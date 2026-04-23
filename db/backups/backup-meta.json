@@ -1,0 +1,51 @@
+{
+  "lastDailyAt": "2026-04-22T16:11:44.737Z",
+  "lastWeeklyAt": "2026-04-22T16:12:06.618Z",
+  "backups": [
+    {
+      "filename": "daily-2026-04-22T15-31-00-714Z.db",
+      "type": "daily",
+      "timestamp": "2026-04-22T15:31:00.714Z",
+      "sizeBytes": 634880,
+      "sizeHuman": "620.0 KB",
+      "dbSizeBytes": 634880,
+      "dbSizeHuman": "620.0 KB"
+    },
+    {
+      "filename": "weekly-2026-W17-Wed-2026-04-22T15-31-00-716Z.db",
+      "type": "weekly",
+      "timestamp": "2026-04-22T15:31:00.716Z",
+      "sizeBytes": 634880,
+      "sizeHuman": "620.0 KB",
+      "dbSizeBytes": 634880,
+      "dbSizeHuman": "620.0 KB"
+    },
+    {
+      "filename": "daily-2026-04-22T15-36-14-737Z.db",
+      "type": "daily",
+      "timestamp": "2026-04-22T15:36:14.737Z",
+      "sizeBytes": 634880,
+      "sizeHuman": "620.0 KB",
+      "dbSizeBytes": 634880,
+      "dbSizeHuman": "620.0 KB"
+    },
+    {
+      "filename": "daily-2026-04-22T16-11-44-737Z.db",
+      "type": "daily",
+      "timestamp": "2026-04-22T16:11:44.737Z",
+      "sizeBytes": 634880,
+      "sizeHuman": "620.0 KB",
+      "dbSizeBytes": 634880,
+      "dbSizeHuman": "620.0 KB"
+    },
+    {
+      "filename": "weekly-2026-W17-Wed-2026-04-22T16-12-06-618Z.db",
+      "type": "weekly",
+      "timestamp": "2026-04-22T16:12:06.618Z",
+      "sizeBytes": 634880,
+      "sizeHuman": "620.0 KB",
+      "dbSizeBytes": 634880,
+      "dbSizeHuman": "620.0 KB"
+    }
+  ]
+}

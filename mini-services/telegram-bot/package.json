@@ -1,0 +1,16 @@
+{
+  "name": "zarrin-gold-telegram-bot",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "bun --hot index.ts"
+  },
+  "dependencies": {
+    "grammy": "^1.35.0",
+    "@prisma/client": "^6.11.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "bun-types": "^1.3.4"
+  }
+}

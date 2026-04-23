@@ -1,20 +1,66 @@
-import type { Metadata } from "next";
-import { Vazirmatn } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from "@/components/amanda/theme-provider";
+import { ThemeProvider } from "next-themes";
 
-const vazirmatn = Vazirmatn({
-  variable: "--font-vazirmatn",
-  subsets: ["arabic"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+const iranSans = localFont({
+  variable: "--font-vazir",
+  src: [
+    {
+      path: "../../public/fonts/IRANSansWeb_UltraLight.woff2",
+      weight: "200",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/IRANSansWeb_Light.woff2",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/IRANSansWeb.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/IRANSansWeb_Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/IRANSansWeb_Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/IRANSansWeb_Black.woff2",
+      weight: "900",
+      style: "normal",
+    },
+  ],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "آماندا کیدز | Amanda Kids - لباس کودک و نوزاد",
-  description: "فروشگاه آنلاین لباس کودک و نوزاد آماندا کیدز. بهترین کیفیت با قیمت مناسب. ارسال رایگان برای خریدهای بالای ۵۰۰,۰۰۰ تومان.",
-  keywords: ["لباس کودک", "لباس نوزاد", "فروشگاه لباس کودک", "آماندا کیدز", "amanda kids"],
+  title: "زرین گلد | خرید و فروش طلای نوین",
+  description: "پلتفرم معاملات طلای آنلاین - خرید، فروش و پس‌انداز طلا",
+  keywords: ["طلا", "خرید طلا", "فروش طلا", "زرین گلد", "سرمایه‌گذاری طلا", "قیمت طلا"],
+  authors: [{ name: "Zarrin Gold" }],
+  icons: {
+    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
 };
 
 export default function RootLayout({
@@ -24,15 +70,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
-      <body
-        className={`${vazirmatn.variable} antialiased bg-background text-foreground font-[family-name:var(--font-vazirmatn)]`}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
+      <body className={`${iranSans.variable} antialiased bg-background text-foreground`}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           {children}
           <Toaster />
         </ThemeProvider>
