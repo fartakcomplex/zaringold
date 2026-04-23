@@ -1,11 +1,15 @@
 #!/bin/bash
+cd /home/z/my-project
 while true; do
-  if ! ss -tlnp | grep -q ":3000 "; then
-    echo "[$(date)] Port 3000 down, restarting Next.js..."
-    cd /home/z/my-project
-    rm -rf .next/cache
-    NODE_OPTIONS="--max-old-space-size=512" setsid npx next dev --port 3000 >> /home/z/my-project/dev.log 2>&1 &
+  if ! ss -tlnp 2>/dev/null | grep -q ':3000'; then
+    echo "$(date '+%H:%M:%S') - Server down, killing leftovers..."
+    pkill -f "standalone/server" 2>/dev/null
+    sleep 3
+    echo "$(date '+%H:%M:%S') - Starting server..."
+    node --max-old-space-size=2048 .next/standalone/server.js > /dev/null 2>&1 &
     disown
+    sleep 5
+    echo "$(date '+%H:%M:%S') - Server should be up now"
   fi
-  sleep 5
+  sleep 3
 done

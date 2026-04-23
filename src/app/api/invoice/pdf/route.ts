@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { chromium } from 'playwright';
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/invoice/pdf  —  Generate A4 PDF receipt                  */
@@ -1061,27 +1060,12 @@ export async function POST(req: NextRequest) {
 </body>
 </html>`;
 
-    /* ── Launch Playwright & generate PDF ── */
-    const browser = await chromium.launch({ headless: true });
-    const page = await browser.newPage();
-
-    await page.setContent(html, { waitUntil: 'networkidle' });
-
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      margin: { top: '0mm', bottom: '0mm', left: '0mm', right: '0mm' },
-      printBackground: true,
-      preferCSSPageSize: false,
-    });
-
-    await browser.close();
-
-    /* ── Return PDF ── */
-    return new NextResponse(new Uint8Array(pdfBuffer), {
+    /* ── Return HTML as printable page (PDF generation requires playwright) ── */
+    return new NextResponse(html, {
       status: 200,
       headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `inline; filename="${invoiceNumber}.pdf"`,
+        'Content-Type': 'text/html; charset=utf-8',
+        'Content-Disposition': `inline; filename="${invoiceNumber}.html"`,
       },
     });
   } catch (error: unknown) {

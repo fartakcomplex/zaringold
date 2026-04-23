@@ -1,18 +1,11 @@
-#!/bin/sh
-# Start Mili Gold dev server
-# Usage: sh start.sh
+#!/bin/bash
 cd /home/z/my-project
-pkill -f "next-server" 2>/dev/null
-pkill -f "next dev" 2>/dev/null
-sleep 1
-rm -f dev.log
-nohup bun run dev > dev.log 2>&1 &
-echo "Server starting... (port 3000)"
-echo "Waiting 15s..."
-sleep 15
-if ss -tlnp | grep -q 3000; then
-  echo "✅ Server is RUNNING on port 3000"
-else
-  echo "❌ Server failed to start"
-  tail -20 dev.log
-fi
+while true; do
+  node --max-old-space-size=2048 .next/standalone/server.js 2>&1 &
+  PID=$!
+  echo "$(date '+%H:%M:%S') - Next.js started (PID: $PID)"
+  wait $PID
+  EXIT=$?
+  echo "$(date '+%H:%M:%S') - Server exited (code: $EXIT), restarting in 3s..."
+  sleep 3
+done
