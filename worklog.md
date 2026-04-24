@@ -53,3 +53,28 @@ Stage Summary:
   10. Full settings tab
 - All API endpoints functional (200 responses)
 - Zero lint errors in GoldCardView.tsx
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Build SMS Marketing Platform
+
+Work Log:
+- Added 4 new Prisma models: SmsCampaign, SmsLog, SmsTemplate, SmsBlacklist
+- Created 9 API routes for SMS marketing
+- Rewrote SmsSettings.tsx into full SMS Marketing Dashboard (2369 lines)
+- Seeded 7 default templates, 2 test campaigns, 20 SMS logs
+- Fixed SQLite aggregate issue in stats API
+
+Stage Summary:
+- SMS Marketing Dashboard with 7 tabs:
+  1. داشبورد (Dashboard) — Stats cards, bar chart, quick actions
+  2. کمپین‌ها (Campaigns) — Create/send/cancel/duplicate campaigns
+  3. ارسال سریع (Quick Send) — Bulk SMS with character count
+  4. قالب‌ها (Templates) — 7 default templates, CRUD operations
+  5. پیامک تولد (Birthday) — Upcoming birthdays, auto-send
+  6. لاگ ارسال (Send Logs) — Filterable table with pagination
+  7. لیست سیاه (Blacklist) — Phone blacklist management
+- Features: segment targeting (all/active/vip/new/kyc/gold_holders),
+  scheduled campaigns, cost tracking, delivery analytics
+- All APIs tested and returning 200

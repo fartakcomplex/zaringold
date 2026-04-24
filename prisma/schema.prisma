@@ -1101,3 +1101,74 @@ model LandingSection {
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  SMS Marketing Platform Module                                         */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+model SmsCampaign {
+  id            String   @id @default(cuid())
+  name          String
+  type          String   @default("marketing") // marketing, transactional, birthday, price_alert, security, promotional
+  message       String
+  senderNumber  String   @default("")
+  recipientCount Int     @default(0)
+  deliveredCount Int     @default(0)
+  failedCount   Int     @default(0)
+  pendingCount  Int     @default(0)
+  status        String   @default("draft") // draft, scheduled, sending, completed, cancelled
+  scheduledAt   DateTime?
+  sentAt        DateTime?
+  completedAt   DateTime?
+  createdById   String?
+  segment       String   @default("all") // all, active, vip, new_users, kyc_verified, gold_holders
+  filterJson    String   @default("{}") // JSON filter criteria
+  costPerSms    Float    @default(35)
+  totalCost     Float    @default(0)
+  template      String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  logs SmsLog[]
+}
+
+model SmsLog {
+  id          String   @id @default(cuid())
+  campaignId  String?
+  phone       String
+  message     String
+  type        String   @default("marketing") // otp, transaction, birthday, marketing, price_alert, security, promotional, welcome, withdrawal, deposit
+  status      String   @default("pending") // pending, sent, delivered, failed, bounced
+  provider    String   @default("kavenegar")
+  messageId   String?
+  cost        Float    @default(35)
+  errorMessage String?
+  retryCount  Int      @default(0)
+  sentAt      DateTime?
+  deliveredAt DateTime?
+  userId      String?
+  createdAt   DateTime @default(now())
+
+  campaign SmsCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+}
+
+model SmsTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  content     String
+  type        String   @default("transactional") // transactional, marketing, birthday, welcome, security, notification
+  variables   String   @default("[]") // JSON array of variable names
+  isActive    Boolean  @default(true)
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SmsBlacklist {
+  id        String   @id @default(cuid())
+  phone     String   @unique
+  reason    String   @default("")
+  addedBy   String?
+  createdAt DateTime @default(now())
+}
