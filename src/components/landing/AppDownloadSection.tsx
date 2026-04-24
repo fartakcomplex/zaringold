@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from '@/lib/framer-compat';
-import { Zap, Bell, Brain, Shield, Download, QrCode } from 'lucide-react';
+import { Zap, Bell, Brain, Shield, Download, QrCode, Star, Smartphone, ArrowRight } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
@@ -14,23 +14,46 @@ const appFeatures = [
     icon: Zap,
     titleKey: 'app.feature1',
     descKey: 'app.feature1Desc',
+    gradient: 'from-amber-500/20 to-orange-500/20',
   },
   {
     icon: Bell,
     titleKey: 'app.feature2',
     descKey: 'app.feature2Desc',
+    gradient: 'from-yellow-500/20 to-amber-500/20',
   },
   {
     icon: Brain,
     titleKey: 'app.feature3',
     descKey: 'app.feature3Desc',
+    gradient: 'from-orange-500/20 to-red-500/20',
   },
   {
     icon: Shield,
     titleKey: 'app.feature4',
     descKey: 'app.feature4Desc',
+    gradient: 'from-emerald-500/20 to-teal-500/20',
   },
 ];
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  Floating Elements Around Phone                                            */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+function FloatingElement({ children, className, delay = '0s' }: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: string;
+}) {
+  return (
+    <div
+      className={cn('absolute pointer-events-none', className)}
+      style={{ animationDelay: delay }}
+    >
+      <div className="float-animation-slow">{children}</div>
+    </div>
+  );
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  CSS-Only Phone Mockup                                                    */
@@ -38,18 +61,51 @@ const appFeatures = [
 
 function PhoneMockup() {
   return (
-    <div className="relative mx-auto w-[200px] sm:w-[240px] lg:w-[260px]">
+    <div className="relative mx-auto w-[220px] sm:w-[260px] lg:w-[280px]">
+      {/* Animated ring behind phone */}
+      <div
+        className="absolute inset-0 -z-10 rounded-[3rem] sm:rounded-[3.5rem] lg:rounded-[4rem]"
+        style={{
+          background: 'conic-gradient(from 0deg, oklch(0.75 0.15 85 / 20%), transparent 30%, oklch(0.75 0.15 85 / 10%) 50%, transparent 70%, oklch(0.75 0.15 85 / 20%))',
+          animation: 'spin-slow 12s linear infinite',
+        }}
+      />
+
+      {/* Glow behind phone */}
+      <div
+        className="absolute inset-0 -z-20 rounded-[3rem] sm:rounded-[3.5rem] lg:rounded-[4rem] pulse-glow"
+      />
+
+      {/* Floating gold particles */}
+      <FloatingElement className="top-4 -right-6" delay="0s">
+        <div className="size-3 rounded-full bg-gold/30 shadow-[0_0_8px_rgba(212,175,55,0.4)]" />
+      </FloatingElement>
+      <FloatingElement className="top-1/3 -left-8" delay="1s">
+        <div className="size-2 rounded-full bg-gold-light/25 shadow-[0_0_6px_rgba(240,208,96,0.3)]" />
+      </FloatingElement>
+      <FloatingElement className="bottom-1/4 -right-10" delay="2s">
+        <div className="size-2.5 rounded-full bg-gold/20 shadow-[0_0_8px_rgba(212,175,55,0.3)]" />
+      </FloatingElement>
+      <FloatingElement className="bottom-8 -left-6" delay="0.5s">
+        <div className="size-2 rounded-full bg-gold-light/30 shadow-[0_0_6px_rgba(240,208,96,0.4)]" />
+      </FloatingElement>
+
       {/* Phone frame */}
       <div
-        className="relative rounded-[2rem] p-2.5 sm:p-3"
+        className="relative rounded-[2.2rem] sm:rounded-[2.5rem] p-2.5 sm:p-3"
         style={{
-          background: 'linear-gradient(145deg, #3a3a3a 0%, #1a1a1a 100%)',
-          boxShadow: '0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.1)',
+          background: 'linear-gradient(160deg, #4a4a4a 0%, #2a2a2a 30%, #1a1a1a 70%, #111 100%)',
+          boxShadow: `
+            0 30px 80px rgba(0,0,0,0.5),
+            0 0 0 1px rgba(255,255,255,0.06),
+            inset 0 1px 0 rgba(255,255,255,0.15),
+            inset 0 -1px 0 rgba(0,0,0,0.3)
+          `,
         }}
       >
         {/* Screen */}
         <div
-          className="relative overflow-hidden rounded-[1.5rem] sm:rounded-[1.75rem]"
+          className="relative overflow-hidden rounded-[1.7rem] sm:rounded-[2rem]"
           style={{
             background: 'linear-gradient(180deg, #0d0d0d 0%, #111111 50%, #0a0a0a 100%)',
             aspectRatio: '9/19.5',
@@ -57,8 +113,8 @@ function PhoneMockup() {
         >
           {/* Status bar */}
           <div className="flex items-center justify-between px-5 pt-3 pb-1">
-            <span className="text-[8px] text-white/60">۹:۴۱</span>
-            <div className="h-1.5 w-8 rounded-full bg-white/20" />
+            <span className="text-[8px] text-white/60 font-medium">۹:۴۱</span>
+            <div className="h-1.5 w-8 rounded-full bg-white/15" />
             <div className="flex items-center gap-1">
               <div className="size-1 rounded-full bg-white/40" />
               <div className="size-1 rounded-full bg-white/40" />
@@ -66,64 +122,86 @@ function PhoneMockup() {
             </div>
           </div>
 
-          {/* App header mockup */}
+          {/* App header */}
           <div className="px-4 pt-3 pb-2">
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-[10px] font-bold text-white/90">زرین گلد</div>
-                <div className="text-[8px] text-white/40 mt-0.5">خوش آمدید</div>
+                <div className="text-[7px] text-white/40 mt-0.5">خوش آمدید 👋</div>
               </div>
               <div
-                className="flex items-center justify-center rounded-full size-6"
+                className="flex items-center justify-center rounded-full size-7"
                 style={{
-                  background: 'linear-gradient(135deg, #D4AF37 0%, #B8960C 100%)',
+                  background: 'linear-gradient(135deg, #D4AF37 0%, #F0D060 50%, #B8960C 100%)',
+                  boxShadow: '0 2px 8px rgba(212, 175, 55, 0.4)',
                 }}
               >
-                <span className="text-[8px] font-bold text-black">Z</span>
+                <span className="text-[9px] font-black text-black">Z</span>
               </div>
             </div>
           </div>
 
-          {/* Gold balance card mockup */}
-          <div className="mx-4 mt-2 rounded-xl p-3" style={{
-            background: 'linear-gradient(135deg, #D4AF37 0%, #B8960C 60%, #8B6914 100%)',
+          {/* Gold balance card */}
+          <div className="mx-3 mt-2 rounded-xl p-3 relative overflow-hidden" style={{
+            background: 'linear-gradient(135deg, #D4AF37 0%, #F0D060 30%, #B8960C 70%, #8B6914 100%)',
           }}>
-            <div className="text-[8px] text-black/60">موجودی طلا</div>
-            <div className="text-lg font-extrabold text-black mt-0.5">۱۲.۵۴ گرم</div>
-            <div className="mt-2 flex items-center gap-2">
-              <div className="flex-1 rounded-md bg-black/15 py-1 text-center text-[8px] font-medium text-black/80">خرید</div>
-              <div className="flex-1 rounded-md bg-black/15 py-1 text-center text-[8px] font-medium text-black/80">فروش</div>
+            {/* Card pattern overlay */}
+            <div className="absolute inset-0 opacity-10" style={{
+              backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 50%, white 1px, transparent 1px)',
+              backgroundSize: '12px 12px',
+            }} />
+            <div className="relative">
+              <div className="text-[7px] text-black/50 font-medium">موجودی طلا</div>
+              <div className="text-lg font-extrabold text-black mt-0.5 drop-shadow-sm">۱۲.۵۴ <span className="text-[10px]">گرم</span></div>
+              <div className="mt-2 flex items-center gap-2">
+                <div className="flex-1 rounded-lg bg-black/20 py-1.5 text-center text-[8px] font-bold text-black/80 backdrop-blur-sm">
+                  خرید
+                </div>
+                <div className="flex-1 rounded-lg bg-black/20 py-1.5 text-center text-[8px] font-bold text-black/80 backdrop-blur-sm">
+                  فروش
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Quick actions mockup */}
-          <div className="mx-4 mt-3 grid grid-cols-4 gap-2">
-            {['خرید', 'فروش', 'پس‌انداز', 'بازار'].map((label) => (
-              <div key={label} className="flex flex-col items-center gap-1">
+          {/* Quick actions */}
+          <div className="mx-3 mt-3 grid grid-cols-4 gap-1.5">
+            {[
+              { label: 'خرید', color: '#4ade80' },
+              { label: 'فروش', color: '#f87171' },
+              { label: 'پس‌انداز', color: '#60a5fa' },
+              { label: 'بازار', color: '#D4AF37' },
+            ].map((item) => (
+              <div key={item.label} className="flex flex-col items-center gap-1">
                 <div
                   className="flex items-center justify-center rounded-lg size-8"
-                  style={{ background: 'rgba(212, 175, 55, 0.1)', border: '1px solid rgba(212, 175, 55, 0.15)' }}
+                  style={{
+                    background: 'rgba(212, 175, 55, 0.08)',
+                    border: '1px solid rgba(212, 175, 55, 0.12)',
+                    boxShadow: `0 2px 6px ${item.color}10`,
+                  }}
                 >
-                  <div className="size-2.5 rounded-full" style={{ background: 'rgba(212, 175, 55, 0.5)' }} />
+                  <div className="size-2.5 rounded-full" style={{ background: item.color, opacity: 0.7 }} />
                 </div>
-                <span className="text-[7px] text-white/50">{label}</span>
+                <span className="text-[6.5px] text-white/45 font-medium">{item.label}</span>
               </div>
             ))}
           </div>
 
-          {/* Price chart mockup */}
-          <div className="mx-4 mt-3 rounded-lg p-2.5" style={{
-            background: 'rgba(212, 175, 55, 0.05)',
-            border: '1px solid rgba(212, 175, 55, 0.1)',
+          {/* Price chart */}
+          <div className="mx-3 mt-3 rounded-lg p-2.5" style={{
+            background: 'rgba(212, 175, 55, 0.04)',
+            border: '1px solid rgba(212, 175, 55, 0.08)',
           }}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[8px] text-white/70">قیمت لحظه‌ای طلا</span>
-              <span className="text-[8px] font-bold text-green-400">+۲.۴٪</span>
+              <span className="text-[7px] text-white/60 font-medium">قیمت لحظه‌ای طلا</span>
+              <span className="text-[7px] font-bold text-green-400 bg-green-400/10 px-1.5 py-0.5 rounded-full">
+                +۲.۴٪
+              </span>
             </div>
-            {/* Mini chart line (SVG) */}
             <svg viewBox="0 0 200 50" className="w-full h-8" fill="none">
               <defs>
-                <linearGradient id="chartGold" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="chartGoldApp" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#D4AF37" stopOpacity="0.3" />
                   <stop offset="100%" stopColor="#D4AF37" stopOpacity="0" />
                 </linearGradient>
@@ -136,23 +214,22 @@ function PhoneMockup() {
               />
               <path
                 d="M0 40 L20 35 L40 38 L60 25 L80 28 L100 15 L120 20 L140 10 L160 12 L180 5 L200 8 L200 50 L0 50 Z"
-                fill="url(#chartGold)"
+                fill="url(#chartGoldApp)"
               />
             </svg>
           </div>
 
           {/* Home indicator */}
           <div className="mt-auto flex justify-center pb-2 pt-2">
-            <div className="w-16 h-1 rounded-full bg-white/15" />
+            <div className="w-16 h-1 rounded-full bg-white/10" />
           </div>
         </div>
 
-        {/* Side button (power) */}
+        {/* Side buttons */}
         <div
           className="absolute top-14 -right-0.5 h-6 w-[3px] rounded-l-sm"
           style={{ background: 'linear-gradient(180deg, #444 0%, #222 100%)' }}
         />
-        {/* Volume buttons */}
         <div
           className="absolute top-20 -left-0.5 h-4 w-[3px] rounded-r-sm"
           style={{ background: 'linear-gradient(180deg, #444 0%, #222 100%)' }}
@@ -162,15 +239,6 @@ function PhoneMockup() {
           style={{ background: 'linear-gradient(180deg, #444 0%, #222 100%)' }}
         />
       </div>
-
-      {/* Glow behind phone */}
-      <div
-        className="absolute inset-0 -z-10 rounded-[2.5rem] sm:rounded-[3rem]"
-        style={{
-          background: 'radial-gradient(ellipse 60% 50% at 50% 50%, oklch(0.75 0.15 85 / 20%) 0%, transparent 70%)',
-          transform: 'scale(1.2)',
-        }}
-      />
     </div>
   );
 }
@@ -193,20 +261,27 @@ function DownloadButton({
   return (
     <button
       className={cn(
-        'group flex items-center gap-3 rounded-xl px-4 py-3 sm:px-5 sm:py-3.5',
-        'card-glass-premium',
-        'hover-lift-sm',
-        'transition-all duration-200',
-        'border border-white/[0.06] hover:border-[#D4AF37]/20',
+        'group relative flex items-center gap-3 rounded-2xl px-5 py-3.5 sm:px-6 sm:py-4',
+        'overflow-hidden',
+        'transition-all duration-300',
+        'hover:shadow-[0_0_20px_rgba(212,175,55,0.15)]',
         className,
       )}
+      style={{
+        background: 'linear-gradient(135deg, oklch(0.98 0.025 85 / 80%), oklch(0.995 0.01 85 / 90%))',
+        border: '1px solid oklch(0.75 0.15 85 / 12%)',
+        backdropFilter: 'blur(16px)',
+      }}
     >
-      <div className="shrink-0 text-[#D4AF37]">{icon}</div>
-      <div className="text-right">
+      {/* Shimmer border */}
+      <div className="absolute inset-0 shimmer-border rounded-2xl pointer-events-none" />
+
+      <div className="shrink-0 text-gold relative z-10">{icon}</div>
+      <div className="text-right relative z-10">
         <div className="text-[10px] text-muted-foreground sm:text-xs">{sublabel}</div>
         <div className="text-xs font-bold text-foreground sm:text-sm">{label}</div>
       </div>
-      <Download className="mr-auto size-3.5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+      <Download className="mr-auto size-3.5 text-gold opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 relative z-10" />
     </button>
   );
 }
@@ -222,46 +297,60 @@ export default function AppDownloadSection() {
     <section
       id="app-download"
       dir="rtl"
-      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
+      className="relative py-20 sm:py-28 lg:py-32 overflow-hidden"
     >
       {/* ── Gold separator at top ── */}
       <div className="absolute top-0 left-0 right-0 gold-separator" />
 
-      {/* ── Background glow ── */}
+      {/* ── Background layers ── */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse 50% 60% at 70% 50%, oklch(0.75 0.15 85 / 10%) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse 60% 70% at 60% 50%, oklch(0.75 0.15 85 / 8%) 0%, transparent 70%)',
         }}
       />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 40% 50% at 30% 60%, oklch(0.85 0.1 85 / 6%) 0%, transparent 60%)',
+        }}
+      />
+
+      {/* Sparkles */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="gold-sparkle absolute top-[10%] right-[15%]" style={{ animationDelay: '0s' }} />
+        <div className="gold-sparkle absolute top-[40%] left-[10%]" style={{ animationDelay: '1.5s' }} />
+        <div className="gold-sparkle absolute bottom-[20%] right-[25%]" style={{ animationDelay: '2.5s' }} />
+        <div className="gold-sparkle absolute top-[60%] left-[30%]" style={{ animationDelay: '0.8s' }} />
+      </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
           className="mx-auto mb-12 max-w-2xl text-center sm:mb-16"
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
         >
           <span className="badge-gold mb-4 inline-block">
             {t('app.badge')}
           </span>
-          <h2 className="gold-gradient-text mb-4 text-3xl font-extrabold tracking-tight sm:text-4xl gold-text-shadow">
+          <h2 className="gold-gradient-text mb-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl gold-text-shadow">
             {t('app.title')}
           </h2>
-          <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p className="text-sm leading-relaxed text-muted-foreground sm:text-base max-w-xl mx-auto">
             {t('app.subtitle')}
           </p>
         </motion.div>
 
         {/* ── Two-column layout: Phone + Content ── */}
-        <div className="flex flex-col items-center gap-10 lg:flex-row lg:gap-16 lg:items-center">
+        <div className="flex flex-col items-center gap-12 lg:flex-row lg:gap-16 lg:items-center">
           {/* Phone mockup */}
           <motion.div
             className="order-1 lg:order-2 lg:flex-1"
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
           >
             <PhoneMockup />
           </motion.div>
@@ -269,32 +358,46 @@ export default function AppDownloadSection() {
           {/* Content side */}
           <motion.div
             className="order-2 flex flex-col gap-6 lg:order-1 lg:flex-1 lg:gap-8"
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            {/* Feature highlights */}
+            {/* Feature highlights grid */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
               {appFeatures.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
                   <motion.div
                     key={feature.titleKey}
-                    className="flex items-start gap-3 rounded-xl p-3 card-glass-premium"
-                    initial={{ opacity: 0, y: 12 }}
+                    className="group relative rounded-2xl overflow-hidden p-4 card-spotlight hover-lift-sm"
+                    style={{
+                      background: 'linear-gradient(135deg, oklch(0.98 0.02 85 / 70%), oklch(0.995 0.008 85 / 80%))',
+                      border: '1px solid oklch(0.75 0.15 85 / 8%)',
+                    }}
+                    initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: 0.2 + index * 0.08 }}
+                    transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
                   >
-                    <div className="gold-icon-circle shrink-0">
-                      <Icon className="size-4 text-gold" />
-                    </div>
-                    <div className="space-y-0.5">
-                      <h3 className="text-xs font-bold text-foreground sm:text-sm">
-                        {t(feature.titleKey)}
-                      </h3>
-                      <p className="text-[11px] leading-relaxed text-muted-foreground sm:text-xs">
-                        {t(feature.descKey)}
-                      </p>
+                    <div className="absolute inset-0 shimmer-border rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="relative flex items-start gap-3">
+                      <div
+                        className={cn(
+                          'shrink-0 flex items-center justify-center rounded-xl size-10 transition-all duration-300',
+                          'bg-gold/8 group-hover:bg-gold/15',
+                          'shadow-[0_2px_8px_rgba(212,175,55,0.08)]',
+                          'group-hover:shadow-[0_2px_12px_rgba(212,175,55,0.15)]',
+                        )}
+                      >
+                        <Icon className="size-4.5 text-gold transition-transform duration-300 group-hover:scale-110" />
+                      </div>
+                      <div className="space-y-0.5 min-w-0">
+                        <h3 className="text-xs font-bold text-foreground sm:text-sm">
+                          {t(feature.titleKey)}
+                        </h3>
+                        <p className="text-[11px] leading-relaxed text-muted-foreground sm:text-xs">
+                          {t(feature.descKey)}
+                        </p>
+                      </div>
                     </div>
                   </motion.div>
                 );
@@ -303,7 +406,6 @@ export default function AppDownloadSection() {
 
             {/* Download buttons */}
             <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-              {/* Google Play */}
               <DownloadButton
                 label={t('app.googlePlay')}
                 sublabel="Android"
@@ -313,7 +415,6 @@ export default function AppDownloadSection() {
                   </svg>
                 }
               />
-              {/* App Store */}
               <DownloadButton
                 label={t('app.appStore')}
                 sublabel="iOS"
@@ -327,29 +428,37 @@ export default function AppDownloadSection() {
 
             {/* Direct APK + QR */}
             <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-              {/* Direct APK link */}
               <button
                 className={cn(
-                  'flex items-center gap-2 rounded-lg px-3 py-2',
-                  'text-xs text-muted-foreground hover:text-gold',
-                  'border border-white/[0.06] hover:border-[#D4AF37]/20',
+                  'flex items-center gap-2 rounded-xl px-4 py-2.5',
+                  'text-xs text-muted-foreground hover:text-gold font-medium',
                   'transition-all duration-200',
+                  'hover:shadow-[0_0_12px_rgba(212,175,55,0.08)]',
                 )}
+                style={{
+                  background: 'linear-gradient(135deg, oklch(0.98 0.02 85 / 60%), oklch(0.995 0.008 85 / 70%))',
+                  border: '1px solid oklch(0.75 0.15 85 / 8%)',
+                }}
               >
                 <Download className="size-3.5" />
                 {t('app.directApk')}
+                <ArrowRight className="size-3 opacity-0 -translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-x-0" />
               </button>
 
-              {/* QR code placeholder */}
+              {/* QR code */}
               <div
-                className="flex items-center gap-3 rounded-xl p-3 card-glass-premium"
-                style={{ border: '1px solid rgba(212, 175, 55, 0.1)' }}
+                className="flex items-center gap-3 rounded-2xl p-3 card-spotlight hover-lift-sm"
+                style={{
+                  background: 'linear-gradient(135deg, oklch(0.98 0.02 85 / 70%), oklch(0.995 0.008 85 / 80%))',
+                  border: '1px solid oklch(0.75 0.15 85 / 10%)',
+                }}
               >
                 <div
-                  className="flex items-center justify-center rounded-lg size-14"
+                  className="flex items-center justify-center rounded-xl size-14"
                   style={{
                     background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.03) 100%)',
-                    border: '1px solid rgba(212, 175, 55, 0.15)',
+                    border: '1px solid rgba(212, 175, 55, 0.12)',
+                    boxShadow: '0 2px 8px rgba(212, 175, 55, 0.05)',
                   }}
                 >
                   <QrCode className="size-7 text-gold/50" />
@@ -364,6 +473,29 @@ export default function AppDownloadSection() {
                 </div>
               </div>
             </div>
+
+            {/* Rating badge */}
+            <motion.div
+              className="flex items-center gap-3 rounded-2xl px-5 py-3"
+              style={{
+                background: 'linear-gradient(135deg, oklch(0.98 0.02 85 / 60%), oklch(0.995 0.008 85 / 70%))',
+                border: '1px solid oklch(0.75 0.15 85 / 8%)',
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+            >
+              <Smartphone className="size-5 text-gold/60" />
+              <div className="flex-1">
+                <div className="text-xs font-bold text-foreground">بیش از ۱۰۰,۰۰۰ دانلود</div>
+                <div className="flex items-center gap-1 mt-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="size-3 fill-gold text-gold" />
+                  ))}
+                  <span className="text-[10px] text-muted-foreground mr-1">۴.۸ از ۵</span>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>

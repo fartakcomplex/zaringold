@@ -8,9 +8,18 @@ import {
   Search,
   Loader2,
   Sparkles,
+  TrendingUp,
+  GraduationCap,
+  PiggyBank,
+  Shield,
+  CreditCard,
+  Wrench,
+  Scale,
+  FileText,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { motion } from '@/lib/framer-compat';
 import { cn } from '@/lib/utils';
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -76,6 +85,17 @@ const MOCK_CATEGORIES: Category[] = [
   { name: 'خدمات', slug: 'services', color: '#f59e0b', postCount: 1 },
 ];
 
+const CATEGORY_ICONS: Record<string, React.ElementType> = {
+  '': Sparkles,
+  'market-analysis': TrendingUp,
+  'education': GraduationCap,
+  'savings': PiggyBank,
+  'security': Shield,
+  'product': CreditCard,
+  'services': Wrench,
+  'regulations': Scale,
+};
+
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  Helpers                                                            */
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -135,7 +155,7 @@ function CategoriesSkeleton() {
     <div className="mx-auto max-w-5xl px-4 pt-10 sm:px-6">
       <div className="flex flex-wrap gap-2">
         {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="h-8 w-24 rounded-full" />
+          <Skeleton key={i} className="h-9 w-28 rounded-full" />
         ))}
       </div>
     </div>
@@ -148,7 +168,7 @@ function PostsGridSkeleton() {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="overflow-hidden rounded-2xl border border-border/50 bg-card">
-            <Skeleton className="h-36 w-full" />
+            <Skeleton className="h-40 w-full" />
             <div className="space-y-3 p-5">
               <Skeleton className="h-5 w-20" />
               <Skeleton className="h-5 w-full" />
@@ -262,176 +282,267 @@ export default function BlogPage({ onBack, onViewPost }: SubPageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="relative overflow-hidden border-b border-border bg-gradient-to-b from-gold/[0.06] to-transparent">
-        <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 md:py-24">
-          <button
+      {/* ── Enhanced Header ── */}
+      <div className="relative overflow-hidden border-b border-border">
+        <div className="absolute inset-0 bg-gradient-to-b from-gold/[0.08] via-gold/[0.03] to-transparent" />
+        <div className="absolute top-0 right-1/4 w-[500px] h-[250px] bg-gradient-to-b from-gold/8 to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-16 left-10 w-2 h-2 bg-gold rounded-full opacity-30 animate-pulse" />
+        <div className="absolute top-28 right-1/3 w-1.5 h-1.5 bg-gold-light rounded-full opacity-25 animate-pulse delay-700" />
+
+        <div className="relative mx-auto max-w-5xl px-4 py-16 sm:px-6 md:py-24">
+          <motion.button
             onClick={onBack}
-            className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-gold"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-gold group"
           >
-            <ArrowLeft className="size-4" />
+            <ArrowLeft className="size-4 transition-transform group-hover:translate-x-1" />
             بازگشت به صفحه اصلی
-          </button>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex size-12 items-center justify-center rounded-2xl bg-gold/10">
-              <BookOpen className="size-6 text-gold" />
+          </motion.button>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="relative flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-gold/20 to-gold/5 ring-1 ring-gold/20">
+                <BookOpen className="size-6 text-gold" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="flex items-center gap-1.5 rounded-full bg-gold/10 px-3 py-1 text-xs font-medium text-gold">
+                    <FileText className="size-3" />
+                    مقالات تخصصی
+                  </span>
+                </div>
+                <h1 className="text-3xl font-black md:text-5xl gold-text-shadow">
+                  وبلاگ <span className="gold-gradient-text">زرین گلد</span>
+                </h1>
+              </div>
             </div>
-            <h1 className="text-3xl font-black md:text-4xl">
-              وبلاگ <span className="gold-gradient-text">زرین گلد</span>
-            </h1>
-          </div>
-          <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="max-w-2xl text-base leading-relaxed text-muted-foreground"
+          >
             آخرین اخبار، تحلیل‌ها و آموزش‌های بازار طلا. با مقالات تخصصی ما، تصمیمات
             سرمایه‌گذاری بهتری بگیرید.
-          </p>
+          </motion.p>
         </div>
       </div>
 
-      {/* Search Bar */}
+      {/* ── Enhanced Search Bar ── */}
       <div className="mx-auto max-w-5xl px-4 pt-8 sm:px-6">
-        <div className="relative">
-          <Search className="absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.25 }}
+          className="relative"
+        >
+          <Search className="absolute right-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="جستجو در مقالات..."
-            className="w-full rounded-xl border border-border bg-card py-3 pr-10 pl-4 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-gold/40 focus:ring-2 focus:ring-gold/10"
+            className="input-gold-focus w-full rounded-2xl border border-border/50 bg-white/60 backdrop-blur-xl py-3.5 pr-11 pl-4 text-sm outline-none transition-all placeholder:text-muted-foreground/60 dark:bg-gold/[0.02]"
           />
           {isSearching && (
-            <Loader2 className="absolute left-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-gold" />
+            <Loader2 className="absolute left-4 top-1/2 size-4 -translate-y-1/2 animate-spin text-gold" />
           )}
-        </div>
+        </motion.div>
       </div>
 
-      {/* Featured Post */}
+      {/* ── Enhanced Featured Post ── */}
       {loading ? (
         <FeaturedSkeleton />
       ) : featuredPost ? (
-        <div className="mx-auto max-w-5xl px-4 pt-6 sm:px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mx-auto max-w-5xl px-4 pt-6 sm:px-6"
+        >
           <article
             onClick={() => onViewPost?.(featuredPost.slug)}
-            className="group -mt-0 cursor-pointer overflow-hidden rounded-2xl border border-gold/20 bg-gradient-to-l from-gold/[0.06] to-transparent p-6 transition-all hover:border-gold/30 hover:shadow-md md:p-8"
+            className={cn(
+              'group relative cursor-pointer overflow-hidden rounded-2xl p-6 md:p-8 transition-all hover-lift-md',
+              'shimmer-border card-spotlight',
+              'bg-gradient-to-l from-gold/[0.08] to-gold/[0.02]',
+              'dark:from-gold/[0.06] dark:to-gold/[0.01]',
+              'border border-gold/20 hover:border-gold/40'
+            )}
           >
-            <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="size-3.5 text-gold" />
-              <span className="text-xs font-medium text-gold">مقاله ویژه</span>
-            </div>
-            <div className="flex items-start gap-4 md:gap-6">
-              <div className="flex-1">
-                {featuredPost.category && (
-                  <Badge
-                    className="mb-3 text-xs"
-                    style={{
-                      backgroundColor: featuredPost.category.color + '18',
-                      color: featuredPost.category.color,
-                      borderColor: featuredPost.category.color + '40',
-                    }}
-                  >
-                    {featuredPost.category.name}
-                  </Badge>
-                )}
-                <h2 className="mb-2 text-xl font-bold leading-relaxed transition-colors group-hover:text-gold md:text-2xl">
-                  {featuredPost.title}
-                </h2>
-                <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-                  {featuredPost.excerpt}
-                </p>
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Clock className="size-3" />
-                    {apiAvailable ? formatPersianDate(featuredPost.publishedAt) : MOCK_FEATURED.date}
-                  </span>
-                  {featuredPost.readTime > 0 && (
-                    <span>{featuredPost.readTime} دقیقه مطالعه</span>
-                  )}
-                  <span className="flex items-center gap-1 text-gold font-medium">
-                    ادامه مطلب
-                    <ArrowLeft className="size-3" />
-                  </span>
-                </div>
+            {/* Background decoration */}
+            <div className="absolute -top-12 -left-12 size-40 bg-gradient-to-br from-gold/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-1/3 h-full bg-gradient-to-l from-gold/[0.04] to-transparent pointer-events-none" />
+
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="flex items-center gap-1.5 rounded-full bg-gold/15 px-3 py-1 text-xs font-medium text-gold">
+                  <Sparkles className="size-3" />
+                  مقاله ویژه
+                </span>
               </div>
-              {featuredPost.featuredImage ? (
-                <img
-                  src={featuredPost.featuredImage}
-                  alt=""
-                  className="hidden size-28 shrink-0 rounded-2xl object-cover sm:block md:size-32"
-                />
-              ) : (
-                <div className="hidden size-28 shrink-0 items-center justify-center rounded-2xl bg-gold/5 text-5xl sm:flex md:size-32">
-                  {apiAvailable ? getPostEmoji(featuredPost.id) : MOCK_FEATURED.image}
+              <div className="flex items-start gap-4 md:gap-6">
+                <div className="flex-1">
+                  {featuredPost.category && (
+                    <Badge
+                      className="mb-3 text-xs rounded-full"
+                      style={{
+                        backgroundColor: featuredPost.category.color + '18',
+                        color: featuredPost.category.color,
+                        borderColor: featuredPost.category.color + '30',
+                      }}
+                    >
+                      {featuredPost.category.name}
+                    </Badge>
+                  )}
+                  <h2 className="mb-2 text-xl font-bold leading-relaxed transition-colors group-hover:text-gold md:text-2xl">
+                    {featuredPost.title}
+                  </h2>
+                  <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+                    {featuredPost.excerpt}
+                  </p>
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Clock className="size-3" />
+                      {apiAvailable ? formatPersianDate(featuredPost.publishedAt) : MOCK_FEATURED.date}
+                    </span>
+                    {featuredPost.readTime > 0 && (
+                      <span className="flex items-center gap-1">
+                        <BookOpen className="size-3" />
+                        {featuredPost.readTime} دقیقه مطالعه
+                      </span>
+                    )}
+                    <span className="flex items-center gap-1 text-gold font-medium">
+                      ادامه مطلب
+                      <ArrowLeft className="size-3" />
+                    </span>
+                  </div>
                 </div>
-              )}
+                {featuredPost.featuredImage ? (
+                  <img
+                    src={featuredPost.featuredImage}
+                    alt=""
+                    className="hidden size-28 shrink-0 rounded-2xl object-cover ring-1 ring-white/20 shadow-lg sm:block md:size-32"
+                  />
+                ) : (
+                  <div className="hidden size-28 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-gold/10 to-gold/[0.02] text-5xl ring-1 ring-gold/10 shadow-lg sm:flex md:size-32">
+                    {apiAvailable ? getPostEmoji(featuredPost.id) : MOCK_FEATURED.image}
+                  </div>
+                )}
+              </div>
             </div>
           </article>
-        </div>
+        </motion.div>
       ) : null}
 
-      {/* Categories */}
+      {/* ── Enhanced Category Filter Pills ── */}
       {loading ? (
         <CategoriesSkeleton />
       ) : (
-        <div className="mx-auto max-w-5xl px-4 pt-10 sm:px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
+          className="mx-auto max-w-5xl px-4 pt-10 sm:px-6"
+        >
           <div className="flex flex-wrap gap-2">
-            {categories.map((c) => (
-              <button
-                key={c.slug || 'all'}
-                className={cn(
-                  'rounded-full px-4 py-1.5 text-xs font-medium transition-all',
-                  activeCategory === c.slug
-                    ? 'bg-gold text-gold-foreground'
-                    : 'bg-muted text-muted-foreground hover:bg-gold/10 hover:text-gold'
-                )}
-                onClick={() => handleCategoryFilter(c.slug)}
-              >
-                {c.name} ({c.postCount})
-              </button>
-            ))}
+            {categories.map((c) => {
+              const IconComponent = CATEGORY_ICONS[c.slug] || Sparkles;
+              const isActive = activeCategory === c.slug;
+              return (
+                <button
+                  key={c.slug || 'all'}
+                  className={cn(
+                    'flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium transition-all',
+                    isActive
+                      ? 'bg-gradient-to-l from-gold-dark to-gold text-white shadow-lg shadow-gold/20 ring-1 ring-gold/30'
+                      : 'bg-white/60 backdrop-blur-sm border border-border/50 text-muted-foreground hover:bg-gold/10 hover:text-gold hover:border-gold/20 dark:bg-gold/[0.02] dark:border-gold/10'
+                  )}
+                  onClick={() => handleCategoryFilter(c.slug)}
+                >
+                  <IconComponent className="size-3" />
+                  {c.name}
+                  <span className={cn(
+                    'rounded-full px-1.5 py-0.5 text-[10px]',
+                    isActive ? 'bg-white/20' : 'bg-muted'
+                  )}>
+                    {c.postCount}
+                  </span>
+                </button>
+              );
+            })}
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* Posts Grid */}
+      {/* ── Enhanced Posts Grid ── */}
       {loading ? (
         <PostsGridSkeleton />
       ) : (
         <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
           {displayPosts.length === 0 ? (
-            <div className="py-20 text-center">
-              <BookOpen className="mx-auto mb-4 size-12 text-muted-foreground/30" />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="py-20 text-center"
+            >
+              <div className="flex mx-auto mb-4 size-16 items-center justify-center rounded-2xl bg-muted/50">
+                <BookOpen className="size-8 text-muted-foreground/30" />
+              </div>
               <p className="text-base text-muted-foreground">
                 {searchQuery ? 'نتیجه‌ای برای جستجوی شما یافت نشد.' : 'هنوز مقاله‌ای منتشر نشده است.'}
               </p>
-            </div>
+            </motion.div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {displayPosts.map((post) => (
-                <article
+              {displayPosts.map((post, idx) => (
+                <motion.article
                   key={post.id}
+                  initial={{ opacity: 0, y: 25 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.05 + idx * 0.06 }}
                   onClick={() => onViewPost?.(post.slug)}
-                  className="group cursor-pointer overflow-hidden rounded-2xl border border-border/50 bg-card transition-all hover:border-gold/20 hover:shadow-md"
+                  className={cn(
+                    'group cursor-pointer overflow-hidden rounded-2xl border transition-all hover-lift-md',
+                    'bg-white/60 backdrop-blur-xl border-white/50',
+                    'dark:bg-gold/[0.02] dark:border-gold/10',
+                    'card-spotlight hover:border-gold/30'
+                  )}
                 >
+                  {/* Image / Emoji area */}
                   {post.featuredImage ? (
-                    <div className="h-36 overflow-hidden">
+                    <div className="relative h-40 overflow-hidden">
                       <img
                         src={post.featuredImage}
                         alt=""
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                     </div>
                   ) : (
-                    <div className="flex h-36 items-center justify-center bg-muted/30 text-4xl">
+                    <div className="relative flex h-40 items-center justify-center bg-gradient-to-br from-muted/40 to-muted/10 text-5xl transition-all group-hover:from-gold/[0.08] group-hover:to-gold/[0.02]">
                       {apiAvailable ? getPostEmoji(post.id) : POST_EMOJIS[MOCK_POSTS.findIndex(p => p.id === post.id) % POST_EMOJIS.length]}
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-gold/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                     </div>
                   )}
+
                   <div className="p-5">
                     {post.category && (
                       <Badge
-                        className="mb-2 text-[10px]"
+                        className="mb-2.5 text-[10px] rounded-full"
                         style={{
                           backgroundColor: post.category.color + '18',
                           color: post.category.color,
-                          borderColor: post.category.color + '40',
+                          borderColor: post.category.color + '30',
                         }}
                       >
                         {post.category.name}
@@ -443,12 +554,21 @@ export default function BlogPage({ onBack, onViewPost }: SubPageProps) {
                     <p className="text-xs leading-relaxed text-muted-foreground line-clamp-2">
                       {post.excerpt}
                     </p>
-                    <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
-                      <span>{apiAvailable ? formatPersianDate(post.publishedAt) : post.publishedAt}</span>
-                      {post.readTime > 0 && <span>{post.readTime} دقیقه</span>}
+                    <div className="gold-separator my-3" />
+                    <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Clock className="size-3" />
+                        {apiAvailable ? formatPersianDate(post.publishedAt) : post.publishedAt}
+                      </span>
+                      {post.readTime > 0 && (
+                        <span className="flex items-center gap-1">
+                          <BookOpen className="size-3" />
+                          {post.readTime} دقیقه
+                        </span>
+                      )}
                     </div>
                   </div>
-                </article>
+                </motion.article>
               ))}
             </div>
           )}

@@ -8,14 +8,13 @@ import {
   ShieldCheck,
   Wallet,
   TrendingUp,
-  ArrowLeft,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════ */
 /*  Step data                                                               */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════ */
 
 interface StepItem {
   number: number;
@@ -51,9 +50,213 @@ const steps: StepItem[] = [
   },
 ];
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════ */
+/*  Animated Step Number Circle                                              */
+/* ═══════════════════════════════════════════════════════════════ */
+
+function StepNumberCircle({ number, size = 'lg' }: { number: number; size?: 'sm' | 'lg' }) {
+  const isLarge = size === 'lg';
+  return (
+    <div className="relative">
+      {/* Outer pulsing ring */}
+      <div
+        className={cn(
+          'absolute inset-0 rounded-full',
+          'bg-gradient-to-br from-gold-light via-gold to-gold-dark',
+          'animate-pulse opacity-30',
+          isLarge ? 'inset-[-4px]' : 'inset-[-2px]',
+        )}
+        aria-hidden="true"
+      />
+      {/* Main circle */}
+      <div
+        className={cn(
+          'relative flex items-center justify-center rounded-full',
+          'bg-gradient-to-br from-gold-light via-gold to-gold-dark',
+          'shadow-lg shadow-gold/30',
+          isLarge ? 'size-16' : 'size-7',
+        )}
+        style={{
+          boxShadow: '0 4px 20px rgba(212,175,55,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
+        }}
+      >
+        {/* Inner highlight */}
+        <div
+          className="absolute top-0 left-0 right-0 h-1/2 rounded-t-full opacity-30"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(255,255,255,0.6), transparent)',
+          }}
+          aria-hidden="true"
+        />
+        <span
+          className={cn(
+            'relative font-black text-gray-950',
+            isLarge ? 'text-2xl' : 'text-[10px]',
+          )}
+        >
+          {number}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/*  Animated Gold Connector Line                                            */
+/* ═══════════════════════════════════════════════════════════════ */
+
+function GoldConnector({ orientation = 'horizontal' }: { orientation?: 'horizontal' | 'vertical' }) {
+  return (
+    <div
+      className={cn(
+        'relative overflow-hidden',
+        orientation === 'horizontal' ? 'h-1 w-full' : 'w-1 flex-1',
+      )}
+      aria-hidden="true"
+    >
+      {/* Base track */}
+      <div className="absolute inset-0 rounded-full bg-gold/15" />
+      {/* Animated gradient line */}
+      <div
+        className={cn(
+          'absolute inset-0 rounded-full',
+          'bg-gradient-to-r from-gold-dark via-gold-light to-gold-dark',
+          'gradient-animate',
+        )}
+        style={{ backgroundSize: '200% 100%' }}
+      />
+      {/* Traveling particle */}
+      <div
+        className={cn(
+          'absolute rounded-full bg-gold-light shadow-lg shadow-gold/50',
+          orientation === 'horizontal'
+            ? 'top-1/2 -translate-y-1/2 size-2'
+            : 'left-1/2 -translate-x-1/2 size-2',
+        )}
+        style={{
+          animation: orientation === 'horizontal'
+            ? 'travel-right 2.5s ease-in-out infinite'
+            : 'travel-down 2.5s ease-in-out infinite',
+        }}
+      />
+      <style jsx>{`
+        @keyframes travel-right {
+          0% { right: 0; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { right: 100%; opacity: 0; }
+        }
+        @keyframes travel-down {
+          0% { top: 0; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { top: 100%; opacity: 0; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/*  Gold Sparkle Particles                                                 */
+/* ═══════════════════════════════════════════════════════════════ */
+
+function GoldSparkles() {
+  const sparkles = [
+    { top: '10%', left: '15%', delay: '0s', size: '3px' },
+    { top: '20%', left: '80%', delay: '1s', size: '4px' },
+    { top: '60%', left: '10%', delay: '0.5s', size: '3px' },
+    { top: '70%', left: '85%', delay: '1.5s', size: '5px' },
+    { top: '40%', left: '50%', delay: '2s', size: '3px' },
+    { top: '85%', left: '30%', delay: '0.8s', size: '4px' },
+  ];
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      {sparkles.map((s, i) => (
+        <div
+          key={i}
+          className="gold-sparkle"
+          style={{
+            top: s.top,
+            left: s.left,
+            width: s.size,
+            height: s.size,
+            animationDelay: s.delay,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/*  Desktop Step Card                                                       */
+/* ═══════════════════════════════════════════════════════════════ */
+
+function DesktopStepCard({ step, index }: { step: StepItem; index: number }) {
+  const { t } = useTranslation();
+  const Icon = step.icon;
+
+  return (
+    <motion.div
+      className="group relative z-10 flex flex-col items-center text-center"
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.6,
+        delay: index * 0.15,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+    >
+      {/* Glass card with shimmer border */}
+      <div
+        className={cn(
+          'shimmer-border glass-card-enhanced relative w-full rounded-2xl p-6',
+          'border border-gold/10 transition-all duration-400 ease-out',
+          'hover:border-gold/30 card-spotlight',
+          'pt-10',
+        )}
+      >
+        {/* Floating step number - positioned on top */}
+        <div className="absolute -top-7 left-1/2 -translate-x-1/2">
+          <StepNumberCircle number={step.number} size="lg" />
+        </div>
+
+        {/* Icon */}
+        <div
+          className={cn(
+            'mx-auto mb-4 flex size-12 items-center justify-center rounded-2xl',
+            'bg-gradient-to-br from-gold/10 to-gold/5',
+            'border border-gold/15',
+            'transition-all duration-300',
+            'group-hover:scale-110 group-hover:border-gold/30 group-hover:bg-gold/15',
+          )}
+        >
+          <Icon className="size-6 text-gold" />
+        </div>
+
+        {/* Title */}
+        <h3 className="mb-2 text-sm font-extrabold text-foreground sm:text-base">
+          {t(step.titleKey)}
+        </h3>
+
+        {/* Description */}
+        <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm">
+          {t(step.descKey)}
+        </p>
+
+        {/* Bottom gold accent bar */}
+        <div
+          className="mx-auto mt-4 h-0.5 w-12 rounded-full bg-gradient-to-r from-transparent via-gold/40 to-transparent opacity-0 transition-all duration-300 group-hover:w-20 group-hover:opacity-100"
+        />
+      </div>
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
 /*  Component                                                               */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════ */
 
 export default function HowItWorksSection() {
   const { t } = useTranslation();
@@ -62,44 +265,41 @@ export default function HowItWorksSection() {
     <section
       id="how-it-works"
       dir="rtl"
-      className="relative py-16 sm:py-20"
+      className="relative py-20 sm:py-28"
     >
+      {/* ── Background elements ── */}
+      <GoldSparkles />
+      <div className="pointer-events-none absolute inset-0 radial-gold-fade" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-0 dot-pattern opacity-30" aria-hidden="true" />
+
       {/* ── Gold separator at top ── */}
-      <div className="gold-separator mb-12 sm:mb-16" />
+      <div className="gold-separator mb-16 sm:mb-20" />
 
-      {/* ── Subtle background radial gold glow ── */}
-      <div
-        className="pointer-events-none absolute inset-0 radial-gold-fade"
-        aria-hidden="true"
-      />
-
-      <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
-          className="mb-12 text-center sm:mb-16"
-          initial={{ opacity: 0, y: 24 }}
+          className="mb-16 text-center sm:mb-20"
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
           {/* Badge */}
           <motion.span
             className={cn(
-              'glass-gold inline-block rounded-full px-4 py-1.5 text-xs font-semibold text-gold',
-              'border border-gold/15',
+              'glass-gold badge-gold inline-flex items-center gap-2',
             )}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            
             transition={{ duration: 0.4, delay: 0.1 }}
           >
+            <span className="size-1.5 rounded-full bg-gold animate-pulse" />
             {t('howItWorks.badge')}
           </motion.span>
 
           {/* Title */}
           <h2
             className={cn(
-              'mt-5 text-3xl font-extrabold tracking-tight sm:text-4xl',
+              'mt-6 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl',
               'gold-gradient-text gold-text-shadow',
             )}
           >
@@ -115,207 +315,91 @@ export default function HowItWorksSection() {
         {/* ── Steps Timeline ── */}
         <div className="relative">
           {/* ════════════════════════════════════════════════════════════════ */}
-          {/*  Desktop: Horizontal timeline with connector lines               */}
+          {/*  Desktop: Horizontal timeline with animated connectors         */}
           {/* ════════════════════════════════════════════════════════════════ */}
           <div className="hidden md:grid md:grid-cols-4 md:gap-0 md:items-start">
-            {steps.map((step, index) => {
-              const Icon = step.icon;
+            {steps.map((step, index) => (
+              <React.Fragment key={step.number}>
+                <DesktopStepCard step={step} index={index} />
 
-              return (
-                <React.Fragment key={step.number}>
-                  {/* Step Card */}
+                {/* Animated gold connector between steps */}
+                {index < steps.length - 1 && (
                   <motion.div
-                    className={cn(
-                      'group relative z-10 flex flex-col items-center text-center px-2',
-                      'card-hover-lift',
-                    )}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    
-                    transition={{
-                      duration: 0.5,
-                      delay: index * 0.12,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
+                    className="flex items-center justify-center px-1 pt-14"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: index * 0.15 + 0.4 }}
                   >
-                    {/* Glass card */}
-                    <div
-                      className={cn(
-                        'glass-card-enhanced w-full rounded-2xl p-5 sm:p-6',
-                        'border border-gold/10',
-                        'transition-all duration-300 ease-out',
-                        'hover:border-gold/25',
-                        'card-spotlight',
-                      )}
-                    >
-                      {/* Step number circle */}
-                      <div
-                        className={cn(
-                          'mx-auto mb-4 flex size-12 items-center justify-center rounded-full',
-                          'bg-gradient-to-br from-gold-light via-gold to-gold-dark',
-                          'shadow-lg shadow-gold/25',
-                          'step-number-pop',
-                        )}
-                        style={{ animationDelay: `${index * 0.12}s` }}
-                      >
-                        <span className="text-lg font-black text-gray-950">
-                          {step.number}
-                        </span>
-                      </div>
-
-                      {/* Icon */}
-                      <div
-                        className={cn(
-                          'mx-auto mb-3 flex size-10 items-center justify-center rounded-xl',
-                          'bg-gold/10',
-                          'transition-all duration-300',
-                          'group-hover:bg-gold/15',
-                        )}
-                      >
-                        <Icon className="size-5 text-gold icon-hover-bounce" />
-                      </div>
-
-                      {/* Title */}
-                      <h3 className="mb-2 text-sm font-bold text-foreground sm:text-base">
-                        {t(step.titleKey)}
-                      </h3>
-
-                      {/* Description */}
-                      <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                        {t(step.descKey)}
-                      </p>
-                    </div>
+                    <GoldConnector orientation="horizontal" />
                   </motion.div>
-
-                  {/* Connector line + arrow between steps */}
-                  {index < steps.length - 1 && (
-                    <motion.div
-                      className="relative flex items-center justify-center px-1 pt-6 sm:pt-8"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      
-                      transition={{ duration: 0.4, delay: index * 0.12 + 0.2 }}
-                    >
-                      {/* Dashed gold connector line */}
-                      <div
-                        className={cn(
-                          'absolute top-6 sm:top-8 right-0 left-0 h-px',
-                          'border-t-2 border-dashed border-gold/30',
-                          'timeline-line-glow',
-                        )}
-                        aria-hidden="true"
-                      />
-
-                      {/* Arrow icon in the middle */}
-                      <div
-                        className={cn(
-                          'relative z-10 flex size-7 items-center justify-center rounded-full',
-                          'bg-background',
-                          'dark:bg-background',
-                        )}
-                      >
-                        <ArrowLeft className="size-3.5 text-gold" />
-                      </div>
-                    </motion.div>
-                  )}
-                </React.Fragment>
-              );
-            })}
+                )}
+              </React.Fragment>
+            ))}
           </div>
 
           {/* ════════════════════════════════════════════════════════════════ */}
-          {/*  Mobile: Vertical timeline with right-side connector             */}
+          {/*  Mobile: Vertical timeline with animated connector              */}
           {/* ════════════════════════════════════════════════════════════════ */}
           <div className="relative md:hidden">
-            {/* Vertical gold dashed line (absolute, on the right side) */}
-            <div
-              className="absolute top-6 bottom-6 right-6 w-px border-r-2 border-dashed border-gold/25"
-              aria-hidden="true"
-            />
-
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-0">
               {steps.map((step, index) => {
                 const Icon = step.icon;
 
                 return (
-                  <motion.div
-                    key={step.number}
-                    className="relative pr-16"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    
-                    transition={{
-                      duration: 0.5,
-                      delay: index * 0.1,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
-                  >
-                    {/* Step number dot on the vertical line */}
-                    <div
-                      className={cn(
-                        'absolute top-5 right-4 z-10 flex size-5 items-center justify-center rounded-full',
-                        'bg-gradient-to-br from-gold-light via-gold to-gold-dark',
-                        'shadow-md shadow-gold/20',
-                      )}
+                  <React.Fragment key={step.number}>
+                    <motion.div
+                      className="relative flex gap-5 pr-2 pb-2"
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        delay: index * 0.12,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
                     >
-                      <span className="text-[10px] font-black text-gray-950">
-                        {step.number}
-                      </span>
-                    </div>
+                      {/* ── Right column: step number + connector ── */}
+                      <div className="relative flex flex-col items-center">
+                        <StepNumberCircle number={step.number} size="sm" />
+                        {/* Animated vertical connector */}
+                        {index < steps.length - 1 && (
+                          <div className="relative my-1 flex-1" style={{ minHeight: '48px' }}>
+                            <GoldConnector orientation="vertical" />
+                          </div>
+                        )}
+                      </div>
 
-                    {/* Glass card */}
-                    <div
-                      className={cn(
-                        'glass-card-enhanced rounded-xl p-4 sm:p-5',
-                        'border border-gold/10',
-                        'transition-all duration-300 ease-out',
-                        'active:scale-[0.98]',
-                      )}
-                    >
-                      <div className="flex items-start gap-3.5">
-                        {/* Icon */}
-                        <div
-                          className={cn(
-                            'flex size-10 shrink-0 items-center justify-center rounded-xl',
-                            'bg-gold/10',
-                          )}
-                        >
-                          <Icon className="size-5 text-gold" />
-                        </div>
+                      {/* ── Card ── */}
+                      <div
+                        className={cn(
+                          'glass-card-enhanced shimmer-border flex-1 rounded-xl p-4',
+                          'border border-gold/10 transition-all duration-300',
+                        )}
+                      >
+                        <div className="flex items-start gap-3.5">
+                          {/* Icon */}
+                          <div
+                            className={cn(
+                              'flex size-11 shrink-0 items-center justify-center rounded-xl',
+                              'bg-gradient-to-br from-gold/10 to-gold/5',
+                              'border border-gold/15',
+                            )}
+                          >
+                            <Icon className="size-5 text-gold" />
+                          </div>
 
-                        {/* Text content */}
-                        <div className="min-w-0 flex-1">
-                          {/* Step label */}
-                          <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-gold/70">
-                            {t('howItWorks.badge')} {step.number}
-                          </span>
-
-                          {/* Title */}
-                          <h3 className="mb-1 text-sm font-bold text-foreground">
-                            {t(step.titleKey)}
-                          </h3>
-
-                          {/* Description */}
-                          <p className="text-xs leading-relaxed text-muted-foreground">
-                            {t(step.descKey)}
-                          </p>
+                          {/* Text content */}
+                          <div className="min-w-0 flex-1">
+                            <h3 className="mb-1 text-sm font-extrabold text-foreground">
+                              {t(step.titleKey)}
+                            </h3>
+                            <p className="text-xs leading-relaxed text-muted-foreground">
+                              {t(step.descKey)}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-
-                    {/* Vertical connecting arrow between steps */}
-                    {index < steps.length - 1 && (
-                      <motion.div
-                        className="absolute bottom-[-12px] right-[14px] z-10 flex size-4 items-center justify-center rounded-full bg-background dark:bg-background"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        
-                        transition={{ delay: index * 0.1 + 0.2 }}
-                      >
-                        <ArrowLeft className="size-2.5 text-gold/60 -rotate-90" />
-                      </motion.div>
-                    )}
-                  </motion.div>
+                    </motion.div>
+                  </React.Fragment>
                 );
               })}
             </div>

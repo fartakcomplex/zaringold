@@ -177,10 +177,12 @@
   body {
     @apply bg-background text-foreground;
     direction: rtl;
+    font-family: var(--font-vazir), 'IRANSans', 'Iran Sans', 'Vazir', system-ui, sans-serif;
     font-feature-settings: "ss01", "ss02";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    line-height: 1.7;
 
     /* Smooth theme transitions */
     transition:

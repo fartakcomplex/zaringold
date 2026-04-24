@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
 import { motion, AnimatePresence } from '@/lib/framer-compat';
-import { Menu, X, LogIn, Moon, Sun, PartyPopper } from 'lucide-react';
+import { Menu, X, LogIn, Moon, Sun, PartyPopper, ChevronLeft } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n';
@@ -136,21 +136,35 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
       )}
     </AnimatePresence>
 
+    {/* ── Main Header ── */}
     <motion.header
       dir="rtl"
       style={{ top: bannerVisible ? 40 : 0 }}
       className={cn(
         'fixed left-0 right-0 z-50 transition-all duration-500 ease-out',
         scrolled
-          ? 'bg-background/70 backdrop-blur-xl shadow-lg shadow-black/5 border-b border-gold/10'
+          ? 'bg-background/60 backdrop-blur-2xl shadow-xl shadow-black/[0.04] border-b border-gold/8'
           : 'bg-transparent',
       )}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
     >
+      {/* Animated gold glow line at bottom when scrolled */}
       {scrolled && (
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-l from-transparent via-gold/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] overflow-hidden">
+          {/* Static gradient base */}
+          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-gold/40 to-transparent" />
+          {/* Animated sweeping highlight */}
+          <div
+            className="absolute inset-0 animate-[nav-gold-glow_2.5s_ease-in-out_infinite]"
+            style={{
+              background: 'linear-gradient(90deg, transparent 0%, oklch(0.75 0.15 85 / 60%) 50%, transparent 100%)',
+              transform: 'translateX(-100%)',
+              animation: 'nav-gold-glow 2.5s ease-in-out infinite',
+            }}
+          />
+        </div>
       )}
 
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -162,9 +176,9 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <div className={cn(
-            'relative flex size-9 items-center justify-center rounded-xl transition-all duration-300',
+            'relative flex size-9 items-center justify-center rounded-xl transition-all duration-500',
             scrolled
-              ? 'bg-gradient-to-br from-gold via-gold to-gold-dark shadow-lg shadow-gold/20'
+              ? 'bg-gradient-to-br from-gold via-gold to-gold-dark shadow-lg shadow-gold/25 scale-105'
               : 'bg-gradient-to-br from-gold-light via-gold to-gold-dark shadow-md shadow-gold/15',
           )}>
             <span className="text-base font-black text-gray-950">ز</span>
@@ -184,17 +198,26 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
                 key={link.href}
                 onClick={() => handleNavClick(link.href)}
                 className={cn(
-                  'relative rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-200',
+                  'relative rounded-xl px-3.5 py-2 text-[13px] font-medium transition-all duration-300',
                   isActive
                     ? 'text-gold'
-                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
+                    : 'text-muted-foreground hover:bg-muted/40 hover:text-foreground',
                 )}
               >
-                {t(link.key)}
+                {/* Active pill background */}
+                {isActive && (
+                  <motion.span
+                    layoutId="activeNavPill"
+                    className="absolute inset-0 rounded-xl bg-gold/8 border border-gold/15"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{t(link.key)}</span>
+                {/* Active underline */}
                 {isActive && (
                   <motion.span
                     layoutId="activeNavUnderline"
-                    className="absolute bottom-0.5 left-3 right-3 h-[2px] rounded-full bg-gradient-to-l from-gold-light via-gold to-gold-dark"
+                    className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-gradient-to-l from-gold-light via-gold to-gold-dark"
                     transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                   />
                 )}
@@ -215,8 +238,8 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
             <button
               onClick={handleToggleTheme}
               className={cn(
-                'flex size-9 items-center justify-center rounded-lg transition-all duration-200',
-                'text-muted-foreground hover:bg-muted hover:text-foreground',
+                'relative flex size-9 items-center justify-center rounded-xl transition-all duration-300',
+                'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
                 scrolled && 'hover:bg-gold/10 hover:text-gold',
               )}
               aria-label={isDark ? t('nav.lightMode') : t('nav.darkMode')}
@@ -228,7 +251,7 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
                     initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
                     animate={{ rotate: 0, opacity: 1, scale: 1 }}
                     exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.25 }}
                   >
                     <Sun className="size-[18px] text-gold" />
                   </motion.div>
@@ -238,7 +261,7 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
                     initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
                     animate={{ rotate: 0, opacity: 1, scale: 1 }}
                     exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.25 }}
                   >
                     <Moon className="size-[18px]" />
                   </motion.div>
@@ -247,79 +270,129 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
             </button>
           )}
 
-          {/* Login button (desktop) */}
-          <Button
-            onClick={onLogin}
-            className={cn(
-              'hidden h-9 rounded-xl px-5 text-sm font-bold text-gray-950',
-              'bg-gradient-to-l from-gold-dark via-gold to-gold-light',
-              'shadow-md shadow-gold/20 transition-all duration-300',
-              'hover:shadow-lg hover:shadow-gold/30 hover:scale-[1.03]',
-              'active:scale-[0.97]',
-              'btn-gold-shine sm:flex',
-            )}
+          {/* Login button (desktop) — Enhanced gold gradient */}
+          <motion.div
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            className="hidden sm:flex"
           >
-            <LogIn className="size-4 ml-1.5" />
-            {t('nav.loginRegister')}
-          </Button>
+            <Button
+              onClick={onLogin}
+              className={cn(
+                'relative h-9 overflow-hidden rounded-xl px-5 text-sm font-bold text-gray-950',
+                'bg-gradient-to-l from-gold-dark via-gold to-gold-light',
+                'shadow-lg shadow-gold/20 transition-all duration-300',
+                'hover:shadow-xl hover:shadow-gold/35',
+                'active:scale-[0.97]',
+                'group',
+              )}
+            >
+              {/* Shine sweep effect */}
+              <span className="absolute inset-0 overflow-hidden rounded-xl">
+                <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+              </span>
+              <LogIn className="relative z-10 size-4 ml-1.5" />
+              <span className="relative z-10">{t('nav.loginRegister')}</span>
+            </Button>
+          </motion.div>
 
-          {/* Mobile hamburger */}
+          {/* Mobile hamburger — Enhanced */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={cn(
-              'flex size-9 items-center justify-center rounded-lg transition-all duration-200',
-              'text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden',
-              mobileMenuOpen && 'bg-gold/10 text-gold',
+              'relative flex size-10 items-center justify-center rounded-xl transition-all duration-300',
+              'text-muted-foreground hover:bg-muted/60 hover:text-foreground lg:hidden',
+              'border border-transparent',
+              mobileMenuOpen
+                ? 'bg-gold/10 text-gold border-gold/15 shadow-sm shadow-gold/5'
+                : scrolled && 'border-border/50',
             )}
             aria-label={mobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
           >
-            {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            <AnimatePresence mode="wait">
+              {mobileMenuOpen ? (
+                <motion.div
+                  key="close"
+                  initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
+                  animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                  exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <X className="size-5" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
+                  animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                  exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Menu className="size-5" />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </button>
         </div>
       </div>
 
-      {/* ── Mobile menu ── */}
+      {/* ── Mobile Menu ── */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
+            {/* Backdrop */}
             <motion.div
               key="mobile-backdrop"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-md lg:hidden"
               onClick={() => setMobileMenuOpen(false)}
             />
 
+            {/* Panel */}
             <motion.div
               key="mobile-panel"
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
+              initial={{ x: '100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: '100%', opacity: 0 }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
               dir="rtl"
-              className="fixed top-0 right-0 bottom-0 z-50 w-72 overflow-y-auto border-l border-gold/10 lg:hidden"
+              className={cn(
+                'fixed top-0 right-0 bottom-0 z-50 w-[300px] overflow-y-auto lg:hidden',
+                'border-l border-gold/10',
+              )}
               style={{
-                background: 'oklch(0.08 0.005 280 / 85%)',
-                backdropFilter: 'blur(24px) saturate(200%)',
-                WebkitBackdropFilter: 'blur(24px) saturate(200%)',
+                background: 'oklch(0.08 0.005 280 / 90%)',
+                backdropFilter: 'blur(32px) saturate(200%)',
+                WebkitBackdropFilter: 'blur(32px) saturate(200%)',
               }}
             >
-              <div className="h-1 w-full bg-gradient-to-l from-gold-dark via-gold to-gold-light" />
+              {/* Top gold gradient bar */}
+              <div className="relative h-1 w-full overflow-hidden bg-gradient-to-l from-gold-dark via-gold to-gold-light">
+                <div className="absolute inset-0 bg-gradient-to-l from-transparent via-white/30 to-transparent" style={{ animation: 'shimmer-border-anim 3s ease-in-out infinite' }} />
+              </div>
 
-              <div className="flex items-center justify-between px-5 py-4">
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-5">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-gold-light via-gold to-gold-dark">
+                  <div className="relative flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-gold-light via-gold to-gold-dark shadow-lg shadow-gold/20">
                     <span className="text-sm font-black text-gray-950">ز</span>
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent" />
                   </div>
-                  <span className="gold-gradient-text text-lg font-extrabold">
-                    {t('common.zarrinGold')}
-                  </span>
+                  <div>
+                    <span className="gold-gradient-text text-lg font-extrabold">
+                      {t('common.zarrinGold')}
+                    </span>
+                    <p className="text-[9px] font-medium tracking-wider text-muted-foreground/50 uppercase">
+                      Gold Trading
+                    </p>
+                  </div>
                 </div>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-gold/10 hover:text-gold"
+                  className="flex size-8 items-center justify-center rounded-lg border border-gold/10 text-muted-foreground transition-all duration-200 hover:bg-gold/10 hover:text-gold hover:border-gold/20"
                   aria-label={t('nav.closeMenu')}
                 >
                   <X className="size-4" />
@@ -328,67 +401,94 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
 
               <div className="mx-5 h-px bg-gradient-to-l from-transparent via-gold/15 to-transparent" />
 
-              {/* Theme toggle */}
-              <div className="flex items-center justify-between px-5 py-3.5">
-                <span className="text-sm font-medium text-muted-foreground">
-                  {isDark ? t('nav.darkMode') : t('nav.lightMode')}
-                </span>
+              {/* Settings row */}
+              <div className="flex gap-2 px-5 py-3">
+                {/* Theme toggle */}
                 {mounted && (
                   <button
                     onClick={handleToggleTheme}
-                    className="flex size-9 items-center justify-center rounded-lg bg-white/5 text-muted-foreground transition-all duration-200 hover:bg-gold/10 hover:text-gold"
-                    aria-label={isDark ? t('nav.lightMode') : t('nav.darkMode')}
+                    className={cn(
+                      'flex flex-1 items-center gap-2.5 rounded-xl px-3.5 py-2.5',
+                      'border border-white/5 bg-white/[0.03] text-sm text-muted-foreground',
+                      'transition-all duration-200 hover:bg-gold/8 hover:text-gold hover:border-gold/15',
+                    )}
                   >
                     {isDark ? <Sun className="size-4 text-gold" /> : <Moon className="size-4" />}
+                    {isDark ? t('nav.darkMode') : t('nav.lightMode')}
                   </button>
                 )}
-              </div>
-
-              {/* Language Switcher */}
-              <div className="flex items-center justify-between px-5 py-3.5">
-                <span className="text-sm font-medium text-muted-foreground">
-                  {t('nav.language')}
-                </span>
-                <LanguageSwitcher />
+                {/* Language Switcher */}
+                <div className="flex flex-1 items-center gap-2.5 rounded-xl border border-white/5 bg-white/[0.03] px-3.5 py-2">
+                  <span className="text-sm text-muted-foreground">{t('nav.language')}</span>
+                  <LanguageSwitcher />
+                </div>
               </div>
 
               <div className="mx-5 h-px bg-gradient-to-l from-transparent via-gold/15 to-transparent" />
 
               {/* Nav links */}
-              <div className="space-y-1 px-4 pb-4 pt-2">
-                {navLinkKeys.map((link) => {
+              <div className="space-y-1 px-4 pb-4 pt-3">
+                {navLinkKeys.map((link, index) => {
                   const isActive = activeSection === link.href.replace('#', '');
                   return (
-                    <button
+                    <motion.button
                       key={link.href}
                       onClick={() => handleNavClick(link.href)}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.25, delay: index * 0.05 }}
                       className={cn(
-                        'flex w-full items-center rounded-xl px-4 py-3 text-right text-sm font-medium transition-all duration-200',
+                        'flex w-full items-center justify-between rounded-xl px-4 py-3 text-right text-sm font-medium transition-all duration-200',
                         isActive
-                          ? 'bg-gold/10 text-gold shadow-sm shadow-gold/5'
-                          : 'text-muted-foreground hover:bg-white/5 hover:text-foreground',
+                          ? 'bg-gradient-to-l from-gold/15 to-gold/5 text-gold shadow-sm shadow-gold/5 border border-gold/10'
+                          : 'text-muted-foreground hover:bg-white/5 hover:text-foreground border border-transparent',
                       )}
                     >
-                      {t(link.key)}
-                      {isActive && (
-                        <span className="mr-auto ml-2 size-1.5 rounded-full bg-gold gold-pulse" />
+                      <span>{t(link.key)}</span>
+                      {isActive ? (
+                        <span className="size-1.5 rounded-full bg-gold gold-pulse" />
+                      ) : (
+                        <ChevronLeft className="size-3.5 opacity-30" />
                       )}
-                    </button>
+                    </motion.button>
                   );
                 })}
 
+                <div className="mx-4 my-4 h-px bg-gradient-to-l from-transparent via-gold/10 to-transparent" />
+
                 {/* Login CTA */}
-                <div className="pt-4">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.3 }}
+                >
                   <Button
                     onClick={() => {
                       setMobileMenuOpen(false);
                       onLogin();
                     }}
-                    className="w-full h-11 rounded-xl text-sm font-bold text-gray-950 bg-gradient-to-l from-gold-dark via-gold to-gold-light shadow-lg shadow-gold/20"
+                    className={cn(
+                      'relative w-full h-12 overflow-hidden rounded-xl text-sm font-bold text-gray-950',
+                      'bg-gradient-to-l from-gold-dark via-gold to-gold-light',
+                      'shadow-lg shadow-gold/25',
+                    )}
                   >
-                    <LogIn className="size-4 ml-2" />
-                    {t('nav.loginRegister')}
+                    {/* Shine sweep */}
+                    <span className="absolute inset-0 overflow-hidden rounded-xl">
+                      <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 hover:translate-x-full" />
+                    </span>
+                    <LogIn className="relative z-10 size-4 ml-2" />
+                    <span className="relative z-10">{t('nav.loginRegister')}</span>
                   </Button>
+                </motion.div>
+
+                {/* Decorative bottom element */}
+                <div className="mt-6 flex items-center justify-center gap-2 pb-2">
+                  <div className="size-1 rounded-full bg-gold/30" />
+                  <div className="h-px w-12 bg-gradient-to-l from-transparent via-gold/20 to-transparent" />
+                  <div className="size-1.5 rounded-full bg-gold/20" />
+                  <div className="h-px w-12 bg-gradient-to-l from-transparent via-gold/20 to-transparent" />
+                  <div className="size-1 rounded-full bg-gold/30" />
                 </div>
               </div>
             </motion.div>

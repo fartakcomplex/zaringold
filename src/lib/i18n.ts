@@ -271,6 +271,15 @@ const translations: Record<Locale, TranslationMap> = {
     'landing.statTradeLabel': 'کیلوگرم طلا معامله',
     'landing.statUptimeValue': '۹۹.۹٪',
     'landing.statUptimeLabel': 'آپتایم',
+    'landing.featSecure': 'امنیت بالا',
+    'landing.featSecureDesc': 'حفاظت از سرمایه شما',
+    'landing.featFast': 'معاملات آنی',
+    'landing.featFastDesc': 'سرعت بالا در خرید و فروش',
+    'landing.featLowFee': 'کمترین کارمزد',
+    'landing.featLowFeeDesc': 'صرفه‌جویی بیشتر',
+    'landing.featSupport': 'پشتیبانی ۲۴/۷',
+    'landing.featSupportDesc': 'همیشه در دسترس شما',
+    'landing.statSatisfactionLabel': 'رضایت کاربران',
 
     // features
     'features.badge': 'ویژگی‌ها',
@@ -931,6 +940,15 @@ const translations: Record<Locale, TranslationMap> = {
     'landing.statTradeLabel': 'Billion Toman Traded',
     'landing.statUptimeValue': '99.9%',
     'landing.statUptimeLabel': 'Uptime',
+    'landing.featSecure': 'High Security',
+    'landing.featSecureDesc': 'Your Capital Protected',
+    'landing.featFast': 'Instant Trades',
+    'landing.featFastDesc': 'Fast Buy & Sell',
+    'landing.featLowFee': 'Lowest Fees',
+    'landing.featLowFeeDesc': 'Save More',
+    'landing.featSupport': '24/7 Support',
+    'landing.featSupportDesc': 'Always Available',
+    'landing.statSatisfactionLabel': 'User Satisfaction',
 
     // features
     'features.badge': 'Features',
