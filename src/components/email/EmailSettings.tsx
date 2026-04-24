@@ -772,12 +772,23 @@ export default function EmailSettings() {
           setStats(data);
         } else if (data.data) {
           setStats({ totalSent: data.data.totalSent || 0, delivered: data.data.totalSent || 0, opened: data.data.totalOpened || 0, clicked: data.data.totalClicked || 0, bounced: data.data.totalBounced || 0, unsubscribed: 150, todaySent: data.data.todaySent || 0, todayCost: 0, openRate: data.data.openRate || 0, clickRate: data.data.clickRate || 0, bounceRate: 3.6, chartData: [] });
+        } else {
+          setStats({
+            totalSent: 8920, delivered: 8450, opened: 5200, clicked: 1840, bounced: 320, unsubscribed: 150,
+            todaySent: 156, todayCost: 0, openRate: 58.3, clickRate: 20.6, bounceRate: 3.6,
+            chartData: [
+              { day: 'شنبه', sent: 380, opened: 220, clicked: 85 },
+              { day: 'یکشنبه', sent: 290, opened: 175, clicked: 62 },
+              { day: 'دوشنبه', sent: 450, opened: 280, clicked: 110 },
+              { day: 'سه‌شنبه', sent: 320, opened: 190, clicked: 70 },
+              { day: 'چهارشنبه', sent: 410, opened: 245, clicked: 95 },
+              { day: 'پنجشنبه', sent: 280, opened: 165, clicked: 55 },
+              { day: 'جمعه', sent: 150, opened: 80, clicked: 28 },
+            ],
+          });
         }
       }
     } catch {
-      // fallback
-    }
-    if (!stats) {
       setStats({
         totalSent: 8920, delivered: 8450, opened: 5200, clicked: 1840, bounced: 320, unsubscribed: 150,
         todaySent: 156, todayCost: 0, openRate: 58.3, clickRate: 20.6, bounceRate: 3.6,
@@ -793,7 +804,7 @@ export default function EmailSettings() {
       });
     }
     setStatsLoading(false);
-  }, [stats]);
+  }, []);
 
   const fetchCampaigns = useCallback(async () => {
     setCampaignsLoading(true);
