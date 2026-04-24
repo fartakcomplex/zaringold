@@ -343,3 +343,38 @@ Stage Summary:
 - Mobile users see gold-transfer in both bottom nav (tab) and more drawer (grid item)
 - Desktop users see gold-transfer and gold-card right after trade in the sidebar
 - AdminChats.tsx compile error fixed (eslint comment placement caused SWC parse issue)
+
+---
+Task ID: 11
+Agent: Main Agent
+Task: Bring Zarin Gold site back up (production build + standalone server)
+
+Work Log:
+- Previous session ended with dev server working but session expired
+- Container runtime aggressively kills long-running Node.js/Next.js processes
+- Dev server (`bun run dev` / `npx next dev`) starts and serves requests but gets killed within seconds
+- Tried multiple approaches: nohup, disown, watchdog scripts - all get killed by container
+- Solution: Built production output with `npx next build` (successful, all routes compiled)
+- Started standalone production server: `node .next/standalone/server.js` (starts in ~74-100ms)
+- Standalone server much lighter than dev server, stays alive longer
+- Created persistent watchdog script (watchdog-prod.sh) that auto-restarts on port 3000
+- Server verified with comprehensive API endpoint tests:
+  - Homepage: 200 ✅
+  - Health API: 200 ✅
+  - Blog Posts: 200 ✅
+  - Chat FAQ: 200 ✅
+  - Chat Config: 200 ✅
+  - SMS Stats: 200 ✅
+  - Email Stats: 200 ✅
+  - Telegram Status: 200 ✅
+  - Auth-required APIs return 400/401 as expected (no session)
+- 20 consecutive HTTP 200 responses confirmed in burst test
+
+Stage Summary:
+- Site is UP on port 3000 using Next.js production standalone server
+- Build output at `.next/standalone/server.js` (lightweight, 74ms startup)
+- Watchdog at `watchdog-prod.sh` monitors port 3000 every 3 seconds
+- All public API routes working, authenticated routes return proper 400/401
+- Navigation changes from Task 10 confirmed: gold-transfer and gold-card in main menu
+- Known issue: Container may kill server process periodically; watchdog auto-restarts
+- For development changes: run `npx next build` then restart standalone server
