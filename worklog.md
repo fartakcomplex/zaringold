@@ -1049,3 +1049,37 @@ Stage Summary:
 - All existing landing page buttons now have properly visible text on hover
 - The shine effect now sweeps UNDER the text content instead of over it
 - The gold fill on btn-gold-outline hover now properly shows dark text on gold background
+
+---
+Task ID: contrast-fix
+Agent: Main Agent
+Task: Fix Card Color Contrast Issues on Dark-Mode Landing Page
+
+Work Log:
+- Identified root cause: Landing page components use hardcoded light oklch backgrounds with CSS variable text colors (light in dark mode)
+- Fixed 4 files with targeted text color changes only (no background/layout changes)
+
+**TestimonialsSection.tsx:**
+- Desktop cards (even index, light bg): Changed name from `text-foreground` → `text-gray-900`, date from `text-muted-foreground` → `text-gray-500`, quote from `text-foreground/75` → `text-gray-700`
+- Desktop cards (odd index, dark bg): Kept `text-foreground`/`text-muted-foreground` unchanged
+- Mobile cards: Applied same conditional logic for name and quote text
+- Gold role badges and accent elements preserved as-is
+
+**AppDownloadSection.tsx:**
+- DownloadButton: `text-muted-foreground` → `text-gray-500`, `text-foreground` → `text-gray-900`
+- Feature cards: `text-foreground` → `text-gray-900`, `text-muted-foreground` → `text-gray-500`
+- QR code card: `text-foreground` → `text-gray-900`, `text-muted-foreground` → `text-gray-500`
+- Rating badge: `text-foreground` → `text-gray-900`, `text-muted-foreground` → `text-gray-500`
+
+**CTASection.tsx:**
+- User count badge: `text-foreground` → `text-gray-900`, `text-muted-foreground` → `text-gray-500`
+- Trust indicator cards: `text-foreground` → `text-gray-900`, `text-muted-foreground` → `text-gray-500`
+
+**FAQSection.tsx:**
+- Bottom CTA card: `text-muted-foreground` → `text-gray-500`
+
+Stage Summary:
+- All light-background cards in dark mode now use explicit dark Tailwind text colors (text-gray-900/700/500)
+- Dark-background cards retain CSS variable text colors (text-foreground/text-muted-foreground) for dark mode compatibility
+- Zero new lint errors introduced (all pre-existing errors in unrelated files)
+- Screenshots saved: qa-cards-fixed.png, qa-cards-testimonials.png, qa-cards-app-cta.png

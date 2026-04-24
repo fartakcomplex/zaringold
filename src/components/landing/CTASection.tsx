@@ -186,8 +186,8 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
             </div>
             <div className="flex items-center gap-1.5">
               <Users className="size-4 text-gold" />
-              <span className="text-sm font-bold text-foreground">+۱۰۰,۰۰۰</span>
-              <span className="text-xs text-muted-foreground">کاربر فعال</span>
+              <span className="text-sm font-bold text-gray-900">+۱۰۰,۰۰۰</span>
+              <span className="text-xs text-gray-500">کاربر فعال</span>
             </div>
           </motion.div>
 
@@ -283,8 +283,8 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
                       <Icon className="size-4.5 text-gold" />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-xs font-bold text-foreground">{item.label}</div>
-                      <div className="text-[10px] text-muted-foreground">{item.sublabel}</div>
+                      <div className="text-xs font-bold text-gray-900">{item.label}</div>
+                      <div className="text-[10px] text-gray-500">{item.sublabel}</div>
                     </div>
                   </motion.div>
                 );

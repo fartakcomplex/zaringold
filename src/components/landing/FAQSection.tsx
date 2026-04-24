@@ -229,7 +229,7 @@ export default function FAQSection() {
             }}
           >
             <HelpCircle className="size-5 text-gold" />
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-gray-500">
               هنوز سوالی دارید؟
             </span>
             <button className={cn(

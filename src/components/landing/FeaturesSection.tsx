@@ -253,7 +253,7 @@ function TiltCard({
               <p
                 className={cn(
                   'text-sm leading-relaxed sm:text-[15px] sm:leading-7',
-                  'text-muted-foreground/80 group-hover:text-muted-foreground',
+                  'text-foreground/65 group-hover:text-foreground/80',
                   'transition-colors duration-300',
                 )}
               >

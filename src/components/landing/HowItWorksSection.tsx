@@ -240,7 +240,7 @@ function DesktopStepCard({ step, index }: { step: StepItem; index: number }) {
         </h3>
 
         {/* Description */}
-        <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm">
+        <p className="text-xs leading-relaxed text-foreground/70 sm:text-sm">
           {t(step.descKey)}
         </p>
 
@@ -402,7 +402,7 @@ export default function HowItWorksSection() {
                             <h3 className="mb-1 text-sm font-extrabold text-foreground">
                               {t(step.titleKey)}
                             </h3>
-                            <p className="text-xs leading-relaxed text-muted-foreground">
+                            <p className="text-xs leading-relaxed text-foreground/70">
                               {t(step.descKey)}
                             </p>
                           </div>

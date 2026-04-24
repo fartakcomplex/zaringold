@@ -237,7 +237,7 @@ function SecurityCard({
             <h3 className="text-sm font-extrabold text-foreground sm:text-base">
               {t(feature.titleKey)}
             </h3>
-            <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm">
+            <p className="text-xs leading-relaxed text-foreground/70 sm:text-sm">
               {t(feature.descKey)}
             </p>
           </div>
@@ -393,7 +393,7 @@ export default function SecuritySection() {
                 <p className="text-sm font-bold text-foreground">
                   {t('security.insurance.title')}
                 </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
+                <p className="text-xs text-foreground/60 mt-0.5">
                   {t('security.insurance.desc')}
                 </p>
               </div>

@@ -278,8 +278,8 @@ function DownloadButton({
 
       <div className="shrink-0 text-gold relative z-10">{icon}</div>
       <div className="text-right relative z-10">
-        <div className="text-[10px] text-muted-foreground sm:text-xs">{sublabel}</div>
-        <div className="text-xs font-bold text-foreground sm:text-sm">{label}</div>
+        <div className="text-[10px] text-gray-500 sm:text-xs">{sublabel}</div>
+        <div className="text-xs font-bold text-gray-900 sm:text-sm">{label}</div>
       </div>
       <Download className="mr-auto size-3.5 text-gold opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 relative z-10" />
     </button>
@@ -391,10 +391,10 @@ export default function AppDownloadSection() {
                         <Icon className="size-4.5 text-gold transition-transform duration-300 group-hover:scale-110" />
                       </div>
                       <div className="space-y-0.5 min-w-0">
-                        <h3 className="text-xs font-bold text-foreground sm:text-sm">
+                        <h3 className="text-xs font-bold text-gray-900 sm:text-sm">
                           {t(feature.titleKey)}
                         </h3>
-                        <p className="text-[11px] leading-relaxed text-muted-foreground sm:text-xs">
+                        <p className="text-[11px] leading-relaxed text-gray-500 sm:text-xs">
                           {t(feature.descKey)}
                         </p>
                       </div>
@@ -464,10 +464,10 @@ export default function AppDownloadSection() {
                   <QrCode className="size-7 text-gold/50" />
                 </div>
                 <div className="space-y-0.5">
-                  <div className="text-xs font-bold text-foreground">
+                  <div className="text-xs font-bold text-gray-900">
                     {t('app.scanQr')}
                   </div>
-                  <div className="text-[10px] text-muted-foreground">
+                  <div className="text-[10px] text-gray-500">
                     با دوربین گوشی اسکن کنید
                   </div>
                 </div>
@@ -487,12 +487,12 @@ export default function AppDownloadSection() {
             >
               <Smartphone className="size-5 text-gold/60" />
               <div className="flex-1">
-                <div className="text-xs font-bold text-foreground">بیش از ۱۰۰,۰۰۰ دانلود</div>
+                <div className="text-xs font-bold text-gray-900">بیش از ۱۰۰,۰۰۰ دانلود</div>
                 <div className="flex items-center gap-1 mt-0.5">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star key={i} className="size-3 fill-gold text-gold" />
                   ))}
-                  <span className="text-[10px] text-muted-foreground mr-1">۴.۸ از ۵</span>
+                  <span className="text-[10px] text-gray-500 mr-1">۴.۸ از ۵</span>
                 </div>
               </div>
             </motion.div>

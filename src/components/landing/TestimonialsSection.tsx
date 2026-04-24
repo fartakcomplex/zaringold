@@ -231,7 +231,7 @@ export default function TestimonialsSection() {
                   <div className="flex-1 min-w-0">
                     <h3 className={cn(
                       'text-sm font-bold truncate',
-                      index % 2 === 0 ? 'text-foreground' : 'text-foreground',
+                      index % 2 === 0 ? 'text-gray-900' : 'text-foreground',
                     )}>
                       {item.name}
                     </h3>
@@ -249,7 +249,7 @@ export default function TestimonialsSection() {
                   {/* Date */}
                   <span className={cn(
                     'text-[10px] shrink-0',
-                    index % 2 === 0 ? 'text-muted-foreground' : 'text-muted-foreground',
+                    index % 2 === 0 ? 'text-gray-500' : 'text-muted-foreground',
                   )}>
                     {item.date}
                   </span>
@@ -263,7 +263,7 @@ export default function TestimonialsSection() {
                 {/* Quote text */}
                 <p className={cn(
                   'flex-1 text-sm leading-[1.85] relative',
-                  index % 2 === 0 ? 'text-foreground/75' : 'text-foreground/70',
+                  index % 2 === 0 ? 'text-gray-700' : 'text-foreground/70',
                 )}>
                   <Quote className="inline-block size-4 text-gold/40 align-top ml-1 -mt-0.5" strokeWidth={2.5} />
                   {item.text}
@@ -362,7 +362,7 @@ export default function TestimonialsSection() {
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-bold text-foreground truncate">{item.name}</h3>
+                      <h3 className={cn('text-sm font-bold truncate', index % 2 === 0 ? 'text-gray-900' : 'text-foreground')}>{item.name}</h3>
                       <span className="mt-0.5 inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gold/10 text-gold border border-gold/15">
                         {item.role}
                       </span>
@@ -376,7 +376,7 @@ export default function TestimonialsSection() {
                   }} />
 
                   {/* Text */}
-                  <p className="flex-1 text-sm leading-[1.8] text-foreground/75">
+                  <p className={cn('flex-1 text-sm leading-[1.8]', index % 2 === 0 ? 'text-gray-700' : 'text-foreground/75')}>
                     <Quote className="inline-block size-3.5 text-gold/40 align-top ml-1 -mt-0.5" strokeWidth={2.5} />
                     {item.text}
                   </p>
