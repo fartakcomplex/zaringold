@@ -15,10 +15,14 @@ import {
   XCircle,
   ChevronLeft,
   ChevronDown,
+  ChevronUp,
   Banknote,
   Zap,
   Building,
   Phone,
+  Settings,
+  Loader2,
+  Save,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -215,6 +219,372 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
+/*  Provider Settings Panel                                                  */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+function ProviderSettingsPanel({ serviceType }: { serviceType: 'utility' | 'car' | 'insurance' }) {
+  const t = useTranslation();
+  const [open, setOpen] = useState(false);
+  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const fetchSettings = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/admin/service-settings/${serviceType}`);
+      if (res.ok) {
+        const data = await res.json();
+        setSettings(data.settings || {});
+      }
+    } catch {
+      // silent
+    } finally {
+      setLoading(false);
+    }
+  }, [serviceType]);
+
+  useEffect(() => {
+    fetchSettings();
+  }, [fetchSettings]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    setMessage('');
+    try {
+      const res = await fetch(`/api/admin/service-settings/${serviceType}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ settings }),
+      });
+      if (res.ok) {
+        setMessage(t('admin.settingsSaved'));
+        setTimeout(() => setMessage(''), 3000);
+      }
+    } catch {
+      // silent
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const updateSetting = (key: string, value: string) => {
+    setSettings((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const toggleSetting = (key: string) => {
+    setSettings((prev) => ({ ...prev, [key]: prev[key] === 'true' ? 'false' : 'true' }));
+  };
+
+  return (
+    <Card className="border-gold/20 overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between p-4 text-right hover:bg-gold/5 transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gold/10">
+            <Settings className="h-4 w-4 text-gold" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-foreground">{t('admin.providerSettings')}</p>
+            <p className="text-[10px] text-muted-foreground">
+              {serviceType === 'utility' ? 'تنظیمات API اپراتورها و کارمزد' : serviceType === 'car' ? 'تنظیمات تعمیرگاه‌ها و دسته‌بندی‌ها' : 'تنظیمات شرکت‌های بیمه'}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {message && (
+            <span className="text-[11px] font-medium text-emerald-500">{message}</span>
+          )}
+          {open ? (
+            <ChevronUp className="h-4 w-4 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          )}
+        </div>
+      </button>
+
+      {open && (
+        <div className="border-t border-gold/10">
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-5 w-5 animate-spin text-gold" />
+            </div>
+          ) : (
+            <CardContent className="p-4 space-y-4">
+              {/* Utility Settings */}
+              {serviceType === 'utility' && (
+                <div className="space-y-4">
+                  {/* Operator API Sections */}
+                  {[
+                    { prefix: 'mci', label: 'همراه اول', icon: Smartphone },
+                    { prefix: 'irancell', label: 'ایرانسل', icon: Wifi },
+                    { prefix: 'rightel', label: 'رایتل', icon: Phone },
+                  ].map((op) => (
+                    <div key={op.prefix} className="rounded-lg border border-border/50 bg-muted/20 p-3 space-y-3">
+                      <div className="flex items-center gap-2">
+                        <op.icon className="h-3.5 w-3.5 text-gold" />
+                        <span className="text-xs font-bold text-foreground">{op.label}</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <label className="text-[10px] text-muted-foreground">{t('admin.apiUrl')}</label>
+                          <Input
+                            value={settings[`utility_${op.prefix}_api_url`] || ''}
+                            onChange={(e) => updateSetting(`utility_${op.prefix}_api_url`, e.target.value)}
+                            className="h-8 text-xs"
+                            dir="ltr"
+                            placeholder="https://api.example.com"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] text-muted-foreground">{t('admin.apiKey')}</label>
+                          <Input
+                            value={settings[`utility_${op.prefix}_api_key`] || ''}
+                            onChange={(e) => updateSetting(`utility_${op.prefix}_api_key`, e.target.value)}
+                            className="h-8 text-xs"
+                            dir="ltr"
+                            type="password"
+                            placeholder="••••••••"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Commission */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {[
+                      { key: 'utility_topup_commission', label: 'کارمزد شارژ (%)' },
+                      { key: 'utility_internet_commission', label: 'کارمزد اینترنت (%)' },
+                      { key: 'utility_bill_commission', label: 'کارمزد قبوض (%)' },
+                    ].map((item) => (
+                      <div key={item.key} className="space-y-1">
+                        <label className="text-[10px] text-muted-foreground">{item.label}</label>
+                        <Input
+                          value={settings[item.key] || ''}
+                          onChange={(e) => updateSetting(item.key, e.target.value)}
+                          className="h-8 text-xs"
+                          dir="ltr"
+                          type="number"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Min/Max Amount */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-[10px] text-muted-foreground">{t('admin.minAmount')} (تومان)</label>
+                      <Input
+                        value={settings['utility_min_amount'] || ''}
+                        onChange={(e) => updateSetting('utility_min_amount', e.target.value)}
+                        className="h-8 text-xs"
+                        dir="ltr"
+                        type="number"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] text-muted-foreground">{t('admin.maxAmount')} (تومان)</label>
+                      <Input
+                        value={settings['utility_max_amount'] || ''}
+                        onChange={(e) => updateSetting('utility_max_amount', e.target.value)}
+                        className="h-8 text-xs"
+                        dir="ltr"
+                        type="number"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Enable/Disable Toggles */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {[
+                      { key: 'utility_topup_enabled', label: 'شارژ موبایل' },
+                      { key: 'utility_internet_enabled', label: 'بسته اینترنت' },
+                      { key: 'utility_bill_enabled', label: 'قبوض' },
+                    ].map((item) => (
+                      <button
+                        key={item.key}
+                        type="button"
+                        onClick={() => toggleSetting(item.key)}
+                        className={cn(
+                          'flex items-center justify-between rounded-lg border p-2.5 transition-all',
+                          settings[item.key] === 'true'
+                            ? 'border-emerald-500/30 bg-emerald-500/5'
+                            : 'border-border/50 bg-muted/20'
+                        )}
+                      >
+                        <span className="text-xs text-foreground">{item.label}</span>
+                        <span
+                          className={cn(
+                            'text-[10px] font-medium px-2 py-0.5 rounded-full',
+                            settings[item.key] === 'true'
+                              ? 'bg-emerald-500/10 text-emerald-500'
+                              : 'bg-gray-500/10 text-gray-500'
+                          )}
+                        >
+                          {settings[item.key] === 'true' ? t('admin.enabled') : t('admin.disabled')}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Car Settings */}
+              {serviceType === 'car' && (
+                <div className="space-y-4">
+                  {/* Category Commission */}
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                    {[
+                      { key: 'car_body_commission', label: 'بدنه' },
+                      { key: 'car_mechanical_commission', label: 'مکانیکی' },
+                      { key: 'car_electrical_commission', label: 'برق' },
+                      { key: 'car_wash_commission', label: 'شستشو' },
+                      { key: 'car_tow_commission', label: 'یدک‌کش' },
+                    ].map((item) => (
+                      <div key={item.key} className="space-y-1">
+                        <label className="text-[10px] text-muted-foreground">{item.label} (%)</label>
+                        <Input
+                          value={settings[item.key] || ''}
+                          onChange={(e) => updateSetting(item.key, e.target.value)}
+                          className="h-8 text-xs"
+                          dir="ltr"
+                          type="number"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Enable/Disable Toggles */}
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                    {[
+                      { key: 'car_body_enabled', label: 'بدنه' },
+                      { key: 'car_mechanical_enabled', label: 'مکانیکی' },
+                      { key: 'car_electrical_enabled', label: 'برق' },
+                      { key: 'car_wash_enabled', label: 'شستشو' },
+                      { key: 'car_tow_enabled', label: 'یدک‌کش' },
+                    ].map((item) => (
+                      <button
+                        key={item.key}
+                        type="button"
+                        onClick={() => toggleSetting(item.key)}
+                        className={cn(
+                          'flex items-center justify-between rounded-lg border p-2.5 transition-all',
+                          settings[item.key] === 'true'
+                            ? 'border-emerald-500/30 bg-emerald-500/5'
+                            : 'border-border/50 bg-muted/20'
+                        )}
+                      >
+                        <span className="text-xs text-foreground">{item.label}</span>
+                        <span
+                          className={cn(
+                            'text-[10px] font-medium px-2 py-0.5 rounded-full',
+                            settings[item.key] === 'true'
+                              ? 'bg-emerald-500/10 text-emerald-500'
+                              : 'bg-gray-500/10 text-gray-500'
+                          )}
+                        >
+                          {settings[item.key] === 'true' ? t('admin.enabled') : t('admin.disabled')}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Insurance Settings */}
+              {serviceType === 'insurance' && (
+                <div className="space-y-4">
+                  {[
+                    { prefix: 'asia', label: 'بیمه آسیا' },
+                    { prefix: 'dana', label: 'بیمه دانا' },
+                    { prefix: 'alborz', label: 'بیمه البرز' },
+                    { prefix: 'iran', label: 'بیمه ایران' },
+                  ].map((prov) => (
+                    <div key={prov.prefix} className="rounded-lg border border-border/50 bg-muted/20 p-3 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Building className="h-3.5 w-3.5 text-gold" />
+                          <span className="text-xs font-bold text-foreground">{prov.label}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => toggleSetting(`insurance_${prov.prefix}_enabled`)}
+                          className={cn(
+                            'text-[10px] font-medium px-2 py-0.5 rounded-full border transition-all',
+                            settings[`insurance_${prov.prefix}_enabled`] === 'true'
+                              ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-500'
+                              : 'border-border/50 bg-muted/30 text-gray-500'
+                          )}
+                        >
+                          {settings[`insurance_${prov.prefix}_enabled`] === 'true' ? t('admin.enabled') : t('admin.disabled')}
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="space-y-1">
+                          <label className="text-[10px] text-muted-foreground">{t('admin.apiUrl')}</label>
+                          <Input
+                            value={settings[`insurance_${prov.prefix}_api_url`] || ''}
+                            onChange={(e) => updateSetting(`insurance_${prov.prefix}_api_url`, e.target.value)}
+                            className="h-8 text-xs"
+                            dir="ltr"
+                            placeholder="https://api.example.com"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] text-muted-foreground">{t('admin.commission')} (%)</label>
+                          <Input
+                            value={settings[`insurance_${prov.prefix}_commission`] || ''}
+                            onChange={(e) => updateSetting(`insurance_${prov.prefix}_commission`, e.target.value)}
+                            className="h-8 text-xs"
+                            dir="ltr"
+                            type="number"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] text-muted-foreground">پوشش پیش‌فرض (تومان)</label>
+                          <Input
+                            value={settings[`insurance_${prov.prefix}_default_coverage`] || ''}
+                            onChange={(e) => updateSetting(`insurance_${prov.prefix}_default_coverage`, e.target.value)}
+                            className="h-8 text-xs"
+                            dir="ltr"
+                            type="number"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Save Button */}
+              <div className="flex justify-end pt-2 border-t border-gold/10">
+                <Button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="bg-gold/10 text-gold hover:bg-gold/20 border border-gold/20 h-9 text-xs"
+                >
+                  {saving ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Save className="h-3.5 w-3.5" />
+                  )}
+                  <span className="mr-2">{t('admin.saveSettings')}</span>
+                </Button>
+              </div>
+            </CardContent>
+          )}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
 /*  Tab: Utility Services                                                     */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -278,6 +648,9 @@ function UtilityTab() {
 
   return (
     <div className="space-y-6">
+      {/* Provider Settings */}
+      <ProviderSettingsPanel serviceType="utility" />
+
       {/* Stats */}
       {stats && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
@@ -470,6 +843,9 @@ function CarTab() {
 
   return (
     <div className="space-y-6">
+      {/* Provider Settings */}
+      <ProviderSettingsPanel serviceType="car" />
+
       {/* Stats */}
       {stats && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
@@ -656,6 +1032,9 @@ function InsuranceTab() {
 
   return (
     <div className="space-y-6">
+      {/* Provider Settings */}
+      <ProviderSettingsPanel serviceType="insurance" />
+
       {/* Stats */}
       {stats && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">

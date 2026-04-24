@@ -414,6 +414,15 @@ model SiteSetting {
   @@unique([group, key])
 }
 
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  group     String   @default("general")
+  label     String
+  updatedAt DateTime @updatedAt
+}
+
 model PriceAlert {
   id          String   @id @default(cuid())
   userId      String

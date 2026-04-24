@@ -141,6 +141,7 @@ function getTxFilterOptions(t: (k: string) => string) {
 }
 
 const PIE_COLORS = ['#D4AF37', '#10b981']; // gold, emerald
+const PIE_COLORS_GRADIENT = ['url(#pieGoldGrad)', 'url(#pieGreenGrad)'];
 const PAGE_SIZE = 8;
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -361,7 +362,7 @@ export default function WalletView() {
 
   // Pie chart data
   const pieData = [
-    { name: 'کیف پول طلایی', value: fiatWallet.balance },
+    { name: 'کیف پول', value: fiatWallet.balance },
     { name: 'ارزش طلای شما', value: goldValue },
   ];
 
@@ -532,7 +533,7 @@ export default function WalletView() {
 
   return (
     <motion.div
-      className="mx-auto max-w-6xl grid grid-cols-1 gap-6"
+      className="w-full grid grid-cols-1 gap-6"
       variants={containerVariants}
       initial="hidden"
       animate="show"
@@ -555,7 +556,7 @@ export default function WalletView() {
                   </p>
                   <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground sm:justify-start">
                     <span>
-                      طلایی: <span className="font-semibold text-foreground">{formatToman(fiatWallet.balance)}</span>
+                      ریال: <span className="font-semibold text-foreground">{formatToman(fiatWallet.balance)}</span>
                     </span>
                     <Separator orientation="vertical" className="h-3" />
                     <span>
@@ -570,16 +571,35 @@ export default function WalletView() {
                   <div className="size-28 sm:size-32 md:size-36">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
+                        <defs>
+                          <radialGradient id="pieGoldGrad" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stopColor="#F5D060" />
+                            <stop offset="100%" stopColor="#C59B2F" />
+                          </radialGradient>
+                          <radialGradient id="pieGreenGrad" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stopColor="#34d399" />
+                            <stop offset="100%" stopColor="#059669" />
+                          </radialGradient>
+                          <filter id="pieGlow">
+                            <feGaussianBlur stdDeviation="2" result="blur" />
+                            <feMerge>
+                              <feMergeNode in="blur" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                        </defs>
                         <Pie
                           data={pieData}
                           cx="50%"
                           cy="50%"
-                          innerRadius={35}
+                          innerRadius={32}
                           outerRadius={55}
                           paddingAngle={3}
                           dataKey="value"
                           stroke="var(--card, #fff)"
-                          strokeWidth={2}
+                          strokeWidth={2.5}
+                          animationBegin={0}
+                          animationDuration={1200}
                         >
                           {pieData.map((_, index) => (
                             <Cell key={index} fill={PIE_COLORS[index]} />
@@ -593,11 +613,11 @@ export default function WalletView() {
                   <div className="mt-2 flex items-center justify-center gap-4">
                     <div className="flex items-center gap-1.5">
                       <div className="size-2.5 rounded-full bg-gold" />
-                      <span className="text-[10px] text-muted-foreground">طلایی</span>
+                      <span className="text-[10px] text-muted-foreground">کیف پول</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div className="size-2.5 rounded-full bg-emerald-500" />
-                      <span className="text-[10px] text-muted-foreground">طلایی</span>
+                      <span className="text-[10px] text-muted-foreground">ارزش طلا</span>
                     </div>
                   </div>
                 </div>
@@ -612,7 +632,7 @@ export default function WalletView() {
       {/* ──────────────────────────────────────────────────────── */}
       {!isLoading && (
         <motion.div variants={itemVariants}>
-          <Card className="overflow-hidden border-gold/15">
+          <Card className="overflow-hidden border-gold/15 shadow-[0_0_15px_rgba(212,175,55,0.06)]">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base font-bold">
                 <Wallet className="size-4 text-gold" />
@@ -622,24 +642,42 @@ export default function WalletView() {
             <CardContent>
               <div className="flex flex-col items-center gap-4">
                 <div className="relative mx-auto h-[200px] w-[200px] md:h-[260px] md:w-[260px]">
+                  <div className="absolute inset-0 rounded-full" style={{ background: 'conic-gradient(from 0deg, transparent 0%, rgba(212,175,55,0.04) 10%, transparent 20%, rgba(212,175,55,0.04) 30%, transparent 40%, rgba(212,175,55,0.04) 50%, transparent 60%, rgba(212,175,55,0.04) 70%, transparent 80%, rgba(212,175,55,0.04) 90%, transparent 100%)' }} />
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
+                      <defs>
+                        <radialGradient id="breakdownGoldGrad" cx="50%" cy="50%" r="50%">
+                          <stop offset="0%" stopColor="#F5D060" />
+                          <stop offset="100%" stopColor="#C59B2F" />
+                        </radialGradient>
+                        <radialGradient id="breakdownGreenGrad" cx="50%" cy="50%" r="50%">
+                          <stop offset="0%" stopColor="#34d399" />
+                          <stop offset="100%" stopColor="#059669" />
+                        </radialGradient>
+                        <filter id="donutGlow">
+                          <feGaussianBlur stdDeviation="3" result="blur" />
+                          <feMerge>
+                            <feMergeNode in="blur" />
+                            <feMergeNode in="SourceGraphic" />
+                          </feMerge>
+                        </filter>
+                      </defs>
                       <Pie
                         data={pieData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={60}
+                        innerRadius={58}
                         outerRadius={85}
                         paddingAngle={4}
                         dataKey="value"
                         stroke="var(--card, #fff)"
-                        strokeWidth={2}
+                        strokeWidth={2.5}
                         animationBegin={0}
                         animationDuration={1200}
                         animationEasing="ease-out"
                       >
-                        {pieData.map((_, index) => (
-                          <Cell key={index} fill={PIE_COLORS[index]} />
+                        {pieData.map((entry, index) => (
+                          <Cell key={index} fill={entry.value > 0 ? (index === 0 ? '#D4AF37' : '#10b981') : '#94a3b8'} />
                         ))}
                       </Pie>
                       <Tooltip content={<PieTooltip />} />
@@ -661,7 +699,7 @@ export default function WalletView() {
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="size-3 rounded-full bg-emerald-500" />
-                    <span className="text-xs text-muted-foreground">طلایی ({formatToman(goldValue)})</span>
+                    <span className="text-xs text-muted-foreground">ارزش طلا ({formatToman(goldValue)})</span>
                   </div>
                 </div>
                 {/* Percentage bars */}
@@ -670,13 +708,13 @@ export default function WalletView() {
                     <p className="text-lg font-bold tabular-nums text-gold">
                       {totalPortfolio > 0 ? Math.round((fiatWallet.balance / totalPortfolio) * 100) : 0}%
                     </p>
-                    <p className="text-[10px] text-muted-foreground">سهم طلایی</p>
+                    <p className="text-[10px] text-muted-foreground">سهم کیف پول</p>
                   </div>
                   <div className="flex-1 rounded-lg bg-emerald-500/5 p-3 text-center">
                     <p className="text-lg font-bold tabular-nums text-emerald-500">
                       {totalPortfolio > 0 ? Math.round((goldValue / totalPortfolio) * 100) : 0}%
                     </p>
-                    <p className="text-[10px] text-muted-foreground">سهم طلایی</p>
+                    <p className="text-[10px] text-muted-foreground">سهم طلای شما</p>
                   </div>
                 </div>
               </div>
@@ -737,9 +775,22 @@ export default function WalletView() {
                     >
                       <defs>
                         <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#D4AF37" stopOpacity={0.3} />
+                          <stop offset="0%" stopColor="#F5D060" stopOpacity={0.35} />
+                          <stop offset="50%" stopColor="#D4AF37" stopOpacity={0.12} />
                           <stop offset="100%" stopColor="#D4AF37" stopOpacity={0} />
                         </linearGradient>
+                        <linearGradient id="goldLineGrad" x1="0" y1="0" x2="1" y2="0">
+                          <stop offset="0%" stopColor="#F5D060" />
+                          <stop offset="100%" stopColor="#C59B2F" />
+                        </linearGradient>
+                        <filter id="areaGlow">
+                          <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
+                          <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.212 0 0 0 0 0 0.686 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0" />
+                          <feMerge>
+                            <feMergeNode />
+                            <feMergeNode in="SourceGraphic" />
+                          </feMerge>
+                        </filter>
                       </defs>
                       <XAxis
                         dataKey="label"
@@ -761,11 +812,13 @@ export default function WalletView() {
                       <Area
                         type="monotone"
                         dataKey="value"
-                        stroke="#D4AF37"
-                        strokeWidth={2}
+                        stroke="url(#goldLineGrad)"
+                        strokeWidth={2.5}
                         fill="url(#goldGradient)"
                         animationDuration={1500}
                         animationEasing="ease-out"
+                        dot={true}
+                        style={{ filter: 'url(#areaGlow)' }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -865,7 +918,7 @@ export default function WalletView() {
       {/* ──────────────────────────────────────────────────────── */}
       {!isLoading && (
         <motion.div variants={itemVariants}>
-          <Card className="overflow-hidden">
+          <Card className="overflow-hidden shadow-[0_0_15px_rgba(212,175,55,0.06)]">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base font-bold">
                 <Receipt className="size-4 text-gold" />
@@ -875,7 +928,7 @@ export default function WalletView() {
             <CardContent>
               <div className="h-[200px] w-full md:h-[280px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={TX_BREAKDOWN} layout="vertical" margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <BarChart data={TX_BREAKDOWN.map((d) => ({ ...d, color: d.color }))} layout="vertical" margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.7 0.08 85 / 15%)" horizontal={false} />
                     <XAxis type="number" tick={{ fontSize: 10, fill: 'oklch(0.52 0.01 85)' }} tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`} axisLine={false} tickLine={false} />
                     <YAxis type="category" dataKey="type" tick={{ fontSize: 11, fill: 'oklch(0.52 0.01 85)' }} axisLine={false} tickLine={false} width={70} />
@@ -973,7 +1026,7 @@ export default function WalletView() {
             <TabsList className="mb-4 grid w-full grid-cols-2">
               <TabsTrigger value="fiat" className={cn('text-sm', activeTab === 'fiat' && 'tab-active-gold')}>
                 <Wallet className="ml-2 size-4" />
-                کیف پول طلایی
+                کیف پول ریالی
               </TabsTrigger>
               <TabsTrigger value="gold" className={cn('text-sm', activeTab === 'gold' && 'tab-active-gold')}>
                 <Coins className="ml-2 size-4" />
