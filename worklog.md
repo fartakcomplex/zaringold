@@ -1569,3 +1569,34 @@ Stage Summary:
 - Service request flow with urgency (normal/urgent), estimated pricing
 - Order tracking with status badges and star ratings
 - All API routes functional (seed verified: 8 categories created)
+
+---
+Task ID: 16
+Agent: Main Agent
+Task: Build Utility Payment Services Module (خرید شارژ، اینترنت، قبوض)
+
+Work Log:
+- Added UtilityPayment Prisma model with fields for topup, internet, and bill payments
+- Created 4 API routes:
+  - POST /api/utility/topup - Phone recharge with operator detection
+  - POST /api/utility/internet - Internet package purchase
+  - POST /api/utility/bills - Bill inquiry and payment
+  - GET /api/utility/history - Payment history with summary stats
+- Built UtilityServicesView.tsx (~620 lines) with 4 tabs:
+  1. Topup (خرید شارژ) - Operator selection, phone input with auto-detection, 5 preset amounts + custom
+  2. Internet (بسته اینترنت) - 4 operators with 20+ data plans, badges
+  3. Bills (پرداخت قبض) - 5 bill types (electricity, water, gas, landline, internet), inquiry flow
+  4. History (تاریخچه) - Summary cards, type filter, transaction list
+- Added success dialog with reference code
+- Navigation: 📱 خدمات_util added to sidebar with isNew badge
+- Full i18n support (fa + en) with 35+ translation keys
+- Production build: Compiled successfully in 19.2s
+- Zero lint errors in utility files
+
+Stage Summary:
+- Complete utility services module accessible via sidebar
+- Phone topup: 4 operators (MCI, Irancell, Rightel, Taliya), auto-detect operator from phone prefix
+- Internet packages: 20+ plans across operators with badges (محبوب, ویژه, پرفروش)
+- Bill payment: 5 types (آب, برق, گاز, تلفن ثابت, اینترنت) with inquiry before payment
+- Transaction history with summary statistics and type filtering
+- Payment flow: wallet deduction, reference code generation, success dialog

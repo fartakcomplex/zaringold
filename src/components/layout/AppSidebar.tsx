@@ -47,6 +47,7 @@ import {
   Store,
   Umbrella,
   Car,
+  Smartphone,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useAppStore } from '@/lib/store';
@@ -148,6 +149,12 @@ const navSections: NavSection[] = [
     titleKey: 'nav.carServices',
     items: [
       { labelKey: 'nav.carServices', page: 'car-services', icon: Car, isNew: true },
+    ],
+  },
+  {
+    titleKey: 'nav.utility',
+    items: [
+      { labelKey: 'nav.utility', page: 'utility', icon: Smartphone, isNew: true },
     ],
   },
   {
