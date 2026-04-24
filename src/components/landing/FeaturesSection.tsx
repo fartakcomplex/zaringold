@@ -292,19 +292,19 @@ export default function FeaturesSection() {
     <section
       id="features"
       dir="rtl"
-      className="relative py-20 sm:py-28 lg:py-32 overflow-hidden"
+      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
     >
       {/* Background decorations */}
       <div className="radial-gold-fade pointer-events-none absolute inset-0 opacity-40" aria-hidden="true" />
       <div className="dot-pattern pointer-events-none absolute inset-0 opacity-20" aria-hidden="true" />
 
       {/* Gold separator at top */}
-      <div className="gold-separator mb-14 sm:mb-20" />
+      <div className="gold-separator mb-12 sm:mb-16" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
-          className="relative z-10 mb-14 text-center sm:mb-20"
+          className="relative z-10 mb-12 text-center sm:mb-16"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -371,7 +371,7 @@ export default function FeaturesSection() {
         </div>
 
         {/* Bottom gold separator */}
-        <div className="gold-separator mt-14 sm:mt-20" />
+        <div className="gold-separator mt-12 sm:mt-16" />
       </div>
 
       {/* Inject conic gradient spin animation */}

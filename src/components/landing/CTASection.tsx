@@ -55,7 +55,7 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
     <section
       id="cta"
       dir="rtl"
-      className="relative py-24 sm:py-32 lg:py-40 overflow-hidden"
+      className="relative py-16 sm:py-24 lg:py-32 overflow-hidden"
     >
       {/* ── Gold separator at top ── */}
       <div className="absolute top-0 left-0 right-0 gold-separator" />

@@ -146,7 +146,7 @@ export default function ComparisonSection() {
     <section
       id="comparison"
       dir="rtl"
-      className="relative py-16 sm:py-20 overflow-hidden"
+      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
     >
       {/* ── Background decorative ── */}
       <div className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" />

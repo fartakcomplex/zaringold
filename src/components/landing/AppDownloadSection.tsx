@@ -297,7 +297,7 @@ export default function AppDownloadSection() {
     <section
       id="app-download"
       dir="rtl"
-      className="relative py-20 sm:py-28 lg:py-32 overflow-hidden"
+      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
     >
       {/* ── Gold separator at top ── */}
       <div className="absolute top-0 left-0 right-0 gold-separator" />
@@ -327,7 +327,7 @@ export default function AppDownloadSection() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
-          className="mx-auto mb-12 max-w-2xl text-center sm:mb-16"
+          className="mx-auto mb-10 max-w-2xl text-center sm:mb-14"
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}

@@ -884,3 +884,95 @@ Stage Summary:
   - All sub-pages (About, Contact, Blog, Terms, Privacy) enhanced with motion animations
 - All changes maintain RTL direction and i18n translation support
 - Zero new lint errors introduced
+---
+Task ID: 15
+Agent: Main Agent
+Task: Fix all landing page sections - alignment, spacing, and responsive layout issues
+
+Work Log:
+- User reported landing page sections were "بهم ریخته" (broken/messed up) with alignment and spacing issues
+- Read all 13 landing page component files to identify issues
+
+**HowItWorksSection.tsx (CRITICAL FIX):**
+  - Root cause: Used `grid-cols-4` on `md` breakpoint with connector elements mixed as grid items
+  - This created uneven layout: Row 1 [Step1, Conn1, Step2, Conn2] → Row 2 [Step3, Conn3, Step4, empty]
+  - Fix: Split into 3 responsive layouts:
+    - Mobile (< md): Vertical timeline with animated vertical connectors (kept as-is)
+    - Tablet (md): Clean 2×2 grid (`grid-cols-2`) without connectors
+    - Desktop (lg+): Flex layout (`lg:flex`) with `flex-1` cards and `shrink-0` connectors between them
+  - Desktop connectors changed from `px-1` to `w-8 xl:w-12` for consistent spacing
+  - Each desktop card wrapped in `flex-1 min-w-0` for proper flex distribution
+
+**All Sections - Consistent Spacing:**
+  - Standardized section padding across all sections to `py-16 sm:py-20 lg:py-24`
+  - Standardized header margin to `mb-12 sm:mb-16` (or `mb-10 sm:mb-14` for smaller sections)
+  - Standardized separator margins to `mb-12 sm:mb-16` and `mt-12 sm:mt-16`
+  - Fixed invalid Tailwind class `sm:mb-18` → `sm:mb-16` in SecuritySection.tsx
+
+**Files Modified:**
+  1. HowItWorksSection.tsx - 2×2 tablet grid + flex desktop layout with connectors
+  2. FeaturesSection.tsx - Consistent spacing (py-16/20/24, mb-12/16)
+  3. CalculatorSection.tsx - Consistent spacing
+  4. SecuritySection.tsx - Consistent spacing + fixed sm:mb-18
+  5. PartnersSection.tsx - Added lg breakpoint to padding
+  6. TestimonialsSection.tsx - Consistent spacing
+  7. ComparisonSection.tsx - Added lg breakpoint to padding
+  8. FAQSection.tsx - Consistent spacing
+  9. AppDownloadSection.tsx - Consistent spacing
+  10. CTASection.tsx - Slightly reduced excessive padding (py-40 → py-32 on desktop)
+
+**Verification:**
+  - `bun run lint` confirmed zero new errors in landing page files
+  - All pre-existing errors are in other files (EmailSettings.tsx, MediaPicker.tsx, static-server.js, ultra-server.js)
+  - Dev server compiles successfully
+
+Stage Summary:
+- HowItWorksSection is the most critical fix: tablet 2×2 grid + desktop flex layout with animated connectors
+- All 10 content sections now have consistent vertical rhythm and spacing
+- All sections properly responsive: mobile vertical → tablet 2-col → desktop multi-col
+- Zero lint errors in modified files
+
+---
+Task ID: landing-fix-1
+Agent: full-stack-developer
+Task: Fix all landing page sections for proper alignment, spacing, and responsive design
+
+Work Log:
+- Analyzed user screenshot showing misaligned 2x2 grid in HowItWorks section
+- Used VLM (vision AI) to analyze the screenshot and identify layout issues
+- Used agent-browser to QA the full landing page on desktop and mobile viewports
+- Fixed 10 landing page component files:
+
+1. **HowItWorksSection.tsx** (CRITICAL FIX):
+   - Changed from broken `grid-cols-4` with mixed connector items to proper responsive layout
+   - Mobile (< md): Vertical timeline (unchanged)
+   - Tablet (md): Clean 2x2 grid (`grid-cols-2 gap-6`)
+   - Desktop (lg+): Flex layout with equal-width cards and fixed-size connectors
+   - Fixed connector alignment between steps
+
+2. **FeaturesSection.tsx**: Standardized section padding to `py-16 sm:py-20 lg:py-24`, header margin to `mb-12 sm:mb-16`
+
+3. **CalculatorSection.tsx**: Standardized spacing consistency
+
+4. **SecuritySection.tsx**: Fixed invalid Tailwind class `sm:mb-18` → `sm:mb-16`, standardized spacing
+
+5. **PartnersSection.tsx**: Added missing `lg:py-24` breakpoint
+
+6. **TestimonialsSection.tsx**: Standardized section spacing
+
+7. **ComparisonSection.tsx**: Added missing `lg:py-24` breakpoint
+
+8. **FAQSection.tsx**: Standardized section spacing
+
+9. **AppDownloadSection.tsx**: Standardized section spacing
+
+10. **CTASection.tsx**: Reduced excessive padding, standardized spacing
+
+Stage Summary:
+- All 10 landing page sections now have consistent spacing and alignment
+- HowItWorksSection: Fixed critical 2x2 grid alignment issue - now properly responsive
+- Bug fix: Invalid `sm:mb-18` Tailwind class in SecuritySection
+- Zero lint errors in all modified files
+- Desktop QA: All sections pass visual inspection (VLM verified)
+- Mobile QA: All sections pass visual inspection on iPhone 14 viewport
+- Iran Sans font already applied globally (verified in layout.tsx and globals.css)

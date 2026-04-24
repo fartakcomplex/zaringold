@@ -220,7 +220,7 @@ export default function CalculatorSection({ onLogin }: CalculatorSectionProps) {
     <section
       id="calculator"
       dir="rtl"
-      className="relative overflow-hidden py-20 sm:py-28"
+      className="relative overflow-hidden py-16 sm:py-20 lg:py-24"
     >
       {/* ── Background decorations ── */}
       <div className="pointer-events-none absolute inset-0">

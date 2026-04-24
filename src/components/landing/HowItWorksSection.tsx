@@ -265,7 +265,7 @@ export default function HowItWorksSection() {
     <section
       id="how-it-works"
       dir="rtl"
-      className="relative py-20 sm:py-28"
+      className="relative py-16 sm:py-20 lg:py-24"
     >
       {/* ── Background elements ── */}
       <GoldSparkles />
@@ -273,12 +273,12 @@ export default function HowItWorksSection() {
       <div className="pointer-events-none absolute inset-0 dot-pattern opacity-30" aria-hidden="true" />
 
       {/* ── Gold separator at top ── */}
-      <div className="gold-separator mb-16 sm:mb-20" />
+      <div className="gold-separator mb-12 sm:mb-16" />
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
-          className="mb-16 text-center sm:mb-20"
+          className="mb-12 text-center sm:mb-16"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -315,17 +315,28 @@ export default function HowItWorksSection() {
         {/* ── Steps Timeline ── */}
         <div className="relative">
           {/* ════════════════════════════════════════════════════════════════ */}
+          {/*  Tablet: 2×2 grid — no connectors, clean card layout           */}
+          {/* ════════════════════════════════════════════════════════════════ */}
+          <div className="hidden md:grid md:grid-cols-2 md:gap-6 lg:hidden">
+            {steps.map((step, index) => (
+              <DesktopStepCard key={step.number} step={step} index={index} />
+            ))}
+          </div>
+
+          {/* ════════════════════════════════════════════════════════════════ */}
           {/*  Desktop: Horizontal timeline with animated connectors         */}
           {/* ════════════════════════════════════════════════════════════════ */}
-          <div className="hidden md:grid md:grid-cols-4 md:gap-0 md:items-start">
+          <div className="hidden lg:flex lg:items-start lg:gap-0">
             {steps.map((step, index) => (
               <React.Fragment key={step.number}>
-                <DesktopStepCard step={step} index={index} />
+                <div className="flex-1 min-w-0">
+                  <DesktopStepCard step={step} index={index} />
+                </div>
 
                 {/* Animated gold connector between steps */}
                 {index < steps.length - 1 && (
                   <motion.div
-                    className="flex items-center justify-center px-1 pt-14"
+                    className="flex items-center justify-center w-8 xl:w-12 shrink-0 pt-14"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5, delay: index * 0.15 + 0.4 }}

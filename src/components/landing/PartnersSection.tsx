@@ -53,7 +53,7 @@ export default function PartnersSection() {
     <section
       id="partners"
       dir="rtl"
-      className="relative py-16 sm:py-20 overflow-hidden"
+      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
     >
       {/* ── Background decorative glow ── */}
       <div
@@ -69,7 +69,7 @@ export default function PartnersSection() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
-          className="mx-auto mb-12 max-w-2xl text-center sm:mb-16"
+          className="mx-auto mb-10 max-w-2xl text-center sm:mb-14"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
