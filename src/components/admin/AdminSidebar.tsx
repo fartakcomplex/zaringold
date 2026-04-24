@@ -24,6 +24,7 @@ import {
   Database,
   Package,
   Layers,
+  Mail,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useAppStore } from '@/lib/store';
@@ -79,6 +80,7 @@ const adminNavSections: { title: string; items: AdminNavItem[] }[] = [
     title: 'مارکتینگ',
     items: [
       { label: 'پیامک', page: 'sms-marketing', icon: MessageSquare, badge: 'SMS' },
+      { label: 'ایمیل', page: 'email-marketing', icon: Mail, badge: 'EMAIL' },
     ],
   },
   {

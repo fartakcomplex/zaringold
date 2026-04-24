@@ -23,6 +23,7 @@ import AdminLandingBuilder from './pages/AdminLandingBuilder';
 import FraudAlertsView from '@/components/gateway/FraudAlertsView';
 import GatewayAdminView from './GatewayAdminView';
 import SmsSettings from '@/components/sms/SmsSettings';
+import EmailSettings from '@/components/email/EmailSettings';
 import ToastContainer from '@/components/shared/ToastContainer';
 import {
   Sheet,
@@ -56,6 +57,7 @@ function AdminPageRouter() {
     case 'fraud-alerts': return <FraudAlertsView />;
     case 'gateway': return <GatewayAdminView />;
     case 'sms-marketing': return <SmsSettings />;
+    case 'email-marketing': return <EmailSettings />;
     case 'security': return <AdminSecurity />;
     case 'landing-builder': return <AdminLandingBuilder />;
     default: return <AdminDashboard />;
