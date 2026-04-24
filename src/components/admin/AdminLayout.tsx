@@ -26,6 +26,7 @@ import SmsSettings from '@/components/sms/SmsSettings';
 import EmailSettings from '@/components/email/EmailSettings';
 import TelegramBotAdmin from './TelegramBotAdmin';
 import AdminRoles from './pages/AdminRoles';
+import AdminInsurance from './AdminInsurance';
 import ToastContainer from '@/components/shared/ToastContainer';
 import {
   Sheet,
@@ -62,6 +63,7 @@ function AdminPageRouter() {
     case 'email-marketing': return <EmailSettings />;
     case 'telegram-bot': return <TelegramBotAdmin />;
     case 'roles': return <AdminRoles />;
+    case 'insurance': return <AdminInsurance />;
     case 'security': return <AdminSecurity />;
     case 'landing-builder': return <AdminLandingBuilder />;
     default: return <AdminDashboard />;

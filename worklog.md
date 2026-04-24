@@ -1500,3 +1500,36 @@ Stage Summary:
 - Order management with status tracking (pending, active, expired, cancelled)
 - Zero lint errors, zero build errors
 - WalletView constants all properly defined - no remaining undefined variable issues
+
+---
+Task ID: 28
+Agent: Main Agent
+Task: Build admin insurance management panel + notification system
+
+Work Log:
+- Created GET/PATCH/DELETE /api/admin/insurance API route for full order management
+- Created AdminInsurance.tsx component (~530 lines) with:
+  - Stats dashboard (total orders, pending, revenue, commission)
+  - Status filter tabs (all, pending, active, expired, cancelled)
+  - Search by name, policy number, phone
+  - Sort by date or amount
+  - Order detail dialog with full policy info
+  - Admin action panel: status change + notes
+  - Quick issue button for pending orders
+  - Pagination support
+  - Visual "new order" indicators
+- Added insurance route to AdminLayout.tsx router
+- Added "مدیریت بیمه" (Insurance Management) to AdminSidebar.tsx under new "بیمه و خدمات" section
+- Created /api/insurance/seed-orders route for sample data
+- Seeded 6 sample orders via Prisma (1 pending, 3 active, 1 expired, 1 cancelled)
+- Production build successful - zero errors
+- Server verified running and returning 200
+
+Stage Summary:
+- Admin can now see ALL insurance orders in one place
+- New orders show with amber indicator ("جديد" badge + ring)
+- Stats cards show total orders, pending count, revenue, and commission earned
+- Admin can: approve/issue policies, cancel orders, add notes, delete orders
+- Search across policy number, holder name, phone number
+- Filter by status with real-time counts
+- Sample data seeded for immediate testing

@@ -27,6 +27,7 @@ import {
   Mail,
   Bot,
   ShieldHalf,
+  Umbrella,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useAppStore } from '@/lib/store';
@@ -92,6 +93,12 @@ const adminNavSections: { title: string; items: AdminNavItem[] }[] = [
       { label: 'بلاگ', page: 'blog', icon: FileText },
       { label: 'صفحات', page: 'pages', icon: FileEdit },
       { label: 'ویرایش لندینگ', page: 'landing-builder', icon: Layers },
+    ],
+  },
+  {
+    title: 'بیمه و خدمات',
+    items: [
+      { label: 'مدیریت بیمه', page: 'insurance', icon: Umbrella },
     ],
   },
   {
