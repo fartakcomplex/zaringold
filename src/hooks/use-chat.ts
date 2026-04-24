@@ -10,7 +10,7 @@ import { useAppStore } from '@/lib/store';
 
 export interface SupportMessage {
   id: string;
-  senderType: 'user' | 'operator';
+  senderType: 'user' | 'operator' | 'ai';
   senderId: string;
   senderName: string;
   message: string;

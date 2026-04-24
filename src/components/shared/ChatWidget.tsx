@@ -3,11 +3,13 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from '@/lib/framer-compat';
 import {
-  MessageCircle,
   Send,
   X,
   ShieldCheck,
   Headphones,
+  Bot,
+  Sparkles,
+  HelpCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
@@ -15,6 +17,17 @@ import { useSupportChat, type SupportMessage } from '@/hooks/use-chat';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  Types                                                                    */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+interface FAQItem {
+  id: string;
+  question: string;
+  answer: string;
+  category: string;
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  Helper: format timestamp in Persian locale                               */
@@ -42,6 +55,7 @@ function MessageBubble({
   msg: SupportMessage;
   isOwn: boolean;
 }) {
+  const isAI = msg.senderType === 'ai';
   const isOperator = msg.senderType === 'operator';
 
   return (
@@ -58,14 +72,18 @@ function MessageBubble({
       <div
         className={cn(
           'flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold',
-          isOperator
-            ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
-            : isOwn
-              ? 'bg-[#D4AF37]/20 text-[#D4AF37]'
-              : 'bg-muted text-muted-foreground'
+          isAI
+            ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300'
+            : isOperator
+              ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
+              : isOwn
+                ? 'bg-[#D4AF37]/20 text-[#D4AF37]'
+                : 'bg-muted text-muted-foreground'
         )}
       >
-        {isOperator ? (
+        {isAI ? (
+          <Bot className="size-4" />
+        ) : isOperator ? (
           <ShieldCheck className="size-4" />
         ) : (
           msg.senderName.charAt(0)
@@ -78,20 +96,33 @@ function MessageBubble({
           'max-w-[75%] rounded-2xl px-3 py-2',
           isOwn
             ? 'rounded-tr-sm bg-[#D4AF37] text-white'
-            : isOperator
-              ? 'rounded-tl-sm border border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/40'
-              : 'rounded-tl-sm bg-card shadow-sm border border-border'
+            : isAI
+              ? 'rounded-tl-sm border border-violet-200 bg-violet-50 dark:border-violet-800 dark:bg-violet-950/30'
+              : isOperator
+                ? 'rounded-tl-sm border border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/40'
+                : 'rounded-tl-sm bg-card shadow-sm border border-border'
         )}
       >
         {/* Name */}
         <div
           className={cn(
             'mb-0.5 flex items-center gap-1.5 text-xs font-semibold',
-            isOwn ? 'text-white/80' : isOperator ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground'
+            isOwn
+              ? 'text-white/80'
+              : isAI
+                ? 'text-violet-600 dark:text-violet-400'
+                : isOperator
+                  ? 'text-amber-600 dark:text-amber-400'
+                  : 'text-muted-foreground'
           )}
         >
           {msg.senderName}
-          {isOperator && (
+          {isAI && (
+            <Badge className="bg-violet-500 text-white text-[9px] px-1.5 py-0 hover:bg-violet-500">
+              AI
+            </Badge>
+          )}
+          {isOperator && !isAI && (
             <Badge className="bg-amber-500 text-white text-[9px] px-1.5 py-0 hover:bg-amber-500">
               پشتیبان
             </Badge>
@@ -118,6 +149,87 @@ function MessageBubble({
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
+/*  FAQ Quick Buttons                                                        */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+function FAQQuickButtons({
+  faqs,
+  onSelect,
+}: {
+  faqs: FAQItem[];
+  onSelect: (question: string) => void;
+}) {
+  if (faqs.length === 0) return null;
+
+  return (
+    <div className="w-full mt-3">
+      <div className="flex items-center gap-1.5 mb-2 px-1">
+        <HelpCircle className="size-3.5 text-violet-500" />
+        <span className="text-[11px] font-semibold text-violet-600 dark:text-violet-400">
+          سوالات متداول
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-1.5">
+        {faqs.map((faq) => (
+          <motion.button
+            key={faq.id}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => onSelect(faq.question)}
+            className={cn(
+              'text-[11px] leading-relaxed px-2.5 py-1.5 rounded-full border transition-colors',
+              'border-violet-200 bg-violet-50/80 text-violet-700',
+              'dark:border-violet-700 dark:bg-violet-950/40 dark:text-violet-300',
+              'hover:bg-violet-100 dark:hover:bg-violet-950/60 cursor-pointer text-start'
+            )}
+          >
+            {faq.question}
+          </motion.button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  AI Status Indicator in Header                                            */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+function HeaderStatus({
+  operatorName,
+  isConnected,
+}: {
+  operatorName: string | null;
+  isConnected: boolean;
+}) {
+  if (!isConnected) {
+    return (
+      <span className="text-[11px] text-muted-foreground">
+        <span className="inline-block size-1.5 rounded-full bg-red-500" />
+        {' '}قطع ارتباط
+      </span>
+    );
+  }
+
+  if (operatorName) {
+    return (
+      <span className="text-[11px] text-muted-foreground">
+        <span className="inline-block size-1.5 rounded-full bg-green-500" />
+        {' '}آنلاین
+      </span>
+    );
+  }
+
+  /* Connected but no operator → AI mode */
+  return (
+    <span className="text-[11px] text-violet-600 dark:text-violet-400">
+      <Sparkles className="inline size-3 me-0.5 -mt-0.5" />
+      هوش مصنوعی
+    </span>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
 /*  Chat Widget                                                              */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -125,6 +237,7 @@ export default function ChatWidget() {
   const { user } = useAppStore();
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [faqs, setFaqs] = useState<FAQItem[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -137,6 +250,24 @@ export default function ChatWidget() {
     emitTyping,
     emitStopTyping,
   } = useSupportChat();
+
+  /* Fetch FAQs on mount */
+  useEffect(() => {
+    async function loadFAQs() {
+      try {
+        const res = await fetch('/api/chat/faq?category=general&active=true');
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && Array.isArray(json.data)) {
+            setFaqs(json.data.slice(0, 6) as FAQItem[]);
+          }
+        }
+      } catch {
+        // Silently fail — FAQs are optional
+      }
+    }
+    loadFAQs();
+  }, []);
 
   /* Auto-scroll to bottom on new messages */
   useEffect(() => {
@@ -164,6 +295,14 @@ export default function ChatWidget() {
     inputRef.current?.focus();
   }, [inputValue, sendUserMessage, emitStopTyping]);
 
+  /* FAQ selection handler */
+  const handleFAQSelect = useCallback(
+    (question: string) => {
+      sendUserMessage(question);
+    },
+    [sendUserMessage]
+  );
+
   /* Enter key handler */
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -184,6 +323,9 @@ export default function ChatWidget() {
     },
     [emitTyping]
   );
+
+  /* Determine if currently in AI mode */
+  const isAIMode = isConnected && !operatorName;
 
   /* Don't show if user is not authenticated */
   if (!user) return null;
@@ -227,34 +369,33 @@ export default function ChatWidget() {
           >
             {/* ── Header ── */}
             <div className="flex items-center gap-3 border-b border-border bg-card px-4 py-3">
-              <div className="flex size-9 items-center justify-center rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
-                <ShieldCheck className="size-5" />
+              <div
+                className={cn(
+                  'flex size-9 items-center justify-center rounded-full',
+                  isAIMode
+                    ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300'
+                    : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
+                )}
+              >
+                {isAIMode ? <Bot className="size-5" /> : <ShieldCheck className="size-5" />}
               </div>
               <div className="flex flex-1 flex-col">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-foreground">
-                    {operatorName || 'پشتیبانی آنلاین'}
+                    {isAIMode ? 'دستیار هوشمند' : operatorName || 'پشتیبانی آنلاین'}
                   </span>
                   {operatorName && (
                     <Badge className="bg-amber-500 text-white text-[8px] px-1 py-0 hover:bg-amber-500 leading-none">
                       پشتیبان
                     </Badge>
                   )}
-                </div>
-                <span className="text-[11px] text-muted-foreground">
-                  {isConnected ? (
-                    <>
-                      <span className="inline-block size-1.5 rounded-full bg-green-500" />
-                      {' '}
-                      {operatorName ? 'آنلاین' : 'در انتظار اپراتور'}
-                    </>
-                  ) : (
-                    <>
-                      <span className="inline-block size-1.5 rounded-full bg-red-500" />
-                      {' '}در حال اتصال...
-                    </>
+                  {isAIMode && (
+                    <Badge className="bg-violet-500 text-white text-[8px] px-1 py-0 hover:bg-violet-500 leading-none">
+                      AI
+                    </Badge>
                   )}
-                </span>
+                </div>
+                <HeaderStatus operatorName={operatorName} isConnected={isConnected} />
               </div>
               <Button
                 variant="ghost"
@@ -275,11 +416,20 @@ export default function ChatWidget() {
               {/* Empty state */}
               {messages.length === 0 && !isOperatorTyping && (
                 <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">
-                  <Headphones className="size-10 opacity-20" />
-                  <p className="text-sm font-medium">پشتیبانی آنلاین</p>
-                  <p className="text-xs text-muted-foreground/60">
-                    به زودی یک اپراتور پاسخ خواهد داد
+                  <div className="flex size-16 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-900/30">
+                    {isAIMode ? (
+                      <Sparkles className="size-8 text-violet-500" />
+                    ) : (
+                      <Bot className="size-8 text-[#D4AF37]/50" />
+                    )}
+                  </div>
+                  <p className="text-sm font-bold text-foreground">
+                    به پشتیبانی زرین گلد خوش آمدید
                   </p>
+                  <p className="text-xs text-muted-foreground/60">
+                    دستیار هوشمند ما آماده پاسخگویی است
+                  </p>
+                  <FAQQuickButtons faqs={faqs} onSelect={handleFAQSelect} />
                 </div>
               )}
 
@@ -296,7 +446,7 @@ export default function ChatWidget() {
               {isOperatorTyping && (
                 <div className="flex items-center gap-2 px-3 py-1">
                   <span className="text-xs text-muted-foreground">
-                    {operatorName || 'اپراتور'} در حال نوشتن...
+                    {operatorName || 'دستیار هوشمند'} در حال نوشتن...
                   </span>
                   <span className="flex gap-0.5">
                     <span className="size-1 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: '0ms' }} />

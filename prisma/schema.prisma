@@ -1202,6 +1202,58 @@ model TelegramUser {
   invoices       TelegramInvoice[]
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  Smart Chat Platform Module                                             */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+model ChatFAQ {
+  id          String   @id @default(cuid())
+  question    String
+  answer      String
+  category    String   @default("general") // general, account, trading, gold_card, wallet, security, payments, referral
+  keywords    String   @default("") // comma-separated keywords for matching
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  views       Int      @default(0)
+  helpfulYes  Int      @default(0)
+  helpfulNo   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ChatOperator {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String   @unique
+  email       String?
+  role        String   @default("operator") // operator, supervisor, admin
+  department  String   @default("support")
+  maxChats    Int      @default(5)
+  isOnline    Boolean  @default(false)
+  isAvailable Boolean  @default(true)
+  status      String   @default("active") // active, inactive, suspended
+  avatar      String?
+  socketId    String?
+  lastSeenAt  DateTime?
+  totalChats  Int      @default(0)
+  avgRating   Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ChatAIConfig {
+  id              String   @id @default(cuid())
+  isEnabled       Boolean  @default(true)
+  systemPrompt    String   @default("تو دستیار هوشمند پشتیبانی زرین گلد هستی. به سوالات کاربران درباره خرید و فروش طلا، کیف پول، کارت طلایی، وام، حساب کاربری و سایر خدمات پاسخ بده. پاسخ‌ها باید مختصر، دوستانه و به زبان فارسی باشند.")
+  fallbackMessage String   @default("متشکرم از پیام شما. به زودی یک اپراتور پاسخ خواهد داد.")
+  maxHistory      Int      @default(10)
+  responseDelay   Int      @default(2000)
+  greetingMessage String   @default("سلام! 👋 من دستیار هوشمند زرین گلد هستم. چطور می‌تونم کمکتون کنم؟")
+  offlineMessage  String   @default("در حال حاضر اپراتور آنلاین نیست. دستیار هوشمند در خدمت شماست.")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
 model TelegramAlert {
   id              String   @id @default(cuid())
   telegramUserId  String

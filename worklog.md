@@ -210,3 +210,105 @@ Stage Summary:
 - Admin panel updated with trading dashboard
 - Main menu keyboard updated with 12 interactive buttons
 - Help command updated with full command list
+
+---
+Task ID: 7
+Agent: Main Agent
+Task: Create Smart Chat System API Routes
+
+Work Log:
+- Verified Prisma models already exist: ChatFAQ, ChatOperator, ChatAIConfig
+- Created 6 new API route files under /api/chat/:
+  1. GET/POST /api/chat/faq — List FAQs (with category, active, search filters) / Create FAQ
+  2. PUT/DELETE /api/chat/faq/[id] — Update FAQ / Delete FAQ
+  3. GET/POST /api/chat/operators — List operators (with department, status, online, role filters) / Add operator
+  4. PUT/DELETE /api/chat/operators/[id] — Update operator status / Remove operator
+  5. POST /api/chat/ai-reply — Smart AI reply with 3-tier logic: FAQ keyword match → LLM (z-ai-web-dev-sdk) → Fallback
+  6. GET/PUT /api/chat/config — Get AI config / Update AI config
+- AI reply route uses z-ai-web-dev-sdk for LLM with Zarin Gold-specific system prompt
+- FAQ matching uses Persian text normalization (diacritics removal, ZWNJ handling) + keyword scoring
+- Auto-creates default ChatAIConfig if none exists in database
+- All error messages in Persian matching project convention
+- Zero lint errors on all new files
+- db:push confirms schema is in sync
+
+Stage Summary:
+- 6 new API routes for the smart chat system
+- FAQ management: CRUD with keyword-based search, category filtering, view/helpful tracking
+- Operator management: CRUD with online status, department, role, availability
+- AI reply: 3-tier response system (FAQ → LLM → fallback) with Zarin Gold context
+- AI config: GET/PUT for system prompt, greeting, offline message, response delay, max history
+- Database schema already contained ChatFAQ, ChatOperator, ChatAIConfig models
+
+---
+Task ID: 8
+Agent: Main Agent
+Task: Upgrade chat-service mini-service with dynamic operators, FAQ, AI replies, HTTP REST API
+
+Work Log:
+- Completely rewrote mini-services/chat-service/index.ts (~1085 lines)
+- Removed hardcoded MOCK_OPERATORS array, replaced with dynamic in-memory Map<string, Operator>
+- Added HTTP REST API server on same port 3005 alongside Socket.io:
+  - GET /api/operators — List all registered operators
+  - POST /api/operators — Add operator { name, phone, email?, role? }
+  - PUT /api/operators/:id — Update operator (toggle online, status, etc.)
+  - DELETE /api/operators/:id — Remove operator (cleans up assignments)
+  - GET /api/faq?category=xxx — List FAQs (optionally filtered by category)
+  - POST /api/faq-match — Match message against FAQ keywords
+  - GET /api/stats — Service health and stats (uptime, connections, queue)
+- Changed Socket.io path from `/` to default `/socket.io` to avoid conflicts with REST API routes
+- Added manual CORS handler in HTTP request listener
+- Replaced random auto-replies with AI-powered responses:
+  - Calls GET http://localhost:3000/api/chat/config for greeting message
+  - Calls POST http://localhost:3000/api/chat/ai-reply for smart AI replies
+  - Falls back to FAQ keyword matching before AI call
+  - Final fallback to generic Persian message if AI unavailable
+  - Sender set to "دستیار هوشمند" with senderType 'ai'
+- Added greeting on user join (calls Next.js /api/chat/config, falls back to default)
+- Auto-reply only fires when no real operator is connected
+- Real operator responses cancel pending AI auto-replies
+- Added operator verification on socket join (must exist in operators registry)
+- Added FAQ system with 8 built-in Persian FAQs across 6 categories
+- Updated frontend SupportMessage type to include 'ai' senderType
+- package.json scripts unchanged (bun --hot index.ts)
+- All 12 endpoint tests passed successfully
+
+Stage Summary:
+- Chat service upgraded from mock-based to production-ready on port 3005
+- Socket.io real-time + HTTP REST API coexist without conflicts
+- Dynamic operator management via REST endpoints (CRUD)
+- FAQ keyword matching with 8 built-in entries (6 categories)
+- AI auto-reply chain: FAQ match → Next.js AI API → generic fallback
+- AI greeting on user join when no operator online
+- Operator verification on socket connection
+- Frontend use-chat.ts updated with 'ai' senderType support
+
+---
+Task ID: 9
+Agent: Main Agent
+Task: Enhance ChatWidget and ChatView with AI styling, FAQ quick buttons, AI status indicator
+
+Work Log:
+- Enhanced ChatWidget.tsx (`/src/components/shared/ChatWidget.tsx`):
+  1. AI Message Bubble: Added Bot icon avatar (violet-100 bg), violet-50 bubble with violet-200 border, violet "AI" badge next to sender name
+  2. FAQ Quick Buttons: Fetch FAQs from `/api/chat/faq?category=general&active=true` on mount, show up to 6 as clickable pills with HelpCircle icon + "سوالات متداول" label
+  3. AI Status Indicator: HeaderStatus component — operator online (green dot + "آنلاین"), AI mode (Sparkles icon + "هوش مصنوعی" in violet), disconnected (red dot + "قطع ارتباط")
+  4. Enhanced Empty State: Sparkles/Bot icon in violet circle, "به پشتیبانی زرین گلد خوش آمدید" welcome text, "دستیار هوشمند ما آماده پاسخگویی است" subtitle, FAQ buttons below
+- Enhanced ChatView.tsx (`/src/components/chat/ChatView.tsx`) with identical features:
+  1. AIBubble component with violet theme (Bot icon, violet-100 avatar, violet-50 bubble, violet-200 border, "AI" badge, violet check marks)
+  2. FAQQuickButtons component centered layout with larger pills
+  3. EmptyState component with isAIMode prop, Sparkles icon for AI, Bot icon otherwise, FAQ section
+  4. HeaderStatusRow component with 3 states (operator online, AI mode, disconnected)
+  5. TypingIndicator updated with isAI prop for violet styling
+- New imports: Bot, Sparkles, HelpCircle from lucide-react
+- Removed unused imports: MessageCircle from both files
+- All existing functionality preserved (send message, typing indicator, connection status, RTL)
+- Zero lint errors in modified files
+- ESLint shows only pre-existing errors in other files (TelegramBotAdmin, EmailSettings, etc.)
+
+Stage Summary:
+- Both ChatWidget and ChatView now fully support AI message differentiation
+- AI messages have distinct violet/purple styling while operator messages retain amber/gold theme
+- FAQ quick buttons provide quick-start experience in empty state (graceful fallback if API unavailable)
+- AI status indicator dynamically adapts header based on connection state and operator availability
+- User experience: AI-assisted chat feels distinct from human operator chat
