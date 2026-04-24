@@ -6,9 +6,10 @@ const PORT = 3000;
 const STATIC_DIR = '/home/z/my-project/public';
 const NEXT_DIR = '/home/z/my-project/.next';
 const STANDALONE_DIR = '/home/z/my-project/.next/standalone';
+const CACHED_HTML = '/home/z/my-project/cached-homepage.html';
 
 // Load cached page
-let cachedPage = fs.readFileSync('/tmp/cached-page.html', 'utf8');
+let cachedPage = fs.readFileSync(CACHED_HTML, 'utf8');
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -79,6 +80,23 @@ const server = http.createServer((req, res) => {
     return;
   }
   
+  // API routes - try to proxy to Next.js standalone
+  if (url.startsWith('/api/')) {
+    // For API routes, return empty JSON (APIs need full Next.js)
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: false, message: 'API routes require full server' }));
+    return;
+  }
+
+  // _next static assets
+  if (url.startsWith('/_next/')) {
+    const nextPath = url.startsWith('/_next/static') 
+      ? path.join(NEXT_DIR, url) 
+      : path.join(STANDALONE_DIR, '.next', url);
+    serveFile(nextPath, res);
+    return;
+  }
+
   // Static files - try multiple locations
   const candidates = [
     path.join(STANDALONE_DIR, url),
