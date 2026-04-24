@@ -26,6 +26,7 @@ import {
   Layers,
   Mail,
   Bot,
+  ShieldHalf,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useAppStore } from '@/lib/store';
@@ -96,6 +97,7 @@ const adminNavSections: { title: string; items: AdminNavItem[] }[] = [
   {
     title: 'سیستم',
     items: [
+      { label: 'نقش‌ها و دسترسی‌ها', page: 'roles', icon: ShieldHalf },
       { label: 'بکاپ دیتابیس', page: 'backups', icon: Database },
       { label: 'ایزی اینستالر', page: 'easy-installer', icon: Package },
       { label: 'سپر امنیتی', page: 'security', icon: Shield },

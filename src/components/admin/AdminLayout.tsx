@@ -25,6 +25,7 @@ import GatewayAdminView from './GatewayAdminView';
 import SmsSettings from '@/components/sms/SmsSettings';
 import EmailSettings from '@/components/email/EmailSettings';
 import TelegramBotAdmin from './TelegramBotAdmin';
+import AdminRoles from './pages/AdminRoles';
 import ToastContainer from '@/components/shared/ToastContainer';
 import {
   Sheet,
@@ -60,6 +61,7 @@ function AdminPageRouter() {
     case 'sms-marketing': return <SmsSettings />;
     case 'email-marketing': return <EmailSettings />;
     case 'telegram-bot': return <TelegramBotAdmin />;
+    case 'roles': return <AdminRoles />;
     case 'security': return <AdminSecurity />;
     case 'landing-builder': return <AdminLandingBuilder />;
     default: return <AdminDashboard />;

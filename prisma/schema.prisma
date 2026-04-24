@@ -20,7 +20,7 @@ model User {
   avatar        String?
   referredBy    String?
   referralCode  String   @unique
-  userLevel      String   @default("bronze")
+  userLevel     String   @default("bronze")
   levelUpgradedAt DateTime?
   lastLoginAt   DateTime?
   createdAt     DateTime @default(now())
@@ -60,7 +60,71 @@ model User {
   merchant            Merchant?
   blogPosts           BlogPost[]
   telegramUser        TelegramUser?
+  activities          UserActivity[]
+  roles               UserRole[]
+}
 
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  label       String
+  description String?
+  permissions String   @default("[]")
+  color       String   @default("#6B7280")
+  isSystem    Boolean  @default(false)
+  priority    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users          UserRole[]
+  rolePermissions RolePermission[]
+}
+
+model UserRole {
+  id          String   @id @default(cuid())
+  userId      String
+  roleId      String
+  assignedBy  String?
+  assignedAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  label       String
+  module      String
+  description String?
+  createdAt   DateTime @default(now())
+
+  roles RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
+model UserActivity {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  details   String?
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Profile {
