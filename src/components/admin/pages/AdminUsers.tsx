@@ -1540,6 +1540,7 @@ export default function AdminUsers() {
             خروجی CSV
           </Button>
         </div>
+      </div>
 
       {/* ── Stats Dashboard Row (6 cards) ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -1950,6 +1951,13 @@ export default function AdminUsers() {
           </Button>
         </div>
       )}
+
+      {/* ── Create User Dialog ── */}
+      <CreateUserDialog
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreated={fetchUsers}
+      />
 
       {/* ── User Detail Dialog ── */}
       <UserDetailDialog

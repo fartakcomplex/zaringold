@@ -427,3 +427,33 @@ Stage Summary:
 - GitHub repo: github.com/fartakcomplex/zaringold
 - Latest release: v2.3.0 - پایداری و بهبود عملکرد
 - Release URL: https://github.com/fartakcomplex/zaringold/releases/tag/v2.3.0
+
+---
+Task ID: 14
+Agent: Main Agent
+Task: Add "Create User" button to Admin Users page (fix missing CreateUserDialog render)
+
+Work Log:
+- Found that CreateUserDialog component was fully implemented (lines 1003-1293) but NEVER rendered in JSX
+- The "افزودن کاربر" button existed with onClick={() => setCreateOpen(true)} but the dialog was missing from the render tree
+- Also found a missing closing </div> for the page header section (causing JSX structure error)
+- Fixed both issues:
+  1. Added </div> to close the header wrapper div before the Stats Dashboard section
+  2. Added <CreateUserDialog open={createOpen} onClose={() => setCreateOpen(false)} onCreated={fetchUsers} /> to render output
+- The CreateUserDialog already supports:
+  - Phone number input (required, with validation)
+  - Full name input (optional)
+  - Email input (optional)
+  - Password input (optional - auto-generates secure random password if left empty)
+  - Role selection grid (user, admin, super_admin, support_admin, finance_admin, support_agent, viewer)
+  - Verify toggle (isVerified)
+  - Generated password display with copy button
+- Backend API POST /api/admin/users already existed and working
+- Lint check passed - zero errors in AdminUsers.tsx
+
+Stage Summary:
+- "افزودن کاربر" (Add User) button now works correctly in admin panel → کاربران section
+- Dialog opens with full form: phone, name, email, password, role grid, verify toggle
+- Auto-generates password if left empty, shows it with copy button after creation
+- Creates user with wallet, gold wallet, and gamification data automatically
+- All 7 role types supported: کاربر عادی, مدیر سیستم, مدیر ارشد, مدیر پشتیبانی, مدیر مالی, اپراتور پشتیبانی, بازدیدکننده
