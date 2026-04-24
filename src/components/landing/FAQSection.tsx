@@ -161,7 +161,7 @@ function FAQItem({
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function FAQSection() {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const handleToggle = (index: number) => {
@@ -171,7 +171,7 @@ export default function FAQSection() {
   return (
     <section
       id="faq"
-      dir="rtl"
+      dir={dir}
       className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
     >
       {/* ── Background ── */}
@@ -223,13 +223,13 @@ export default function FAQSection() {
           <div
             className="inline-flex items-center gap-3 rounded-2xl px-6 py-4"
             style={{
-              background: 'linear-gradient(135deg, oklch(0.98 0.025 85 / 80%), oklch(0.995 0.01 85 / 90%))',
-              border: '1px solid oklch(0.75 0.15 85 / 10%)',
+              background: 'linear-gradient(135deg, oklch(0.95 0.012 85 / 85%), oklch(0.97 0.008 85 / 90%))',
+              border: '1px solid oklch(0.75 0.15 85 / 15%)',
               backdropFilter: 'blur(16px)',
             }}
           >
             <HelpCircle className="size-5 text-gold" />
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-600">
               هنوز سوالی دارید؟
             </span>
             <button className={cn(

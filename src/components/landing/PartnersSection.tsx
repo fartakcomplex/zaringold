@@ -47,12 +47,12 @@ const partnerBadges = [
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function PartnersSection() {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
   return (
     <section
       id="partners"
-      dir="rtl"
+      dir={dir}
       className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
     >
       {/* ── Background decorative glow ── */}

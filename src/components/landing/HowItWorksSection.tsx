@@ -240,7 +240,7 @@ function DesktopStepCard({ step, index }: { step: StepItem; index: number }) {
         </h3>
 
         {/* Description */}
-        <p className="text-xs leading-relaxed text-foreground/70 sm:text-sm">
+        <p className="text-xs leading-relaxed text-foreground/80 sm:text-sm">
           {t(step.descKey)}
         </p>
 
@@ -258,12 +258,12 @@ function DesktopStepCard({ step, index }: { step: StepItem; index: number }) {
 /* ═══════════════════════════════════════════════════════════════ */
 
 export default function HowItWorksSection() {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
   return (
     <section
       id="how-it-works"
-      dir="rtl"
+      dir={dir}
       className="relative py-16 sm:py-20 lg:py-24"
     >
       {/* ── Background elements ── */}

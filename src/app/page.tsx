@@ -22,6 +22,7 @@ import LoginDialog from '@/components/auth/LoginDialog';
 import RegisterDialog from '@/components/auth/RegisterDialog';
 import ToastContainer from '@/components/shared/ToastContainer';
 import ScrollToTop from '@/components/shared/ScrollToTop';
+import { useTranslation } from '@/lib/i18n';
 
 /* ------------------------------------------------------------------ */
 /*  Blog Landing Section (fetches latest 3 posts from API)              */
@@ -39,6 +40,7 @@ interface BlogLandingPost {
 }
 
 function BlogLandingSection({ onViewAll }: { onViewAll: () => void }) {
+  const { t, dir } = useTranslation();
   const [posts, setPosts] = useState<BlogLandingPost[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -66,18 +68,18 @@ function BlogLandingSection({ onViewAll }: { onViewAll: () => void }) {
   const getEmoji = (id: string) => POST_EMOJIS[id.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % POST_EMOJIS.length];
 
   return (
-    <section className="py-20" id="blog">
+    <section className="py-20" id="blog" dir={dir}>
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* Section Header */}
         <div className="mb-10 text-center">
           <span className="mb-3 inline-block rounded-full bg-gold/10 px-4 py-1 text-xs font-medium text-gold">
-            وبلاگ
+            {t('blog.badge')}
           </span>
-          <h2 className="mb-3 text-2xl font-extrabold sm:text-3xl">
-            آخرین <span className="gold-gradient-text">مقالات</span>
+          <h2 className="mb-3 text-2xl font-extrabold sm:text-3xl gold-gradient-text">
+            {t('blog.title')}
           </h2>
           <p className="mx-auto max-w-lg text-sm text-muted-foreground">
-            جدیدترین اخبار، تحلیل‌ها و آموزش‌های بازار طلا را در وبلاگ زرین گلد بخوانید.
+            {t('blog.subtitle')}
           </p>
         </div>
 
@@ -127,13 +129,13 @@ function BlogLandingSection({ onViewAll }: { onViewAll: () => void }) {
                   <span>
                     {(() => {
                       try {
-                        return new Intl.DateTimeFormat('fa-IR', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(post.publishedAt));
+                        return new Intl.DateTimeFormat(dir === 'rtl' ? 'fa-IR' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(post.publishedAt));
                       } catch {
                         return post.publishedAt;
                       }
                     })()}
                   </span>
-                  {post.readTime > 0 && <span>{post.readTime} دقیقه</span>}
+                  {post.readTime > 0 && <span>{post.readTime} {t('blog.minute')}</span>}
                 </div>
               </div>
             </article>
@@ -146,7 +148,7 @@ function BlogLandingSection({ onViewAll }: { onViewAll: () => void }) {
             onClick={onViewAll}
             className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-6 py-2.5 text-sm font-medium text-gold transition-all hover:bg-gold/10 hover:border-gold/50"
           >
-            مشاهده همه مقالات
+            {t('blog.viewAll')}
             <svg className="size-4 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -251,21 +253,22 @@ function LandingPageContent({
 /* ------------------------------------------------------------------ */
 
 function LandingPreviewToggle({ showLanding, onToggle }: { showLanding: boolean; onToggle: () => void }) {
+  const { t } = useTranslation();
   return (
     <button
       onClick={onToggle}
-      title={showLanding ? 'بازگشت به پنل کاربری' : 'مشاهده لندینگ پیج'}
+      title={showLanding ? t('toggle.backToDashboard') : t('toggle.viewLanding')}
       className="fixed bottom-4 right-4 z-[60] flex items-center gap-2 rounded-full bg-[#1A1A1A] border border-white/[0.08] px-4 py-2.5 text-xs font-medium text-white shadow-[0_2px_16px_rgba(0,0,0,0.5)] transition-all duration-200 hover:bg-[#252525] active:scale-95 md:bottom-6 md:right-6"
     >
       {showLanding ? (
         <>
           <LogIn className="size-4 text-[#D4AF37]" />
-          <span className="hidden sm:inline">پنل کاربری</span>
+          <span className="hidden sm:inline">{t('toggle.dashboard')}</span>
         </>
       ) : (
         <>
           <Eye className="size-4 text-[#D4AF37]" />
-          <span className="hidden sm:inline">لندینگ پیج</span>
+          <span className="hidden sm:inline">{t('toggle.landingPage')}</span>
         </>
       )}
     </button>

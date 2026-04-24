@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "next-themes";
@@ -41,6 +42,12 @@ const iranSans = localFont({
   display: "swap",
 });
 
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "زرین گلد | خرید و فروش طلای نوین",
   description: "پلتفرم معاملات طلای آنلاین - خرید، فروش و پس‌انداز طلا",
@@ -70,7 +77,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
-      <body className={`${iranSans.variable} antialiased bg-background text-foreground`}>
+      <body className={`${iranSans.variable} ${inter.variable} antialiased bg-background text-foreground font-[family-name:var(--font-vazir)]`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           {children}
           <Toaster />

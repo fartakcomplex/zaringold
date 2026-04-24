@@ -1083,3 +1083,273 @@ Stage Summary:
 - Dark-background cards retain CSS variable text colors (text-foreground/text-muted-foreground) for dark mode compatibility
 - Zero new lint errors introduced (all pre-existing errors in unrelated files)
 - Screenshots saved: qa-cards-fixed.png, qa-cards-testimonials.png, qa-cards-app-cta.png
+---
+Task ID: 1
+Agent: Main Agent
+Task: Make the gold coin element smaller, add perspective/distance effect, and move it down
+
+Work Log:
+- Analyzed uploaded screenshot to identify the gold coin element (circular coin with "Z" and "ZARRIN GOLD" text)
+- Modified HeroSection.tsx coin container: moved position down from top-20/top-24/top-28 to top-32/top-36/top-40
+- Reduced coin sizes from 90/140/200/240px to 70/110/155/185px across breakpoints
+- Added CSS perspective (800px), scale(0.9), and translateZ(-30px) for distance effect
+- Added transformStyle: preserve-3d on parent for proper 3D compositing
+- Reduced inner text sizes (Z letter and ZARRIN GOLD sub-text)
+- Reduced highlight/shadow decorative elements to match smaller coin
+- Reduced outer glow inset values
+- Verified via VLM screenshot analysis - all 3 requirements confirmed
+
+Stage Summary:
+- Gold coin element is now smaller, has a perspective "viewing from distance" feel, and positioned lower
+- File modified: /home/z/my-project/src/components/landing/HeroSection.tsx
+- No compilation errors, dev server running fine
+---
+Task ID: 2
+Agent: Main Agent
+Task: Center the shield icon inside the circle in the Security section's CentralShield component
+
+Work Log:
+- Analyzed user's uploaded screenshot to identify the element (CentralShield in SecuritySection)
+- Identified the issue: shield icon was inside a `flex flex-col` wrapper with orbiting dots, causing imperfect centering
+- Removed the flex-col wrapper structure
+- Made the shield icon absolute-positioned with `top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2` for perfect centering
+- Moved orbiting dots out of the flex wrapper and made them direct children of the circle, positioned with percentage-based offsets (38% radius)
+- Verified via VLM screenshot analysis: icon is now perfectly centered in the circle
+
+Stage Summary:
+- Shield icon is now perfectly centered in the circular element
+- File modified: /home/z/my-project/src/components/landing/SecuritySection.tsx
+- No compilation errors
+
+---
+Task ID: R24-LightMode
+Agent: Main Agent
+Task: Fix light mode card backgrounds and border colors for landing pages
+
+Work Log:
+- Analyzed all landing page components for light mode styling issues
+- Identified root causes: CSS variables too bright, hardcoded inline styles, missing dark: variants
+- Fixed globals.css light mode CSS variables:
+  - --card: 0.995→0.96 (darker warm white)
+  - --popover: same as card
+  - --secondary: 0.965→0.94 (darker)
+  - --muted: 0.945→0.92 (darker)
+  - --accent: 0.94→0.92 (darker)
+  - --border: 0.87→0.82 (stronger for visibility)
+  - --input: 0.87→0.82 (match border)
+  - --sidebar: 0.98→0.955
+  - --sidebar-accent: 0.94→0.92
+  - --sidebar-border: 0.905→0.87
+- Fixed glass CSS classes in globals.css:
+  - .glass-card: 0.975→0.95, border 10%→15%
+  - .glass-card-enhanced: 0.975→0.945, border 12%→18%
+  - .glass-gold: 0.97→0.94, border 12%→18%
+  - .drawer-gold-panel: 0.98→0.955
+  - .gold-shimmer: darkened base colors
+- Fixed FeaturesSection.tsx: bg-white/80 → bg-card/90, border-white/50 → border-border/50, icon border-white/60 → border-border/40
+- Fixed TestimonialsSection.tsx: Removed alternating light/dark hardcoded card backgrounds, unified to slightly darker warm bg (0.95), replaced all hardcoded text-gray-* colors with semantic text-foreground/text-muted-foreground
+- Fixed CTASection.tsx: Darkened inline style backgrounds for user badge and trust indicator cards, replaced text-gray-900/500 with semantic text-foreground/text-muted-foreground
+- Fixed FAQSection.tsx: Darkened inline style CTA card background, replaced text-gray-500 with text-muted-foreground
+- Fixed LandingNav.tsx: Darkened mobile menu panel background from 0.975→0.955
+- Fixed LandingFooter.tsx: Changed social icons bg-white/60 → bg-card/60, newsletter input bg-white/60 → bg-card/60
+
+Stage Summary:
+- Light mode card backgrounds significantly darkened across all landing page components
+- Border colors strengthened for better visibility in light mode
+- All hardcoded gray-* text colors replaced with semantic CSS variables (text-foreground, text-muted-foreground)
+- Alternating light/dark card pattern removed from testimonials (was causing dark cards in light mode)
+- Dev server compiled successfully with zero errors
+- Dark mode styling unchanged (was already working correctly)
+
+---
+Task ID: 2-c
+Agent: Sub Agent
+Task: Fix all hardcoded dir="rtl" in landing section components + update page.tsx
+
+Work Log:
+- Read worklog.md for previous agent context
+- Grepped for all `dir="rtl"` instances across landing components
+- Found 12 files with hardcoded `dir="rtl"` (GoldCalcSection.tsx had none)
+- For each file: added `dir` to destructured `useTranslation()` call, replaced `dir="rtl"` with `dir={dir}`
+- Files fixed:
+  1. HeroSection.tsx — line 119: `const { t, dir }`, line 225: `dir={dir}`
+  2. FeaturesSection.tsx — line 289: `const { t, dir }`, line 294: `dir={dir}`
+  3. HowItWorksSection.tsx — line 261: `const { t, dir }`, line 266: `dir={dir}`
+  4. CalculatorSection.tsx — line 160: `const { t, dir }`, line 222: `dir={dir}`
+  5. SecuritySection.tsx — line 295: `const { t, dir }`, line 300: `dir={dir}`
+  6. PartnersSection.tsx — line 50: `const { t, dir }`, line 55: `dir={dir}`
+  7. TestimonialsSection.tsx — line 91: `const { t, dir }`, line 116: `dir={dir}`
+  8. ComparisonSection.tsx — line 143: `const { t, dir }`, line 148: `dir={dir}`
+  9. FAQSection.tsx — line 164: `const { t, dir }`, line 174: `dir={dir}`
+  10. AppDownloadSection.tsx — line 294: `const { t, dir }`, line 299: `dir={dir}`
+  11. CTASection.tsx — line 52: `const { t, dir }`, line 57: `dir={dir}`
+  12. LandingHero.tsx — line 62: `const { t, dir }`, line 116: `dir={dir}`
+- Updated page.tsx:
+  - Added `import { useTranslation } from '@/lib/i18n'`
+  - BlogLandingSection: added `const { t, dir } = useTranslation()`, `dir={dir}` on section
+  - Replaced hardcoded Persian text with i18n keys: blog.badge, blog.title, blog.subtitle, blog.minute, blog.viewAll
+  - Moved gold-gradient-text class to h2 element (full title instead of span)
+  - Date formatting: changed `'fa-IR'` to `dir === 'rtl' ? 'fa-IR' : 'en-US'`
+  - LandingPreviewToggle: added `const { t } = useTranslation()`, replaced all hardcoded text with toggle.* keys
+- Verified: zero `dir="rtl"` remaining in section files (grep confirmed)
+- Dev server compiled successfully (✓ Compiled in XXXms), no new errors
+- ESLint: all errors are pre-existing (EmailSettings, MediaPicker, static-server.js)
+
+Stage Summary:
+- All 12 landing section components now use dynamic `dir={dir}` from useTranslation() instead of hardcoded `dir="rtl"`
+- page.tsx BlogLandingSection fully internationalized with i18n keys
+- page.tsx LandingPreviewToggle fully internationalized with i18n keys
+- Date formatting is locale-aware (fa-IR for RTL, en-US for LTR)
+- GoldCalcSection.tsx had no `dir="rtl"` to fix (confirmed clean)
+- No changes to gradient directions or margin classes (kept minimal scope)
+
+---
+Task ID: 2-a
+Agent: i18n-font-updater
+Task: Add English font to layout.tsx and new translation keys to i18n.ts
+
+Work Log:
+- Added Inter font from next/font/google to layout.tsx as second font
+- Updated body className to include both ${iranSans.variable} ${inter.variable} and font-[family-name:var(--font-vazir)]
+- Added font switching logic in setLocale() function in i18n.ts
+- Added ~52 new translation keys for footer, banner, blog, toggle, logo in both fa and en
+
+Stage Summary:
+- layout.tsx now loads both IRANSansWeb and Inter fonts
+- i18n.ts setLocale() switches font-family on body based on locale (fa → --font-vazir, en → --font-inter)
+- All new translation keys added for both fa and en locales
+
+---
+Task ID: 2-b
+Agent: Sub Agent
+Task: Update LandingNav.tsx and LandingFooter.tsx for full i18n support
+
+Work Log:
+- Verified all translation keys (footer.*, banner.*, logo.letter) already exist in i18n.ts (both fa and en)
+- Confirmed useTranslation() hook returns { t, locale, dir, setLocale }
+
+**LandingNav.tsx changes:**
+- Changed `const { t } = useTranslation()` to `const { t, dir } = useTranslation()`
+- Replaced all 3 hardcoded `dir="rtl"` with `dir={dir}` (banner, header, mobile panel)
+- Translated banner text: hardcoded Persian → `{t('banner.text')}`, aria-label → `{t('footer.closeBanner')}`
+- Translated logo letter: `ز` → `{t('logo.letter')}` in both header and mobile menu
+- Translated mobile menu subtitle: `Gold Trading` → `{t('footer.goldTrading')}`
+- Fixed mobile menu panel direction for LTR: `initial/exit x` now uses conditional based on `dir` (RTL slides from right, LTR from left)
+- Replaced `right-0` with `start-0` for direction-aware panel positioning
+- Replaced `border-l` with `border-s` for direction-aware border
+- Imported ChevronRight and used conditional: `dir === 'rtl' ? ChevronLeft : ChevronRight` for mobile nav link arrows
+- Changed all `bg-gradient-to-l` to `bg-gradient-to-r` for proper gradient direction (CSS dir attribute handles mirroring)
+
+**LandingFooter.tsx changes:**
+- Added `import { useTranslation } from '@/lib/i18n'`
+- Added `const { t, dir } = useTranslation()` inside LandingFooter component
+- Moved hardcoded data arrays (quickLinks, services, socials) inside the component to use `t()` calls
+- Imported ArrowRight and added dir-aware arrow in FooterLink component
+- Added dir-aware arrow in NewsletterInput submit button
+- Added `useTranslation()` hook to both FooterLink and NewsletterInput sub-components
+- Replaced all hardcoded text with translation keys:
+  - Newsletter title/desc/placeholder/success message
+  - Brand name/subtitle/description
+  - Trust badges (SSL Secure, Official License)
+  - Column headers (Quick Links, Services, Contact Us)
+  - Address, copyright, made with, version
+- Added `dir={dir}` to footer root div for proper RTL/LTR layout
+- Fixed SocialIcon type to accept the socials array structure
+- Changed `bg-gradient-to-l` to `bg-gradient-to-r` throughout
+
+- ESLint: zero new errors in both files (all pre-existing errors in other files)
+- Dev server compiles successfully
+
+Stage Summary:
+- LandingNav.tsx fully i18n-aware: direction, text, arrows, mobile panel slide direction all adapt to locale
+- LandingFooter.tsx fully i18n-aware: all text translated, data arrays use t(), arrows direction-aware
+- Both components now properly support RTL (fa) and LTR (en) switching
+- Mobile menu slides from correct side based on direction
+- Chevron arrows flip based on text direction
+
+---
+Task ID: 2-a
+Agent: i18n-font-updater
+Task: Add English font to layout.tsx and new translation keys to i18n.ts
+
+Work Log:
+- Added Inter font from next/font/google to layout.tsx with --font-inter CSS variable
+- Updated body className to include both font variables: iranSans.variable + inter.variable
+- Added font switching in setLocale(): fa uses var(--font-vazir), en uses var(--font-inter)
+- Added ~42 new translation keys in both fa and en sections for: footer (31 keys), banner (1), blog (5), toggle (4), logo (1)
+- Fixed duplicate goldCard.cardFrozen property in both fa and en sections
+
+Stage Summary:
+- layout.tsx loads both IRANSansWeb (Persian) and Inter (English) fonts
+- Font switches dynamically based on locale selection via body.style.fontFamily
+- All new translation keys added for footer, banner, blog, toggle, and logo letter
+
+---
+Task ID: 2-b
+Agent: landing-components-updater
+Task: Update LandingNav.tsx and LandingFooter.tsx for full i18n support
+
+Work Log:
+- LandingNav.tsx: Added dir to useTranslation destructuring, replaced 3 hardcoded dir="rtl" with dir={dir}
+- Translated banner text, close button aria-label, logo letter, mobile subtitle
+- Made mobile panel slide direction-aware (RTL from right, LTR from left)
+- Fixed positioning: right-0 → start-0, border-l → border-s
+- Conditional ChevronLeft/ChevronRight based on direction
+- LandingFooter.tsx: Added useTranslation import and hook
+- Moved data arrays (quickLinks, services, socials) inside component to use t()
+- Translated ALL hardcoded Persian text (newsletter, brand, description, badges, headers, address, copyright, version)
+- Added ArrowLeft/ArrowRight conditional in FooterLink based on direction
+- NewsletterInput uses useTranslation for all text
+- Added dir={dir} to footer root div
+
+Stage Summary:
+- LandingNav and LandingFooter fully internationalized with useTranslation
+- All hardcoded Persian text replaced with translation keys
+- Direction-aware animations, positioning, and icon directions
+- Mobile menu slides from correct side based on LTR/RTL
+
+---
+Task ID: 2-c
+Agent: section-components-updater
+Task: Fix dir="rtl" in all landing section components + update page.tsx
+
+Work Log:
+- Fixed dir="rtl" → dir={dir} in 12 landing section components:
+  HeroSection, FeaturesSection, HowItWorksSection, CalculatorSection, SecuritySection,
+  PartnersSection, TestimonialsSection, ComparisonSection, FAQSection,
+  AppDownloadSection, CTASection, LandingHero
+- Each file updated: const { t } = useTranslation() → const { t, dir } = useTranslation()
+- page.tsx: Added useTranslation import, translated BlogLandingSection (5 strings) and LandingPreviewToggle (4 strings)
+- Made date formatting locale-aware: fa-IR vs en-US based on dir
+- Zero new lint errors from our changes
+
+Stage Summary:
+- All 12 landing section components now use dynamic dir={dir} instead of hardcoded dir="rtl"
+- page.tsx BlogLandingSection and LandingPreviewToggle fully translated
+- Date formatting is locale-aware
+- Dev server compiles successfully
+
+---
+Task ID: 17
+Agent: Main Agent
+Task: Fix unreadable card elements in landing page sections (dark mode contrast issue)
+
+Work Log:
+- User reported that card elements (names, text, dates) inside testimonials and other landing page sections were completely unreadable
+- Root cause: Cards used hardcoded light oklch backgrounds (oklch(0.95+)) via inline styles, but text used theme-aware Tailwind classes (text-foreground, text-muted-foreground)
+- In dark mode, text-foreground resolves to oklch(0.93) (very light), creating white-on-white invisible text
+- Fixed all affected sections by replacing theme-aware text classes with explicit dark color classes (text-gray-900, text-gray-700, text-gray-500) inside light-background cards
+- Fixed sections:
+  1. TestimonialsSection - names, dates, review text, online indicators
+  2. CTASection - user count badge text, trust indicator cards, avatar borders
+  3. FAQSection - bottom CTA card text
+  4. AppDownloadSection - direct APK button text
+  5. LandingNav - mobile drawer menu text (all items, labels, buttons)
+- Verified both light and dark mode with screenshots - all text now readable with good contrast
+
+Stage Summary:
+- 5 landing page component files modified for readability
+- Core fix: explicit dark text colors (text-gray-900, text-gray-700, text-gray-500) inside cards with fixed light backgrounds
+- Online indicator dots: changed bg-background to bg-white/90
+- Avatar borders: changed border-background to border-white/80
+- QA verified: both dark and light modes pass readability check via VLM analysis

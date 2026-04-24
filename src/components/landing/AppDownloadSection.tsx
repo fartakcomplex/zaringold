@@ -291,12 +291,12 @@ function DownloadButton({
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function AppDownloadSection() {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
   return (
     <section
       id="app-download"
-      dir="rtl"
+      dir={dir}
       className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
     >
       {/* ── Gold separator at top ── */}
@@ -431,7 +431,7 @@ export default function AppDownloadSection() {
               <button
                 className={cn(
                   'flex items-center gap-2 rounded-xl px-4 py-2.5',
-                  'text-xs text-muted-foreground hover:text-gold font-medium',
+                  'text-xs text-gray-600 hover:text-gold font-medium',
                   'transition-all duration-200',
                   'hover:shadow-[0_0_12px_rgba(212,175,55,0.08)]',
                 )}

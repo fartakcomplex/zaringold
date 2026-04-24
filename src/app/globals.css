@@ -58,10 +58,10 @@
   --background: oklch(1 0 0);
   --foreground: oklch(0.12 0.005 60);
 
-  /* Cards & popovers — warm white tint */
-  --card: oklch(0.995 0.003 85);
+  /* Cards & popovers — slightly darker warm white for readability */
+  --card: oklch(0.96 0.008 85);
   --card-foreground: oklch(0.12 0.005 60);
-  --popover: oklch(0.995 0.003 85);
+  --popover: oklch(0.96 0.008 85);
   --popover-foreground: oklch(0.12 0.005 60);
 
   /* Primary — gold */
@@ -69,23 +69,23 @@
   --primary-foreground: oklch(0.12 0.005 60);
 
   /* Secondary — warm off-white */
-  --secondary: oklch(0.965 0.01 85);
+  --secondary: oklch(0.94 0.012 85);
   --secondary-foreground: oklch(0.2 0.01 85);
 
-  /* Muted — subtle gray */
-  --muted: oklch(0.96 0.005 85);
-  --muted-foreground: oklch(0.52 0.01 85);
+  /* Muted — subtle gray (darker for readability) */
+  --muted: oklch(0.92 0.008 85);
+  --muted-foreground: oklch(0.40 0.01 85);
 
   /* Accent — light gold tint */
-  --accent: oklch(0.94 0.035 85);
+  --accent: oklch(0.92 0.035 85);
   --accent-foreground: oklch(0.2 0.01 85);
 
   /* Destructive — red */
   --destructive: oklch(0.577 0.245 27.325);
 
-  /* Borders & inputs */
-  --border: oklch(0.905 0.01 85);
-  --input: oklch(0.905 0.01 85);
+  /* Borders & inputs (stronger for visibility) */
+  --border: oklch(0.82 0.012 85);
+  --input: oklch(0.82 0.012 85);
   --ring: oklch(0.75 0.15 85);
 
   /* Chart palette — gold shades & complementary tones */
@@ -96,13 +96,13 @@
   --chart-5: oklch(0.6 0.14 30);        /* amber accent */
 
   /* Sidebar */
-  --sidebar: oklch(0.98 0.008 85);
+  --sidebar: oklch(0.955 0.008 85);
   --sidebar-foreground: oklch(0.12 0.005 60);
   --sidebar-primary: oklch(0.75 0.15 85);
   --sidebar-primary-foreground: oklch(0.12 0.005 60);
-  --sidebar-accent: oklch(0.94 0.035 85);
+  --sidebar-accent: oklch(0.92 0.035 85);
   --sidebar-accent-foreground: oklch(0.2 0.01 85);
-  --sidebar-border: oklch(0.905 0.01 85);
+  --sidebar-border: oklch(0.87 0.01 85);
   --sidebar-ring: oklch(0.75 0.15 85);
 }
 
@@ -256,9 +256,9 @@
   overflow: hidden;
   background: linear-gradient(
     90deg,
-    oklch(0.92 0.02 85) 25%,
-    oklch(0.96 0.04 85) 50%,
-    oklch(0.92 0.02 85) 75%
+    oklch(0.90 0.02 85) 25%,
+    oklch(0.94 0.04 85) 50%,
+    oklch(0.90 0.02 85) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 2s ease-in-out infinite;
@@ -309,10 +309,10 @@
 
 /* Glass card with backdrop blur */
 .glass-card {
-  background: oklch(1 0 0 / 60%);
+  background: oklch(0.95 0.012 85 / 88%);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid oklch(1 0 0 / 20%);
+  border: 1px solid oklch(0.75 0.15 85 / 15%);
 }
 
 /*
@@ -637,13 +637,13 @@ html {
 
 /* ── Enhanced glass-morphism ── */
 .glass-card-enhanced {
-  background: oklch(1 0 0 / 50%);
+  background: oklch(0.945 0.012 85 / 90%);
   backdrop-filter: blur(24px) saturate(200%);
   -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border: 1px solid oklch(1 0 0 / 15%);
+  border: 1px solid oklch(0.75 0.15 85 / 18%);
   box-shadow:
-    0 8px 32px oklch(0 0 0 / 5%),
-    inset 0 1px 0 oklch(1 0 0 / 20%);
+    0 8px 32px oklch(0 0 0 / 6%),
+    inset 0 1px 0 oklch(1 0 0 / 25%);
 }
 
 .dark .glass-card-enhanced {
@@ -1112,7 +1112,7 @@ html {
 
 /* ── Drawer gold-themed slide-up panel ── */
 .drawer-gold-panel {
-  background: oklch(0.98 0.025 85 / 98%);
+  background: oklch(0.955 0.025 85 / 98%);
   backdrop-filter: blur(24px) saturate(200%);
   -webkit-backdrop-filter: blur(24px) saturate(200%);
   border-top: 2px solid oklch(0.75 0.15 85 / 30%);
@@ -1306,13 +1306,13 @@ html {
 
 /* ── glass-gold: Glass-morphism with gold tint ── */
 .glass-gold {
-  background: oklch(0.97 0.03 85 / 55%);
+  background: oklch(0.94 0.03 85 / 60%);
   backdrop-filter: blur(18px) saturate(180%);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
-  border: 1px solid oklch(0.75 0.15 85 / 12%);
+  border: 1px solid oklch(0.75 0.15 85 / 18%);
   box-shadow:
-    0 4px 16px oklch(0 0 0 / 4%),
-    inset 0 1px 0 oklch(0.97 0.06 85 / 30%);
+    0 4px 16px oklch(0 0 0 / 5%),
+    inset 0 1px 0 oklch(0.97 0.06 85 / 25%);
 }
 
 .dark .glass-gold {
@@ -1657,14 +1657,14 @@ html {
 
 /* ── card-glass-premium: Enhanced glassmorphism with gold tint ── */
 .card-glass-premium {
-  background: oklch(0.98 0.025 85 / 65%);
+  background: oklch(0.97 0.025 85 / 90%);
   backdrop-filter: blur(28px) saturate(210%);
   -webkit-backdrop-filter: blur(28px) saturate(210%);
-  border: 1px solid oklch(0.75 0.15 85 / 10%);
+  border: 1px solid oklch(0.75 0.15 85 / 15%);
   box-shadow:
     0 8px 32px oklch(0 0 0 / 6%),
-    0 0 0 1px oklch(0.75 0.15 85 / 5%),
-    inset 0 1px 0 oklch(0.97 0.06 85 / 25%);
+    0 0 0 1px oklch(0.75 0.15 85 / 8%),
+    inset 0 1px 0 oklch(0.97 0.06 85 / 30%);
   transition: box-shadow 0.3s ease,
               border-color 0.3s ease;
 }
@@ -1672,10 +1672,10 @@ html {
 .card-glass-premium:hover {
   box-shadow:
     0 12px 40px oklch(0 0 0 / 8%),
-    0 0 20px oklch(0.75 0.15 85 / 10%),
-    0 0 0 1px oklch(0.75 0.15 85 / 12%),
-    inset 0 1px 0 oklch(0.97 0.06 85 / 35%);
-  border-color: oklch(0.75 0.15 85 / 20%);
+    0 0 20px oklch(0.75 0.15 85 / 12%),
+    0 0 0 1px oklch(0.75 0.15 85 / 15%),
+    inset 0 1px 0 oklch(0.97 0.06 85 / 40%);
+  border-color: oklch(0.75 0.15 85 / 25%);
 }
 
 .dark .card-glass-premium {
@@ -6259,7 +6259,7 @@ html {
 /* Gold separator line */
 .gold-separator {
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, oklch(0.75 0.15 85 / 40%) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, oklch(0.75 0.15 85 / 50%) 50%, transparent 100%);
 }
 
 /* Tab active gold indicator */

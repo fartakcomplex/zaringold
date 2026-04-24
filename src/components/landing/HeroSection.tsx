@@ -116,7 +116,7 @@ const ORBS = [
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function HeroSection({ onGetStarted }: HeroSectionProps) {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
 
 
@@ -222,7 +222,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
 
       <section
         id="hero"
-        dir="rtl"
+        dir={dir}
         className="relative min-h-screen overflow-hidden bg-background pt-24 sm:pt-32 md:pt-36 pb-20 sm:pb-28"
       >
         {/* ═══════════════════════════════════════════════════════════════════ */}
@@ -300,7 +300,8 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
         {/*  DRAMATIC 3D GOLD COIN — Left side (visible on all screens)          */}
         {/* ═══════════════════════════════════════════════════════════════════ */}
         <div
-          className="pointer-events-none absolute top-20 sm:top-24 md:top-28 left-2 sm:left-6 lg:left-10 xl:left-16 z-10"
+          className="pointer-events-none absolute top-32 sm:top-36 md:top-40 left-2 sm:left-6 lg:left-10 xl:left-16 z-10"
+          style={{ perspective: '800px' }}
           aria-hidden="true"
         >
           <motion.div
@@ -310,14 +311,14 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
           >
             <div
               className="relative"
-              style={{ animation: 'coin-float-3d 6s ease-in-out infinite' }}
+              style={{ animation: 'coin-float-3d 6s ease-in-out infinite', transformStyle: 'preserve-3d' }}
             >
-              {/* Coin container — 90px mobile, 140px sm, 200px lg, 240px xl */}
-              <div className="relative w-[90px] h-[90px] sm:w-[140px] sm:h-[140px] lg:w-[200px] lg:h-[200px] xl:w-[240px] xl:h-[240px]">
+              {/* Coin container — 70px mobile, 110px sm, 155px lg, 185px xl */}
+              <div className="relative w-[70px] h-[70px] sm:w-[110px] sm:h-[110px] lg:w-[155px] lg:h-[155px] xl:w-[185px] xl:h-[185px]" style={{ transform: 'perspective(800px) scale(0.9) translateZ(-30px)' }}>
                 
                 {/* Outer ambient pulse glow */}
                 <div
-                  className="absolute -inset-6 sm:-inset-8 lg:-inset-12 xl:-inset-16 rounded-full"
+                  className="absolute -inset-5 sm:-inset-7 lg:-inset-10 xl:-inset-14 rounded-full"
                   style={{
                     background: 'radial-gradient(circle, rgba(212,175,55,0.35) 0%, rgba(240,208,96,0.15) 30%, rgba(139,92,246,0.05) 50%, transparent 70%)',
                     animation: 'coin-pulse-glow 4s ease-in-out infinite',
@@ -394,7 +395,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
                             <span
                               className={cn(
                                 'gold-coin-inner font-black text-gold-dark/60 select-none',
-                                'text-2xl sm:text-3xl lg:text-5xl xl:text-6xl',
+                                'text-xl sm:text-2xl lg:text-4xl xl:text-5xl',
                                 'drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]',
                               )}
                             >
@@ -402,7 +403,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
                             </span>
                             {/* Sub-text */}
                             <span
-                              className="text-gold-dark/40 font-bold text-[7px] sm:text-[9px] lg:text-xs tracking-wider"
+                              className="text-gold-dark/40 font-bold text-[6px] sm:text-[8px] lg:text-[10px] tracking-wider"
                             >
                               ZARRIN GOLD
                             </span>
@@ -432,17 +433,17 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
 
                   {/* Top specular highlight */}
                   <div
-                    className="absolute top-3 right-4 w-10 h-6 sm:w-16 sm:h-9 lg:w-24 lg:h-14 xl:w-28 xl:h-16 rounded-full bg-white/25 blur-sm rotate-[-30deg]"
+                    className="absolute top-2 right-3 w-8 h-5 sm:w-14 sm:h-8 lg:w-20 lg:h-12 xl:w-24 xl:h-14 rounded-full bg-white/20 blur-sm rotate-[-30deg]"
                   />
 
                   {/* Secondary highlight arc */}
                   <div
-                    className="absolute top-1/4 left-1/4 w-6 h-4 sm:w-10 sm:h-7 lg:w-16 lg:h-10 rounded-full bg-white/10 blur-md rotate-[-45deg]"
+                    className="absolute top-1/4 left-1/4 w-5 h-3 sm:w-8 sm:h-6 lg:w-14 lg:h-8 rounded-full bg-white/8 blur-md rotate-[-45deg]"
                   />
 
                   {/* Bottom shadow */}
                   <div
-                    className="absolute bottom-2 left-4 w-8 h-4 sm:w-12 sm:h-6 lg:w-20 lg:h-10 rounded-full bg-black/10 blur-sm rotate-[-30deg]"
+                    className="absolute bottom-2 left-3 w-6 h-3 sm:w-10 sm:h-5 lg:w-16 lg:h-8 rounded-full bg-black/10 blur-sm rotate-[-30deg]"
                   />
                 </div>
 

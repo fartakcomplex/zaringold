@@ -157,7 +157,7 @@ function InfoCard({
 /* ═══════════════════════════════════════════════════════════════ */
 
 export default function CalculatorSection({ onLogin }: CalculatorSectionProps) {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
   const [activeTab, setActiveTab] = useState<CalculatorTab>('gramToToman');
   const [inputValue, setInputValue] = useState<string>('');
@@ -219,7 +219,7 @@ export default function CalculatorSection({ onLogin }: CalculatorSectionProps) {
   return (
     <section
       id="calculator"
-      dir="rtl"
+      dir={dir}
       className="relative overflow-hidden py-16 sm:py-20 lg:py-24"
     >
       {/* ── Background decorations ── */}

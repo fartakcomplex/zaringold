@@ -156,9 +156,9 @@ function TiltCard({
         <div
           className={cn(
             'relative z-10 rounded-[22px] p-6 sm:p-8',
-            'bg-white/80 dark:bg-zinc-900/80',
+            'bg-card/90 dark:bg-zinc-900/80',
             'backdrop-blur-2xl',
-            'border border-white/50 dark:border-white/5',
+            'border border-border/50 dark:border-white/5',
             'transition-shadow duration-300',
           )}
           style={{
@@ -196,7 +196,7 @@ function TiltCard({
                   'w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-2xl',
                   'bg-gradient-to-br',
                   feature.gradient,
-                  'border border-white/60 dark:border-white/10',
+                  'border border-border/40 dark:border-white/10',
                   'transition-all duration-500 ease-out',
                   'group-hover:scale-110 group-hover:rounded-3xl',
                   'group-hover:border-white/80 dark:group-hover:border-white/20',
@@ -253,7 +253,7 @@ function TiltCard({
               <p
                 className={cn(
                   'text-sm leading-relaxed sm:text-[15px] sm:leading-7',
-                  'text-foreground/65 group-hover:text-foreground/80',
+                  'text-foreground/75 group-hover:text-foreground/90',
                   'transition-colors duration-300',
                 )}
               >
@@ -286,12 +286,12 @@ function TiltCard({
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function FeaturesSection() {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
   return (
     <section
       id="features"
-      dir="rtl"
+      dir={dir}
       className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
     >
       {/* Background decorations */}

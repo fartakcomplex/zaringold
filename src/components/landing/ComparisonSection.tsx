@@ -140,12 +140,12 @@ function ComparisonCell({ value, highlight }: { value: CellValue; highlight?: bo
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function ComparisonSection() {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
   return (
     <section
       id="comparison"
-      dir="rtl"
+      dir={dir}
       className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
     >
       {/* ── Background decorative ── */}
@@ -182,7 +182,7 @@ export default function ComparisonSection() {
             <table className="w-full min-w-[500px] border-collapse">
               {/* ── Table Header ── */}
               <thead>
-                <tr className="border-b border-white/[0.06]">
+                <tr className="border-b border-border">
                   <th className="py-3 px-3 sm:py-4 sm:px-4 text-right text-xs sm:text-sm font-bold text-muted-foreground w-[130px] sm:w-[160px]">
                     {/* Feature label column — empty header */}
                   </th>
@@ -211,8 +211,8 @@ export default function ComparisonSection() {
                   <motion.tr
                     key={row.labelKey}
                     className={cn(
-                      'border-b border-white/[0.04] last:border-b-0',
-                      index % 2 === 0 && 'bg-white/[0.01]',
+                      'border-b border-border/50 last:border-b-0',
+                      index % 2 === 0 && 'bg-muted/30',
                     )}
                     initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -235,7 +235,7 @@ export default function ComparisonSection() {
           </div>
 
           {/* ── Bottom note ── */}
-          <div className="mt-5 pt-4 border-t border-white/[0.06] text-center">
+          <div className="mt-5 pt-4 border-t border-border text-center">
             <p className="text-[11px] sm:text-xs text-muted-foreground/60">
               ✅ {t('comparison.legend.yes')}&nbsp;&nbsp;⏳ {t('comparison.legend.partial')}&nbsp;&nbsp;❌ {t('comparison.legend.no')}
             </p>

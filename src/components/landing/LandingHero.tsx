@@ -59,7 +59,7 @@ interface LandingHeroProps {
 }
 
 export default function LandingHero({ onGetStarted }: LandingHeroProps) {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
   /* ── Real-time gold prices ── */
   const { prices: goldPrices, coinPrices, isLoading, isLive, source, refresh } = useRealGoldPrice();
@@ -113,7 +113,7 @@ export default function LandingHero({ onGetStarted }: LandingHeroProps) {
 
   /* ═══════════════════════════════════════════════════════════════════════ */
   return (
-    <section id="hero" dir="rtl" className="relative overflow-hidden">
+    <section id="hero" dir={dir} className="relative overflow-hidden">
       {/* ── Dark gradient background ── */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-[#111] to-[#0d0d0d]" />
 

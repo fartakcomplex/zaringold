@@ -49,12 +49,12 @@ const trustItems = [
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function CTASection({ onGetStarted }: CTASectionProps) {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
   return (
     <section
       id="cta"
-      dir="rtl"
+      dir={dir}
       className="relative py-16 sm:py-24 lg:py-32 overflow-hidden"
     >
       {/* ── Gold separator at top ── */}
@@ -162,8 +162,8 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
           <motion.div
             className="mb-8 sm:mb-10 inline-flex items-center gap-2.5 rounded-full px-5 py-2.5"
             style={{
-              background: 'linear-gradient(135deg, oklch(0.98 0.025 85 / 80%), oklch(0.995 0.01 85 / 90%))',
-              border: '1px solid oklch(0.75 0.15 85 / 12%)',
+              background: 'linear-gradient(135deg, oklch(0.95 0.012 85 / 85%), oklch(0.97 0.008 85 / 90%))',
+              border: '1px solid oklch(0.75 0.15 85 / 18%)',
               backdropFilter: 'blur(16px)',
             }}
             initial={{ opacity: 0, y: 16 }}
@@ -175,7 +175,7 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
               {['#D4AF37', '#F0D060', '#B8960C', '#8B6914'].map((color, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-center size-7 rounded-full border-2 border-background"
+                  className="flex items-center justify-center size-7 rounded-full border-2 border-white/80"
                   style={{ background: color }}
                 >
                   <span className="text-[8px] font-bold text-black">
@@ -266,8 +266,8 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
                     key={item.label}
                     className="flex items-center gap-3 rounded-2xl p-4 card-spotlight hover-lift-sm"
                     style={{
-                      background: 'linear-gradient(135deg, oklch(0.98 0.02 85 / 60%), oklch(0.995 0.008 85 / 70%))',
-                      border: '1px solid oklch(0.75 0.15 85 / 8%)',
+                      background: 'linear-gradient(135deg, oklch(0.95 0.015 85 / 70%), oklch(0.97 0.01 85 / 80%))',
+                      border: '1px solid oklch(0.75 0.15 85 / 15%)',
                     }}
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}

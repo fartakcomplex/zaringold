@@ -88,7 +88,7 @@ function StarRating({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'lg
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function TestimonialsSection() {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -113,7 +113,7 @@ export default function TestimonialsSection() {
   return (
     <section
       id="testimonials"
-      dir="rtl"
+      dir={dir}
       className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
     >
       {/* ── Background decorative ── */}
@@ -178,12 +178,8 @@ export default function TestimonialsSection() {
                 'card-spotlight',
               )}
               style={{
-                background: index % 2 === 0
-                  ? 'linear-gradient(135deg, oklch(0.98 0.025 85 / 80%), oklch(0.995 0.01 85 / 90%))'
-                  : 'linear-gradient(135deg, oklch(0.12 0.008 280 / 70%), oklch(0.1 0.005 280 / 80%))',
-                border: index % 2 === 0
-                  ? '1px solid oklch(0.75 0.15 85 / 12%)'
-                  : '1px solid oklch(0.75 0.15 85 / 8%)',
+                background: 'linear-gradient(135deg, oklch(0.95 0.012 85 / 85%), oklch(0.97 0.008 85 / 90%))',
+                border: '1px solid oklch(0.75 0.15 85 / 18%)',
                 backdropFilter: 'blur(24px) saturate(200%)',
               }}
               initial={{ opacity: 0, y: 24 }}
@@ -199,9 +195,7 @@ export default function TestimonialsSection() {
                   <Quote
                     className={cn(
                       'size-16 sm:size-20 transition-all duration-500',
-                      index % 2 === 0
-                        ? 'text-gold/[0.06] group-hover:text-gold/[0.12]'
-                        : 'text-gold/[0.08] group-hover:text-gold/[0.15]',
+                      'text-gold/[0.06] group-hover:text-gold/[0.12]',
                     )}
                     strokeWidth={1}
                   />
@@ -223,7 +217,7 @@ export default function TestimonialsSection() {
                       </span>
                     </div>
                     {/* Online-style indicator */}
-                    <div className="absolute -bottom-0.5 -left-0.5 size-4 rounded-full bg-background flex items-center justify-center">
+                    <div className="absolute -bottom-0.5 -left-0.5 size-4 rounded-full bg-white/90 flex items-center justify-center">
                       <div className="size-2.5 rounded-full bg-green-500 shadow-sm" />
                     </div>
                   </div>
@@ -231,7 +225,7 @@ export default function TestimonialsSection() {
                   <div className="flex-1 min-w-0">
                     <h3 className={cn(
                       'text-sm font-bold truncate',
-                      index % 2 === 0 ? 'text-gray-900' : 'text-foreground',
+                      'text-gray-900',
                     )}>
                       {item.name}
                     </h3>
@@ -249,7 +243,7 @@ export default function TestimonialsSection() {
                   {/* Date */}
                   <span className={cn(
                     'text-[10px] shrink-0',
-                    index % 2 === 0 ? 'text-gray-500' : 'text-muted-foreground',
+                    'text-gray-500',
                   )}>
                     {item.date}
                   </span>
@@ -263,7 +257,7 @@ export default function TestimonialsSection() {
                 {/* Quote text */}
                 <p className={cn(
                   'flex-1 text-sm leading-[1.85] relative',
-                  index % 2 === 0 ? 'text-gray-700' : 'text-foreground/70',
+                  'text-gray-700',
                 )}>
                   <Quote className="inline-block size-4 text-gold/40 align-top ml-1 -mt-0.5" strokeWidth={2.5} />
                   {item.text}
@@ -317,12 +311,8 @@ export default function TestimonialsSection() {
                   'card-spotlight',
                 )}
                 style={{
-                  background: index % 2 === 0
-                    ? 'linear-gradient(135deg, oklch(0.98 0.025 85 / 80%), oklch(0.995 0.01 85 / 90%))'
-                    : 'linear-gradient(135deg, oklch(0.12 0.008 280 / 70%), oklch(0.1 0.005 280 / 80%))',
-                  border: index % 2 === 0
-                    ? '1px solid oklch(0.75 0.15 85 / 12%)'
-                    : '1px solid oklch(0.75 0.15 85 / 8%)',
+                  background: 'linear-gradient(135deg, oklch(0.95 0.012 85 / 85%), oklch(0.97 0.008 85 / 90%))',
+                  border: '1px solid oklch(0.75 0.15 85 / 18%)',
                   backdropFilter: 'blur(24px) saturate(200%)',
                 }}
                 initial={{ opacity: 0, y: 20 }}
@@ -337,9 +327,7 @@ export default function TestimonialsSection() {
                     <Quote
                       className={cn(
                         'size-14 transition-all duration-500',
-                        index % 2 === 0
-                          ? 'text-gold/[0.06] group-hover:text-gold/[0.12]'
-                          : 'text-gold/[0.08] group-hover:text-gold/[0.15]',
+                        'text-gold/[0.06] group-hover:text-gold/[0.12]',
                       )}
                       strokeWidth={1}
                     />
@@ -357,12 +345,12 @@ export default function TestimonialsSection() {
                       >
                         <span className="text-sm font-black text-gray-950">{item.name.charAt(0)}</span>
                       </div>
-                      <div className="absolute -bottom-0.5 -left-0.5 size-3.5 rounded-full bg-background flex items-center justify-center">
+                      <div className="absolute -bottom-0.5 -left-0.5 size-3.5 rounded-full bg-white/90 flex items-center justify-center">
                         <div className="size-2 rounded-full bg-green-500" />
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className={cn('text-sm font-bold truncate', index % 2 === 0 ? 'text-gray-900' : 'text-foreground')}>{item.name}</h3>
+                      <h3 className={cn('text-sm font-bold truncate', 'text-gray-900')}>{item.name}</h3>
                       <span className="mt-0.5 inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gold/10 text-gold border border-gold/15">
                         {item.role}
                       </span>
@@ -376,7 +364,7 @@ export default function TestimonialsSection() {
                   }} />
 
                   {/* Text */}
-                  <p className={cn('flex-1 text-sm leading-[1.8]', index % 2 === 0 ? 'text-gray-700' : 'text-foreground/75')}>
+                  <p className={cn('flex-1 text-sm leading-[1.8]', 'text-gray-700')}>
                     <Quote className="inline-block size-3.5 text-gold/40 align-top ml-1 -mt-0.5" strokeWidth={2.5} />
                     {item.text}
                   </p>

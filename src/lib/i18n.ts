@@ -198,7 +198,6 @@ const translations: Record<Locale, TranslationMap> = {
     'goldCard.transferPin': 'رمز کارت',
     'goldCard.confirmTransfer': 'تأیید انتقال وجه',
     'goldCard.transferSuccess': 'انتقال موفق!',
-    'goldCard.cardFrozen': 'کارت مسدود است',
     'goldCard.instantTransfer': 'انتقال آنی',
     'goldCard.instantTransferDesc': 'تراکنش در کمتر از ۱۰ ثانیه انجام می‌شود',
     'goldCard.highSecurity': 'امنیت بالا',
@@ -686,6 +685,57 @@ const translations: Record<Locale, TranslationMap> = {
     'comparison.legend.yes': 'موجود',
     'comparison.legend.partial': 'محدود',
     'comparison.legend.no': 'غیرفعال',
+
+    // footer
+    'footer.quickLinks': 'دسترسی سریع',
+    'footer.services': 'خدمات',
+    'footer.contactUs': 'ارتباط با ما',
+    'footer.newsletter': 'خبرنامه',
+    'footer.newsletterDesc': 'از آخرین اخبار و تخفیف‌های ویژه باخبر شوید',
+    'footer.emailPlaceholder': 'ایمیل شما...',
+    'footer.subscribed': 'با موفقیت ثبت شد!',
+    'footer.description': 'پلتفرم معاملات طلای نوین ایران. خرید، فروش و پس‌انداز طلا با بالاترین امنیت، کمترین کارمزد و سریع‌ترین تراکنش‌ها.',
+    'footer.sslSecure': 'SSL امن',
+    'footer.officialLicense': 'مجوز رسمی',
+    'footer.copyright': '© ۱۴۰۴',
+    'footer.allRightsReserved': 'تمامی حقوق محفوظ است.',
+    'footer.madeWith': 'ساخته شده با',
+    'footer.inIran': 'در ایران',
+    'footer.version': 'نسخه ۲.۴.۰',
+    'footer.address': 'تهران، خیابان ولیعصر، پلاک ۱۲۳',
+    'footer.instagram': 'اینستاگرام',
+    'footer.twitter': 'توییتر',
+    'footer.telegram': 'تلگرام',
+    'footer.aboutUs': 'درباره ما',
+    'footer.terms': 'قوانین و مقررات',
+    'footer.privacy': 'حریم خصوصی',
+    'footer.blog': 'وبلاگ',
+    'footer.buyGold': 'خرید طلا',
+    'footer.sellGold': 'فروش طلا',
+    'footer.goldSavings': 'پس‌انداز طلا',
+    'footer.marketAnalysis': 'تحلیل بازار',
+    'footer.referralReward': 'پاداش دعوت',
+    'footer.closeBanner': 'بستن بنر',
+    'footer.goldTrading': 'Gold Trading',
+
+    // banner
+    'banner.text': 'جشنواره تخفیف ویژه: کارمزد خرید طلا فقط ۰.۳٪ برای مدت محدود!',
+    
+    // blog section
+    'blog.badge': 'وبلاگ',
+    'blog.title': 'آخرین مقالات',
+    'blog.subtitle': 'جدیدترین اخبار، تحلیل‌ها و آموزش‌های بازار طلا را در وبلاگ زرین گلد بخوانید.',
+    'blog.viewAll': 'مشاهده همه مقالات',
+    'blog.minute': 'دقیقه',
+    
+    // toggle
+    'toggle.backToDashboard': 'بازگشت به پنل کاربری',
+    'toggle.viewLanding': 'مشاهده لندینگ پیج',
+    'toggle.dashboard': 'پنل کاربری',
+    'toggle.landingPage': 'لندینگ پیج',
+    
+    // logo
+    'logo.letter': 'ز',
   },
 
   /* ── English (en) ── */
@@ -867,7 +917,6 @@ const translations: Record<Locale, TranslationMap> = {
     'goldCard.transferPin': 'Card PIN',
     'goldCard.confirmTransfer': 'Confirm Transfer',
     'goldCard.transferSuccess': 'Transfer Successful!',
-    'goldCard.cardFrozen': 'Card is frozen',
     'goldCard.instantTransfer': 'Instant Transfer',
     'goldCard.instantTransferDesc': 'Transaction completes in under 10 seconds',
     'goldCard.highSecurity': 'High Security',
@@ -1355,6 +1404,57 @@ const translations: Record<Locale, TranslationMap> = {
     'comparison.legend.yes': 'Available',
     'comparison.legend.partial': 'Limited',
     'comparison.legend.no': 'Unavailable',
+
+    // footer
+    'footer.quickLinks': 'Quick Links',
+    'footer.services': 'Services',
+    'footer.contactUs': 'Contact Us',
+    'footer.newsletter': 'Newsletter',
+    'footer.newsletterDesc': 'Stay updated with the latest news and special offers',
+    'footer.emailPlaceholder': 'Your email...',
+    'footer.subscribed': 'Successfully subscribed!',
+    'footer.description': 'Iran\'s modern gold trading platform. Buy, sell and save gold with the highest security, lowest fees and fastest transactions.',
+    'footer.sslSecure': 'SSL Secured',
+    'footer.officialLicense': 'Official License',
+    'footer.copyright': '© 2025',
+    'footer.allRightsReserved': 'All rights reserved.',
+    'footer.madeWith': 'Made with',
+    'footer.inIran': 'in Iran',
+    'footer.version': 'Version 2.4.0',
+    'footer.address': 'Tehran, Valiasr St., No. 123',
+    'footer.instagram': 'Instagram',
+    'footer.twitter': 'Twitter',
+    'footer.telegram': 'Telegram',
+    'footer.aboutUs': 'About Us',
+    'footer.terms': 'Terms & Conditions',
+    'footer.privacy': 'Privacy Policy',
+    'footer.blog': 'Blog',
+    'footer.buyGold': 'Buy Gold',
+    'footer.sellGold': 'Sell Gold',
+    'footer.goldSavings': 'Gold Savings',
+    'footer.marketAnalysis': 'Market Analysis',
+    'footer.referralReward': 'Referral Reward',
+    'footer.closeBanner': 'Close banner',
+    'footer.goldTrading': 'Gold Trading',
+
+    // banner
+    'banner.text': 'Special Discount: Gold purchase fee only 0.3% for a limited time!',
+    
+    // blog section
+    'blog.badge': 'Blog',
+    'blog.title': 'Latest Articles',
+    'blog.subtitle': 'Read the latest gold market news, analyses and tutorials on Zarrin Gold blog.',
+    'blog.viewAll': 'View All Articles',
+    'blog.minute': 'min',
+    
+    // toggle
+    'toggle.backToDashboard': 'Back to Dashboard',
+    'toggle.viewLanding': 'View Landing Page',
+    'toggle.dashboard': 'Dashboard',
+    'toggle.landingPage': 'Landing Page',
+    
+    // logo
+    'logo.letter': 'Z',
   },
 };
 
@@ -1417,6 +1517,12 @@ export function setLocale(locale: Locale) {
   if (locale === currentLocale) return;
   currentLocale = locale;
   applyDirection(locale);
+  // Font switching
+  if (locale === 'fa') {
+    document.body.style.fontFamily = 'var(--font-vazir)';
+  } else {
+    document.body.style.fontFamily = 'var(--font-inter), system-ui, sans-serif';
+  }
   try {
     localStorage.setItem(STORAGE_KEY, locale);
   } catch {

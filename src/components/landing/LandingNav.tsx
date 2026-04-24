@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
 import { motion, AnimatePresence } from '@/lib/framer-compat';
-import { Menu, X, LogIn, Moon, Sun, PartyPopper, ChevronLeft } from 'lucide-react';
+import { Menu, X, LogIn, Moon, Sun, PartyPopper, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n';
@@ -46,7 +46,7 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useMounted();
   const isDark = resolvedTheme === 'dark';
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
   const handleToggleTheme = () => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
@@ -101,10 +101,10 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
     <AnimatePresence>
       {bannerVisible && (
         <motion.div
-          dir="rtl"
+          dir={dir}
           className={cn(
             'fixed top-0 left-0 right-0 z-[60]',
-            'bg-gradient-to-l from-gold/10 via-gold/[0.07] to-gold/5',
+            'bg-gradient-to-r from-gold/10 via-gold/[0.07] to-gold/5',
             'backdrop-blur-lg border-b border-gold/20',
             'shadow-[0_1px_12px_rgba(212,175,55,0.15)]',
           )}
@@ -116,7 +116,7 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
           <div className="mx-auto flex h-10 max-w-7xl items-center justify-center gap-2.5 px-4 sm:px-6 lg:px-8">
             <PartyPopper className="size-4 shrink-0 text-gold" />
             <p className="text-center text-xs sm:text-sm font-medium text-gold">
-              جشنواره تخفیف ویژه: کارمزد خرید طلا فقط ۰.۳٪ برای مدت محدود!
+              {t('banner.text')}
             </p>
             <button
               onClick={() => setBannerVisible(false)}
@@ -125,20 +125,20 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
                 'text-gold/60 transition-all duration-200',
                 'hover:bg-gold/15 hover:text-gold',
               )}
-              aria-label="بستن بنر"
+              aria-label={t('footer.closeBanner')}
             >
               <X className="size-3.5" />
             </button>
           </div>
           {/* Gold bottom glow line */}
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-l from-transparent via-gold/30 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
         </motion.div>
       )}
     </AnimatePresence>
 
     {/* ── Main Header ── */}
     <motion.header
-      dir="rtl"
+      dir={dir}
       style={{ top: bannerVisible ? 40 : 0 }}
       className={cn(
         'fixed left-0 right-0 z-50 transition-all duration-500 ease-out',
@@ -154,7 +154,7 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
       {scrolled && (
         <div className="absolute bottom-0 left-0 right-0 h-[2px] overflow-hidden">
           {/* Static gradient base */}
-          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-gold/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
           {/* Animated sweeping highlight */}
           <div
             className="absolute inset-0 animate-[nav-gold-glow_2.5s_ease-in-out_infinite]"
@@ -181,7 +181,7 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
               ? 'bg-gradient-to-br from-gold via-gold to-gold-dark shadow-lg shadow-gold/25 scale-105'
               : 'bg-gradient-to-br from-gold-light via-gold to-gold-dark shadow-md shadow-gold/15',
           )}>
-            <span className="text-base font-black text-gray-950">ز</span>
+            <span className="text-base font-black text-gray-950">{t('logo.letter')}</span>
             <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent" />
           </div>
           <span className="gold-gradient-text text-xl font-extrabold tracking-tight gold-text-shadow">
@@ -217,7 +217,7 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
                 {isActive && (
                   <motion.span
                     layoutId="activeNavUnderline"
-                    className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-gradient-to-l from-gold-light via-gold to-gold-dark"
+                    className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-gradient-to-r from-gold-light via-gold to-gold-dark"
                     transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                   />
                 )}
@@ -280,7 +280,7 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
               onClick={onLogin}
               className={cn(
                 'relative h-9 overflow-hidden rounded-xl px-5 text-sm font-bold text-gray-950',
-                'bg-gradient-to-l from-gold-dark via-gold to-gold-light',
+                'bg-gradient-to-r from-gold-dark via-gold to-gold-light',
                 'shadow-lg shadow-gold/20 transition-all duration-300',
                 'hover:shadow-xl hover:shadow-gold/35',
                 'active:scale-[0.97]',
@@ -354,52 +354,52 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
             {/* Panel */}
             <motion.div
               key="mobile-panel"
-              initial={{ x: '100%', opacity: 0 }}
+              initial={{ x: dir === 'rtl' ? '100%' : '-100%', opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              exit={{ x: '100%', opacity: 0 }}
+              exit={{ x: dir === 'rtl' ? '100%' : '-100%', opacity: 0 }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              dir="rtl"
+              dir={dir}
               className={cn(
-                'fixed top-0 right-0 bottom-0 z-50 w-[300px] overflow-y-auto lg:hidden',
-                'border-l border-gold/10',
+                'fixed top-0 start-0 bottom-0 z-50 w-[300px] overflow-y-auto lg:hidden',
+                'border-s border-gold/10',
               )}
               style={{
-                background: 'oklch(0.08 0.005 280 / 90%)',
+                background: 'oklch(0.955 0.01 85 / 96%)',
                 backdropFilter: 'blur(32px) saturate(200%)',
                 WebkitBackdropFilter: 'blur(32px) saturate(200%)',
               }}
             >
               {/* Top gold gradient bar */}
-              <div className="relative h-1 w-full overflow-hidden bg-gradient-to-l from-gold-dark via-gold to-gold-light">
-                <div className="absolute inset-0 bg-gradient-to-l from-transparent via-white/30 to-transparent" style={{ animation: 'shimmer-border-anim 3s ease-in-out infinite' }} />
+              <div className="relative h-1 w-full overflow-hidden bg-gradient-to-r from-gold-dark via-gold to-gold-light">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent" style={{ animation: 'shimmer-border-anim 3s ease-in-out infinite' }} />
               </div>
 
               {/* Header */}
               <div className="flex items-center justify-between px-5 py-5">
                 <div className="flex items-center gap-2.5">
                   <div className="relative flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-gold-light via-gold to-gold-dark shadow-lg shadow-gold/20">
-                    <span className="text-sm font-black text-gray-950">ز</span>
+                    <span className="text-sm font-black text-gray-950">{t('logo.letter')}</span>
                     <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent" />
                   </div>
                   <div>
                     <span className="gold-gradient-text text-lg font-extrabold">
                       {t('common.zarrinGold')}
                     </span>
-                    <p className="text-[9px] font-medium tracking-wider text-muted-foreground/50 uppercase">
-                      Gold Trading
+                    <p className="text-[9px] font-medium tracking-wider text-gray-500 uppercase">
+                      {t('footer.goldTrading')}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex size-8 items-center justify-center rounded-lg border border-gold/10 text-muted-foreground transition-all duration-200 hover:bg-gold/10 hover:text-gold hover:border-gold/20"
+                  className="flex size-8 items-center justify-center rounded-lg border border-gold/10 text-gray-600 transition-all duration-200 hover:bg-gold/10 hover:text-gold hover:border-gold/20"
                   aria-label={t('nav.closeMenu')}
                 >
                   <X className="size-4" />
                 </button>
               </div>
 
-              <div className="mx-5 h-px bg-gradient-to-l from-transparent via-gold/15 to-transparent" />
+              <div className="mx-5 h-px bg-gradient-to-r from-transparent via-gold/15 to-transparent" />
 
               {/* Settings row */}
               <div className="flex gap-2 px-5 py-3">
@@ -409,7 +409,7 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
                     onClick={handleToggleTheme}
                     className={cn(
                       'flex flex-1 items-center gap-2.5 rounded-xl px-3.5 py-2.5',
-                      'border border-white/5 bg-white/[0.03] text-sm text-muted-foreground',
+                      'border border-border/50 bg-muted/30 text-sm text-gray-700',
                       'transition-all duration-200 hover:bg-gold/8 hover:text-gold hover:border-gold/15',
                     )}
                   >
@@ -418,13 +418,13 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
                   </button>
                 )}
                 {/* Language Switcher */}
-                <div className="flex flex-1 items-center gap-2.5 rounded-xl border border-white/5 bg-white/[0.03] px-3.5 py-2">
-                  <span className="text-sm text-muted-foreground">{t('nav.language')}</span>
+                <div className="flex flex-1 items-center gap-2.5 rounded-xl border border-border/50 bg-muted/30 px-3.5 py-2">
+                  <span className="text-sm text-gray-700">{t('nav.language')}</span>
                   <LanguageSwitcher />
                 </div>
               </div>
 
-              <div className="mx-5 h-px bg-gradient-to-l from-transparent via-gold/15 to-transparent" />
+              <div className="mx-5 h-px bg-gradient-to-r from-transparent via-gold/15 to-transparent" />
 
               {/* Nav links */}
               <div className="space-y-1 px-4 pb-4 pt-3">
@@ -440,21 +440,23 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
                       className={cn(
                         'flex w-full items-center justify-between rounded-xl px-4 py-3 text-right text-sm font-medium transition-all duration-200',
                         isActive
-                          ? 'bg-gradient-to-l from-gold/15 to-gold/5 text-gold shadow-sm shadow-gold/5 border border-gold/10'
-                          : 'text-muted-foreground hover:bg-white/5 hover:text-foreground border border-transparent',
+                          ? 'bg-gradient-to-r from-gold/15 to-gold/5 text-gold shadow-sm shadow-gold/5 border border-gold/10'
+                          : 'text-gray-700 hover:bg-muted/40 hover:text-gray-900 border border-transparent',
                       )}
                     >
                       <span>{t(link.key)}</span>
                       {isActive ? (
                         <span className="size-1.5 rounded-full bg-gold gold-pulse" />
-                      ) : (
+                      ) : dir === 'rtl' ? (
                         <ChevronLeft className="size-3.5 opacity-30" />
+                      ) : (
+                        <ChevronRight className="size-3.5 opacity-30" />
                       )}
                     </motion.button>
                   );
                 })}
 
-                <div className="mx-4 my-4 h-px bg-gradient-to-l from-transparent via-gold/10 to-transparent" />
+                <div className="mx-4 my-4 h-px bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
 
                 {/* Login CTA */}
                 <motion.div
@@ -469,7 +471,7 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
                     }}
                     className={cn(
                       'relative w-full h-12 overflow-hidden rounded-xl text-sm font-bold text-gray-950',
-                      'bg-gradient-to-l from-gold-dark via-gold to-gold-light',
+                      'bg-gradient-to-r from-gold-dark via-gold to-gold-light',
                       'shadow-lg shadow-gold/25',
                     )}
                   >
@@ -485,9 +487,9 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
                 {/* Decorative bottom element */}
                 <div className="mt-6 flex items-center justify-center gap-2 pb-2">
                   <div className="size-1 rounded-full bg-gold/30" />
-                  <div className="h-px w-12 bg-gradient-to-l from-transparent via-gold/20 to-transparent" />
+                  <div className="h-px w-12 bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
                   <div className="size-1.5 rounded-full bg-gold/20" />
-                  <div className="h-px w-12 bg-gradient-to-l from-transparent via-gold/20 to-transparent" />
+                  <div className="h-px w-12 bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
                   <div className="size-1 rounded-full bg-gold/30" />
                 </div>
               </div>

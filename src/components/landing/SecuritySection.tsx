@@ -110,7 +110,7 @@ function CentralShield() {
       />
       {/* Main shield circle */}
       <div
-        className="relative flex items-center justify-center rounded-full"
+        className="relative rounded-full"
         style={{
           inset: 35,
           background: 'linear-gradient(135deg, oklch(0.97 0.03 85 / 80%), oklch(0.94 0.04 85 / 60%))',
@@ -118,35 +118,32 @@ function CentralShield() {
           border: '2px solid rgba(212,175,55,0.2)',
         }}
       >
-        {/* Shield icon */}
-        <div className="flex flex-col items-center gap-2">
-          <div
-            className="flex size-16 items-center justify-center rounded-2xl"
-            style={{
-              background: 'linear-gradient(135deg, #F0D060, #D4AF37, #B8960C)',
-              boxShadow: '0 4px 16px rgba(212,175,55,0.3)',
-            }}
-          >
-            <ShieldCheck className="size-8 text-gray-950" strokeWidth={2.5} />
-          </div>
-          {/* Orbiting dots */}
-          <div className="absolute" aria-hidden="true">
-            {[0, 1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="absolute rounded-full bg-gold/40"
-                style={{
-                  width: 4,
-                  height: 4,
-                  top: `${50 + 50 * Math.sin((i * 90) * Math.PI / 180)}%`,
-                  left: `${50 + 50 * Math.cos((i * 90) * Math.PI / 180)}%`,
-                  transform: 'translate(-50%, -50%)',
-                  animation: `pulse-glow 2s ease-in-out infinite ${i * 0.5}s`,
-                }}
-              />
-            ))}
-          </div>
+        {/* Shield icon — perfectly centered */}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex size-16 items-center justify-center rounded-2xl"
+          style={{
+            background: 'linear-gradient(135deg, #F0D060, #D4AF37, #B8960C)',
+            boxShadow: '0 4px 16px rgba(212,175,55,0.3)',
+          }}
+        >
+          <ShieldCheck className="size-8 text-gray-950" strokeWidth={2.5} />
         </div>
+        {/* Orbiting dots — positioned relative to circle center */}
+        {[0, 1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-gold/40"
+            style={{
+              width: 4,
+              height: 4,
+              top: `${50 + 38 * Math.sin((i * 90) * Math.PI / 180)}%`,
+              left: `${50 + 38 * Math.cos((i * 90) * Math.PI / 180)}%`,
+              transform: 'translate(-50%, -50%)',
+              animation: `pulse-glow 2s ease-in-out infinite ${i * 0.5}s`,
+            }}
+            aria-hidden="true"
+          />
+        ))}
       </div>
 
       {/* Floating particles */}
@@ -237,7 +234,7 @@ function SecurityCard({
             <h3 className="text-sm font-extrabold text-foreground sm:text-base">
               {t(feature.titleKey)}
             </h3>
-            <p className="text-xs leading-relaxed text-foreground/70 sm:text-sm">
+            <p className="text-xs leading-relaxed text-foreground/80 sm:text-sm">
               {t(feature.descKey)}
             </p>
           </div>
@@ -295,12 +292,12 @@ function TrustBadge({
 /* ═══════════════════════════════════════════════════════════════ */
 
 export default function SecuritySection() {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
   return (
     <section
       id="security"
-      dir="rtl"
+      dir={dir}
       className="relative overflow-hidden py-16 sm:py-20 lg:py-24"
     >
       {/* ── Background decorative elements ── */}
@@ -393,7 +390,7 @@ export default function SecuritySection() {
                 <p className="text-sm font-bold text-foreground">
                   {t('security.insurance.title')}
                 </p>
-                <p className="text-xs text-foreground/60 mt-0.5">
+                <p className="text-xs text-foreground/75 mt-0.5">
                   {t('security.insurance.desc')}
                 </p>
               </div>
