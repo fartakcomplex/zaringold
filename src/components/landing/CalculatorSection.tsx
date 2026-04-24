@@ -251,7 +251,7 @@ export default function CalculatorSection({ onLogin }: CalculatorSectionProps) {
           </motion.div>
 
           {/* Title */}
-          <h2 className="mb-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
+          <h2 className="mb-4 text-3xl font-extrabold sm:text-4xl lg:text-5xl">
             <span className="gold-gradient-text gold-text-shadow">{t('calc.title')}</span>
           </h2>
 
