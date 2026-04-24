@@ -36,9 +36,9 @@ export async function GET(request: Request) {
     hasCard: true,
     card: {
       id: card.id,
-      cardNumber: masked,
+      cardNumber: card.cardNumber,
       fullCardNumber: card.cardNumber,
-      cvv: '***',
+      cvv: card.cvv,
       expiryMonth: card.expiryMonth,
       expiryYear: card.expiryYear,
       pin: card.pin,

@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAppStore } from '@/lib/store';
 import { usePageEvent } from '@/hooks/use-page-event';
-import { useTranslation } from '@/lib/i18n';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -60,11 +59,160 @@ import {
   ArrowLeftRight,
   Send,
   Clock,
-  BookUser,
+  Copy,
+  Gift,
+  Trophy,
+  Gem,
+  Crown,
+  Award,
+  TrendingUp,
+  CircleDollarSign,
+  Zap,
+  ShieldAlert,
+  Globe,
+  Store,
+  Banknote,
+  ChevronDown,
+  Star,
 } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/*  Types                                                                     */
+/*  Custom CSS (card flip, holographic effects)                                 */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+const CardStyles = () => (
+  <style>{`
+    /* ── 3D Card Flip ── */
+    .card-perspective {
+      perspective: 1200px;
+    }
+    .card-flipper {
+      transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1);
+      transform-style: preserve-3d;
+      position: relative;
+    }
+    .card-flipper.flipped {
+      transform: rotateY(180deg);
+    }
+    .card-face {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      position: absolute;
+      inset: 0;
+    }
+    .card-face-back {
+      transform: rotateY(180deg);
+    }
+    .card-face-front {
+      transform: rotateY(0deg);
+    }
+
+    /* ── Holographic rainbow shimmer ── */
+    @keyframes holo-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .holo-shimmer {
+      background: linear-gradient(
+        105deg,
+        transparent 20%,
+        rgba(255, 215, 0, 0.15) 35%,
+        rgba(255, 255, 255, 0.25) 42%,
+        rgba(0, 210, 255, 0.15) 48%,
+        rgba(255, 255, 255, 0.25) 55%,
+        rgba(212, 175, 55, 0.15) 65%,
+        transparent 80%
+      );
+      background-size: 200% 100%;
+      animation: holo-shimmer 3.5s ease-in-out infinite;
+    }
+
+    /* ── Magnetic stripe ── */
+    .magnetic-stripe {
+      background: repeating-linear-gradient(
+        0deg,
+        #111 0px,
+        #111 2px,
+        #222 2px,
+        #222 4px
+      );
+    }
+
+    /* ── Frost overlay for frozen card ── */
+    @keyframes frost-spread {
+      0% { opacity: 0; backdrop-filter: blur(0px); }
+      100% { opacity: 1; backdrop-filter: blur(4px); }
+    }
+    .frost-overlay {
+      animation: frost-spread 0.6s ease-out forwards;
+    }
+
+    /* ── Gold value ticker pulse ── */
+    @keyframes value-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .value-ticker {
+      animation: value-pulse 2s ease-in-out infinite;
+    }
+
+    /* ── Level badge glow ── */
+    @keyframes level-glow {
+      0%, 100% { box-shadow: 0 0 4px rgba(212,175,55,0.3); }
+      50% { box-shadow: 0 0 12px rgba(212,175,55,0.6), 0 0 24px rgba(212,175,55,0.2); }
+    }
+    .level-badge-glow {
+      animation: level-glow 2.5s ease-in-out infinite;
+    }
+
+    /* ── Quick action button ripple ── */
+    .quick-action-btn {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s ease;
+    }
+    .quick-action-btn:active {
+      transform: scale(0.95);
+    }
+    .quick-action-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at var(--rx, 50%) var(--ry, 50%),
+        rgba(212,175,55,0.12) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .quick-action-btn:hover::after {
+      opacity: 1;
+    }
+
+    /* ── Stat card shimmer border ── */
+    .stat-card-shimmer {
+      position: relative;
+    }
+    .stat-card-shimmer::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg,
+        transparent 0%,
+        rgba(212,175,55,0.3) 50%,
+        transparent 100%);
+      background-size: 200% 200%;
+      animation: holo-shimmer 4s ease-in-out infinite;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+  `}</style>
+);
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  Types / Interfaces                                                         */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 interface GoldCardData {
@@ -72,6 +220,7 @@ interface GoldCardData {
   userId: string;
   cardNumber: string;
   cvv: string;
+  pin: string;
   expiry: string;
   design: 'gold-gradient' | 'black-premium' | 'diamond' | 'rose-gold';
   type: 'VIRTUAL' | 'PHYSICAL';
@@ -97,8 +246,27 @@ interface CardTransaction {
   goldGrams?: number;
 }
 
+interface SecuritySettings {
+  onlinePurchases: boolean;
+  inStorePurchases: boolean;
+  internationalPurchases: boolean;
+  contactlessNfc: boolean;
+}
+
+interface CardLevel {
+  key: string;
+  label: string;
+  icon: React.ReactNode;
+  minTx: number;
+  maxTx: number;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+  benefits: string[];
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/*  Helpers                                                                   */
+/*  Helper functions                                                           */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 function formatToman(amount: number): string {
@@ -112,7 +280,7 @@ function toPersianDigits(str: string): string {
 
 function maskCardNumber(num: string): string {
   const clean = num.replace(/-/g, '');
-  return `${clean.slice(0, 4)}-XXXX-XX${clean.slice(-6, -4)}-${clean.slice(-4)}`;
+  return `${clean.slice(0, 4)}-XXXX-XXXX-${clean.slice(-4)}`;
 }
 
 function getRelativeTime(dateStr: string): string {
@@ -122,7 +290,6 @@ function getRelativeTime(dateStr: string): string {
   const diffMin = Math.floor(diffMs / 60000);
   const diffHr = Math.floor(diffMs / 3600000);
   const diffDay = Math.floor(diffMs / 86400000);
-
   if (diffMin < 1) return 'همین الان';
   if (diffMin < 60) return toPersianDigits(`${diffMin} دقیقه پیش`);
   if (diffHr < 24) return toPersianDigits(`${diffHr} ساعت پیش`);
@@ -132,18 +299,23 @@ function getRelativeTime(dateStr: string): string {
 
 function getTxIcon(type: CardTransaction['type']) {
   switch (type) {
-    case 'purchase':
-      return <ShoppingCart className="size-4 text-red-400" />;
-    case 'refund':
-      return <RotateCcw className="size-4 text-green-400" />;
-    case 'charge':
-      return <Coins className="size-4 text-yellow-400" />;
-    case 'withdrawal':
-      return <ArrowDown className="size-4 text-orange-400" />;
-    case 'transfer_out':
-      return <Send className="size-4 text-blue-400" />;
-    default:
-      return <CreditCard className="size-4" />;
+    case 'purchase': return <ShoppingCart className="size-4 text-red-400" />;
+    case 'refund': return <RotateCcw className="size-4 text-green-400" />;
+    case 'charge': return <Coins className="size-4 text-yellow-400" />;
+    case 'withdrawal': return <ArrowDown className="size-4 text-orange-400" />;
+    case 'transfer_out': return <Send className="size-4 text-blue-400" />;
+    default: return <CreditCard className="size-4" />;
+  }
+}
+
+function getTxTypeLabel(type: CardTransaction['type']): string {
+  switch (type) {
+    case 'purchase': return 'خرید';
+    case 'refund': return 'برگشت وجه';
+    case 'charge': return 'شارژ';
+    case 'withdrawal': return 'برداشت';
+    case 'transfer_out': return 'انتقال';
+    default: return 'تراکنش';
   }
 }
 
@@ -151,30 +323,16 @@ function getStatusBadge(status: CardTransaction['status']) {
   switch (status) {
     case 'success':
     case 'completed':
-      return (
-        <Badge className="bg-green-500/15 text-green-400 border-green-500/20 text-[10px]">
-          <CheckCircle className="size-3" />
-          موفق
-        </Badge>
-      );
+      return <Badge className="bg-green-500/15 text-green-400 border-green-500/20 text-[10px]"><CheckCircle className="size-3 ml-0.5" />موفق</Badge>;
     case 'pending':
-      return (
-        <Badge className="bg-yellow-500/15 text-yellow-400 border-yellow-500/20 text-[10px]">
-          در انتظار
-        </Badge>
-      );
+      return <Badge className="bg-yellow-500/15 text-yellow-400 border-yellow-500/20 text-[10px]"><Clock className="size-3 ml-0.5" />در انتظار</Badge>;
     case 'failed':
-      return (
-        <Badge className="bg-red-500/15 text-red-400 border-red-500/20 text-[10px]">
-          <XCircle className="size-3" />
-          ناموفق
-        </Badge>
-      );
+      return <Badge className="bg-red-500/15 text-red-400 border-red-500/20 text-[10px]"><XCircle className="size-3 ml-0.5" />ناموفق</Badge>;
   }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/*  Card Gradient Configs                                                      */
+/*  Card Design Configs                                                        */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 const CARD_DESIGNS = {
@@ -193,8 +351,8 @@ const CARD_DESIGNS = {
     sub: 'text-gray-300',
     accent: 'text-[#D4AF37]',
     shimmer: 'from-[#D4AF37]/0 via-[#D4AF37]/25 to-[#D4AF37]/0',
-    border: 'border-[#D4AF37]/40',
     label: 'مشکی پریمیوم',
+    border: 'border-[#D4AF37]/40',
   },
   'diamond': {
     bg: 'linear-gradient(135deg, #b8860b, #daa520, #ffd700, #e8c252, #daa520, #b8860b)',
@@ -211,13 +369,25 @@ const CARD_DESIGNS = {
     sub: 'text-[#3d1a25]/90',
     accent: 'text-white',
     shimmer: 'from-white/0 via-white/25 to-white/0',
-    label: 'رز گلد',
+    label: 'رزگلد',
     border: '',
   },
 } as const;
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/*  API helper to map server response to local GoldCardData               */
+/*  Card Level Configs                                                         */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+const CARD_LEVELS: CardLevel[] = [
+  { key: 'bronze', label: 'برنزی', icon: <Award className="size-4" />, minTx: 0, maxTx: 10, color: 'text-[#CD7F32]', bgColor: 'bg-[#CD7F32]/10', borderColor: 'border-[#CD7F32]/30', benefits: ['سقف روزانه: ۵۰ میلیون تومان', 'کارمزد: ۱٪'] },
+  { key: 'silver', label: 'نقره‌ای', icon: <Star className="size-4" />, minTx: 11, maxTx: 50, color: 'text-[#C0C0C0]', bgColor: 'bg-[#C0C0C0]/10', borderColor: 'border-[#C0C0C0]/30', benefits: ['سقف روزانه: ۱۰۰ میلیون تومان', 'کارمزد: ۰.۸٪'] },
+  { key: 'gold', label: 'طلایی', icon: <Crown className="size-4" />, minTx: 51, maxTx: 200, color: 'text-[#FFD700]', bgColor: 'bg-[#FFD700]/10', borderColor: 'border-[#FFD700]/30', benefits: ['سقف روزانه: ۲۰۰ میلیون تومان', 'کارمزد: ۰.۵٪', 'درصد کش‌بک بیشتر'] },
+  { key: 'platinum', label: 'پلاتینیوم', icon: <Gem className="size-4" />, minTx: 201, maxTx: 500, color: 'text-[#E5E4E2]', bgColor: 'bg-[#E5E4E2]/10', borderColor: 'border-[#E5E4E2]/30', benefits: ['سقف روزانه: ۵۰۰ میلیون تومان', 'کارمزد: ۰.۳٪', 'کش‌بک ویژه', 'پشتیبانی اختصاصی'] },
+  { key: 'diamond', label: 'الماسی', icon: <Sparkles className="size-4" />, minTx: 501, maxTx: Infinity, color: 'text-[#D4AF37]', bgColor: 'bg-[#D4AF37]/10', borderColor: 'border-[#D4AF37]/30', benefits: ['سقف روزانه: نامحدود', 'کارمزد: صفر', 'کش‌بک حداکثری', 'پشتیبانی VIP', 'دسترسی زودتر به امکانات'] },
+];
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  API Helper — mapApiCard                                                    */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 function mapApiCard(c: Record<string, unknown>, userId: string, goldPriceVal: number): GoldCardData {
@@ -226,6 +396,7 @@ function mapApiCard(c: Record<string, unknown>, userId: string, goldPriceVal: nu
     userId,
     cardNumber: (c.fullCardNumber || c.cardNumber) as string,
     cvv: (c.cvv) as string,
+    pin: (c.pin) as string || '',
     expiry: `${toPersianDigits(String(c.expiryMonth))}/${toPersianDigits(String(c.expiryYear))}`,
     design: (c.design as GoldCardData['design']) || 'gold-gradient',
     type: (c.cardType === 'virtual' ? 'VIRTUAL' : 'PHYSICAL') as GoldCardData['type'],
@@ -242,7 +413,7 @@ function mapApiCard(c: Record<string, unknown>, userId: string, goldPriceVal: nu
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/*  Virtual Card Component                                                     */
+/*  VirtualCard — 3D Flip Card Component                                       */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 function VirtualCard({
@@ -251,142 +422,815 @@ function VirtualCard({
   isFrozen,
   showNumber,
   showCvv,
+  showPin,
   onToggleNumber,
   onToggleCvv,
+  onTogglePin,
+  onFlip,
 }: {
   card: GoldCardData;
   userName: string;
   isFrozen: boolean;
   showNumber: boolean;
   showCvv: boolean;
+  showPin: boolean;
   onToggleNumber: () => void;
   onToggleCvv: () => void;
+  onTogglePin: () => void;
+  onFlip: () => void;
 }) {
+  const [flipped, setFlipped] = useState(false);
   const design = CARD_DESIGNS[card.design];
   const isDiamond = card.design === 'diamond';
-  const isSuperAdmin = false; // We'll get from store
+
+  const handleFlip = () => {
+    setFlipped(!flipped);
+    onFlip();
+  };
 
   return (
-    <div
-      className={`relative w-full max-w-[400px] mx-auto aspect-[1.586/1] rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(212,175,55,0.25)] golden-card-animated ${design.border || 'border border-white/10'} select-none`}
-      style={{ background: design.bg }}
-    >
-      {/* Shimmer overlay */}
-      <div
-        className={`absolute inset-0 bg-gradient-to-r ${design.shimmer} animate-[shimmer_3s_ease-in-out_infinite] pointer-events-none`}
-        style={{ backgroundSize: '200% 100%' }}
-      />
-
-      {/* Diamond sparkle particles */}
-      {isDiamond && (
-        <>
-          <div className="absolute top-4 left-8 w-2 h-2 bg-white/70 rounded-full animate-[twinkle_2s_ease-in-out_infinite]" />
-          <div className="absolute top-12 right-16 w-1.5 h-1.5 bg-white/50 rounded-full animate-[twinkle_2.5s_ease-in-out_infinite_0.5s]" />
-          <div className="absolute bottom-16 left-20 w-1 h-1 bg-white/60 rounded-full animate-[twinkle_3s_ease-in-out_infinite_1s]" />
-          <div className="absolute top-1/2 right-8 w-2 h-2 bg-white/40 rounded-full animate-[twinkle_2.8s_ease-in-out_infinite_0.3s]" />
-        </>
-      )}
-
-      {/* Frozen overlay */}
-      {isFrozen && (
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-10">
-          <div className="flex flex-col items-center gap-2">
-            <Snowflake className="size-12 text-blue-300 animate-pulse" />
-            <span className="text-white font-bold text-lg">کارتی مسدود</span>
-          </div>
-        </div>
-      )}
-
-      {/* Card content */}
-      <div className="relative z-[5] flex flex-col justify-between h-full p-5 sm:p-6">
-        {/* Top row */}
-        <div className="flex items-start justify-between">
-          <div>
-            <p className={`text-[10px] font-bold tracking-wider uppercase ${design.sub}`}>
-              ZARRIN GOLD
-            </p>
-            <p className={`text-lg font-extrabold tracking-wide ${design.text} mt-0.5`}>
-              زرین گلد
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Wifi className={`size-5 ${design.sub} rotate-90`} />
-            {isSuperAdmin && (
-              <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 text-[9px] px-1.5 py-0">
-                الماس 💎
-              </Badge>
-            )}
-          </div>
-        </div>
-
-        {/* Card number */}
+    <div className="card-perspective w-full max-w-[400px] mx-auto" onClick={handleFlip}>
+      <div className={`card-flipper w-full aspect-[1.586/1] ${flipped ? 'flipped' : ''}`}>
+        {/* ── FRONT FACE ── */}
         <div
-          className="cursor-pointer active:scale-[0.98] transition-transform"
-          onClick={onToggleNumber}
+          className={`card-face card-face-front w-full rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(212,175,55,0.25)] golden-card-animated ${design.border || 'border border-white/10'} select-none cursor-pointer`}
+          style={{ background: design.bg }}
         >
-          <p className={`text-lg sm:text-xl font-mono tracking-[0.15em] ${design.text} text-center font-bold`}>
-            {showNumber ? card.cardNumber : maskCardNumber(card.cardNumber)}
-          </p>
-          <p className="text-center mt-0.5">
-            {showNumber ? (
-              <EyeOff className={`size-3.5 mx-auto ${design.sub}`} />
-            ) : (
-              <Eye className={`size-3.5 mx-auto ${design.sub}`} />
-            )}
-          </p>
-        </div>
+          {/* Holographic shimmer */}
+          <div className="absolute inset-0 holo-shimmer pointer-events-none" />
 
-        {/* Bottom row */}
-        <div className="flex items-end justify-between">
-          <div>
-            <p className={`text-[9px] font-semibold ${design.sub}`}>CVV2</p>
-            <div
-              className="cursor-pointer active:scale-[0.98] transition-transform"
-              onClick={onToggleCvv}
-            >
-              <p className={`text-sm font-mono ${design.text} font-bold`}>
-                {showCvv ? card.cvv : '***'}
+          {/* Diamond sparkle particles */}
+          {isDiamond && (
+            <>
+              <div className="absolute top-4 left-8 w-2 h-2 bg-white/70 rounded-full animate-[twinkle_2s_ease-in-out_infinite]" />
+              <div className="absolute top-12 right-16 w-1.5 h-1.5 bg-white/50 rounded-full animate-[twinkle_2.5s_ease-in-out_infinite_0.5s]" />
+              <div className="absolute bottom-16 left-20 w-1 h-1 bg-white/60 rounded-full animate-[twinkle_3s_ease-in-out_infinite_1s]" />
+              <div className="absolute top-1/2 right-8 w-2 h-2 bg-white/40 rounded-full animate-[twinkle_2.8s_ease-in-out_infinite_0.3s]" />
+            </>
+          )}
+
+          {/* Frozen overlay */}
+          {isFrozen && (
+            <div className="frost-overlay absolute inset-0 bg-blue-900/30 flex items-center justify-center z-10">
+              <div className="flex flex-col items-center gap-2">
+                <Snowflake className="size-12 text-blue-200 animate-pulse" />
+                <span className="text-white font-bold text-lg drop-shadow-lg">کارت مسدود است</span>
+              </div>
+            </div>
+          )}
+
+          {/* Card front content */}
+          <div className="relative z-[5] flex flex-col justify-between h-full p-5 sm:p-6">
+            {/* Top row */}
+            <div className="flex items-start justify-between">
+              <div>
+                <p className={`text-[10px] font-bold tracking-wider uppercase ${design.sub}`}>ZARRIN GOLD</p>
+                <p className={`text-lg font-extrabold tracking-wide ${design.text} mt-0.5`}>زرین گلد</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Wifi className={`size-5 ${design.sub} rotate-90`} />
+                <Badge variant="outline" className={`${design.border || 'border-white/30'} ${design.sub} text-[9px] px-1.5 py-0`}>
+                  {card.type === 'VIRTUAL' ? 'مجازی' : 'فیزیکی'}
+                </Badge>
+              </div>
+            </div>
+
+            {/* Card number */}
+            <div className="cursor-pointer active:scale-[0.98] transition-transform" onClick={(e) => { e.stopPropagation(); onToggleNumber(); }}>
+              <p className={`text-lg sm:text-xl font-mono tracking-[0.15em] ${design.text} text-center font-bold`}>
+                {showNumber ? card.cardNumber : maskCardNumber(card.cardNumber)}
               </p>
+              <p className="text-center mt-0.5">
+                {showNumber
+                  ? <EyeOff className={`size-3.5 mx-auto ${design.sub}`} />
+                  : <Eye className={`size-3.5 mx-auto ${design.sub}`} />}
+              </p>
+            </div>
+
+            {/* Bottom row */}
+            <div className="flex items-end justify-between">
+              <div>
+                <p className={`text-[9px] font-semibold ${design.sub}`}>CVV2</p>
+                <div className="cursor-pointer active:scale-[0.98] transition-transform" onClick={(e) => { e.stopPropagation(); onToggleCvv(); }}>
+                  <p className={`text-sm font-mono ${design.text} font-bold`}>{showCvv ? card.cvv : '***'}</p>
+                </div>
+              </div>
+              <div className="text-center">
+                <p className={`text-[9px] font-semibold ${design.sub}`}>اعتبار</p>
+                <p className={`text-sm font-mono ${design.text} font-bold`}>{card.expiry}</p>
+              </div>
+              <div className="text-left">
+                <p className={`text-[9px] font-semibold ${design.sub}`}>دارنده کارت</p>
+                <p className={`text-xs font-bold ${design.text} max-w-[120px] truncate`}>{userName || 'کاربر زرین گلد'}</p>
+              </div>
             </div>
           </div>
 
-          <div className="text-center">
-            <p className={`text-[9px] font-semibold ${design.sub}`}>اعتبار</p>
-            <p className={`text-sm font-mono ${design.text} font-bold`}>{card.expiry}</p>
-          </div>
-
-          <div className="text-left">
-            <p className={`text-[9px] font-semibold ${design.sub}`}>دارنده کارت</p>
-            <p className={`text-xs font-bold ${design.text} max-w-[120px] truncate`}>
-              {userName || 'کاربر زرین گلد'}
-            </p>
+          {/* Flip hint */}
+          <div className={`absolute bottom-2 left-1/2 -translate-x-1/2 ${design.sub} opacity-40 z-[5]`}>
+            <p className="text-[8px]">برای مشاهده پشت کارت کلیک کنید</p>
           </div>
         </div>
 
-        {/* Card type badge */}
-        <div className="absolute bottom-3 right-5">
-          <Badge
-            variant="outline"
-            className={`${design.border || 'border-white/30'} ${design.sub} text-[9px] px-1.5 py-0`}
-          >
-            {card.type === 'VIRTUAL' ? '🥇 مجازی' : '💳 فیزیکی'}
-          </Badge>
-        </div>
-      </div>
+        {/* ── BACK FACE ── */}
+        <div
+          className={`card-face card-face-back w-full rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(212,175,55,0.25)] select-none ${design.border || 'border border-white/10'}`}
+          style={{ background: design.bg }}
+        >
+          {/* Magnetic stripe */}
+          <div className="magnetic-stripe w-full h-12 mt-4" />
 
-      {/* NFC icon bottom-left */}
-      <div className={`absolute bottom-5 left-5 z-[5]`}>
-        <QrCode className={`size-6 ${design.sub} opacity-40`} />
+          {/* CVV strip */}
+          <div className="px-5 pt-4">
+            <div className="bg-black/20 backdrop-blur-sm rounded-lg p-3 flex items-center justify-between">
+              <div>
+                <p className={`text-[9px] ${design.sub}`}>CVV2</p>
+                <div className="cursor-pointer" onClick={(e) => { e.stopPropagation(); onToggleCvv(); }}>
+                  <p className={`text-lg font-mono ${design.text} font-bold tracking-widest`}>{showCvv ? card.cvv : '•••'}</p>
+                </div>
+              </div>
+              <div className="text-left">
+                <p className={`text-[9px] ${design.sub}`}>PIN</p>
+                <div className="cursor-pointer" onClick={(e) => { e.stopPropagation(); onTogglePin(); }}>
+                  <p className={`text-lg font-mono ${design.text} font-bold tracking-widest`}>{showPin ? card.pin : '••••'}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom info */}
+          <div className="absolute bottom-4 right-5 left-5 z-[5]">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className={`text-[9px] ${design.sub}`}>شماره کارت</p>
+                <p className={`text-xs font-mono ${design.text} font-bold tracking-wide`}>
+                  {showNumber ? card.cardNumber : maskCardNumber(card.cardNumber)}
+                </p>
+              </div>
+              <QrCode className={`size-8 ${design.sub} opacity-30`} />
+            </div>
+          </div>
+
+          {/* Holographic shimmer on back too */}
+          <div className="absolute inset-0 holo-shimmer pointer-events-none opacity-50" />
+        </div>
       </div>
     </div>
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/*  Welcome Screen (No Card)                                                   */
+/*  QuickActions — Grid of action buttons below the card                      */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
-function WelcomeScreen({ onRequest }: { onRequest: () => void }) {
+function QuickActions({
+  isFrozen,
+  actionLoading,
+  onFreeze,
+  onChargeOpen,
+  onPinOpen,
+  onDesignOpen,
+  onLimitsOpen,
+  onCopyNumber,
+  cardNumber,
+}: {
+  isFrozen: boolean;
+  actionLoading: boolean;
+  onFreeze: () => void;
+  onChargeOpen: () => void;
+  onPinOpen: () => void;
+  onDesignOpen: () => void;
+  onLimitsOpen: () => void;
+  onCopyNumber: () => void;
+  cardNumber: string;
+}) {
+  const actions = [
+    { icon: <Coins className="size-4" />, label: 'شارژ از طلا', onClick: onChargeOpen, color: 'text-yellow-500' },
+    { icon: isFrozen ? <Flame className="size-4" /> : <Snowflake className="size-4" />, label: isFrozen ? 'فعال‌سازی' : 'مسدود/فعال', onClick: onFreeze, color: isFrozen ? 'text-orange-500' : 'text-blue-400' },
+    { icon: <Lock className="size-4" />, label: 'تغییر رمز', onClick: onPinOpen, color: 'text-purple-400' },
+    { icon: <Palette className="size-4" />, label: 'تغییر طرح', onClick: onDesignOpen, color: 'text-pink-400' },
+    { icon: <Copy className="size-4" />, label: 'کپی شماره', onClick: onCopyNumber, color: 'text-green-400' },
+    { icon: <Gauge className="size-4" />, label: 'سقف تراکنش', onClick: onLimitsOpen, color: 'text-cyan-400' },
+  ];
+
+  return (
+    <div className="grid grid-cols-3 sm:grid-cols-6 gap-2.5">
+      {actions.map((a, i) => (
+        <button
+          key={i}
+          onClick={a.onClick}
+          disabled={actionLoading}
+          className="quick-action-btn flex flex-col items-center gap-1.5 p-3 rounded-xl bg-card border border-border/50 hover:border-gold/30 transition-all card-hover-lift disabled:opacity-50"
+        >
+          <div className={`size-9 rounded-lg bg-muted flex items-center justify-center ${a.color}`}>
+            {a.icon}
+          </div>
+          <span className="text-[11px] font-medium text-muted-foreground">{a.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  CardStats — Dashboard statistics                                           */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+function CardStats({
+  card,
+  goldPrice,
+}: {
+  card: GoldCardData;
+  goldPrice: number;
+}) {
+  const goldValue = card.linkedGoldGrams * goldPrice;
+  const dailyPct = card.dailyLimit > 0 ? Math.min((card.dailySpent / card.dailyLimit) * 100, 100) : 0;
+  const monthlyPct = card.monthlyLimit > 0 ? Math.min((card.monthlySpent / card.monthlyLimit) * 100, 100) : 0;
+  const priceChange = goldPrice > card.goldValuePerGram
+    ? ((goldPrice - card.goldValuePerGram) / card.goldValuePerGram) * 100
+    : -((card.goldValuePerGram - goldPrice) / card.goldValuePerGram) * 100;
+  const isUp = goldPrice >= card.goldValuePerGram;
+
+  return (
+    <div className="space-y-3">
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+        <TrendingUp className="size-4 text-[#D4AF37]" />
+        آمار کارت
+      </h3>
+
+      {/* Main stats grid */}
+      <div className="grid grid-cols-2 gap-3">
+        {/* Balance */}
+        <Card className="stat-card-shimmer bg-card border-border/30 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="size-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+              <Banknote className="size-4 text-green-500" />
+            </div>
+            <span className="text-[11px] text-muted-foreground">موجودی (تومان)</span>
+          </div>
+          <p className="text-lg font-bold tabular-nums">{formatToman(card.balance)}</p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">
+            ≈ {toPersianDigits(card.linkedGoldGrams.toFixed(2))} گرم طلا
+          </p>
+        </Card>
+
+        {/* Gold Value */}
+        <Card className="stat-card-shimmer bg-card border-border/30 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="size-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+              <Coins className="size-4 text-yellow-500" />
+            </div>
+            <span className="text-[11px] text-muted-foreground">ارزش طلای متصل</span>
+          </div>
+          <p className="text-lg font-bold tabular-nums">{formatToman(goldValue)}</p>
+          <div className={`flex items-center gap-1 mt-0.5 text-[10px] ${isUp ? 'text-green-500' : 'text-red-500'}`}>
+            <TrendingUp className={`size-3 ${isUp ? '' : 'rotate-180'}`} />
+            <span className="value-ticker">
+              {isUp ? '+' : ''}{toPersianDigits(priceChange.toFixed(1))}٪
+            </span>
+          </div>
+        </Card>
+      </div>
+
+      {/* Daily / Monthly limits */}
+      <Card className="bg-card border-border/30 rounded-xl p-4 space-y-3">
+        {/* Daily */}
+        <div>
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs text-muted-foreground">خرید روزانه</span>
+            <span className="text-xs font-medium">{formatToman(card.dailySpent)} / {formatToman(card.dailyLimit)}</span>
+          </div>
+          <Progress value={dailyPct} className="h-2" />
+        </div>
+        <Separator className="my-1" />
+        {/* Monthly */}
+        <div>
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs text-muted-foreground">خرید ماهانه</span>
+            <span className="text-xs font-medium">{formatToman(card.monthlySpent)} / {formatToman(card.monthlyLimit)}</span>
+          </div>
+          <Progress value={monthlyPct} className="h-2" />
+        </div>
+      </Card>
+
+      {/* Gold price indicator */}
+      <div className="flex items-center justify-between p-3 rounded-xl bg-card border border-border/30">
+        <div className="flex items-center gap-2">
+          <div className="size-2 rounded-full bg-green-500 gold-pulse" />
+          <span className="text-xs text-muted-foreground">قیمت لحظه‌ای طلا</span>
+        </div>
+        <span className="text-sm font-bold tabular-nums">{formatToman(goldPrice)} <span className="text-[10px] text-muted-foreground font-normal">تومان/گرم</span></span>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  SecurityCenter — Security toggles & emergency lock                         */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+function SecurityCenter({
+  settings,
+  onToggle,
+  onEmergencyLock,
+  recentTx,
+  actionLoading,
+}: {
+  settings: SecuritySettings;
+  onToggle: (key: keyof SecuritySettings) => void;
+  onEmergencyLock: () => void;
+  recentTx: CardTransaction[];
+  actionLoading: boolean;
+}) {
+  const toggles = [
+    { key: 'onlinePurchases' as const, label: 'خرید آنلاین', desc: 'پرداخت در فروشگاه‌های اینترنتی', icon: <Globe className="size-4" /> },
+    { key: 'inStorePurchases' as const, label: 'خرید حضوری', desc: 'پرداخت با کارتخوان فروشگاهی', icon: <Store className="size-4" /> },
+    { key: 'internationalPurchases' as const, label: 'خرید بین‌المللی', desc: 'تراکنش‌های ارزی خارجی', icon: <CircleDollarSign className="size-4" /> },
+    { key: 'contactlessNfc' as const, label: 'تماس با NFC', desc: 'پرداخت بدون تماس فیزیکی', icon: <Wifi className="size-4" /> },
+  ];
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+        <ShieldCheck className="size-4 text-[#D4AF37]" />
+        مرکز امنیت
+      </h3>
+
+      {/* Toggles */}
+      <Card className="bg-card border-border/30 rounded-xl divide-y divide-border/30">
+        {toggles.map((t) => (
+          <div key={t.key} className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <div className="size-9 rounded-lg bg-muted flex items-center justify-center text-muted-foreground">
+                {t.icon}
+              </div>
+              <div>
+                <p className="text-sm font-medium">{t.label}</p>
+                <p className="text-[11px] text-muted-foreground">{t.desc}</p>
+              </div>
+            </div>
+            <Switch
+              checked={settings[t.key]}
+              onCheckedChange={() => onToggle(t.key)}
+              disabled={actionLoading}
+            />
+          </div>
+        ))}
+      </Card>
+
+      {/* Emergency Lock */}
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="destructive" className="w-full rounded-xl gap-2" disabled={actionLoading}>
+            <ShieldAlert className="size-4" />
+            قفل اضطراری
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>قفل اضطراری کارت</AlertDialogTitle>
+            <AlertDialogDescription>
+              آیا از مسدود کردن فوری کارت مطمئن هستید؟ این عمل تمام تراکنش‌های کارت را متوقف می‌کند.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>انصراف</AlertDialogCancel>
+            <AlertDialogAction onClick={onEmergencyLock} className="bg-red-600 hover:bg-red-700">
+              بله، مسدود کن
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Recent transactions mini list */}
+      {recentTx.length > 0 && (
+        <div className="space-y-2">
+          <h4 className="text-xs font-medium text-muted-foreground">آخرین ۵ تراکنش</h4>
+          <Card className="bg-card border-border/30 rounded-xl divide-y divide-border/30">
+            {recentTx.slice(0, 5).map((tx) => (
+              <div key={tx.id} className="flex items-center justify-between p-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="size-8 rounded-lg bg-muted flex items-center justify-center">
+                    {getTxIcon(tx.type)}
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium">{tx.merchant || getTxTypeLabel(tx.type)}</p>
+                    <p className="text-[10px] text-muted-foreground">{getRelativeTime(tx.createdAt)}</p>
+                  </div>
+                </div>
+                <div className="text-left">
+                  <p className={`text-xs font-bold tabular-nums ${tx.type === 'refund' || tx.type === 'charge' ? 'text-green-500' : 'text-red-400'}`}>
+                    {tx.type === 'refund' || tx.type === 'charge' ? '+' : '-'}{formatToman(tx.amount)}
+                  </p>
+                  {getStatusBadge(tx.status)}
+                </div>
+              </div>
+            ))}
+          </Card>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  TransferSection — Gold-based card-to-card transfer                         */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+function TransferSection({
+  goldPrice,
+  userRole,
+}: {
+  goldPrice: number;
+  userRole: string;
+}) {
+  const { user, addToast } = useAppStore();
+  const [toCard, setToCard] = useState('');
+  const [goldGrams, setGoldGrams] = useState('');
+  const [desc, setDesc] = useState('');
+  const [pin, setPin] = useState('');
+  const [step, setStep] = useState<'form' | 'confirm' | 'success'>('form');
+  const [loading, setLoading] = useState(false);
+
+  const formatCardInput = (v: string) => {
+    const d = v.replace(/\D/g, '').slice(0, 16);
+    return d.replace(/(.{4})/g, '$1-').slice(0, -1);
+  };
+
+  const parsedGrams = parseFloat(goldGrams) || 0;
+  const feeGold = userRole === 'super_admin' ? 0 : parsedGrams * 0.001;
+  const feeFiat = feeGold * goldPrice;
+  const fiatEquiv = parsedGrams * goldPrice;
+  const totalFiat = fiatEquiv + feeFiat;
+
+  const handleTransfer = async () => {
+    if (!toCard.replace(/-/g, '') || parsedGrams <= 0) { addToast('اطلاعات ناقص است', 'error'); return; }
+    if (parsedGrams < 0.001) { addToast('حداقل ۱ میلی‌گرم طلا', 'error'); return; }
+    if (!pin) { addToast('رمز کارت الزامی است', 'error'); return; }
+    setLoading(true);
+    try {
+      const res = await fetch('/api/gold-card/transfer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user?.id, toCardNumber: toCard, goldGrams: parsedGrams, description: desc || undefined, pin }),
+      });
+      const data = await res.json();
+      if (!res.ok) { addToast(data.error || 'خطا در انتقال', 'error'); return; }
+      setStep('success');
+      addToast(data.message, 'success');
+    } catch { addToast('خطای شبکه', 'error'); }
+    finally { setLoading(false); }
+  };
+
+  const reset = () => { setToCard(''); setGoldGrams(''); setDesc(''); setPin(''); setStep('form'); };
+
+  if (step === 'success') {
+    return (
+      <Card className="bg-card border-border/30 rounded-xl p-6 text-center space-y-4">
+        <div className="size-16 mx-auto rounded-full bg-green-500/10 flex items-center justify-center">
+          <CheckCircle className="size-8 text-green-500" />
+        </div>
+        <h3 className="text-lg font-bold gold-gradient-text">انتقال موفق!</h3>
+        <p className="text-sm text-muted-foreground">طلای شما با موفقیت به کارت مقصد منتقل شد.</p>
+        <Button onClick={reset} className="rounded-xl bg-gold hover:bg-gold-dark text-gold-dark">انتقال جدید</Button>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="bg-card border-border/30 rounded-xl p-5 space-y-4">
+      <h3 className="text-sm font-bold flex items-center gap-1.5">
+        <ArrowLeftRight className="size-4 text-[#D4AF37]" />
+        انتقال طلا بین کارت‌ها
+      </h3>
+
+      <div className="space-y-3">
+        <div className="space-y-1.5">
+          <Label className="text-xs">شماره کارت مقصد</Label>
+          <Input value={toCard} onChange={(e) => setToCard(formatCardInput(e.target.value))} placeholder="XXXX-XXXX-XXXX-XXXX" className="rounded-xl text-left font-mono" dir="ltr" />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs">مقدار طلا (گرم)</Label>
+          <Input type="number" step="0.001" min="0.001" value={goldGrams} onChange={(e) => setGoldGrams(e.target.value)} placeholder="مثلاً ۰.۵" className="rounded-xl" />
+          {parsedGrams > 0 && (
+            <p className="text-[11px] text-muted-foreground">
+              معادل: <span className="font-bold text-foreground">{formatToman(fiatEquiv)}</span> تومان
+            </p>
+          )}
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs">توضیحات (اختیاری)</Label>
+          <Input value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="مثلاً: بابت خرید" className="rounded-xl" />
+        </div>
+        {step === 'confirm' && (
+          <div className="space-y-1.5">
+            <Label className="text-xs">رمز کارت</Label>
+            <Input type="password" value={pin} onChange={(e) => setPin(e.target.value)} placeholder="••••" className="rounded-xl text-center tracking-widest" maxLength={8} />
+          </div>
+        )}
+      </div>
+
+      {/* Fee summary */}
+      {parsedGrams > 0 && (
+        <Card className="bg-muted/50 rounded-xl p-3 space-y-1.5 text-xs">
+          <div className="flex justify-between"><span className="text-muted-foreground">مقدار طلا</span><span className="font-mono">{toPersianDigits(parsedGrams.toFixed(3))} گرم</span></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">کارمزد ({toPersianDigits('0.1')}٪)</span><span className="font-mono">{toPersianDigits(feeGold.toFixed(4))} گرم</span></div>
+          <Separator />
+          <div className="flex justify-between font-bold"><span>معادل ریالی کل</span><span className="font-mono">{formatToman(totalFiat)} تومان</span></div>
+        </Card>
+      )}
+
+      {step === 'form' ? (
+        <Button onClick={() => setStep('confirm')} disabled={parsedGrams <= 0 || !toCard.replace(/-/g, '')} className="w-full rounded-xl bg-gold hover:bg-gold-dark text-gold-dark font-bold">
+          ادامه و تأیید
+        </Button>
+      ) : (
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setStep('form')} className="flex-1 rounded-xl">بازگشت</Button>
+          <Button onClick={handleTransfer} disabled={loading} className="flex-1 rounded-xl bg-gold hover:bg-gold-dark text-gold-dark font-bold">
+            {loading ? 'در حال انتقال...' : 'ثبت انتقال'}
+          </Button>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  TransactionsList — Filtered transaction list                               */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+function TransactionsList({
+  transactions,
+  loading,
+  filter,
+  onFilterChange,
+  onRefresh,
+}: {
+  transactions: CardTransaction[];
+  loading: boolean;
+  filter: string;
+  onFilterChange: (f: string) => void;
+  onRefresh: () => void;
+}) {
+  const filtered = filter === 'all' ? transactions : transactions.filter((t) => t.type === filter);
+  const filters = [
+    { key: 'all', label: 'همه' },
+    { key: 'purchase', label: 'خرید' },
+    { key: 'refund', label: 'برگشت' },
+    { key: 'charge', label: 'شارژ' },
+    { key: 'withdrawal', label: 'برداشت' },
+    { key: 'transfer_out', label: 'انتقال' },
+  ];
+
+  if (loading) {
+    return (
+      <div className="space-y-3">
+        {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-16 rounded-xl" />)}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {/* Filter tabs */}
+      <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 mobile-scroll">
+        {filters.map((f) => (
+          <button
+            key={f.key}
+            onClick={() => onFilterChange(f.key)}
+            className={`px-3 py-1.5 rounded-lg text-[11px] font-medium whitespace-nowrap transition-colors ${
+              filter === f.key
+                ? 'bg-gold text-gold-dark'
+                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+        <button onClick={onRefresh} className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-muted text-muted-foreground hover:bg-muted/80 whitespace-nowrap mr-auto">
+          <Clock className="size-3 inline-block ml-1" />
+          بروزرسانی
+        </button>
+      </div>
+
+      {/* Transaction list */}
+      {filtered.length === 0 ? (
+        <Card className="bg-card border-border/30 rounded-xl p-8 text-center space-y-3">
+          <div className="size-12 mx-auto rounded-full bg-muted flex items-center justify-center">
+            <ShoppingCart className="size-5 text-muted-foreground" />
+          </div>
+          <p className="text-sm text-muted-foreground">تراکنشی یافت نشد</p>
+        </Card>
+      ) : (
+        <Card className="bg-card border-border/30 rounded-xl divide-y divide-border/30 max-h-[400px] overflow-y-auto mobile-scroll">
+          {filtered.map((tx) => (
+            <div key={tx.id} className="flex items-center justify-between p-3 hover:bg-muted/30 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="size-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                  {getTxIcon(tx.type)}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium truncate">{tx.merchant || getTxTypeLabel(tx.type)}</p>
+                  <p className="text-[10px] text-muted-foreground">{getRelativeTime(tx.createdAt)}</p>
+                </div>
+              </div>
+              <div className="text-left shrink-0 mr-3">
+                <p className={`text-xs font-bold tabular-nums ${tx.type === 'refund' || tx.type === 'charge' ? 'text-green-500' : 'text-red-400'}`}>
+                  {tx.type === 'refund' || tx.type === 'charge' ? '+' : '-'}{formatToman(tx.amount)}
+                </p>
+                {tx.goldGrams !== undefined && tx.goldGrams > 0 && (
+                  <p className="text-[9px] text-muted-foreground">{toPersianDigits(tx.goldGrams.toFixed(3))} گرم</p>
+                )}
+              </div>
+            </div>
+          ))}
+        </Card>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  DesignPicker — 4 card designs with mini previews                           */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+function DesignPicker({
+  currentDesign,
+  onSelect,
+  loading,
+}: {
+  currentDesign: string;
+  onSelect: (design: string) => void;
+  loading: boolean;
+}) {
+  const designs: Array<{ key: keyof typeof CARD_DESIGNS }> = [
+    { key: 'gold-gradient' },
+    { key: 'black-premium' },
+    { key: 'diamond' },
+    { key: 'rose-gold' },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      {designs.map((d) => {
+        const cfg = CARD_DESIGNS[d.key];
+        const isSelected = d.key === currentDesign;
+        return (
+          <button
+            key={d.key}
+            onClick={() => onSelect(d.key)}
+            disabled={loading || isSelected}
+            className={`w-full aspect-[1.586/1] rounded-xl overflow-hidden relative transition-all duration-300 ${
+              isSelected
+                ? 'ring-2 ring-[#D4AF37] ring-offset-2 ring-offset-background scale-[1.03] shadow-lg'
+                : 'ring-1 ring-border/40 opacity-70 hover:opacity-100 hover:scale-[1.01]'
+            }`}
+          >
+            <div className={`w-full h-full ${cfg.border || ''} flex flex-col justify-between p-2.5`} style={{ background: cfg.bg }}>
+              <p className={`text-[7px] tracking-wider ${cfg.sub}`}>ZARRIN GOLD</p>
+              <p className={`text-[9px] font-mono tracking-wider ${cfg.text}`}>•••• •••• ••••</p>
+              <div className="flex items-center justify-between">
+                <p className={`text-[7px] ${cfg.sub}`}>{cfg.label}</p>
+                {isSelected && <CheckCircle className="size-3 text-green-300" />}
+              </div>
+            </div>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  CardLevel — Level system with progress bar                                 */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+function CardLevel({ totalTx }: { totalTx: number }) {
+  const currentLevel = useMemo(() => {
+    return CARD_LEVELS.find((l) => totalTx >= l.minTx && totalTx <= l.maxTx) || CARD_LEVELS[0];
+  }, [totalTx]);
+
+  const nextLevel = useMemo(() => {
+    const idx = CARD_LEVELS.indexOf(currentLevel);
+    return idx < CARD_LEVELS.length - 1 ? CARD_LEVELS[idx + 1] : null;
+  }, [currentLevel]);
+
+  const progressPct = nextLevel
+    ? ((totalTx - currentLevel.minTx) / (nextLevel.minTx - currentLevel.minTx)) * 100
+    : 100;
+
+  return (
+    <div className="space-y-3">
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+        <Trophy className="size-4 text-[#D4AF37]" />
+        سطح کارت
+      </h3>
+
+      <Card className="bg-card border-border/30 rounded-xl p-4 space-y-3">
+        {/* Current level badge */}
+        <div className="flex items-center justify-between">
+          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${currentLevel.bgColor} ${currentLevel.borderColor} border level-badge-glow`}>
+            <span className={currentLevel.color}>{currentLevel.icon}</span>
+            <span className={`text-sm font-bold ${currentLevel.color}`}>{currentLevel.label}</span>
+          </div>
+          <span className="text-xs text-muted-foreground">
+            {toPersianDigits(String(totalTx))} تراکنش
+          </span>
+        </div>
+
+        {/* Progress to next level */}
+        {nextLevel && (
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="text-muted-foreground">{currentLevel.label}</span>
+              <span className="text-muted-foreground">{nextLevel.label}</span>
+            </div>
+            <Progress value={progressPct} className="h-2" />
+            <p className="text-[10px] text-muted-foreground text-center">
+              {toPersianDigits(String(nextLevel.minTx - totalTx))} تراکنش تا سطح {nextLevel.label}
+            </p>
+          </div>
+        )}
+
+        {/* Benefits */}
+        <Separator />
+        <div className="space-y-1.5">
+          <p className="text-[11px] font-medium text-muted-foreground">مزایای سطح {currentLevel.label}:</p>
+          {currentLevel.benefits.map((b, i) => (
+            <div key={i} className="flex items-center gap-2 text-xs">
+              <CheckCircle className="size-3 text-green-500 shrink-0" />
+              <span>{b}</span>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  CardRewards — Points & rewards                                             */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+function CardRewards({ totalSpent }: { totalSpent: number }) {
+  const points = Math.floor(totalSpent / 100_000);
+  const rewards = [
+    { needed: 50, label: 'کاهش کارمزد یک تراکنش', icon: <Zap className="size-4" /> },
+    { needed: 100, label: 'کش‌بک ۵,۰۰۰ تومانی', icon: <Gift className="size-4" /> },
+    { needed: 200, label: 'افزایش سقف روزانه', icon: <TrendingUp className="size-4" /> },
+    { needed: 500, label: 'ارتقای طرح الماسی', icon: <Gem className="size-4" /> },
+  ];
+
+  return (
+    <div className="space-y-3">
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+        <Gift className="size-4 text-[#D4AF37]" />
+        امتیازات و جایزه‌ها
+      </h3>
+
+      <Card className="bg-card border-border/30 rounded-xl p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <p className="text-2xl font-bold gold-gradient-text">{toPersianDigits(String(points))}</p>
+            <p className="text-[11px] text-muted-foreground">امتیاز فعلی</p>
+          </div>
+          <div className="size-12 rounded-full bg-[#D4AF37]/10 flex items-center justify-center">
+            <Star className="size-6 text-[#D4AF37]" />
+          </div>
+        </div>
+        <p className="text-[10px] text-muted-foreground">
+          هر ۱۰۰ هزار تومان خرید = ۱ امتیاز
+        </p>
+      </Card>
+
+      <div className="space-y-2">
+        {rewards.map((r, i) => {
+          const unlocked = points >= r.needed;
+          return (
+            <Card key={i} className={`bg-card border-border/30 rounded-xl p-3 flex items-center gap-3 ${unlocked ? 'opacity-100' : 'opacity-50'}`}>
+              <div className={`size-9 rounded-lg flex items-center justify-center shrink-0 ${unlocked ? 'bg-green-500/10 text-green-500' : 'bg-muted text-muted-foreground'}`}>
+                {r.icon}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium">{r.label}</p>
+                <p className="text-[10px] text-muted-foreground">
+                  {unlocked ? 'فعال ✅' : `نیاز به ${toPersianDigits(String(r.needed))} امتیاز`}
+                </p>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  WelcomeScreen — No card state                                              */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+function WelcomeScreen({ onRequest, loading }: { onRequest: () => void; loading: boolean }) {
   const benefits = [
     { icon: <ShoppingCart className="size-5" />, text: 'خرید آنلاین در تمام فروشگاه‌ها' },
     { icon: <Download className="size-5" />, text: 'برداشت وجه از ATM' },
@@ -398,7 +1242,7 @@ function WelcomeScreen({ onRequest }: { onRequest: () => void }) {
     <div className="page-transition flex flex-col items-center gap-8 py-8 px-4">
       {/* Card illustration */}
       <div className="w-full max-w-[320px] mx-auto aspect-[1.586/1] rounded-2xl shadow-[0_8px_32px_rgba(212,175,55,0.25)] golden-card-animated relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #b8860b, #daa520, #ffd700, #f0c040, #daa520, #b8860b)' }}>
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-300/0 via-amber-200/40 to-amber-300/0 animate-[shimmer_3s_ease-in-out_infinite]" style={{ backgroundSize: '200% 100%' }} />
+        <div className="absolute inset-0 holo-shimmer" />
         <div className="absolute inset-0 flex flex-col justify-between p-6">
           <div>
             <p className="text-[#3d2800]/70 text-xs tracking-wider">ZARRIN GOLD</p>
@@ -414,7 +1258,6 @@ function WelcomeScreen({ onRequest }: { onRequest: () => void }) {
         </div>
       </div>
 
-      {/* Title */}
       <div className="text-center space-y-3">
         <h2 className="text-2xl font-bold gold-gradient-text">کارت طلایی شما آماده‌ است!</h2>
         <p className="text-muted-foreground text-sm leading-relaxed max-w-sm mx-auto">
@@ -422,29 +1265,19 @@ function WelcomeScreen({ onRequest }: { onRequest: () => void }) {
         </p>
       </div>
 
-      {/* Benefits */}
       <div className="w-full max-w-sm space-y-3">
         {benefits.map((b, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-3 p-3 rounded-xl bg-card border border-border/50 hover:border-gold/30 transition-colors"
-          >
-            <div className="size-10 rounded-lg bg-gold/10 flex items-center justify-center text-gold shrink-0">
-              {b.icon}
-            </div>
+          <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-card border border-border/50 hover:border-gold/30 transition-colors">
+            <div className="size-10 rounded-lg bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] shrink-0">{b.icon}</div>
             <span className="text-sm">{b.text}</span>
           </div>
         ))}
       </div>
 
-      {/* CTA */}
       <div className="w-full max-w-sm space-y-3">
-        <Button
-          className="w-full bg-gold hover:bg-gold-dark text-gold-dark hover:text-white font-bold text-base py-6 rounded-xl transition-all duration-300 btn-gold-shine"
-          onClick={onRequest}
-        >
+        <Button className="w-full bg-[#D4AF37] hover:bg-[#B8960C] text-[#2a1a00] hover:text-white font-bold text-base py-6 rounded-xl transition-all duration-300 btn-gold-shine" onClick={onRequest} disabled={loading}>
           <CreditCard className="size-5 ml-2" />
-          درخواست کارت طلایی
+          {loading ? 'در حال صدور...' : 'درخواست کارت طلایی'}
         </Button>
         <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-1">
           <ShieldCheck className="size-3.5" />
@@ -456,43 +1289,7 @@ function WelcomeScreen({ onRequest }: { onRequest: () => void }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/*  Mini Card Preview (for design picker)                                      */
-/* ═══════════════════════════════════════════════════════════════════════════ */
-
-function MiniCardPreview({
-  design,
-  selected,
-  onSelect,
-}: {
-  design: keyof typeof CARD_DESIGNS;
-  selected: boolean;
-  onSelect: () => void;
-}) {
-  const d = CARD_DESIGNS[design];
-
-  return (
-    <button
-      onClick={onSelect}
-      className={`w-full aspect-[1.586/1] rounded-xl overflow-hidden relative transition-all duration-300 ${
-        selected
-          ? 'ring-2 ring-gold ring-offset-2 ring-offset-background scale-[1.03] shadow-lg'
-          : 'ring-1 ring-border/40 opacity-70 hover:opacity-100 hover:scale-[1.01]'
-      }`}
-    >
-      <div className={`w-full h-full ${d.border || ''} flex flex-col justify-between p-2.5`} style={{ background: d.bg }}>
-        <p className={`text-[7px] tracking-wider ${d.sub}`}>ZARRIN GOLD</p>
-        <p className={`text-[9px] font-mono tracking-wider ${d.text}`}>•••• •••• ••••</p>
-        <div className="flex items-center justify-between">
-          <p className={`text-[7px] ${d.sub}`}>{d.label}</p>
-          {selected && <CheckCircle className="size-3 text-green-300" />}
-        </div>
-      </div>
-    </button>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/*  Main Component                                                             */
+/*  Main Component — GoldCardView (exported default)                           */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function GoldCardView() {
@@ -504,17 +1301,11 @@ export default function GoldCardView() {
   const [loading, setLoading] = useState(true);
   const [showNumber, setShowNumber] = useState(false);
   const [showCvv, setShowCvv] = useState(false);
+  const [showPin, setShowPin] = useState(false);
   const [txFilter, setTxFilter] = useState<string>('all');
   const [goldPrice, setGoldPrice] = useState(8_900_000);
-
-  // Transfer state (GOLD-BASED)
-  const [transferToCard, setTransferToCard] = useState('');
-  const [transferGoldGrams, setTransferGoldGrams] = useState('');
-  const [transferDesc, setTransferDesc] = useState('');
-  const [transferPin, setTransferPin] = useState('');
-  const [transferStep, setTransferStep] = useState<'form' | 'confirm' | 'success'>('form');
-  const [transferLoading, setTransferLoading] = useState(false);
-  const [transferResult, setTransferResult] = useState<Record<string, unknown> | null>(null);
+  const [txLoading, setTxLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   // Dialog states
   const [chargeOpen, setChargeOpen] = useState(false);
@@ -528,30 +1319,34 @@ export default function GoldCardView() {
   const [newPin, setNewPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [selectedDesign, setSelectedDesign] = useState<string>('gold-gradient');
-  const [dailyLimit, setDailyLimit] = useState(10_000_000);
-  const [monthlyLimit, setMonthlyLimit] = useState(100_000_000);
-  const [actionLoading, setActionLoading] = useState(false);
+  const [dailyLimit, setDailyLimit] = useState(50_000_000);
+  const [monthlyLimit, setMonthlyLimit] = useState(500_000_000);
+
+  // Security settings
+  const [security, setSecurity] = useState<SecuritySettings>({
+    onlinePurchases: true,
+    inStorePurchases: true,
+    internationalPurchases: false,
+    contactlessNfc: true,
+  });
 
   /* ── Quick Action Event Listeners ── */
   usePageEvent('transfer', () => {
-    // Switch to transfer tab — we use a ref to the tab trigger
-    const transferTab = document.querySelector('[data-goldcard-tab="transfer"]') as HTMLElement;
-    if (transferTab) transferTab.click();
+    const el = document.querySelector('[data-goldcard-tab="transfer"]') as HTMLElement;
+    if (el) el.click();
   });
   usePageEvent('balance', () => {
-    const cardTab = document.querySelector('[data-goldcard-tab="card"]') as HTMLElement;
-    if (cardTab) cardTab.click();
+    const el = document.querySelector('[data-goldcard-tab="card"]') as HTMLElement;
+    if (el) el.click();
   });
   usePageEvent('freeze', () => handleToggleFreeze());
-  usePageEvent('show-number', () => setShowNumber((prev) => !prev));
+  usePageEvent('show-number', () => setShowNumber((p) => !p));
 
   /* ── Fetch gold price ── */
   useEffect(() => {
     fetch('/api/gold/prices')
-      .then(r => r.json())
-      .then(data => {
-        if (data.buyPrice) setGoldPrice(data.buyPrice);
-      })
+      .then((r) => r.json())
+      .then((d) => { if (d.buyPrice) setGoldPrice(d.buyPrice); })
       .catch(() => {});
   }, []);
 
@@ -581,20 +1376,13 @@ export default function GoldCardView() {
       } else {
         setCard(null);
       }
-    } catch {
-      addToast('خطا در دریافت اطلاعات کارت', 'error');
-    } finally {
-      setLoading(false);
-    }
+    } catch { addToast('خطا در دریافت اطلاعات کارت', 'error'); }
+    finally { setLoading(false); }
   }, [user?.id, goldPrice, addToast]);
 
-  useEffect(() => {
-    fetchCard();
-  }, [fetchCard]);
+  useEffect(() => { fetchCard(); }, [fetchCard]);
 
-  /* ── Fetch full transactions list ── */
-  const [txLoading, setTxLoading] = useState(false);
-
+  /* ── Fetch full transactions ── */
   const fetchAllTransactions = useCallback(async () => {
     if (!user?.id) return;
     try {
@@ -611,11 +1399,8 @@ export default function GoldCardView() {
         createdAt: (tx.createdAt as string) || new Date().toISOString(),
         goldGrams: (tx.goldGrams as number) || undefined,
       })));
-    } catch {
-      addToast('خطا در دریافت تراکنش‌ها', 'error');
-    } finally {
-      setTxLoading(false);
-    }
+    } catch { addToast('خطا در دریافت تراکنش‌ها', 'error'); }
+    finally { setTxLoading(false); }
   }, [user?.id, addToast]);
 
   /* ── Actions ── */
@@ -623,285 +1408,125 @@ export default function GoldCardView() {
     if (!card) return;
     setActionLoading(true);
     try {
-      const res = await fetch('/api/gold-card/freeze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.id }),
-      });
+      const res = await fetch('/api/gold-card/freeze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user?.id }) });
       const data = await res.json();
-      if (!res.ok) {
-        addToast(data.message || 'خطا در تغییر وضعیت کارت', 'error');
-        return;
-      }
-      setCard((prev) =>
-        prev ? { ...prev, status: prev.status === 'frozen' ? 'active' : 'frozen' } : prev
-      );
+      if (!res.ok) { addToast(data.message || 'خطا در تغییر وضعیت', 'error'); return; }
+      setCard((p) => p ? { ...p, status: p.status === 'frozen' ? 'active' : 'frozen' } : p);
       addToast(data.message, 'success');
-    } catch {
-      addToast('خطا در تغییر وضعیت کارت', 'error');
-    } finally {
-      setActionLoading(false);
-    }
+    } catch { addToast('خطا در تغییر وضعیت', 'error'); }
+    finally { setActionLoading(false); }
   }, [card, user?.id, addToast]);
 
   const handleCharge = useCallback(async () => {
     const grams = parseFloat(chargeGrams);
-    if (!grams || grams <= 0) {
-      addToast('مقدار طلا را وارد کنید', 'error');
-      return;
-    }
+    if (!grams || grams <= 0) { addToast('مقدار طلا را وارد کنید', 'error'); return; }
     setActionLoading(true);
     try {
-      const res = await fetch('/api/gold-card/charge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.id, goldGrams: grams }),
-      });
+      const res = await fetch('/api/gold-card/charge', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user?.id, goldGrams: grams }) });
       const data = await res.json();
-      if (!res.ok) {
-        addToast(data.message || 'خطا در شارژ کارت', 'error');
-        return;
-      }
-      setCard((prev) =>
-        prev
-          ? {
-              ...prev,
-              balance: data.newBalance ?? prev.balance,
-              linkedGoldGrams: data.linkedGoldGram ?? prev.linkedGoldGrams,
-            }
-          : prev
-      );
+      if (!res.ok) { addToast(data.message || 'خطا در شارژ', 'error'); return; }
+      setCard((p) => p ? { ...p, balance: data.newBalance ?? p.balance, linkedGoldGrams: data.linkedGoldGram ?? p.linkedGoldGrams } : p);
       setChargeGrams('');
       setChargeOpen(false);
-      addToast(data.message || 'شارژ با موفقیت انجام شد', 'success');
-    } catch {
-      addToast('خطا در شارژ کارت', 'error');
-    } finally {
-      setActionLoading(false);
-    }
+      addToast(data.message || 'شارژ موفق', 'success');
+    } catch { addToast('خطا در شارژ کارت', 'error'); }
+    finally { setActionLoading(false); }
   }, [chargeGrams, user?.id, addToast]);
 
   const handlePinChange = useCallback(async () => {
-    if (!oldPin || !newPin || !confirmPin) {
-      addToast('تمام فیلدها را پر کنید', 'error');
-      return;
-    }
-    if (newPin !== confirmPin) {
-      addToast('رمز جدید با تکرار آن مطابقت ندارد', 'error');
-      return;
-    }
-    if (newPin.length < 4) {
-      addToast('رمز باید حداقل ۴ رقم باشد', 'error');
-      return;
-    }
+    if (!oldPin || !newPin || !confirmPin) { addToast('تمام فیلدها را پر کنید', 'error'); return; }
+    if (newPin !== confirmPin) { addToast('رمز جدید با تکرار مطابقت ندارد', 'error'); return; }
+    if (newPin.length < 4) { addToast('رمز باید حداقل ۴ رقم باشد', 'error'); return; }
     setActionLoading(true);
     try {
-      const res = await fetch('/api/gold-card/pin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.id, oldPin, newPin }),
-      });
+      const res = await fetch('/api/gold-card/pin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user?.id, oldPin, newPin }) });
       const data = await res.json();
-      if (!res.ok) {
-        addToast(data.message || 'خطا در تغییر رمز کارت', 'error');
-        return;
-      }
-      setOldPin('');
-      setNewPin('');
-      setConfirmPin('');
-      setPinOpen(false);
-      addToast(data.message || 'رمز کارت با موفقیت تغییر کرد', 'success');
-    } catch {
-      addToast('خطا در تغییر رمز کارت', 'error');
-    } finally {
-      setActionLoading(false);
-    }
+      if (!res.ok) { addToast(data.message || 'خطا در تغییر رمز', 'error'); return; }
+      setOldPin(''); setNewPin(''); setConfirmPin(''); setPinOpen(false);
+      addToast(data.message || 'رمز تغییر کرد', 'success');
+    } catch { addToast('خطا در تغییر رمز', 'error'); }
+    finally { setActionLoading(false); }
   }, [oldPin, newPin, confirmPin, user?.id, addToast]);
 
-  const handleDesignChange = useCallback(async (designValue?: string) => {
-    const design = designValue || selectedDesign;
-    if (!card || design === card.design) return;
+  const handleDesignChange = useCallback(async (designVal?: string) => {
+    const d = designVal || selectedDesign;
+    if (!card || d === card.design) return;
     setActionLoading(true);
     try {
-      const res = await fetch('/api/gold-card/design', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.id, design }),
-      });
+      const res = await fetch('/api/gold-card/design', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user?.id, design: d }) });
       const data = await res.json();
-      if (!res.ok) {
-        addToast(data.message || 'خطا در تغییر طراحی کارت', 'error');
-        return;
-      }
-      setCard((prev) => (prev ? { ...prev, design: design as GoldCardData['design'] } : prev));
-      setSelectedDesign(design);
+      if (!res.ok) { addToast(data.message || 'خطا در تغییر طرح', 'error'); return; }
+      setCard((p) => p ? { ...p, design: d as GoldCardData['design'] } : p);
+      setSelectedDesign(d);
       setDesignOpen(false);
-      addToast(data.message || 'طراحی کارت تغییر کرد', 'success');
-    } catch {
-      addToast('خطا در تغییر طراحی کارت', 'error');
-    } finally {
-      setActionLoading(false);
-    }
+      addToast(data.message || 'طرح تغییر کرد', 'success');
+    } catch { addToast('خطا در تغییر طرح', 'error'); }
+    finally { setActionLoading(false); }
   }, [card, selectedDesign, user?.id, addToast]);
 
   const handleLimitsSave = useCallback(async () => {
     setActionLoading(true);
     try {
-      const res = await fetch('/api/gold-card/limits', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.id, dailyLimit, monthlyLimit }),
-      });
+      const res = await fetch('/api/gold-card/limits', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user?.id, dailyLimit, monthlyLimit }) });
       const data = await res.json();
-      if (!res.ok) {
-        addToast(data.message || 'خطا در ذخیره سقف تراکنش', 'error');
-        return;
-      }
-      setCard((prev) => (prev ? { ...prev, dailyLimit, monthlyLimit } : prev));
+      if (!res.ok) { addToast(data.message || 'خطا', 'error'); return; }
+      setCard((p) => p ? { ...p, dailyLimit, monthlyLimit } : p);
       setLimitsOpen(false);
-      addToast(data.message || 'سقف تراکنش‌ها با موفقیت ذخیره شد', 'success');
-    } catch {
-      addToast('خطا در ذخیره سقف تراکنش', 'error');
-    } finally {
-      setActionLoading(false);
-    }
+      addToast(data.message || 'سقف ذخیره شد', 'success');
+    } catch { addToast('خطا', 'error'); }
+    finally { setActionLoading(false); }
   }, [user?.id, dailyLimit, monthlyLimit, addToast]);
 
   const handleRequestCard = useCallback(async () => {
     setActionLoading(true);
     try {
-      const res = await fetch('/api/gold-card', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'request', userId: user?.id }),
-      });
+      const res = await fetch('/api/gold-card', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'request', userId: user?.id }) });
       const data = await res.json();
-      if (!res.ok) {
-        addToast(data.error || 'خطا در صدور کارت', 'error');
-        return;
-      }
-      addToast('کارت طلایی شما با موفقیت صادر شد! 🎉', 'success');
+      if (!res.ok) { addToast(data.error || 'خطا در صدور کارت', 'error'); return; }
+      addToast('کارت طلایی صادر شد! 🎉', 'success');
       await fetchCard();
-    } catch {
-      addToast('خطا در صدور کارت', 'error');
-    } finally {
-      setActionLoading(false);
-    }
+    } catch { addToast('خطا در صدور کارت', 'error'); }
+    finally { setActionLoading(false); }
   }, [user?.id, addToast, fetchCard]);
 
   const handleCloseCard = useCallback(async () => {
     if (!card) return;
     setActionLoading(true);
     try {
-      const res = await fetch('/api/gold-card', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'close', userId: user?.id }),
-      });
+      const res = await fetch('/api/gold-card', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'close', userId: user?.id }) });
       const data = await res.json();
-      if (!res.ok) {
-        addToast(data.error || 'خطا در بستن کارت', 'error');
-        return;
-      }
-      setCard(null);
-      setTransactions([]);
-      addToast(data.message || 'کارت با موفقیت بسته شد', 'info');
-    } catch {
-      addToast('خطا در بستن کارت', 'error');
-    } finally {
-      setActionLoading(false);
-    }
+      if (!res.ok) { addToast(data.error || 'خطا', 'error'); return; }
+      setCard(null); setTransactions([]);
+      addToast(data.message || 'کارت بسته شد', 'info');
+    } catch { addToast('خطا', 'error'); }
+    finally { setActionLoading(false); }
   }, [card, user?.id, addToast]);
 
-  /* ── Card-to-Card Transfer (GOLD-BASED) ── */
-  const formatCardInput = (val: string) => {
-    const digits = val.replace(/\D/g, '').slice(0, 16);
-    return digits.replace(/(.{4})/g, '$1-').slice(0, -1);
-  };
+  const handleCopyNumber = useCallback(() => {
+    if (!card) return;
+    navigator.clipboard.writeText(card.cardNumber.replace(/-/g, ''))
+      .then(() => addToast('شماره کارت کپی شد', 'success'))
+      .catch(() => addToast('خطا در کپی', 'error'));
+  }, [card, addToast]);
 
-  // Gold-based fee calculation
-  const parsedGoldGrams = parseFloat(transferGoldGrams) || 0;
-  const transferFeeGoldMg = user?.role === 'super_admin' ? 0 : parsedGoldGrams * 0.001; // 0.1% fee in gold
-  const transferFeeFiat = transferFeeGoldMg * goldPrice;
-  const fiatEquivalent = parsedGoldGrams * goldPrice;
-  const totalTransferFiat = fiatEquivalent + transferFeeFiat;
-  const totalGoldGrams = parsedGoldGrams + transferFeeGoldMg;
+  const handleSecurityToggle = useCallback((key: keyof SecuritySettings) => {
+    setSecurity((p) => ({ ...p, [key]: !p[key] }));
+    addToast(`تنظیم امنیتی تغییر کرد`, 'success');
+  }, [addToast]);
 
-  const handleTransfer = useCallback(async () => {
-    if (!transferToCard.replace(/-/g, '') || !transferGoldGrams || parseFloat(transferGoldGrams) <= 0) {
-      addToast('اطلاعات انتقال ناقص', 'error');
-      return;
-    }
-    if (parseFloat(transferGoldGrams) < 0.001) {
-      addToast('حداقل مقدار انتقال ۱ میلی‌گرم طلا', 'error');
-      return;
-    }
-    if (!transferPin) {
-      addToast('رمز کارت الزامی است', 'error');
-      return;
-    }
-    setTransferLoading(true);
-    try {
-      const res = await fetch('/api/gold-card/transfer', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user?.id,
-          toCardNumber: transferToCard,
-          goldGrams: parseFloat(transferGoldGrams),
-          description: transferDesc || undefined,
-          pin: transferPin,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        addToast(data.error || 'خطا در انتقال طلا', 'error');
-        return;
-      }
-      setTransferResult(data);
-      setTransferStep('success');
-      // Update card balance
-      if (card) {
-        setCard({ 
-          ...card, 
-          balance: data.newBalance,
-          linkedGoldGrams: data.newGoldBalance ?? card.linkedGoldGrams,
-        });
-      }
-      addToast(data.message, 'success');
-    } catch {
-      addToast('خطای شبکه', 'error');
-    } finally {
-      setTransferLoading(false);
-    }
-  }, [transferToCard, transferGoldGrams, transferDesc, transferPin, user?.id, card, addToast]);
-
-  const resetTransfer = useCallback(() => {
-    setTransferToCard('');
-    setTransferGoldGrams('');
-    setTransferDesc('');
-    setTransferPin('');
-    setTransferStep('form');
-    setTransferResult(null);
-  }, []);
-
-  /* ── Filtered transactions ── */
-  const filteredTx = txFilter === 'all' ? transactions : transactions.filter((t) => t.type === txFilter);
+  const chargeFiat = (parseFloat(chargeGrams) || 0) * goldPrice;
 
   /* ── Loading state ── */
   if (loading) {
     return (
-      <div className="space-y-6 p-4">
+      <div dir="rtl" className="space-y-6 p-4">
+        <CardStyles />
         <Skeleton className="w-full max-w-[400px] mx-auto aspect-[1.586/1] rounded-2xl" />
-        <div className="flex gap-3 justify-center">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <Skeleton key={i} className="size-12 rounded-xl" />
-          ))}
+        <div className="grid grid-cols-3 gap-2.5 max-w-[400px] mx-auto">
+          {[1, 2, 3, 4, 5, 6].map((i) => <Skeleton key={i} className="h-20 rounded-xl" />)}
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-20 rounded-xl" />
-          ))}
+        <div className="grid grid-cols-2 gap-3 max-w-[400px] mx-auto">
+          {[1, 2].map((i) => <Skeleton key={i} className="h-24 rounded-xl" />)}
         </div>
       </div>
     );
@@ -909,1116 +1534,287 @@ export default function GoldCardView() {
 
   /* ── No card state ── */
   if (!card) {
-    return <WelcomeScreen onRequest={handleRequestCard} />;
+    return (
+      <div dir="rtl">
+        <CardStyles />
+        <WelcomeScreen onRequest={handleRequestCard} loading={actionLoading} />
+      </div>
+    );
   }
 
   const isFrozen = card.status === 'frozen';
-  const chargeFiat = (parseFloat(chargeGrams) || 0) * goldPrice;
-  const dailyPercent = card.dailyLimit > 0 ? (card.dailySpent / card.dailyLimit) * 100 : 0;
-  const monthlyPercent = card.monthlyLimit > 0 ? (card.monthlySpent / card.monthlyLimit) * 100 : 0;
+  const totalTx = transactions.length;
+  const totalSpent = transactions.filter((t) => t.type === 'purchase').reduce((s, t) => s + t.amount, 0);
 
+  /* ═══════════════════════════════════════════════════════════════════════ */
+  /*  RENDER                                                                 */
+  /* ═══════════════════════════════════════════════════════════════════════ */
   return (
-    <div className="mx-auto max-w-4xl page-transition space-y-4 pb-6 px-4 rounded-2xl" style={{ background: 'linear-gradient(180deg, rgba(212,175,55,0.08) 0%, rgba(212,175,55,0.03) 40%, transparent 100%)' }}>
-      <Tabs defaultValue="card" dir="rtl" className="w-full">
-        <TabsList className="w-full grid grid-cols-4 h-11 bg-card border border-border/50 rounded-xl p-1">
-          <TabsTrigger
-            value="card"
-            className="rounded-lg data-[state=active]:bg-gold data-[state=active]:text-gold-dark text-xs font-medium gap-1"
-          >
-            <CreditCard className="size-3.5" />
-            کارت طلایی من
-          </TabsTrigger>
-          <TabsTrigger
-            value="transactions"
-            className="rounded-lg data-[state=active]:bg-gold data-[state=active]:text-gold-dark text-xs font-medium gap-1"
-            onClick={fetchAllTransactions}
-          >
-            <ShoppingCart className="size-3.5" />
-            تراکنش‌ها
-          </TabsTrigger>
-          <TabsTrigger
-            value="transfer"
-            className="rounded-lg data-[state=active]:bg-gold data-[state=active]:text-gold-dark text-xs font-medium gap-1"
-          >
-            <ArrowLeftRight className="size-3.5" />
-            انتقال وجه
-          </TabsTrigger>
-          <TabsTrigger
-            value="settings"
-            className="rounded-lg data-[state=active]:bg-gold data-[state=active]:text-gold-dark text-xs font-medium gap-1"
-          >
-            <Gauge className="size-3.5" />
-            تنظیمات
-          </TabsTrigger>
-        </TabsList>
+    <div dir="rtl">
+      <CardStyles />
+      <div className="mx-auto max-w-4xl page-transition space-y-4 pb-6 px-4 rounded-2xl" style={{ background: 'linear-gradient(180deg, rgba(212,175,55,0.08) 0%, rgba(212,175,55,0.03) 40%, transparent 100%)' }}>
+        <Tabs defaultValue="card" dir="rtl" className="w-full">
+          <TabsList className="w-full grid grid-cols-4 h-11 bg-card border border-border/50 rounded-xl p-1">
+            <TabsTrigger value="card" data-goldcard-tab="card" className="rounded-lg data-[state=active]:bg-[#D4AF37] data-[state=active]:text-[#2a1a00] text-xs font-medium gap-1">
+              <CreditCard className="size-3.5" />
+              کارت من
+            </TabsTrigger>
+            <TabsTrigger value="transactions" data-goldcard-tab="transactions" className="rounded-lg data-[state=active]:bg-[#D4AF37] data-[state=active]:text-[#2a1a00] text-xs font-medium gap-1" onClick={fetchAllTransactions}>
+              <ShoppingCart className="size-3.5" />
+              تراکنش‌ها
+            </TabsTrigger>
+            <TabsTrigger value="transfer" data-goldcard-tab="transfer" className="rounded-lg data-[state=active]:bg-[#D4AF37] data-[state=active]:text-[#2a1a00] text-xs font-medium gap-1">
+              <ArrowLeftRight className="size-3.5" />
+              انتقال
+            </TabsTrigger>
+            <TabsTrigger value="settings" data-goldcard-tab="settings" className="rounded-lg data-[state=active]:bg-[#D4AF37] data-[state=active]:text-[#2a1a00] text-xs font-medium gap-1">
+              <Gauge className="size-3.5" />
+              تنظیمات
+            </TabsTrigger>
+          </TabsList>
 
-        {/* ═══════════════════════════════════════════════════════ */}
-        {/*  TAB 1 — My Gold Card                                    */}
-        {/* ═══════════════════════════════════════════════════════ */}
-        <TabsContent value="card" className="space-y-5 mt-4">
-          {/* Virtual Card */}
-          <VirtualCard
-            card={card}
-            userName={user?.fullName || ''}
-            isFrozen={isFrozen}
-            showNumber={showNumber}
-            showCvv={showCvv}
-            onToggleNumber={() => setShowNumber(!showNumber)}
-            onToggleCvv={() => setShowCvv(!showCvv)}
-          />
+          {/* ═══════════════════════════════════════════════════════ */}
+          {/*  TAB 1 — My Gold Card                                    */}
+          {/* ═══════════════════════════════════════════════════════ */}
+          <TabsContent value="card" className="space-y-5 mt-4">
+            {/* 3D Flip Card */}
+            <VirtualCard
+              card={card}
+              userName={user?.fullName || ''}
+              isFrozen={isFrozen}
+              showNumber={showNumber}
+              showCvv={showCvv}
+              showPin={showPin}
+              onToggleNumber={() => setShowNumber(!showNumber)}
+              onToggleCvv={() => setShowCvv(!showCvv)}
+              onTogglePin={() => setShowPin(!showPin)}
+              onFlip={() => {}}
+            />
 
-          {/* Card Actions */}
-          <div className="flex justify-center gap-2.5 flex-wrap">
-            <Button
-              variant={isFrozen ? 'default' : 'outline'}
-              size="sm"
-              className={`rounded-xl gap-1.5 text-xs ${isFrozen ? 'bg-orange-500 hover:bg-orange-600 text-white border-0' : 'border-border/50 hover:border-gold/40 hover:text-gold'}`}
-              onClick={handleToggleFreeze}
-              disabled={actionLoading}
-            >
-              {isFrozen ? <Flame className="size-3.5" /> : <Snowflake className="size-3.5" />}
-              {isFrozen ? 'فعال‌سازی' : 'مسدود'}
-            </Button>
+            {/* Quick Actions */}
+            <QuickActions
+              isFrozen={isFrozen}
+              actionLoading={actionLoading}
+              onFreeze={handleToggleFreeze}
+              onChargeOpen={() => setChargeOpen(true)}
+              onPinOpen={() => setPinOpen(true)}
+              onDesignOpen={() => setDesignOpen(true)}
+              onLimitsOpen={() => setLimitsOpen(true)}
+              onCopyNumber={handleCopyNumber}
+              cardNumber={card.cardNumber}
+            />
 
-            {/* Charge Dialog */}
-            <Dialog open={chargeOpen} onOpenChange={setChargeOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-xl gap-1.5 text-xs border-border/50 hover:border-gold/40 hover:text-gold"
-                >
-                  <Coins className="size-3.5" />
-                  شارژ از طلا
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md" dir="rtl">
-                <DialogHeader>
-                  <DialogTitle className="gold-gradient-text text-xl">شارژ کارت از طلا</DialogTitle>
-                  <DialogDescription>
-                    طلای خود را به اعتبار کارت تبدیل کنید
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 py-2">
-                  <div className="space-y-2">
-                    <Label className="text-sm">مقدار طلا (گرم)</Label>
-                    <div className="relative">
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="0.01"
-                        placeholder="مثلاً ۰.۵"
-                        value={chargeGrams}
-                        onChange={(e) => setChargeGrams(e.target.value)}
-                        className="text-left font-mono pr-14"
-                      />
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
-                        گرم
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-3 rounded-xl bg-muted/50 border border-border/30 space-y-1.5">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">قیمت هر گرم:</span>
-                      <span className="font-mono tabular-nums">{formatToman(goldPrice)}</span>
-                    </div>
-                    <Separator />
-                    <div className="flex justify-between text-sm font-bold">
-                      <span>معادل واحد طلایی:</span>
-                      <span className="text-gold font-mono tabular-nums">
-                        {formatToman(chargeFiat)}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <AlertTriangle className="size-3.5 text-yellow-500 shrink-0" />
-                    طلای انتخاب شده از کیف طلای شما کسر و به اعتبار کارت اضافه می‌شود.
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button
-                    variant="outline"
-                    onClick={() => setChargeOpen(false)}
-                    className="rounded-xl"
-                  >
-                    انصراف
-                  </Button>
-                  <Button
-                    className="bg-gold hover:bg-gold-dark text-gold-dark hover:text-white rounded-xl"
-                    onClick={handleCharge}
-                    disabled={actionLoading || !chargeGrams || parseFloat(chargeGrams) <= 0}
-                  >
-                    {actionLoading ? 'در حال شارژ...' : 'تأیید شارژ'}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            {/* Card Stats Dashboard */}
+            <CardStats card={card} goldPrice={goldPrice} />
 
-            {/* PIN Dialog */}
+            {/* Card Level */}
+            <CardLevel totalTx={totalTx} />
+
+            {/* Card Rewards */}
+            <CardRewards totalSpent={totalSpent} />
+          </TabsContent>
+
+          {/* ═══════════════════════════════════════════════════════ */}
+          {/*  TAB 2 — Transactions                                  */}
+          {/* ═══════════════════════════════════════════════════════ */}
+          <TabsContent value="transactions" className="mt-4">
+            <TransactionsList
+              transactions={transactions}
+              loading={txLoading}
+              filter={txFilter}
+              onFilterChange={setTxFilter}
+              onRefresh={fetchAllTransactions}
+            />
+          </TabsContent>
+
+          {/* ═══════════════════════════════════════════════════════ */}
+          {/*  TAB 3 — Transfer                                     */}
+          {/* ═══════════════════════════════════════════════════════ */}
+          <TabsContent value="transfer" className="mt-4">
+            <TransferSection goldPrice={goldPrice} userRole={user?.role || ''} />
+          </TabsContent>
+
+          {/* ═══════════════════════════════════════════════════════ */}
+          {/*  TAB 4 — Settings                                     */}
+          {/* ═══════════════════════════════════════════════════════ */}
+          <TabsContent value="settings" className="mt-4 space-y-5">
+            {/* Security Center */}
+            <SecurityCenter
+              settings={security}
+              onToggle={handleSecurityToggle}
+              onEmergencyLock={handleToggleFreeze}
+              recentTx={transactions}
+              actionLoading={actionLoading}
+            />
+
+            {/* PIN Change Dialog */}
             <Dialog open={pinOpen} onOpenChange={setPinOpen}>
               <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-xl gap-1.5 text-xs border-border/50 hover:border-gold/40 hover:text-gold"
-                >
-                  <Lock className="size-3.5" />
-                  تغییر رمز
-                </Button>
+                <Card className="bg-card border-border/30 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-gold/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="size-9 rounded-lg bg-purple-500/10 flex items-center justify-center"><Lock className="size-4 text-purple-500" /></div>
+                    <div>
+                      <p className="text-sm font-medium">تغییر رمز کارت</p>
+                      <p className="text-[11px] text-muted-foreground">رمز عبور کارت خود را تغییر دهید</p>
+                    </div>
+                  </div>
+                  <ChevronDown className="size-4 text-muted-foreground rotate-[-90deg]" />
+                </Card>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md" dir="rtl">
+              <DialogContent dir="rtl">
                 <DialogHeader>
                   <DialogTitle className="gold-gradient-text text-xl">تغییر رمز کارت</DialogTitle>
-                  <DialogDescription>
-                    رمز عبور کارت طلایی خود را تغییر دهید
-                  </DialogDescription>
+                  <DialogDescription>رمز فعلی و رمز جدید را وارد کنید</DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4 py-2">
-                  <div className="space-y-2">
-                    <Label className="text-sm">رمز فعلی</Label>
-                    <Input
-                      type="password"
-                      maxLength={8}
-                      placeholder="••••"
-                      value={oldPin}
-                      onChange={(e) => setOldPin(e.target.value.replace(/\D/g, ''))}
-                      className="font-mono text-center text-lg tracking-[0.3em]"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm">رمز جدید</Label>
-                    <Input
-                      type="password"
-                      maxLength={8}
-                      placeholder="••••"
-                      value={newPin}
-                      onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ''))}
-                      className="font-mono text-center text-lg tracking-[0.3em]"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm">تکرار رمز جدید</Label>
-                    <Input
-                      type="password"
-                      maxLength={8}
-                      placeholder="••••"
-                      value={confirmPin}
-                      onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, ''))}
-                      className="font-mono text-center text-lg tracking-[0.3em]"
-                    />
-                  </div>
-                  {newPin && confirmPin && newPin !== confirmPin && (
-                    <p className="text-xs text-red-400 flex items-center gap-1">
-                      <XCircle className="size-3" />
-                      رمز جدید با تکرار آن مطابقت ندارد
-                    </p>
-                  )}
-                  {newPin && confirmPin && newPin === confirmPin && (
-                    <p className="text-xs text-green-400 flex items-center gap-1">
-                      <CheckCircle className="size-3" />
-                      رمز مطابقت دارد
-                    </p>
-                  )}
+                <div className="space-y-3">
+                  <div className="space-y-1.5"><Label>رمز فعلی</Label><Input type="password" value={oldPin} onChange={(e) => setOldPin(e.target.value)} className="rounded-xl text-center tracking-widest" maxLength={8} /></div>
+                  <div className="space-y-1.5"><Label>رمز جدید</Label><Input type="password" value={newPin} onChange={(e) => setNewPin(e.target.value)} className="rounded-xl text-center tracking-widest" maxLength={8} /></div>
+                  <div className="space-y-1.5"><Label>تکرار رمز جدید</Label><Input type="password" value={confirmPin} onChange={(e) => setConfirmPin(e.target.value)} className="rounded-xl text-center tracking-widest" maxLength={8} /></div>
                 </div>
                 <DialogFooter>
-                  <Button
-                    variant="outline"
-                    onClick={() => setPinOpen(false)}
-                    className="rounded-xl"
-                  >
-                    انصراف
-                  </Button>
-                  <Button
-                    className="bg-gold hover:bg-gold-dark text-gold-dark hover:text-white rounded-xl"
-                    onClick={handlePinChange}
-                    disabled={actionLoading || !oldPin || !newPin || !confirmPin}
-                  >
+                  <Button variant="outline" onClick={() => setPinOpen(false)} className="rounded-xl">انصراف</Button>
+                  <Button onClick={handlePinChange} disabled={actionLoading} className="rounded-xl bg-[#D4AF37] hover:bg-[#B8960C] text-[#2a1a00] font-bold">
                     {actionLoading ? 'در حال تغییر...' : 'تغییر رمز'}
                   </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
 
-            {/* Design Dialog */}
-            <Dialog open={designOpen} onOpenChange={setDesignOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-xl gap-1.5 text-xs border-border/50 hover:border-gold/40 hover:text-gold"
-                >
-                  <Palette className="size-3.5" />
-                  طراحی
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md" dir="rtl">
-                <DialogHeader>
-                  <DialogTitle className="gold-gradient-text text-xl">انتخاب طراحی کارت</DialogTitle>
-                  <DialogDescription>
-                    طرح مورد علاقه خود را انتخاب کنید
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid grid-cols-2 gap-3 py-2">
-                  {(Object.keys(CARD_DESIGNS) as Array<keyof typeof CARD_DESIGNS>).map((key) => (
-                    <MiniCardPreview
-                      key={key}
-                      design={key}
-                      selected={selectedDesign === key}
-                      onSelect={() => setSelectedDesign(key)}
-                    />
-                  ))}
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setDesignOpen(false)} className="rounded-xl">
-                    انصراف
-                  </Button>
-                  <Button
-                    className="bg-gold hover:bg-gold-dark text-gold-dark hover:text-white rounded-xl"
-                    onClick={() => handleDesignChange()}
-                    disabled={actionLoading || selectedDesign === card.design}
-                  >
-                    {actionLoading ? 'در حال تغییر...' : 'تأیید'}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-
-            {/* Limits Dialog */}
-            <Dialog open={limitsOpen} onOpenChange={setLimitsOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-xl gap-1.5 text-xs border-border/50 hover:border-gold/40 hover:text-gold"
-                >
-                  <Gauge className="size-3.5" />
-                  سقف تراکنش
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md" dir="rtl">
-                <DialogHeader>
-                  <DialogTitle className="gold-gradient-text text-xl">تنظیم سقف تراکنش</DialogTitle>
-                  <DialogDescription>
-                    محدودیت روزانه و ماهانه خرید خود را تعیین کنید
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-6 py-2">
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <Label className="text-sm font-medium">سقف روزانه</Label>
-                      <span className="text-sm font-mono text-gold tabular-nums">
-                        {formatToman(dailyLimit)}
-                      </span>
-                    </div>
-                    <Slider
-                      value={[dailyLimit]}
-                      onValueChange={([v]) => setDailyLimit(v)}
-                      min={1_000_000}
-                      max={50_000_000}
-                      step={500_000}
-                      className="[&_[data-slot=slider-range]]:bg-gold [&_[data-slot=slider-thumb]]:border-gold"
-                    />
-                    <div className="flex justify-between text-[10px] text-muted-foreground">
-                      <span>۱ میلیون</span>
-                      <span>۵۰ میلیون</span>
-                    </div>
-                  </div>
-                  <Separator />
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <Label className="text-sm font-medium">سقف ماهانه</Label>
-                      <span className="text-sm font-mono text-gold tabular-nums">
-                        {formatToman(monthlyLimit)}
-                      </span>
-                    </div>
-                    <Slider
-                      value={[monthlyLimit]}
-                      onValueChange={([v]) => setMonthlyLimit(v)}
-                      min={10_000_000}
-                      max={500_000_000}
-                      step={5_000_000}
-                      className="[&_[data-slot=slider-range]]:bg-gold [&_[data-slot=slider-thumb]]:border-gold"
-                    />
-                    <div className="flex justify-between text-[10px] text-muted-foreground">
-                      <span>۱۰ میلیون</span>
-                      <span>۵۰۰ میلیون</span>
-                    </div>
+            {/* Design Picker */}
+            <div className="space-y-3">
+              <Card className="bg-card border-border/30 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-gold/30 transition-colors" onClick={() => setDesignOpen(true)}>
+                <div className="flex items-center gap-3">
+                  <div className="size-9 rounded-lg bg-pink-500/10 flex items-center justify-center"><Palette className="size-4 text-pink-500" /></div>
+                  <div>
+                    <p className="text-sm font-medium">تغییر طرح کارت</p>
+                    <p className="text-[11px] text-muted-foreground">طرح فعلی: {CARD_DESIGNS[card.design as keyof typeof CARD_DESIGNS]?.label}</p>
                   </div>
                 </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setLimitsOpen(false)} className="rounded-xl">
-                    انصراف
-                  </Button>
-                  <Button
-                    className="bg-gold hover:bg-gold-dark text-gold-dark hover:text-white rounded-xl"
-                    onClick={handleLimitsSave}
-                    disabled={actionLoading}
-                  >
-                    {actionLoading ? 'در حال ذخیره...' : 'ذخیره'}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-
-          {/* Balance Section */}
-          <div className="space-y-3">
-            {/* Main balance */}
-            <Card className="border-border/40 overflow-hidden">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-sm text-muted-foreground">موجودی کارت</p>
-                  <Badge
-                    variant="outline"
-                    className={`text-[10px] ${
-                      isFrozen
-                        ? 'border-blue-500/30 text-blue-400 bg-blue-500/10'
-                        : 'border-green-500/30 text-green-400 bg-green-500/10'
-                    }`}
-                  >
-                    {isFrozen ? '❄️ مسدود' : '✅ فعال'}
-                  </Badge>
-                </div>
-                <p className="text-3xl font-bold gold-gradient-text tabular-nums">
-                  {formatToman(card.balance)}
-                </p>
-                <p className="text-sm text-muted-foreground mt-1">واحد طلایی</p>
-
-                <Separator className="my-4" />
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 rounded-xl bg-muted/40 border border-border/20">
-                    <p className="text-[10px] text-muted-foreground mb-1">طلای مرتبط</p>
-                    <p className="text-base font-bold text-gold tabular-nums">
-                      {card.linkedGoldGrams.toFixed(2)} <span className="text-xs font-normal text-muted-foreground">گرم</span>
-                    </p>
-                  </div>
-                  <div className="p-3 rounded-xl bg-muted/40 border border-border/20">
-                    <p className="text-[10px] text-muted-foreground mb-1">ارزش طلای مرتبط</p>
-                    <p className="text-base font-bold tabular-nums">
-                      {formatToman(card.linkedGoldGrams * goldPrice)}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">واحد طلایی</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Daily limit */}
-            <Card className="border-border/40">
-              <CardContent className="p-4 space-y-3">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="size-8 rounded-lg bg-gold/10 flex items-center justify-center">
-                      <Gauge className="size-4 text-gold" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">خرید روزانه</p>
-                      <p className="text-[10px] text-muted-foreground">
-                        {formatToman(card.dailySpent)} از {formatToman(card.dailyLimit)}
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold text-gold tabular-nums">
-                    {toPersianDigits(`${Math.round(dailyPercent)}%`)}
-                  </span>
-                </div>
-                <Progress
-                  value={dailyPercent}
-                  className="h-2 [&_[data-slot=progress-indicator]]:bg-gold"
-                />
-              </CardContent>
-            </Card>
-
-            {/* Monthly limit */}
-            <Card className="border-border/40">
-              <CardContent className="p-4 space-y-3">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="size-8 rounded-lg bg-gold/10 flex items-center justify-center">
-                      <Gauge className="size-4 text-gold" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">خرید ماهانه</p>
-                      <p className="text-[10px] text-muted-foreground">
-                        {formatToman(card.monthlySpent)} از {formatToman(card.monthlyLimit)}
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold text-gold tabular-nums">
-                    {toPersianDigits(`${Math.round(monthlyPercent)}%`)}
-                  </span>
-                </div>
-                <Progress
-                  value={monthlyPercent}
-                  className="h-2 [&_[data-slot=progress-indicator]]:bg-gold"
-                />
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* ═══════════════════════════════════════════════════════ */}
-        {/*  TAB 2 — Transactions                                  */}
-        {/* ═══════════════════════════════════════════════════════ */}
-        <TabsContent value="transactions" className="space-y-4 mt-4">
-          {/* Filters */}
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-            {[
-              { key: 'all', label: 'همه' },
-              { key: 'purchase', label: 'خرید' },
-              { key: 'refund', label: 'بازگشت وجه' },
-              { key: 'charge', label: 'شارژ' },
-              { key: 'withdrawal', label: 'برداشت' },
-              { key: 'transfer_out', label: 'انتقال وجه' },
-            ].map((f) => (
-              <Button
-                key={f.key}
-                variant={txFilter === f.key ? 'default' : 'outline'}
-                size="sm"
-                className={`rounded-lg text-xs shrink-0 transition-all duration-200 ${
-                  txFilter === f.key
-                    ? 'bg-gold hover:bg-gold-dark text-gold-dark hover:text-white'
-                    : 'border-border/50 hover:border-gold/40 hover:text-gold'
-                }`}
-                onClick={() => setTxFilter(f.key)}
-              >
-                {f.label}
-              </Button>
-            ))}
-          </div>
-
-          {/* Transaction list */}
-          <div className="space-y-2 max-h-[60vh] overflow-y-auto">
-            {txLoading ? (
-              <div className="flex justify-center py-8">
-                <Skeleton className="h-8 w-64" />
-              </div>
-            ) : filteredTx.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="size-16 rounded-full bg-muted/50 flex items-center justify-center mb-4">
-                  <ShoppingCart className="size-8 text-muted-foreground/40" />
-                </div>
-                <p className="text-sm text-muted-foreground">تراکنشی یافت نشد</p>
-                <p className="text-xs text-muted-foreground/60 mt-1">
-                  با انجام اولین خرید، تراکنش‌های شما اینجا نمایش داده می‌شود
-                </p>
-              </div>
-            ) : (
-              filteredTx.map((tx) => (
-                <div
-                  key={tx.id}
-                  className="flex items-center gap-3 p-3.5 rounded-xl bg-card border border-border/40 hover:border-gold/20 transition-all duration-200 group cursor-default"
-                >
-                  <div className="size-10 rounded-xl bg-muted/60 flex items-center justify-center shrink-0 group-hover:bg-gold/10 transition-colors">
-                    {getTxIcon(tx.type)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium truncate">{tx.merchant}</p>
-                    </div>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[10px] text-muted-foreground">
-                        {getRelativeTime(tx.createdAt)}
-                      </span>
-                      {tx.goldGrams && (
-                        <span className="text-[10px] text-gold">
-                          {tx.goldGrams} گرم
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end gap-1 shrink-0">
-                    <span
-                      className={`text-sm font-bold tabular-nums ${
-                        tx.type === 'purchase' || tx.type === 'withdrawal' || tx.type === 'transfer_out'
-                          ? 'text-red-400'
-                          : 'text-green-400'
-                      }`}
-                    >
-                      {tx.type === 'purchase' || tx.type === 'withdrawal' || tx.type === 'transfer_out' ? '-' : '+'}
-                      {formatToman(tx.amount)}
-                    </span>
-                    {getStatusBadge(tx.status)}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </TabsContent>
-
-        {/* ═══════════════════════════════════════════════════════ */}
-        {/*  TAB 3 — Card-to-Card Transfer                          */}
-        {/* ═══════════════════════════════════════════════════════ */}
-        <TabsContent value="transfer" className="space-y-4 mt-4">
-          {/* Gold Price Banner */}
-          <div className="flex items-center gap-2 p-3 rounded-xl bg-gradient-to-l from-amber-500/10 via-gold/5 to-amber-500/10 border border-gold/20">
-            <Coins className="size-4 text-gold shrink-0" />
-            <div className="flex-1 flex justify-between items-center text-xs">
-              <span className="text-muted-foreground">قیمت لحظه‌ای طلا:</span>
-              <span className="font-mono text-gold font-bold">{formatToman(goldPrice)} واحد طلایی/گرم</span>
-            </div>
-          </div>
-
-          {isFrozen ? (
-            <Card className="border-orange-500/30 bg-orange-500/5">
-              <CardContent className="flex flex-col items-center gap-3 py-8">
-                <Snowflake className="size-12 text-orange-400 animate-pulse" />
-                <p className="text-sm text-orange-300 font-medium">کارت مسدود است</p>
-                <p className="text-xs text-muted-foreground">برای انتقال طلا، ابتدا کارت را فعال کنید</p>
-              </CardContent>
-            </Card>
-          ) : transferStep === 'success' ? (
-            /* Success State */
-            <Card className="border-green-500/30 bg-green-500/5">
-              <CardContent className="flex flex-col items-center gap-4 py-8">
-                <div className="size-16 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <CheckCircle className="size-8 text-green-400" />
-                </div>
-                <div className="text-center space-y-1">
-                  <p className="text-lg font-bold text-green-400">انتقال طلا موفق! 🥇</p>
-                  <p className="text-sm">
-                    <span className="text-gold font-bold text-lg">
-                      {toPersianDigits((transferResult?.transaction as Record<string, unknown>)?.netGoldGrams?.toFixed(4) as string || '0')}
-                    </span>
-                    {' '}گرم طلا
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    معادل{' '}
-                    <span className="font-mono text-gold">
-                      {formatToman((transferResult?.transaction as Record<string, unknown>)?.fiatEquivalent as number || 0)}
-                    </span>
-                    {' '}به کارت {(transferResult?.transaction as Record<string, unknown>)?.toCard}
-                  </p>
-                  {(transferResult?.transaction as Record<string, unknown>)?.isInternalTransfer && (
-                    <Badge className="bg-green-500/15 text-green-400 border-green-500/20 text-[10px] mt-1">
-                      <CheckCircle className="size-3" />
-                      انتقال داخلی زرین گلد
-                    </Badge>
-                  )}
-                </div>
-                <div className="w-full max-w-xs space-y-2">
-                  <div className="flex justify-between text-xs p-3 rounded-lg bg-muted/50">
-                    <span className="text-muted-foreground">مانده کارت (طلایی):</span>
-                    <span className="font-mono text-gold">
-                      {toPersianDigits((card.linkedGoldGrams || 0).toFixed(4))} گرم
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-xs p-3 rounded-lg bg-muted/50">
-                    <span className="text-muted-foreground">مانده کارت:</span>
-                    <span className="font-mono text-gold">{formatToman(card.balance)}</span>
-                  </div>
-                  <div className="flex justify-between text-xs p-3 rounded-lg bg-muted/50">
-                    <span className="text-muted-foreground">شماره پیگیری:</span>
-                    <span className="font-mono">{String((transferResult?.transaction as Record<string, unknown>)?.id || '').slice(0, 8)}</span>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <Button variant="outline" size="sm" className="rounded-xl gap-1.5 text-xs" onClick={resetTransfer}>
-                    <CreditCard className="size-3.5" />
-                    انتقال جدید
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ) : transferStep === 'confirm' ? (
-            /* Confirm State */
-            <Card className="border-gold/30">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Send className="size-4 text-gold" />
-                  تأیید انتقال طلا
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2.5">
-                  <div className="flex justify-between items-center p-3 rounded-xl bg-muted/50">
-                    <span className="text-sm text-muted-foreground flex items-center gap-2">
-                      <CreditCard className="size-3.5" />
-                      از کارت:
-                    </span>
-                    <span className="text-xs font-mono">{card.cardNumber.slice(0, 10)}XXXX</span>
-                  </div>
-                  <div className="flex justify-center">
-                    <div className="flex flex-col items-center gap-0.5">
-                      <ArrowDown className="size-5 text-gold rotate-180" />
-                      <span className="text-[10px] text-gold font-bold">{toPersianDigits(parsedGoldGrams.toFixed(4))} گرم طلا</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center p-3 rounded-xl bg-muted/50">
-                    <span className="text-sm text-muted-foreground flex items-center gap-2">
-                      <CreditCard className="size-3.5" />
-                      به کارت:
-                    </span>
-                    <span className="text-xs font-mono">{transferToCard}</span>
-                  </div>
-                </div>
-                <Separator />
-                {/* Gold amounts - primary display */}
-                <div className="p-3 rounded-xl bg-gradient-to-l from-amber-500/10 via-gold/5 to-transparent space-y-1.5">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">مقدار طلا:</span>
-                    <span className="font-mono text-gold font-bold">{toPersianDigits(parsedGoldGrams.toFixed(4))} گرم</span>
-                  </div>
-                  {transferFeeGoldMg > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">کارمزد طلا (۰.۱٪):</span>
-                      <span className="font-mono text-red-400">{toPersianDigits(transferFeeGoldMg.toFixed(4))} گرم</span>
-                    </div>
-                  )}
-                  <Separator />
-                  <div className="flex justify-between text-sm font-bold">
-                    <span>مجموع طلا کسر شده:</span>
-                    <span className="text-gold font-mono">{toPersianDigits(totalGoldGrams.toFixed(4))} گرم</span>
-                  </div>
-                </div>
-                {/* Fiat equivalent - secondary display */}
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>معادل واحد طلایی:</span>
-                    <span className="font-mono">{formatToman(fiatEquivalent)}</span>
-                  </div>
-                  {transferFeeGoldMg > 0 && (
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>کارمزد:</span>
-                      <span className="font-mono">{formatToman(transferFeeFiat)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>مجموع:</span>
-                    <span className="font-mono">{formatToman(totalTransferFiat)}</span>
-                  </div>
-                </div>
-                {transferDesc && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">توضیحات:</span>
-                    <span>{transferDesc}</span>
-                  </div>
-                )}
-                <div className="flex items-center gap-2 text-xs text-yellow-500 bg-yellow-500/10 rounded-xl p-3">
-                  <AlertTriangle className="size-4 shrink-0" />
-                  <span>انتقال طلا غیرقابل بازگشت است. مطمئن باشید؟</span>
-                </div>
-                <div className="flex gap-3">
-                  <Button variant="outline" className="flex-1 rounded-xl" onClick={() => setTransferStep('form')}>
-                    بازگشت
-                  </Button>
-                  <Button
-                    className="flex-1 bg-gold hover:bg-gold-dark text-gold-dark hover:text-white rounded-xl font-bold"
-                    onClick={handleTransfer}
-                    disabled={transferLoading}
-                  >
-                    {transferLoading ? 'در حال انتقال طلا...' : 'تأیید و انتقال طلا'}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            /* Form State */
-            <>
-              {/* Quick gold amount buttons */}
-              <div className="grid grid-cols-4 gap-2">
-                {[
-                  { grams: 0.01, label: '۱۰mg' },
-                  { grams: 0.1, label: '۱۰۰mg' },
-                  { grams: 0.5, label: 'نیم گرم' },
-                  { grams: 1, label: '۱ گرم' },
-                ].map((item) => (
-                  <button
-                    key={item.grams}
-                    onClick={() => setTransferGoldGrams(String(item.grams))}
-                    className={`p-2.5 rounded-xl text-xs font-medium border transition-all ${
-                      parseFloat(transferGoldGrams) === item.grams
-                        ? 'border-gold bg-gold/10 text-gold'
-                        : 'border-border/40 hover:border-gold/30 text-muted-foreground hover:text-gold'
-                    }`}
-                  >
-                    <div className="font-bold">{item.label}</div>
-                    <div className="text-[10px] opacity-70 mt-0.5 font-mono">
-                      {formatToman(item.grams * goldPrice)}
-                    </div>
-                  </button>
-                ))}
-              </div>
-
-              <Card className="border-border/40">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <ArrowLeftRight className="size-4 text-gold" />
-                    انتقال طلا — کارت به کارت
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* To Card Number */}
-                  <div className="space-y-2">
-                    <Label className="text-sm">شماره کارت مقصد</Label>
-                    <div className="relative">
-                      <Input
-                        type="text"
-                        placeholder="XXXX-XXXX-XXXX-XXXX"
-                        value={transferToCard}
-                        onChange={(e) => setTransferToCard(formatCardInput(e.target.value))}
-                        className="font-mono text-left tracking-wider pr-12"
-                        maxLength={19}
-                        dir="ltr"
-                      />
-                      <CreditCard className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                    </div>
-                  </div>
-
-                  {/* Gold Amount */}
-                  <div className="space-y-2">
-                    <Label className="text-sm flex items-center gap-2">
-                      <Coins className="size-3.5 text-gold" />
-                      مقدار طلا (گرم)
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        type="number"
-                        step="0.001"
-                        min="0.001"
-                        placeholder="مثلاً ۰.۵"
-                        value={transferGoldGrams}
-                        onChange={(e) => setTransferGoldGrams(e.target.value)}
-                        className="font-mono text-left pr-20"
-                      />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">گرم طلا 🥇</span>
-                    </div>
-                    {parsedGoldGrams > 0 && (
-                      <div className="p-2.5 rounded-lg bg-amber-500/5 border border-amber-500/20 space-y-1">
-                        <div className="flex justify-between text-xs">
-                          <span className="text-muted-foreground">معادل واحد طلایی:</span>
-                          <span className="font-mono text-gold font-bold">{formatToman(fiatEquivalent)}</span>
-                        </div>
-                        <div className="flex justify-between text-[10px] text-muted-foreground">
-                          <span>قیمت هر گرم:</span>
-                          <span className="font-mono">{formatToman(goldPrice)}</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Description (optional) */}
-                  <div className="space-y-2">
-                    <Label className="text-sm">توضیحات <span className="text-muted-foreground">(اختیاری)</span></Label>
-                    <Input
-                      placeholder="مثلاً: قسط وام، خرید کالا..."
-                      value={transferDesc}
-                      onChange={(e) => setTransferDesc(e.target.value)}
-                      maxLength={100}
-                    />
-                  </div>
-
-                  {/* PIN */}
-                  <div className="space-y-2">
-                    <Label className="text-sm">رمز کارت (PIN)</Label>
-                    <Input
-                      type="password"
-                      maxLength={4}
-                      placeholder="••••"
-                      value={transferPin}
-                      onChange={(e) => setTransferPin(e.target.value.replace(/\D/g, ''))}
-                      className="font-mono text-center text-lg tracking-[0.3em]"
-                    />
-                  </div>
-
-                  {/* Gold Summary */}
-                  {parsedGoldGrams >= 0.001 && (
-                    <div className="p-3 rounded-xl bg-muted/50 border border-border/30 space-y-1.5">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">موجودی کارت (طلایی):</span>
-                        <span className="font-mono text-gold">
-                          {toPersianDigits((card.linkedGoldGrams || 0).toFixed(4))} گرم
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>موجودی کارت:</span>
-                        <span className="font-mono">{formatToman(card.balance)}</span>
-                      </div>
-                      <Separator />
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">کارمزد طلا:</span>
-                        <span className="font-mono text-green-400">
-                          {user?.role === 'super_admin' ? 'رایگان 💎' : `${toPersianDigits(transferFeeGoldMg.toFixed(4))} گرم`}
-                        </span>
-                      </div>
-                      <Separator />
-                      <div className="flex justify-between text-sm font-bold">
-                        <span>مجموع کسر طلا:</span>
-                        <span className="text-gold font-mono">{toPersianDigits(totalGoldGrams.toFixed(4))} گرم</span>
-                      </div>
-                    </div>
-                  )}
-
-                  <Button
-                    className="w-full bg-gold hover:bg-gold-dark text-gold-dark hover:text-white rounded-xl font-bold py-6 text-base btn-gold-shine"
-                    onClick={() => setTransferStep('confirm')}
-                    disabled={
-                      !transferToCard.replace(/-/g, '') ||
-                      !transferGoldGrams ||
-                      parseFloat(transferGoldGrams) < 0.001 ||
-                      !transferPin ||
-                      totalTransferFiat > card.balance
-                    }
-                  >
-                    <Send className="size-4 ml-2" />
-                    ادامه انتقال طلا
-                  </Button>
-                </CardContent>
+                <ChevronDown className="size-4 text-muted-foreground rotate-[-90deg]" />
               </Card>
 
-              {/* Info cards */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 rounded-xl bg-card border border-border/30 space-y-2">
-                  <Coins className="size-4 text-gold" />
-                  <p className="text-xs font-medium">انتقال بر اساس طلا</p>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed">مقدار انتقال بر حسب گرم طلای خالص محاسبه می‌شود</p>
-                </div>
-                <div className="p-3 rounded-xl bg-card border border-border/30 space-y-2">
-                  <ShieldCheck className="size-4 text-gold" />
-                  <p className="text-xs font-medium">امنیت بالا</p>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed">رمزنگاری AES-256 برای تمام انتقال‌ها</p>
-                </div>
-                <div className="p-3 rounded-xl bg-card border border-border/30 space-y-2">
-                  <Clock className="size-4 text-gold" />
-                  <p className="text-xs font-medium">انتقال آنی</p>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed">کارت به کارت زرین گلد در کمتر از ۱۰ ثانیه</p>
-                </div>
-                <div className="p-3 rounded-xl bg-card border border-border/30 space-y-2">
-                  <BookUser className="size-4 text-gold" />
-                  <p className="text-xs font-medium">کارمزد طلایی</p>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed">
-                    {user?.role === 'super_admin' ? 'الماس 💎 — بدون کارمزد' : 'کارمزد ۰.۱٪ طلای انتقالی'}
-                  </p>
-                </div>
-              </div>
-            </>
-          )}
-        </TabsContent>
+              <Dialog open={designOpen} onOpenChange={setDesignOpen}>
+                <DialogContent dir="rtl">
+                  <DialogHeader>
+                    <DialogTitle className="gold-gradient-text text-xl">انتخاب طرح کارت</DialogTitle>
+                    <DialogDescription>یکی از طرح‌های زیر را انتخاب کنید</DialogDescription>
+                  </DialogHeader>
+                  <DesignPicker currentDesign={selectedDesign} onSelect={handleDesignChange} loading={actionLoading} />
+                </DialogContent>
+              </Dialog>
+            </div>
 
-        {/* ═══════════════════════════════════════════════════════ */}
-        {/*  TAB 4 — Settings                                     */}
-        {/* ═══════════════════════════════════════════════════════ */}
-        <TabsContent value="settings" className="space-y-4 mt-4">
-          {/* Card Details Summary */}
-          <Card className="border-border/40">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <CreditCard className="size-4 text-gold" />
-                اطلاعات کارت
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2.5">
-              {[
-                { label: 'شماره کارت', value: card.cardNumber },
-                { label: 'نوع کارت', value: card.type === 'VIRTUAL' ? '🥇 مجازی' : '💳 فیزیکی' },
-                { label: 'وضعیت', value: isFrozen ? '❄️ مسدود' : '✅ فعال' },
-                { label: 'تاریخ صدور', value: toPersianDigits(new Date(card.createdAt).toLocaleDateString('fa-IR')) },
-                { label: 'طراحی', value: CARD_DESIGNS[card.design].label },
-              ].map((item, i) => (
-                <div key={i} className="flex justify-between items-center py-1.5">
-                  <span className="text-xs text-muted-foreground">{item.label}</span>
-                  <span className="text-xs font-medium">{item.value}</span>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Design Picker inline */}
-          <Card className="border-border/40">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Palette className="size-4 text-gold" />
-                طراحی کارت
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-2.5">
-                {(Object.keys(CARD_DESIGNS) as Array<keyof typeof CARD_DESIGNS>).map((key) => (
-                  <div key={key} className="space-y-1.5">
-                    <MiniCardPreview
-                      design={key}
-                      selected={card.design === key}
-                      onSelect={() => {
-                        handleDesignChange(key);
-                      }}
-                    />
-                    <p className="text-[10px] text-center text-muted-foreground">
-                      {CARD_DESIGNS[key].label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* PIN Change Inline */}
-          <Card className="border-border/40">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Lock className="size-4 text-gold" />
-                تغییر رمز کارت
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Button
-                variant="outline"
-                className="w-full rounded-xl border-border/50 hover:border-gold/40 hover:text-gold text-sm"
-                onClick={() => setPinOpen(true)}
-              >
-                <Lock className="size-4 ml-2" />
-                تغییر رمز عبور
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Limit Adjustment */}
-          <Card className="border-border/40">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Gauge className="size-4 text-gold" />
-                سقف تراکنش
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-xs text-muted-foreground">سقف روزانه</span>
-                  <span className="text-xs font-mono text-gold tabular-nums">
-                    {formatToman(dailyLimit)}
-                  </span>
-                </div>
-                <Slider
-                  value={[dailyLimit]}
-                  onValueChange={([v]) => setDailyLimit(v)}
-                  min={1_000_000}
-                  max={50_000_000}
-                  step={500_000}
-                  className="[&_[data-slot=slider-range]]:bg-gold [&_[data-slot=slider-thumb]]:border-gold"
-                />
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-xs text-muted-foreground">سقف ماهانه</span>
-                  <span className="text-xs font-mono text-gold tabular-nums">
-                    {formatToman(monthlyLimit)}
-                  </span>
-                </div>
-                <Slider
-                  value={[monthlyLimit]}
-                  onValueChange={([v]) => setMonthlyLimit(v)}
-                  min={10_000_000}
-                  max={500_000_000}
-                  step={5_000_000}
-                  className="[&_[data-slot=slider-range]]:bg-gold [&_[data-slot=slider-thumb]]:border-gold"
-                />
-              </div>
-              <Button
-                className="w-full bg-gold hover:bg-gold-dark text-gold-dark hover:text-white rounded-xl text-sm"
-                onClick={handleLimitsSave}
-                disabled={actionLoading}
-              >
-                {actionLoading ? 'در حال ذخیره...' : 'ذخیره سقف‌ها'}
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Card Status */}
-          <Card className="border-border/40">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <ShieldCheck className="size-4 text-gold" />
-                وضعیت کارت
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-muted/40">
-                <div className="flex items-center gap-2">
-                  {isFrozen ? (
-                    <Snowflake className="size-4 text-blue-400" />
-                  ) : (
-                    <CheckCircle className="size-4 text-green-400" />
-                  )}
-                  <span className="text-sm">
-                    {isFrozen ? 'کارت مسدود است' : 'کارت فعال است'}
-                  </span>
-                </div>
-                <Switch
-                  checked={!isFrozen}
-                  onCheckedChange={handleToggleFreeze}
-                  disabled={actionLoading}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Request Physical Card */}
-          <Card className="border-border/40">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
+            {/* Spending Limits */}
+            <div className="space-y-3">
+              <Card className="bg-card border-border/30 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-gold/30 transition-colors" onClick={() => setLimitsOpen(true)}>
                 <div className="flex items-center gap-3">
-                  <div className="size-10 rounded-xl bg-gold/10 flex items-center justify-center">
-                    <CreditCard className="size-5 text-gold" />
-                  </div>
+                  <div className="size-9 rounded-lg bg-cyan-500/10 flex items-center justify-center"><Gauge className="size-4 text-cyan-500" /></div>
                   <div>
-                    <p className="text-sm font-medium">درخواست کارت فیزیکی</p>
-                    <p className="text-[10px] text-muted-foreground">به زودی فعال می‌شود</p>
+                    <p className="text-sm font-medium">سقف تراکنش</p>
+                    <p className="text-[11px] text-muted-foreground">سقف خرید روزانه و ماهانه</p>
                   </div>
                 </div>
-                <Badge variant="secondary" className="text-[10px]">
-                  به زودی
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
+                <ChevronDown className="size-4 text-muted-foreground rotate-[-90deg]" />
+              </Card>
 
-          {/* Close Card */}
-          <Card className="border-destructive/20 bg-destructive/5">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="size-10 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0">
-                  <AlertTriangle className="size-5 text-destructive" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-destructive">بستن / حذف کارت</p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                    با بستن کارت، موجودی به کیف طلای شما برگردانده می‌شود. این عمل قابل بازگشت نیست.
-                  </p>
-                </div>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      className="rounded-xl text-xs shrink-0"
-                    >
-                      بستن کارت
+              <Dialog open={limitsOpen} onOpenChange={setLimitsOpen}>
+                <DialogContent dir="rtl">
+                  <DialogHeader>
+                    <DialogTitle className="gold-gradient-text text-xl">تنظیم سقف تراکنش</DialogTitle>
+                    <DialogDescription>سقف خرید روزانه و ماهانه خود را تعیین کنید</DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-5 py-2">
+                    <div className="space-y-2">
+                      <div className="flex justify-between"><Label>سقف روزانه (تومان)</Label><span className="text-xs font-mono text-muted-foreground">{formatToman(dailyLimit)}</span></div>
+                      <Slider value={[dailyLimit]} min={1_000_000} max={500_000_000} step={5_000_000} onValueChange={([v]) => setDailyLimit(v)} />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between"><Label>سقف ماهانه (تومان)</Label><span className="text-xs font-mono text-muted-foreground">{formatToman(monthlyLimit)}</span></div>
+                      <Slider value={[monthlyLimit]} min={10_000_000} max={5_000_000_000} step={50_000_000} onValueChange={([v]) => setMonthlyLimit(v)} />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setLimitsOpen(false)} className="rounded-xl">انصراف</Button>
+                    <Button onClick={handleLimitsSave} disabled={actionLoading} className="rounded-xl bg-[#D4AF37] hover:bg-[#B8960C] text-[#2a1a00] font-bold">
+                      {actionLoading ? 'ذخیره...' : 'ذخیره'}
                     </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent dir="rtl">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>آیا مطمئن هستید؟</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        با بستن کارت طلایی، تمام موجودی ({formatToman(card.balance)}) به کیف
-                        طلای شما برگردانده می‌شود. این عمل غیرقابل بازگشت است.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel className="rounded-xl">انصراف</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleCloseCard}
-                        className="bg-destructive hover:bg-destructive/90 rounded-xl"
-                      >
-                        بله، بستن کارت
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {/* Close Card */}
+            <Separator />
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-red-400 flex items-center gap-1.5">
+                <AlertTriangle className="size-4" />
+                منطقه خطر
+              </h3>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" className="w-full rounded-xl border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-500">
+                    <XCircle className="size-4 ml-2" />
+                    بستن کارت
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent dir="rtl">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>بستن کارت طلایی</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      آیا مطمئن هستید؟ با بستن کارت، موجودی و طلاهای متصل به کیف پول اصلی برگردانده می‌شود. این عمل قابل بازگشت نیست.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>انصراف</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleCloseCard} className="bg-red-600 hover:bg-red-700">
+                      بله، کارت را ببند
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        {/* ═══════════════════════════════════════════════════════ */}
+        {/*  Global Dialogs (outside tabs)                       */}
+        {/* ═══════════════════════════════════════════════════════ */}
+
+        {/* Charge Dialog */}
+        <Dialog open={chargeOpen} onOpenChange={setChargeOpen}>
+          <DialogContent dir="rtl">
+            <DialogHeader>
+              <DialogTitle className="gold-gradient-text text-xl">شارژ کارت از طلا</DialogTitle>
+              <DialogDescription>طلای خود را به اعتبار کارت تبدیل کنید</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-2">
+              <div className="space-y-2">
+                <Label className="text-sm">مقدار طلا (گرم)</Label>
+                <Input type="number" step="0.01" min="0.01" placeholder="مثلاً ۰.۵" value={chargeGrams} onChange={(e) => setChargeGrams(e.target.value)} className="rounded-xl" />
+                {chargeGrams && parseFloat(chargeGrams) > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    معادل: <span className="font-bold text-foreground">{formatToman(chargeFiat)}</span> تومان (قیمت هر گرم: {formatToman(goldPrice)})
+                  </p>
+                )}
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              {chargeGrams && parseFloat(chargeGrams) > 0 && (
+                <Card className="bg-muted/50 rounded-xl p-3 space-y-1 text-xs">
+                  <div className="flex justify-between"><span className="text-muted-foreground">مقدار طلا</span><span className="font-mono">{toPersianDigits(parseFloat(chargeGrams).toFixed(2))} گرم</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">قیمت هر گرم</span><span className="font-mono">{formatToman(goldPrice)}</span></div>
+                  <Separator />
+                  <div className="flex justify-between font-bold text-sm"><span>مجموع</span><span className="font-mono">{formatToman(chargeFiat)} تومان</span></div>
+                </Card>
+              )}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setChargeOpen(false)} className="rounded-xl">انصراف</Button>
+              <Button onClick={handleCharge} disabled={actionLoading || !chargeGrams || parseFloat(chargeGrams) <= 0} className="rounded-xl bg-[#D4AF37] hover:bg-[#B8960C] text-[#2a1a00] font-bold">
+                {actionLoading ? 'در حال شارژ...' : 'شارژ کارت'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }
