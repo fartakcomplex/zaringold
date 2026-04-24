@@ -1172,3 +1172,90 @@ model SmsBlacklist {
   addedBy   String?
   createdAt DateTime @default(now())
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  Email Marketing Platform Module                                              */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+model EmailCampaign {
+  id            String   @id @default(cuid())
+  name          String
+  type          String   @default("marketing") // marketing, transactional, birthday, price_alert, security, promotional, newsletter, weekly_report
+  subject       String
+  htmlContent   String   @default("")
+  plainText     String   @default("")
+  senderName    String   @default("زرین گلد")
+  senderEmail   String   @default("noreply@zarringold.ir")
+  recipientCount Int     @default(0)
+  openedCount  Int     @default(0)
+  clickedCount  Int     @default(0)
+  bouncedCount Int     @default(0)
+  unsubscribed Int     @default(0)
+  status        String   @default("draft") // draft, scheduled, sending, completed, cancelled
+  scheduledAt   DateTime?
+  sentAt        DateTime?
+  completedAt   DateTime?
+  createdById   String?
+  segment       String   @default("all") // all, active, vip, new_users, kyc_verified, gold_holders, inactive_30d
+  filterJson    String   @default("{}")
+  template      String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  logs EmailLog[]
+}
+
+model EmailLog {
+  id            String   @id @default(cuid())
+  campaignId    String?
+  email         String
+  subject       String
+  type          String   @default("marketing") // otp, transaction, birthday, marketing, price_alert, security, welcome, newsletter
+  status        String   @default("pending") // pending, sent, delivered, opened, clicked, bounced, failed, unsubscribed
+  openedAt      DateTime?
+  clickedAt     DateTime?
+  bouncedAt     DateTime?
+  errorMessage  String?
+  userId        String?
+  createdAt     DateTime @default(now())
+
+  campaign EmailCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+}
+
+model EmailTemplate {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  subject       String
+  htmlContent   String
+  type          String   @default("transactional") // transactional, marketing, birthday, welcome, security, newsletter, notification
+  variables     String   @default("[]") // JSON array
+  isActive      Boolean  @default(true)
+  isDefault     Boolean  @default(false)
+  previewText   String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model EmailBlacklist {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  reason    String   @default("")
+  addedBy   String?
+  createdAt DateTime @default(now())
+}
+
+model EmailConfig {
+  id          String   @id @default(cuid())
+  provider    String   @default("smtp")
+  host        String   @default("")
+  port        Int      @default(587)
+  secure      Boolean  @default(true) // SSL/TLS
+  username    String   @default("")
+  password    String   @default("")
+  senderName  String   @default("زرین گلد")
+  senderEmail String   @default("noreply@zarringold.ir")
+  replyTo     String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

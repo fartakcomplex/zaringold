@@ -20,6 +20,7 @@ import {
   ShieldAlert,
   Shield,
   Store,
+  MessageSquare,
   Database,
   Package,
   Layers,
@@ -72,6 +73,12 @@ const adminNavSections: { title: string; items: AdminNavItem[] }[] = [
       { label: 'قیمت طلا', page: 'prices', icon: TrendingUp },
       { label: 'هشدار تقلب', page: 'fraud-alerts', icon: ShieldAlert },
       { label: 'مدیریت درگاه', page: 'gateway', icon: Store },
+    ],
+  },
+  {
+    title: 'مارکتینگ',
+    items: [
+      { label: 'پیامک', page: 'sms-marketing', icon: MessageSquare, badge: 'SMS' },
     ],
   },
   {
