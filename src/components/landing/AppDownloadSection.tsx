@@ -291,7 +291,7 @@ function DownloadButton({
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function AppDownloadSection() {
-  const { t, dir } = useTranslation();
+  const { t, dir, locale } = useTranslation();
 
   return (
     <section
@@ -487,12 +487,12 @@ export default function AppDownloadSection() {
             >
               <Smartphone className="size-5 text-gold/60" />
               <div className="flex-1">
-                <div className="text-xs font-bold text-gray-900">بیش از ۱۰۰,۰۰۰ دانلود</div>
+                <div className="text-xs font-bold text-gray-900">{locale === "en" ? "Over 100,000 Downloads" : "بیش از ۱۰۰,۰۰۰ دانلود"}</div>
                 <div className="flex items-center gap-1 mt-0.5">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star key={i} className="size-3 fill-gold text-gold" />
                   ))}
-                  <span className="text-[10px] text-gray-500 mr-1">۴.۸ از ۵</span>
+                  <span className="text-[10px] text-gray-500 mr-1">{locale === "en" ? "4.8 / 5" : "۴.۸ از ۵"}</span>
                 </div>
               </div>
             </motion.div>

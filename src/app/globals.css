@@ -176,7 +176,7 @@
 
   body {
     @apply bg-background text-foreground;
-    direction: rtl;
+    /* direction and font-family are set dynamically by LocaleProvider */
     font-family: var(--font-vazir), 'IRANSans', 'Iran Sans', 'Vazir', system-ui, sans-serif;
     font-feature-settings: "ss01", "ss02";
     -webkit-font-smoothing: antialiased;

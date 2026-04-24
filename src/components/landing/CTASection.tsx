@@ -38,10 +38,16 @@ const sparkles = [
 /*  Trust Indicators                                                          */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
-const trustItems = [
+const trustItemsFa = [
   { icon: Shield, label: 'امنیت بانکی', sublabel: 'رمزگذاری AES-256' },
   { icon: Clock, label: 'پشتیبانی ۲۴/۷', sublabel: 'پاسخگویی سریع' },
   { icon: Award, label: 'مجوز رسمی', sublabel: 'تحت نظارت بورس' },
+];
+
+const trustItemsEn = [
+  { icon: Shield, label: 'Banking Security', sublabel: 'AES-256 Encryption' },
+  { icon: Clock, label: '24/7 Support', sublabel: 'Quick Response' },
+  { icon: Award, label: 'Official License', sublabel: 'Regulated Exchange' },
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -49,6 +55,8 @@ const trustItems = [
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function CTASection({ onGetStarted }: CTASectionProps) {
+  const { locale } = useTranslation();
+  const trustItems = locale === 'en' ? trustItemsEn : trustItemsFa;
   const { t, dir } = useTranslation();
 
   return (
@@ -155,7 +163,7 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
 
           {/* ── Subheading ── */}
           <p className="text-base sm:text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
-            به بزرگترین پلتفرم معاملات طلای ایران بپیوندید
+            {locale === 'en' ? 'Join the largest gold trading platform in Iran' : 'به بزرگترین پلتفرم معاملات طلای ایران بپیوندید'}
           </p>
 
           {/* ── User count badge ── */}
@@ -187,7 +195,7 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
             <div className="flex items-center gap-1.5">
               <Users className="size-4 text-gold" />
               <span className="text-sm font-bold text-gray-900">+۱۰۰,۰۰۰</span>
-              <span className="text-xs text-gray-500">کاربر فعال</span>
+              <span className="text-xs text-gray-500">{locale === 'en' ? 'Active Users' : 'کاربر فعال'}</span>
             </div>
           </motion.div>
 
@@ -236,7 +244,7 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6 }}
           >
-            {['ثبت‌نام رایگان', 'بدون کارمزد اولیه', 'خرید از ۱۰,۰۰۰ تومان', 'پشتیبانی ۲۴/۷'].map((item, i) => (
+            {(locale === 'en' ? ['Free Registration', 'No Initial Fees', 'Start from 10,000 Toman', '24/7 Support'] : ['ثبت‌نام رایگان', 'بدون کارمزد اولیه', 'خرید از ۱۰,۰۰۰ تومان', 'پشتیبانی ۲۴/۷']).map((item, i) => (
               <span
                 key={item}
                 className="inline-flex items-center gap-1.5 text-xs text-muted-foreground px-3 py-1.5 rounded-full"
@@ -299,7 +307,7 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1 }}
           >
-            زرین گلد — سرمایه‌گذاری هوشمند طلا، با خیال راحت
+            {locale === 'en' ? 'Zarrin Gold — Smart Gold Investment, Peace of Mind' : 'زرین گلد — سرمایه‌گذاری هوشمند طلا، با خیال راحت'}
           </motion.p>
         </motion.div>
       </div>

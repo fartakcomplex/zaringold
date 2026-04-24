@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "next-themes";
+import LocaleProvider from "@/components/shared/LocaleProvider";
 
 const iranSans = localFont({
   variable: "--font-vazir",
@@ -77,11 +78,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
-      <body className={`${iranSans.variable} ${inter.variable} antialiased bg-background text-foreground font-[family-name:var(--font-vazir)]`}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          {children}
-          <Toaster />
-        </ThemeProvider>
+      <body className={`${iranSans.variable} ${inter.variable} antialiased bg-background text-foreground`}>
+        <LocaleProvider>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

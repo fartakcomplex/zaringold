@@ -88,7 +88,8 @@ function StarRating({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'lg
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function TestimonialsSection() {
-  const { t, dir } = useTranslation();
+  const { t, dir, locale } = useTranslation();
+  const testimonials = locale === 'en' ? testimonialsEn : testimonialsFa;
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -150,19 +151,19 @@ export default function TestimonialsSection() {
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <div className="text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold gold-gradient-text">۴.۸</div>
+            <div className="text-2xl sm:text-3xl font-extrabold gold-gradient-text">{locale === 'en' ? '4.8' : '۴.۸'}</div>
             <StarRating rating={5} size="lg" />
-            <div className="text-[11px] text-muted-foreground mt-1">از ۵ ستاره</div>
+            <div className="text-[11px] text-muted-foreground mt-1">{locale === 'en' ? 'out of 5' : 'از ۵ ستاره'}</div>
           </div>
           <div className="w-px h-12 bg-border/50" />
           <div className="text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold gold-gradient-text">۱۰۰K+</div>
-            <div className="text-[11px] text-muted-foreground mt-1">کاربر فعال</div>
+            <div className="text-2xl sm:text-3xl font-extrabold gold-gradient-text">{locale === 'en' ? '100K+' : '۱۰۰K+'}</div>
+            <div className="text-[11px] text-muted-foreground mt-1">{locale === 'en' ? 'Active Users' : 'کاربر فعال'}</div>
           </div>
           <div className="w-px h-12 bg-border/50" />
           <div className="text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold gold-gradient-text">۹۸٪</div>
-            <div className="text-[11px] text-muted-foreground mt-1">رضایت</div>
+            <div className="text-2xl sm:text-3xl font-extrabold gold-gradient-text">{locale === 'en' ? '98%' : '۹۸٪'}</div>
+            <div className="text-[11px] text-muted-foreground mt-1">{locale === 'en' ? 'Satisfaction' : 'رضایت'}</div>
           </div>
         </motion.div>
 
@@ -270,7 +271,7 @@ export default function TestimonialsSection() {
                   }} />
                   <div className="flex items-center gap-0.5">
                     <Star className="size-2.5 fill-gold text-gold" />
-                    <span className="text-[10px] font-bold text-gold">{item.rating}.۰</span>
+                    <span className="text-[10px] font-bold text-gold">{item.rating}{locale === 'en' ? '.0' : '.۰'}</span>
                   </div>
                   <div className="h-0.5 flex-1 rounded-full" style={{
                     background: 'linear-gradient(270deg, oklch(0.75 0.15 85 / 30%), transparent)',
@@ -375,7 +376,7 @@ export default function TestimonialsSection() {
                       background: 'linear-gradient(90deg, oklch(0.75 0.15 85 / 30%), transparent)',
                     }} />
                     <Star className="size-2.5 fill-gold text-gold" />
-                    <span className="text-[10px] font-bold text-gold">{item.rating}.۰</span>
+                    <span className="text-[10px] font-bold text-gold">{item.rating}{locale === 'en' ? '.0' : '.۰'}</span>
                     <div className="h-0.5 flex-1 rounded-full" style={{
                       background: 'linear-gradient(270deg, oklch(0.75 0.15 85 / 30%), transparent)',
                     }} />

@@ -1471,14 +1471,14 @@ function emitChange() {
   }
 }
 
-function subscribe(listener: () => void) {
+export function subscribe(listener: () => void) {
   listeners.add(listener);
   return () => {
     listeners.delete(listener);
   };
 }
 
-function getSnapshot(): Locale {
+export function getSnapshot(): Locale {
   return currentLocale;
 }
 
@@ -1533,6 +1533,15 @@ export function setLocale(locale: Locale) {
 
 export function getDirection(locale: Locale): Direction {
   return locale === 'fa' ? 'rtl' : 'ltr';
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  Utility: Convert Persian/Arabic digits to English                          */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+export function toRomanize(text: string): string {
+  const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
+  return text.replace(/[۰-۹]/g, (d) => String(persianDigits.indexOf(d)));
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
