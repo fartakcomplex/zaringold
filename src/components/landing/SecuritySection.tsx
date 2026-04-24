@@ -146,14 +146,14 @@ function CentralShield() {
         ))}
       </div>
 
-      {/* Floating particles */}
-      {[...Array(6)].map((_, i) => (
+      {/* Floating particles — deterministic positions to avoid hydration mismatch */}
+      {[20, 55, 80, 35, 65, 45].map((topPos, i) => (
         <div
           key={i}
           className="gold-sparkle"
           style={{
-            top: `${15 + Math.random() * 70}%`,
-            left: `${15 + Math.random() * 70}%`,
+            top: `${topPos}%`,
+            left: `${(i * 13 + 25) % 80 + 10}%`,
             animationDelay: `${i * 0.6}s`,
           }}
         />

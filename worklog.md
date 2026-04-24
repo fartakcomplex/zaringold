@@ -1392,3 +1392,21 @@ Stage Summary:
 - Locale-aware number formatting handled via translation keys (not runtime conversion)
 - No visual styling or layout logic was changed
 - Zero lint errors introduced
+
+---
+Task ID: 1
+Agent: Main Agent
+Task: Fix two runtime errors reported by user
+
+Work Log:
+- Analyzed two error screenshots using VLM
+- Error 1: React hydration mismatch in SecuritySection.tsx line 151 - Math.random() used for sparkle particle positions causing server/client mismatch
+- Error 2: ReferenceError in WalletView.tsx line 1318 - DEPOSIT_QUICK_AMOUNTS used but never defined
+- Fixed SecuritySection.tsx: Replaced Math.random() with deterministic position arrays [20, 55, 80, 35, 65, 45]
+- Fixed WalletView.tsx: Added DEPOSIT_QUICK_AMOUNTS constant with 4 quick deposit options (0.1, 0.5, 1, 5 grams)
+- Verified compilation passes and homepage loads (HTTP 200)
+
+Stage Summary:
+- Both runtime errors resolved
+- SecuritySection.tsx: hydration error fixed with deterministic sparkle positions
+- WalletView.tsx: DEPOSIT_QUICK_AMOUNTS constant defined with Persian labels
