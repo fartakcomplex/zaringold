@@ -1,17 +1,15 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import React from 'react';
 import { motion } from '@/lib/framer-compat';
 import {
   ArrowLeft,
   Shield,
   TrendingUp,
-  Users,
   Clock,
   CircleDot,
   Zap,
   Lock,
-  Award,
   Coins,
   Sparkles,
   Gem,
@@ -29,28 +27,7 @@ interface HeroSectionProps {
   onGetStarted: () => void;
 }
 
-/* ── Animated count-up hook (IntersectionObserver + rAF) ── */
-function useCountUp(end: number, duration = 2000, active = false) {
-  const [count, setCount] = useState(0);
-  const hasAnimated = useRef(false);
 
-  useEffect(() => {
-    if (!active || hasAnimated.current) return;
-    hasAnimated.current = true;
-    const startTime = performance.now();
-
-    const animate = (now: number) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 4);
-      setCount(Math.round(eased * end));
-      if (progress < 1) requestAnimationFrame(animate);
-    };
-    requestAnimationFrame(animate);
-  }, [end, duration, active]);
-
-  return count;
-}
 
 /* ── Ticker data ── */
 const TICKER_ITEMS = [
@@ -60,13 +37,7 @@ const TICKER_ITEMS = [
   { key: 'landing.globalOunce', price: '$2,350', change: '+۰.۵٪', up: true },
 ] as const;
 
-/* ── Stats data with numeric targets ── */
-const STATS = [
-  { icon: Users, end: 125000, suffix: '+', valueKey: 'landing.statUsersValue', labelKey: 'landing.statUsersLabel' },
-  { icon: TrendingUp, end: 5000, suffix: '+', valueKey: 'landing.statTradeValue', labelKey: 'landing.statTradeLabel' },
-  { icon: Clock, end: 999, suffix: '٪', valueKey: 'landing.statUptimeValue', labelKey: 'landing.statUptimeLabel', decimal: true },
-  { icon: Award, end: 98, suffix: '٪', valueKey: 'landing.statSatisfactionValue', labelKey: 'landing.statSatisfactionLabel' },
-] as const;
+
 
 /* ── Feature highlights ── */
 const FEATURES = [
@@ -147,31 +118,7 @@ const ORBS = [
 export default function HeroSection({ onGetStarted }: HeroSectionProps) {
   const { t } = useTranslation();
 
-  /* ── IntersectionObserver for stats counter ── */
-  const statsRef = useRef<HTMLDivElement>(null);
-  const [statsVisible, setStatsVisible] = useState(false);
 
-  useEffect(() => {
-    const el = statsRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setStatsVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.15 },
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  const countUsers = useCountUp(STATS[0].end, 2500, statsVisible);
-  const countTrade = useCountUp(STATS[1].end, 2500, statsVisible);
-  const countUptime = useCountUp(STATS[2].end, 2500, statsVisible);
-  const countSatisfaction = useCountUp(STATS[3].end, 2500, statsVisible);
-  const counts = [countUsers, countTrade, countUptime, countSatisfaction];
 
   return (
     <>
@@ -236,11 +183,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
           100% { background-position: 200% center; }
         }
 
-        /* ── Stat card glow ── */
-        @keyframes stat-card-glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(212,175,55,0.03), 0 0 40px rgba(212,175,55,0.01); }
-          50% { box-shadow: 0 0 30px rgba(212,175,55,0.08), 0 0 60px rgba(212,175,55,0.03); }
-        }
+
 
         /* ── CTA dramatic glow ── */
         @keyframes cta-dramatic-glow {
@@ -791,82 +734,6 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
                 <p className="mt-4 text-center text-[11px] text-muted-foreground/40 font-medium">
                   {t('landing.pricesLive')}
                 </p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* ── Animated gold separator ── */}
-          <motion.div
-            initial={{ opacity: 0, scaleX: 0 }}
-            animate={{ opacity: 1, scaleX: 1 }}
-            transition={{ duration: 0.9, delay: 1.2 }}
-            className="w-full max-w-lg mb-14 sm:mb-20"
-          >
-            <div className="gold-separator h-px w-full" />
-          </motion.div>
-
-          {/* ── Stats Counter Bar — Individual glass cards with animated glow ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 1.3 }}
-            className="w-full"
-          >
-            <div ref={statsRef}>
-              <div
-                className={cn(
-                  'glass-gold rounded-2xl sm:rounded-3xl p-3 sm:p-4 lg:p-5',
-                  'border border-gold/10',
-                )}
-              >
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 lg:gap-4">
-                  {STATS.map((stat, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 18 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.45, delay: 1.4 + i * 0.12 }}
-                      className={cn(
-                        'flex flex-col items-center gap-2 sm:gap-2.5',
-                        'rounded-xl sm:rounded-2xl p-3 sm:p-4',
-                        'bg-background/40 backdrop-blur-sm',
-                        'border border-gold/[0.06]',
-                        'transition-all duration-300',
-                        'hover:border-gold/15 hover:bg-gold/[0.04]',
-                      )}
-                      style={{
-                        animation: `stat-card-glow ${4 + i}s ease-in-out infinite`,
-                        animationDelay: `${i * 0.5}s`,
-                      }}
-                    >
-                      {/* Icon circle with gradient */}
-                      <div
-                        className={cn(
-                          'flex items-center justify-center',
-                          'w-11 h-11 sm:w-13 sm:h-13 lg:w-14 lg:h-14 rounded-xl sm:rounded-2xl',
-                          'bg-gradient-to-br from-gold/12 to-gold/[0.04]',
-                          'border border-gold/12',
-                          'transition-all duration-300',
-                          'hover:border-gold/25 hover:shadow-lg hover:shadow-gold/10',
-                        )}
-                      >
-                        <stat.icon className="size-5 sm:size-6 text-gold/60" />
-                      </div>
-
-                      {/* Animated counter value */}
-                      <span className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-black tabular-nums leading-none gold-gradient-text">
-                        {stat.decimal
-                          ? (counts[i] / 10).toFixed(1)
-                          : counts[i].toLocaleString('fa-IR')}
-                        <span className="text-sm sm:text-base lg:text-lg">{stat.suffix}</span>
-                      </span>
-
-                      <span className="text-[11px] sm:text-xs text-muted-foreground font-medium text-center leading-tight">
-                        {t(stat.labelKey)}
-                      </span>
-                    </motion.div>
-                  ))}
-                </div>
               </div>
             </div>
           </motion.div>
