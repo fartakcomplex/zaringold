@@ -63,6 +63,8 @@ model User {
   activities          UserActivity[]
   roles               UserRole[]
   insuranceOrders     InsuranceOrder[]
+  cars               UserCar[]
+  carServiceOrders   CarServiceOrder[]
 }
 
 model Role {
@@ -1616,4 +1618,81 @@ model InsuranceOrder {
   user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan     InsurancePlan     @relation(fields: [planId], references: [id], onDelete: Cascade)
   provider InsuranceProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/*  Automotive Services Module (خدمات خودرو)                         */
+/* ═══════════════════════════════════════════════════════════════ */
+
+model UserCar {
+  id            String   @id @default(cuid())
+  userId        String
+  country       String   @default("ایران")
+  province      String   @default("")
+  city          String   @default("")
+  carType       String   @default("")
+  carBrand      String   @default("")
+  carModel      String   @default("")
+  productionYear Int     @default(1400)
+  plateNumber   String   @default("")
+  plateTwoChar  String   @default("")
+  plateThreeChar String  @default("")
+  plateRegion   String   @default("")
+  color         String   @default("")
+  vin           String   @default("")
+  isDefault     Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user   User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders CarServiceOrder[]
+}
+
+model CarServiceCategory {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  nameEn      String   @default("")
+  description String   @default("")
+  descriptionEn String @default("")
+  icon        String   @default("Car")
+  color       String   @default("#8B5CF6")
+  basePrice   Float    @default(0)
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orders CarServiceOrder[]
+}
+
+model CarServiceOrder {
+  id              String   @id @default(cuid())
+  userId          String
+  carId           String
+  categoryId      String
+  status          String   @default("pending")
+  urgency         String   @default("normal")
+  description     String   @default("")
+  location        String   @default("")
+  latitude        Float    @default(0)
+  longitude       Float    @default(0)
+  scheduledAt     DateTime?
+  estimatedPrice  Float    @default(0)
+  finalPrice      Float    @default(0)
+  paymentStatus   String   @default("unpaid")
+  paymentMethod   String   @default("wallet")
+  rating          Int?
+  userFeedback    String?
+  adminNote       String?
+  assignedTo      String?
+  completedAt     DateTime?
+  cancelledAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  car       UserCar             @relation(fields: [carId], references: [id], onDelete: Cascade)
+  category  CarServiceCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 }
