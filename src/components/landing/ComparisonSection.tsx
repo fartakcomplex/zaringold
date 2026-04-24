@@ -6,77 +6,79 @@ import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/*  Comparison Data (hardcoded Persian)                                       */
+/*  Comparison Data                                                           */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 type CellValue = {
   type: 'check' | 'cross' | 'wait' | 'text';
-  label: string;
+  labelKey?: string;
 };
 
 interface ComparisonRow {
   labelKey: string;
-  zarringold: CellValue;
-  platformA: CellValue;
-  platformB: CellValue;
+  zg: CellValue;
+  pa: CellValue;
+  pb: CellValue;
 }
 
-const comparisonRows: ComparisonRow[] = [
-  {
-    labelKey: 'comparison.rows.feeBuy',
-    zarringold: { type: 'text', label: '۰.۵٪' },
-    platformA: { type: 'text', label: '۱.۲٪' },
-    platformB: { type: 'text', label: '۲٪' },
-  },
-  {
-    labelKey: 'comparison.rows.feeSell',
-    zarringold: { type: 'text', label: '۰.۳٪' },
-    platformA: { type: 'text', label: '۱٪' },
-    platformB: { type: 'text', label: '۱.۵٪' },
-  },
-  {
-    labelKey: 'comparison.rows.instantDeposit',
-    zarringold: { type: 'check', label: '' },
-    platformA: { type: 'wait', label: '۲ ساعته' },
-    platformB: { type: 'cross', label: '' },
-  },
-  {
-    labelKey: 'comparison.rows.fastWithdraw',
-    zarringold: { type: 'check', label: '' },
-    platformA: { type: 'wait', label: '۲۴ ساعته' },
-    platformB: { type: 'wait', label: '۴۸ ساعته' },
-  },
-  {
-    labelKey: 'comparison.rows.support247',
-    zarringold: { type: 'check', label: '' },
-    platformA: { type: 'cross', label: '' },
-    platformB: { type: 'wait', label: 'ساعات اداری' },
-  },
-  {
-    labelKey: 'comparison.rows.priceAlert',
-    zarringold: { type: 'check', label: '' },
-    platformA: { type: 'check', label: '' },
-    platformB: { type: 'cross', label: '' },
-  },
-  {
-    labelKey: 'comparison.rows.autoSave',
-    zarringold: { type: 'check', label: '' },
-    platformA: { type: 'cross', label: '' },
-    platformB: { type: 'cross', label: '' },
-  },
-  {
-    labelKey: 'comparison.rows.goldCard',
-    zarringold: { type: 'check', label: '' },
-    platformA: { type: 'cross', label: '' },
-    platformB: { type: 'cross', label: '' },
-  },
-];
+function buildRows(t: (key: string) => string): ComparisonRow[] {
+  return [
+    {
+      labelKey: 'comparison.rows.feeBuy',
+      zg: { type: 'text', labelKey: 'comparison.cells.feeBuyZg' },
+      pa: { type: 'text', labelKey: 'comparison.cells.feeBuyPa' },
+      pb: { type: 'text', labelKey: 'comparison.cells.feeBuyPb' },
+    },
+    {
+      labelKey: 'comparison.rows.feeSell',
+      zg: { type: 'text', labelKey: 'comparison.cells.feeSellZg' },
+      pa: { type: 'text', labelKey: 'comparison.cells.feeSellPa' },
+      pb: { type: 'text', labelKey: 'comparison.cells.feeSellPb' },
+    },
+    {
+      labelKey: 'comparison.rows.instantDeposit',
+      zg: { type: 'check' },
+      pa: { type: 'wait', labelKey: 'comparison.cells.depositPa' },
+      pb: { type: 'cross' },
+    },
+    {
+      labelKey: 'comparison.rows.fastWithdraw',
+      zg: { type: 'check' },
+      pa: { type: 'wait', labelKey: 'comparison.cells.withdrawPa' },
+      pb: { type: 'wait', labelKey: 'comparison.cells.withdrawPb' },
+    },
+    {
+      labelKey: 'comparison.rows.support247',
+      zg: { type: 'check' },
+      pa: { type: 'cross' },
+      pb: { type: 'wait', labelKey: 'comparison.cells.supportPb' },
+    },
+    {
+      labelKey: 'comparison.rows.priceAlert',
+      zg: { type: 'check' },
+      pa: { type: 'check' },
+      pb: { type: 'cross' },
+    },
+    {
+      labelKey: 'comparison.rows.autoSave',
+      zg: { type: 'check' },
+      pa: { type: 'cross' },
+      pb: { type: 'cross' },
+    },
+    {
+      labelKey: 'comparison.rows.goldCard',
+      zg: { type: 'check' },
+      pa: { type: 'cross' },
+      pb: { type: 'cross' },
+    },
+  ];
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  Cell Renderer                                                             */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
-function ComparisonCell({ value, highlight }: { value: CellValue; highlight?: boolean }) {
+function ComparisonCell({ value, highlight, t }: { value: CellValue; highlight?: boolean; t: (key: string) => string }) {
   if (value.type === 'check') {
     return (
       <td className={cn(
@@ -116,7 +118,7 @@ function ComparisonCell({ value, highlight }: { value: CellValue; highlight?: bo
       )}>
         <span className="inline-flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs sm:text-sm font-medium">
           <Clock className="size-3 sm:size-3.5" />
-          <span>{value.label}</span>
+          <span>{value.labelKey ? t(value.labelKey) : ''}</span>
         </span>
       </td>
     );
@@ -130,7 +132,7 @@ function ComparisonCell({ value, highlight }: { value: CellValue; highlight?: bo
         ? 'bg-gold/[0.04] text-gold stat-glow'
         : 'text-muted-foreground',
     )}>
-      {value.label}
+      {value.labelKey ? t(value.labelKey) : ''}
     </td>
   );
 }
@@ -141,6 +143,7 @@ function ComparisonCell({ value, highlight }: { value: CellValue; highlight?: bo
 
 export default function ComparisonSection() {
   const { t, dir } = useTranslation();
+  const comparisonRows = buildRows(t);
 
   return (
     <section
@@ -223,11 +226,11 @@ export default function ComparisonSection() {
                       {t(row.labelKey)}
                     </td>
                     {/* Zarrin Gold — highlighted */}
-                    <ComparisonCell value={row.zarringold} highlight />
+                    <ComparisonCell value={row.zg} highlight t={t} />
                     {/* Platform A */}
-                    <ComparisonCell value={row.platformA} />
+                    <ComparisonCell value={row.pa} t={t} />
                     {/* Platform B */}
-                    <ComparisonCell value={row.platformB} />
+                    <ComparisonCell value={row.pb} t={t} />
                   </motion.tr>
                 ))}
               </tbody>

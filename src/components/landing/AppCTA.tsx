@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                               */
@@ -19,13 +20,13 @@ import { cn } from '@/lib/utils';
 
 interface FeatureHighlight {
   icon: LucideIcon;
-  title: string;
+  titleKey: string;
 }
 
 const highlights: FeatureHighlight[] = [
-  { icon: UserPlus, title: 'ثبت‌نام رایگان' },
-  { icon: Percent, title: 'کارمزد از ۰.۳٪' },
-  { icon: Headphones, title: 'پشتیبانی ۲۴/۷' },
+  { icon: UserPlus, titleKey: 'appCta.hl1' },
+  { icon: Percent, titleKey: 'appCta.hl2' },
+  { icon: Headphones, titleKey: 'appCta.hl3' },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -99,6 +100,8 @@ interface AppCTAProps {
 /* ------------------------------------------------------------------ */
 
 export default function AppCTA({ onGetStarted }: AppCTAProps) {
+  const { t } = useTranslation();
+
   const scrollToHowItWorks = () => {
     const el = document.getElementById('how-it-works');
     if (el) {
@@ -160,7 +163,7 @@ export default function AppCTA({ onGetStarted }: AppCTAProps) {
             className="gold-text-animated text-3xl font-extrabold sm:text-4xl md:text-5xl"
             variants={itemVariants}
           >
-            همین الان شروع کنید
+            {t('appCta.title')}
           </motion.h2>
 
           {/* Subtitle */}
@@ -168,7 +171,7 @@ export default function AppCTA({ onGetStarted }: AppCTAProps) {
             className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg"
             variants={itemVariants}
           >
-            با ثبت‌نام رایگان، اولین خرید طلا خود را با کمترین کارمزد انجام دهید
+            {t('appCta.subtitle')}
           </motion.p>
 
           {/* Feature highlights row */}
@@ -186,7 +189,7 @@ export default function AppCTA({ onGetStarted }: AppCTAProps) {
                   <item.icon className="size-5 text-gold" />
                 </div>
                 <span className="text-base font-semibold text-foreground sm:text-lg">
-                  {item.title}
+                  {t(item.titleKey)}
                 </span>
               </motion.div>
             ))}
@@ -212,7 +215,7 @@ export default function AppCTA({ onGetStarted }: AppCTAProps) {
                 )}
               >
                 <ArrowLeft className="size-5" />
-                <span>شروع معامله</span>
+                <span>{t('appCta.startTrade')}</span>
               </Button>
             </motion.div>
 
@@ -229,7 +232,7 @@ export default function AppCTA({ onGetStarted }: AppCTAProps) {
                 )}
               >
                 <BookOpen className="size-5 ml-1.5" />
-                <span>یادگیری بیشتر</span>
+                <span>{t('appCta.learnMore')}</span>
               </Button>
             </motion.div>
           </motion.div>
@@ -248,7 +251,7 @@ export default function AppCTA({ onGetStarted }: AppCTAProps) {
               ))}
             </div>
             <p className="text-sm font-medium text-muted-foreground">
-              بیش از ۵۰,۰۰۰ کاربر به ما اعتماد کرده‌اند
+              {t('appCta.trustText')}
             </p>
           </motion.div>
         </motion.div>

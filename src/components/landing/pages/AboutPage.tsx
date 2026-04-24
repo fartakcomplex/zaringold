@@ -20,100 +20,103 @@ import {
 } from 'lucide-react';
 import { motion } from '@/lib/framer-compat';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ═════════════════════════════════════════════════════════════════ */
 /*  About Us Page                                                          */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ═════════════════════════════════════════════════════════════════════════════ */
 
 interface SubPageProps {
   onBack: () => void;
 }
 
-const stats = [
-  { label: 'کاربر فعال', value: '۱۲۰,۰۰۰+', icon: Users, color: 'from-amber-500 to-gold' },
-  { label: 'حجم معاملات روزانه', value: '۵۰۰ کیلو', icon: TrendingUp, color: 'from-emerald-500 to-emerald-400' },
-  { label: 'سال تجربه', value: '۵+', icon: Award, color: 'from-violet-500 to-violet-400' },
-  { label: 'پشتیبانی ۲۴/۷', value: 'آنلاین', icon: ShieldCheck, color: 'from-rose-500 to-rose-400' },
-];
-
-const values = [
-  {
-    icon: ShieldCheck,
-    title: 'امنیت بالا',
-    desc: 'تأیید هویت چندمرحله‌ای، رمزگذاری پیشرفته و صندوق بیمه سپرده برای حفاظت از دارایی‌های شما.',
-    gradient: 'from-amber-500/20 to-gold/5',
-    iconBg: 'from-amber-500 to-gold',
-  },
-  {
-    icon: Clock,
-    title: 'سرعت معاملات',
-    desc: 'خرید و فروش آنی طلا در کمتر از ۳ ثانیه. بدون انتظار و بدون محدودیت زمانی.',
-    gradient: 'from-emerald-500/20 to-emerald-400/5',
-    iconBg: 'from-emerald-500 to-emerald-400',
-  },
-  {
-    icon: TrendingUp,
-    title: 'شفافیت قیمت',
-    desc: 'قیمت‌ها بر اساس نرخ لحظه‌ای بازار تهران و اونس جهانی به‌روزرسانی می‌شوند.',
-    gradient: 'from-sky-500/20 to-sky-400/5',
-    iconBg: 'from-sky-500 to-sky-400',
-  },
-  {
-    icon: Gem,
-    title: 'ذخیره ایمن',
-    desc: 'طلای شما در صندوق‌های تحت نظارت بانک مرکزی با بیمه کامل نگهداری می‌شود.',
-    gradient: 'from-violet-500/20 to-violet-400/5',
-    iconBg: 'from-violet-500 to-violet-400',
-  },
-];
-
-const team = [
-  {
-    name: 'علی محمدی',
-    role: 'مدیرعامل و بنیان‌گذار',
-    bio: 'بیش از ۱۵ سال تجربه در بازار سرمایه و فین‌تک. فارغ‌التحصیل MBA از دانشگاه تهران.',
-    gradient: 'from-amber-400 to-gold',
-    delay: 0,
-  },
-  {
-    name: 'مریم رضایی',
-    role: 'مدیر فنی (CTO)',
-    bio: 'متخصص بلاکچین و امنیت سایبری. سابقه کار در شرکت‌های بزرگ فناوری مالی.',
-    gradient: 'from-emerald-400 to-emerald-500',
-    delay: 0.1,
-  },
-  {
-    name: 'محمد حسینی',
-    role: 'مدیر مالی (CFO)',
-    bio: 'کارشناس ارشد حسابداری با تجربه ۱۰ ساله در حوزه طلا و جواهر.',
-    gradient: 'from-violet-400 to-violet-500',
-    delay: 0.2,
-  },
-  {
-    name: 'سارا کریمی',
-    role: 'مدیر بازاریابی',
-    bio: 'متخصص بازاریابی دیجیتال و توسعه کسب‌وکار. تجربه در صنعت فین‌تک.',
-    gradient: 'from-rose-400 to-rose-500',
-    delay: 0.3,
-  },
-];
-
-const milestones = [
-  { year: '۱۳۹۹', event: 'تأسیس زرین گلد و راه‌اندازی نسخه اول پلتفرم', icon: '🚀' },
-  { year: '۱۴۰۰', event: 'عبور از ۱۰,۰۰۰ کاربر فعال و راه‌اندازی پس‌انداز خودکار', icon: '📈' },
-  { year: '۱۴۰۱', event: 'دریافت مجوز رسمی از سازمان بورس و اوراق بهادار', icon: '🏆' },
-  { year: '۱۴۰۲', event: 'راه‌اندازی کارت طلایی، سیستم پاداش و بخش وی‌آی‌پی', icon: '💳' },
-  { year: '۱۴۰۳', event: 'عبور از ۱۰۰,۰۰۰ کاربر و راه‌اندازی درگاه پرداخت طلایی', icon: '💎' },
-  { year: '۱۴۰۴', event: 'گسترش همکاری با بانک‌ها و راه‌اندازی صندوق سرمایه‌گذاری طلا', icon: '🏦' },
-];
-
-const licenses = [
-  { title: 'سازمان بورس', desc: 'دارای مجوز فعالیت رسمی', icon: Building2 },
-  { title: 'بیمه مرکزی', desc: 'بیمه سپرده تا سقف ۱ کیلوگرم طلا', icon: ShieldCheck },
-  { title: 'استاندارد ISO 27001', desc: 'مدیریت امنیت اطلاعات', icon: Award },
-];
-
 export default function AboutPage({ onBack }: SubPageProps) {
+  const { t } = useTranslation();
+
+  const stats = [
+    { label: t('about.stats.activeUsers'), value: t('about.stats.activeUsersValue'), icon: Users, color: 'from-amber-500 to-gold' },
+    { label: t('about.stats.dailyVolume'), value: t('about.stats.dailyVolumeValue'), icon: TrendingUp, color: 'from-emerald-500 to-emerald-400' },
+    { label: t('about.stats.yearsExperience'), value: t('about.stats.yearsExperienceValue'), icon: Award, color: 'from-violet-500 to-violet-400' },
+    { label: t('about.stats.support247'), value: t('about.stats.support247Value'), icon: ShieldCheck, color: 'from-rose-500 to-rose-400' },
+  ];
+
+  const values = [
+    {
+      icon: ShieldCheck,
+      title: t('about.values.security.title'),
+      desc: t('about.values.security.desc'),
+      gradient: 'from-amber-500/20 to-gold/5',
+      iconBg: 'from-amber-500 to-gold',
+    },
+    {
+      icon: Clock,
+      title: t('about.values.speed.title'),
+      desc: t('about.values.speed.desc'),
+      gradient: 'from-emerald-500/20 to-emerald-400/5',
+      iconBg: 'from-emerald-500 to-emerald-400',
+    },
+    {
+      icon: TrendingUp,
+      title: t('about.values.transparency.title'),
+      desc: t('about.values.transparency.desc'),
+      gradient: 'from-sky-500/20 to-sky-400/5',
+      iconBg: 'from-sky-500 to-sky-400',
+    },
+    {
+      icon: Gem,
+      title: t('about.values.storage.title'),
+      desc: t('about.values.storage.desc'),
+      gradient: 'from-violet-500/20 to-violet-400/5',
+      iconBg: 'from-violet-500 to-violet-400',
+    },
+  ];
+
+  const team = [
+    {
+      name: 'علی محمدی',
+      role: t('about.team.ceo'),
+      bio: t('about.team.ceoBio'),
+      gradient: 'from-amber-400 to-gold',
+      delay: 0,
+    },
+    {
+      name: 'مریم رضایی',
+      role: t('about.team.cto'),
+      bio: t('about.team.ctoBio'),
+      gradient: 'from-emerald-400 to-emerald-500',
+      delay: 0.1,
+    },
+    {
+      name: 'محمد حسینی',
+      role: t('about.team.cfo'),
+      bio: t('about.team.cfoBio'),
+      gradient: 'from-violet-400 to-violet-500',
+      delay: 0.2,
+    },
+    {
+      name: 'سارا کریمی',
+      role: t('about.team.cmo'),
+      bio: t('about.team.cmoBio'),
+      gradient: 'from-rose-400 to-rose-500',
+      delay: 0.3,
+    },
+  ];
+
+  const milestones = [
+    { year: '۱۳۹۹', event: t('about.timeline.m1'), icon: '🚀' },
+    { year: '۱۴۰۰', event: t('about.timeline.m2'), icon: '📈' },
+    { year: '۱۴۰۱', event: t('about.timeline.m3'), icon: '🏆' },
+    { year: '۱۴۰۲', event: t('about.timeline.m4'), icon: '💳' },
+    { year: '۱۴۰۳', event: t('about.timeline.m5'), icon: '💎' },
+    { year: '۱۴۰۴', event: t('about.timeline.m6'), icon: '🏦' },
+  ];
+
+  const licenses = [
+    { title: t('about.trust.exchange'), desc: t('about.trust.exchangeDesc'), icon: Building2 },
+    { title: t('about.trust.insurance'), desc: t('about.trust.insuranceDesc'), icon: ShieldCheck },
+    { title: t('about.trust.iso'), desc: t('about.trust.isoDesc'), icon: Award },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       {/* ── Enhanced Header ── */}
@@ -134,7 +137,7 @@ export default function AboutPage({ onBack }: SubPageProps) {
             className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-gold group"
           >
             <ArrowLeft className="size-4 transition-transform group-hover:translate-x-1" />
-            بازگشت به صفحه اصلی
+            {t('common.backToMain')}
           </motion.button>
 
           <motion.div
@@ -144,7 +147,7 @@ export default function AboutPage({ onBack }: SubPageProps) {
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="relative flex size-14 items-center justify-center rounded-2xl bg-gradient-to-bl from-gold-light via-gold to-gold-dark shadow-lg shadow-gold/20">
-                <span className="text-2xl font-black text-gray-950">ز</span>
+                <span className="text-2xl font-black text-gray-950">{t('logo.letter')}</span>
                 <div className="absolute -inset-1 rounded-2xl bg-gradient-to-bl from-gold/20 to-transparent blur-sm -z-10" />
               </div>
               <div>
@@ -154,11 +157,11 @@ export default function AboutPage({ onBack }: SubPageProps) {
                       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-75" />
                       <span className="relative inline-flex size-2 rounded-full bg-gold" />
                     </span>
-                    از سال ۱۳۹۹
+                    {t('about.since')}
                   </span>
                 </div>
                 <h1 className="text-3xl font-black md:text-5xl gold-text-shadow">
-                  درباره <span className="gold-gradient-text">زرین گلد</span>
+                  {t('about.title')} <span className="gold-gradient-text">{t('common.zarrinGold')}</span>
                 </h1>
               </div>
             </div>
@@ -170,9 +173,7 @@ export default function AboutPage({ onBack }: SubPageProps) {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg"
           >
-            زرین گلد پلتفرم معاملات طلای نوین ایران است که با هدف دسترسی آسان، امن و شفاف
-            همه مردم به بازار طلا تأسیس شده. ما با بهره‌گیری از فناوری‌های روز دنیا، تجربه‌ای
-            مدرن و قابل اعتماد از خرید و فروش طلا ارائه می‌دهیم.
+            {t('about.description')}
           </motion.p>
         </div>
       </div>
@@ -217,9 +218,9 @@ export default function AboutPage({ onBack }: SubPageProps) {
         >
           <span className="inline-flex items-center gap-2 rounded-full bg-gold/10 px-4 py-1.5 text-xs font-medium text-gold">
             <Target className="size-3.5" />
-            رسالت ما
+            {t('about.mission.badge')}
           </span>
-          <h2 className="mt-4 text-2xl font-bold md:text-3xl gold-text-shadow">مأموریت و چشم‌انداز</h2>
+          <h2 className="mt-4 text-2xl font-bold md:text-3xl gold-text-shadow">{t('about.mission.title')}</h2>
         </motion.div>
 
         <div className="relative grid gap-6 md:grid-cols-2">
@@ -241,16 +242,14 @@ export default function AboutPage({ onBack }: SubPageProps) {
                 <div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-gold to-gold-dark text-white shadow-lg shadow-gold/20">
                   <Target className="size-5" />
                 </div>
-                <h3 className="text-lg font-bold text-gold">مأموریت ما</h3>
+                <h3 className="text-lg font-bold text-gold">{t('about.mission.ourMission')}</h3>
               </div>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                دموکراتیزه کردن دسترسی به بازار طلا برای همه ایرانیان. ما معتقدیم هر کسی
-                باید بتواند با هر مبلغی طلا بخرد، نگهداری کند و از رشد ارزش آن بهره‌مند شود.
-                بدون نیاز به دانش تخصصی و بدون نگرانی از امنیت.
+                {t('about.mission.missionDesc')}
               </p>
               <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1"><Users className="size-3 text-gold" /> دسترسی همگانی</span>
-                <span className="flex items-center gap-1"><ShieldCheck className="size-3 text-gold" /> امنیت مطلق</span>
+                <span className="flex items-center gap-1"><Users className="size-3 text-gold" /> {t('about.mission.universalAccess')}</span>
+                <span className="flex items-center gap-1"><ShieldCheck className="size-3 text-gold" /> {t('about.mission.absoluteSecurity')}</span>
               </div>
             </div>
           </motion.div>
@@ -262,8 +261,7 @@ export default function AboutPage({ onBack }: SubPageProps) {
             className={cn(
               'group relative overflow-hidden rounded-2xl p-6 md:p-8',
               'shimmer-border card-spotlight hover-lift-md',
-              'bg-gradient-to-br from-violet/[0.06] to-violet/[0.01]',
-              'dark:from-violet/[0.04] dark:to-violet/[0.005]'
+              'bg-gradient-to-br from-violet/[0.06] to-violet/[0.01]'
             )}
           >
             <div className="absolute -bottom-10 -left-10 size-32 bg-gradient-to-br from-violet/10 to-transparent rounded-full blur-2xl pointer-events-none" />
@@ -272,16 +270,14 @@ export default function AboutPage({ onBack }: SubPageProps) {
                 <div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-violet-600 text-white shadow-lg shadow-violet-500/20">
                   <Rocket className="size-5" />
                 </div>
-                <h3 className="text-lg font-bold text-violet-600 dark:text-violet-400">چشم‌انداز ما</h3>
+                <h3 className="text-lg font-bold text-violet-600 dark:text-violet-400">{t('about.mission.ourVision')}</h3>
               </div>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                تبدیل شدن به بزرگ‌ترین و معتمدترین پلتفرم معاملات طلای دیجیتال در خاورمیانه
-                تا سال ۱۴۱۰. ارائه خدمات جامع مالی مبتنی بر طلا شامل پس‌انداز، وام، پرداخت
-                و سرمایه‌گذاری.
+                {t('about.mission.visionDesc')}
               </p>
               <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1"><TrendingUp className="size-3 text-violet-500" /> رشد مستمر</span>
-                <span className="flex items-center gap-1"><Globe className="size-3 text-violet-500" /> منطقه‌ای</span>
+                <span className="flex items-center gap-1"><TrendingUp className="size-3 text-violet-500" /> {t('about.mission.continuousGrowth')}</span>
+                <span className="flex items-center gap-1"><Globe className="size-3 text-violet-500" /> {t('about.mission.regional')}</span>
               </div>
             </div>
           </motion.div>
@@ -300,9 +296,9 @@ export default function AboutPage({ onBack }: SubPageProps) {
           >
             <span className="inline-flex items-center gap-2 rounded-full bg-gold/10 px-4 py-1.5 text-xs font-medium text-gold">
               <Star className="size-3.5" />
-              مزایای ما
+              {t('about.advantages.badge')}
             </span>
-            <h2 className="mt-4 text-2xl font-bold md:text-3xl gold-text-shadow">چرا زرین گلد؟</h2>
+            <h2 className="mt-4 text-2xl font-bold md:text-3xl gold-text-shadow">{t('about.whyUs')}</h2>
           </motion.div>
 
           <div className="grid gap-6 sm:grid-cols-2">
@@ -352,9 +348,9 @@ export default function AboutPage({ onBack }: SubPageProps) {
         >
           <span className="inline-flex items-center gap-2 rounded-full bg-gold/10 px-4 py-1.5 text-xs font-medium text-gold">
             <Clock className="size-3.5" />
-            تاریخچه
+            {t('about.timeline.badge')}
           </span>
-          <h2 className="mt-4 text-2xl font-bold md:text-3xl gold-text-shadow">مسیر پیشرفت ما</h2>
+          <h2 className="mt-4 text-2xl font-bold md:text-3xl gold-text-shadow">{t('about.timeline.title')}</h2>
         </motion.div>
 
         <div className="relative">
@@ -411,15 +407,15 @@ export default function AboutPage({ onBack }: SubPageProps) {
           >
             <span className="inline-flex items-center gap-2 rounded-full bg-gold/10 px-4 py-1.5 text-xs font-medium text-gold">
               <Users className="size-3.5" />
-              تیم متخصص
+              {t('about.team.badge')}
             </span>
-            <h2 className="mt-4 text-2xl font-bold md:text-3xl gold-text-shadow">تیم ما</h2>
+            <h2 className="mt-4 text-2xl font-bold md:text-3xl gold-text-shadow">{t('about.team.title')}</h2>
           </motion.div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {team.map((t, idx) => (
+            {team.map((member, idx) => (
               <motion.div
-                key={t.name}
+                key={member.name}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
@@ -433,18 +429,18 @@ export default function AboutPage({ onBack }: SubPageProps) {
                 {/* Top gradient accent */}
                 <div className={cn(
                   'absolute top-0 left-0 right-0 h-1 bg-gradient-to-r opacity-0 transition-opacity group-hover:opacity-100',
-                  t.gradient
+                  member.gradient
                 )} />
                 {/* Glow behind avatar */}
                 <div className="absolute top-6 left-1/2 -translate-x-1/2 size-24 rounded-full blur-2xl opacity-0 transition-opacity group-hover:opacity-20"
-                  style={{ background: t.gradient.includes('amber') ? '#D4AF37' : t.gradient.includes('emerald') ? '#22c55e' : t.gradient.includes('violet') ? '#8b5cf6' : '#f43f5e' }}
+                  style={{ background: member.gradient.includes('amber') ? '#D4AF37' : member.gradient.includes('emerald') ? '#22c55e' : member.gradient.includes('violet') ? '#8b5cf6' : '#f43f5e' }}
                 />
                 <div className="relative mx-auto mb-4 flex size-20 items-center justify-center rounded-full bg-gradient-to-bl from-gold/20 to-gold/[0.05] ring-2 ring-gold/10 transition-all group-hover:ring-gold/30 group-hover:scale-105">
-                  <span className="text-3xl font-black gold-gradient-text">{t.name.charAt(0)}</span>
+                  <span className="text-3xl font-black gold-gradient-text">{member.name.charAt(0)}</span>
                 </div>
-                <h3 className="font-bold text-base">{t.name}</h3>
-                <p className="text-xs font-medium text-gold mt-0.5">{t.role}</p>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t.bio}</p>
+                <h3 className="font-bold text-base">{member.name}</h3>
+                <p className="text-xs font-medium text-gold mt-0.5">{member.role}</p>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{member.bio}</p>
                 {/* Bottom decorative dots */}
                 <div className="mt-4 flex items-center justify-center gap-1">
                   {[0, 1, 2].map(i => (
@@ -467,9 +463,9 @@ export default function AboutPage({ onBack }: SubPageProps) {
         >
           <span className="inline-flex items-center gap-2 rounded-full bg-gold/10 px-4 py-1.5 text-xs font-medium text-gold">
             <Trophy className="size-3.5" />
-            اعتماد و اعتبار
+            {t('about.trust.badge')}
           </span>
-          <h2 className="mt-4 text-2xl font-bold md:text-3xl gold-text-shadow">مجوزها و گواهینامه‌ها</h2>
+          <h2 className="mt-4 text-2xl font-bold md:text-3xl gold-text-shadow">{t('about.trust.title')}</h2>
         </motion.div>
 
         <div className="grid gap-4 sm:grid-cols-3">

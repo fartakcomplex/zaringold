@@ -1,7 +1,8 @@
 'use client';
 
 import { motion, AnimatePresence } from '@/lib/framer-compat';
-import { BarChart3, Coins, Shield, Zap } from 'lucide-react';
+import { BarChart3, Coins, Shield, Zap, type LucideIcon } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 import GoldCalculator from '@/components/shared/GoldCalculator';
 
 /* ─── Props ─── */
@@ -10,26 +11,32 @@ interface GoldCalcSectionProps {
 }
 
 /* ─── Data ─── */
-const coinFeatures = [
+interface CoinFeature {
+  icon: LucideIcon;
+  titleKey: string;
+  descKey: string;
+}
+
+const coinFeatures: CoinFeature[] = [
   {
     icon: BarChart3,
-    title: 'قیمت لحظه‌ای',
-    description: 'محاسبه بر اساس قیمت واقعی بازار طلا',
+    titleKey: 'calcSection.f1.title',
+    descKey: 'calcSection.f1.desc',
   },
   {
     icon: Coins,
-    title: 'انواع سکه',
-    description: 'پشتیبانی از سکه پارسیان، بهار آزادی، نیم و ربع سکه',
+    titleKey: 'calcSection.f2.title',
+    descKey: 'calcSection.f2.desc',
   },
   {
     icon: Shield,
-    title: 'قیمت خرید و فروش',
-    description: 'مشاهده قیمت خرید، فروش و اسپرد به صورت همزمان',
+    titleKey: 'calcSection.f3.title',
+    descKey: 'calcSection.f3.desc',
   },
   {
     icon: Zap,
-    title: 'تبدیل سریع',
-    description: 'تبدیل لحظه‌ای بین گرم، میلی‌گرم و انواع سکه',
+    titleKey: 'calcSection.f4.title',
+    descKey: 'calcSection.f4.desc',
   },
 ];
 
@@ -49,6 +56,8 @@ const itemVariants = {
 
 /* ─── Component ─── */
 export default function GoldCalcSection({ onLogin }: GoldCalcSectionProps) {
+  const { t } = useTranslation();
+
   return (
     <section id="calculator" className="relative overflow-hidden bg-muted/20 py-12 sm:py-16">
       {/* Background decorative elements */}
@@ -68,14 +77,13 @@ export default function GoldCalcSection({ onLogin }: GoldCalcSectionProps) {
           transition={{ duration: 0.6 }}
         >
           <span className="badge-gold inline-block px-5 py-1.5 text-sm font-semibold">
-            ابزارها
+            {t('calcSection.badge')}
           </span>
           <h2 className="mt-5 text-3xl font-extrabold sm:text-4xl lg:text-5xl">
-            <span className="gold-gradient-text gold-text-shadow">ماشین حساب طلا</span>
+            <span className="gold-gradient-text gold-text-shadow">{t('calcSection.title')}</span>
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            با ماشین حساب طلا، به راحتی قیمت انواع سکه و طلای خام را
-            محاسبه کنید و مقدار سرمایه مورد نیاز خود را تخمین بزنید
+            {t('calcSection.subtitle')}
           </p>
         </motion.div>
 
@@ -105,7 +113,7 @@ export default function GoldCalcSection({ onLogin }: GoldCalcSectionProps) {
                       Au
                     </span>
                     <span className="block text-[10px] font-semibold text-gray-900/60 sm:text-xs">
-                      ۷۹.۹۹۹
+                      79.999
                     </span>
                   </div>
                 </div>
@@ -126,9 +134,9 @@ export default function GoldCalcSection({ onLogin }: GoldCalcSectionProps) {
                   <div className="mb-3 flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-gold/15 to-gold/5 ring-1 ring-gold/10 transition-all duration-300 group-hover:from-gold/25 group-hover:to-gold/10 group-hover:ring-gold/20">
                     <feature.icon className="size-4.5 text-gold transition-colors duration-300 group-hover:text-gold-light" />
                   </div>
-                  <h4 className="mb-1 text-sm font-bold">{feature.title}</h4>
+                  <h4 className="mb-1 text-sm font-bold">{t(feature.titleKey)}</h4>
                   <p className="text-xs leading-relaxed text-muted-foreground">
-                    {feature.description}
+                    {t(feature.descKey)}
                   </p>
                 </motion.div>
               ))}

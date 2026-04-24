@@ -126,7 +126,7 @@ export default function PartnersSection() {
                         border: `1px solid ${badge.color}20`,
                       }}
                     >
-                      تأیید شده ✓
+                      {t('partners.verified')}
                     </span>
                   </div>
                 </div>
@@ -151,10 +151,10 @@ export default function PartnersSection() {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           {[
-            { value: '+۱۰۰,۰۰۰', label: 'کاربر فعال' },
-            { value: '۹۹.۹٪', label: 'آپتایم' },
-            { value: '+۵,۰۰۰', label: 'کیلوگرم طلا معامله' },
-            { value: '۰', label: 'حادثه امنیتی' },
+            { value: t('partners.statUsersValue'), label: t('partners.statUsersLabel') },
+            { value: t('partners.statUptimeValue'), label: t('partners.statUptimeLabel') },
+            { value: t('partners.statGoldValue'), label: t('partners.statGoldLabel') },
+            { value: t('partners.statSecurityValue'), label: t('partners.statSecurityLabel') },
           ].map((stat) => (
             <div
               key={stat.label}

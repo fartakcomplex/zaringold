@@ -3,82 +3,68 @@
 import { motion, AnimatePresence } from '@/lib/framer-compat';
 import { Check, Crown, Medal, Award, Sparkles, TrendingUp, TrendingDown, ArrowDownToLine, ArrowUpFromLine } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-/* ─── Fee Summary Data ─── */
-const feeSummary = [
-  { label: 'خرید طلا', value: '۰.۵٪', icon: TrendingUp },
-  { label: 'فروش طلا', value: '۰.۳٪', icon: TrendingDown },
-  { label: 'واریز', value: 'رایگان', icon: ArrowDownToLine },
-  { label: 'برداشت', value: '۰.۰۱ گرم طلا', icon: ArrowUpFromLine },
-];
-
-/* ─── Pricing Tier Data ─── */
-const plans = [
-  {
-    icon: Medal,
-    title: 'برنزی',
-    gradient: 'from-amber-700 via-amber-800 to-amber-900',
-    badge: 'پایه',
-    badgeColor: 'bg-amber-700/10 text-amber-600 ring-amber-700/20',
-    popular: false,
-    features: [
-      'خرید و فروش طلا',
-      'کیف پول طلایی',
-      'تاریخچه معاملات',
-    ],
-  },
-  {
-    icon: Award,
-    title: 'نقره‌ای',
-    gradient: 'from-gray-400 via-gray-500 to-gray-600',
-    badge: 'محبوب',
-    badgeColor: 'bg-gold/10 text-gold ring-gold/20',
-    popular: true,
-    features: [
-      'تمام امکانات برنزی',
-      'اطلاع‌رسانی لحظه‌ای',
-      'هشدار قیمت طلا',
-      'گزارش‌های مالی',
-    ],
-  },
-  {
-    icon: Crown,
-    title: 'طلایی',
-    gradient: 'from-gold-light via-gold to-gold-dark',
-    badge: 'حرفه‌ای',
-    badgeColor: 'bg-gold/10 text-gold ring-gold/20',
-    popular: false,
-    features: [
-      'تمام امکانات نقره‌ای',
-      'تحلیل تکنیکال طلا',
-      'پشتیبانی ویژه',
-      'اولویت در معاملات',
-      'مشاوره سرمایه‌گذاری',
-    ],
-  },
-];
-
-/* ─── Animation Variants ─── */
-const feeCardVariants = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: (i: number) => ({
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.4, delay: i * 0.1 },
-  }),
-};
-
-const planVariants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, delay: i * 0.15 },
-  }),
-};
+import { useTranslation } from '@/lib/i18n';
 
 /* ─── Component ─── */
 export default function Pricing() {
+  const { t } = useTranslation();
+
+  const feeSummary = [
+    { label: t('pricing.feeBuyLabel'), value: t('pricing.feeBuyValue'), icon: TrendingUp },
+    { label: t('pricing.feeSellLabel'), value: t('pricing.feeSellValue'), icon: TrendingDown },
+    { label: t('pricing.depositLabel'), value: t('pricing.depositValue'), icon: ArrowDownToLine },
+    { label: t('pricing.withdrawLabel'), value: t('pricing.withdrawValue'), icon: ArrowUpFromLine },
+  ];
+
+  const plans = [
+    {
+      icon: Medal,
+      titleKey: 'pricing.bronze',
+      badgeKey: 'pricing.bronzeBadge',
+      badgeColor: 'bg-amber-700/10 text-amber-600 ring-amber-700/20',
+      gradient: 'from-amber-700 via-amber-800 to-amber-900',
+      popular: false,
+      featureKeys: ['pricing.bronzeF1', 'pricing.bronzeF2', 'pricing.bronzeF3'],
+    },
+    {
+      icon: Award,
+      titleKey: 'pricing.silver',
+      badgeKey: 'pricing.silverBadge',
+      badgeColor: 'bg-gold/10 text-gold ring-gold/20',
+      gradient: 'from-gray-400 via-gray-500 to-gray-600',
+      popular: true,
+      featureKeys: ['pricing.silverF1', 'pricing.silverF2', 'pricing.silverF3', 'pricing.silverF4'],
+    },
+    {
+      icon: Crown,
+      titleKey: 'pricing.gold',
+      badgeKey: 'pricing.goldBadge',
+      badgeColor: 'bg-gold/10 text-gold ring-gold/20',
+      gradient: 'from-gold-light via-gold to-gold-dark',
+      popular: false,
+      featureKeys: ['pricing.goldF1', 'pricing.goldF2', 'pricing.goldF3', 'pricing.goldF4', 'pricing.goldF5'],
+    },
+  ];
+
+  /* ─── Animation Variants ─── */
+  const feeCardVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: (i: number) => ({
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.4, delay: i * 0.1 },
+    }),
+  };
+
+  const planVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, delay: i * 0.15 },
+    }),
+  };
+
   return (
     <section id="pricing" className="relative overflow-hidden bg-background py-12 sm:py-16">
       {/* Background decorative elements */}
@@ -97,13 +83,13 @@ export default function Pricing() {
           transition={{ duration: 0.6 }}
         >
           <span className="badge-gold inline-block px-5 py-1.5 text-sm font-semibold">
-            تعرفه‌ها
+            {t('pricing.badge')}
           </span>
           <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl lg:text-5xl">
-            <span className="gold-gradient-text gold-text-shadow">کارمزد شفاف</span>
+            <span className="gold-gradient-text gold-text-shadow">{t('pricing.title')}</span>
           </h2>
           <p className="mt-3 text-base leading-relaxed text-muted-foreground sm:text-lg">
-            بدون هزینه پنهان — تمام سطوح خدمات به صورت رایگان
+            {t('pricing.subtitle')}
           </p>
         </motion.div>
 
@@ -153,7 +139,7 @@ export default function Pricing() {
                 {plan.popular && (
                   <div className="absolute left-0 top-6 z-20 flex items-center gap-1 -translate-x-1/3 rotate-45 bg-gradient-to-r from-gold-light via-gold to-gold-dark px-8 py-1 shadow-lg shadow-gold/30">
                     <Sparkles className="size-3 text-gray-950" />
-                    <span className="text-xs font-bold text-gray-950">محبوب‌ترین</span>
+                    <span className="text-xs font-bold text-gray-950">{t('pricing.mostPopular')}</span>
                   </div>
                 )}
 
@@ -173,7 +159,7 @@ export default function Pricing() {
                   </div>
 
                   {/* Title */}
-                  <h3 className="mb-1.5 text-lg font-bold sm:mb-2 sm:text-xl">{plan.title}</h3>
+                  <h3 className="mb-1.5 text-lg font-bold sm:mb-2 sm:text-xl">{t(plan.titleKey)}</h3>
 
                   {/* Badge */}
                   <span
@@ -182,24 +168,24 @@ export default function Pricing() {
                       plan.badgeColor,
                     )}
                   >
-                    {plan.badge}
+                    {t(plan.badgeKey)}
                   </span>
 
                   {/* Price */}
-                  <p className="gold-gradient-text text-2xl font-extrabold sm:text-3xl">رایگان</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground sm:mt-1 sm:text-sm">برای همیشه رایگان!</p>
+                  <p className="gold-gradient-text text-2xl font-extrabold sm:text-3xl">{t('pricing.free')}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground sm:mt-1 sm:text-sm">{t('pricing.freeForever')}</p>
 
                   {/* Divider */}
                   <div className="my-4 h-px w-full bg-gradient-to-r from-transparent via-gold/20 to-transparent sm:my-5" />
 
                   {/* Features list with gold checkmarks */}
                   <ul className="w-full space-y-2.5 sm:space-y-3">
-                    {plan.features.map((feature, j) => (
+                    {plan.featureKeys.map((fKey, j) => (
                       <li key={j} className="flex items-center gap-2.5 text-sm">
                         <div className="flex size-5 shrink-0 items-center justify-center rounded-full bg-gold/10">
                           <Check className="size-3 text-gold" />
                         </div>
-                        <span>{feature}</span>
+                        <span>{t(fKey)}</span>
                       </li>
                     ))}
                   </ul>

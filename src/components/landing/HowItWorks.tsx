@@ -2,34 +2,35 @@
 
 import { motion } from '@/lib/framer-compat';
 import { UserPlus, FileCheck, Wallet, Coins, type LucideIcon } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 /* ─── Steps Data ─── */
 interface StepItem {
   icon: LucideIcon;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
 }
 
 const steps: StepItem[] = [
   {
     icon: UserPlus,
-    title: 'ثبت‌نام سریع',
-    description: 'فقط با شماره موبایل در کمتر از ۳۰ ثانیه ثبت‌نام کنید',
+    titleKey: 'howItWorks2.step1.title',
+    descriptionKey: 'howItWorks2.step1.desc',
   },
   {
     icon: FileCheck,
-    title: 'احراز هویت',
-    description: 'با ارسال مدارک هویتی، حساب خود را تأیید کنید',
+    titleKey: 'howItWorks2.step2.title',
+    descriptionKey: 'howItWorks2.step2.desc',
   },
   {
     icon: Wallet,
-    title: 'شارژ کیف پول',
-    description: 'مبلغ دلخواه را به کیف پول خود واریز کنید',
+    titleKey: 'howItWorks2.step3.title',
+    descriptionKey: 'howItWorks2.step3.desc',
   },
   {
     icon: Coins,
-    title: 'خرید طلا',
-    description: 'با بهترین قیمت، طلای خود را بخرید و پس‌انداز کنید',
+    titleKey: 'howItWorks2.step4.title',
+    descriptionKey: 'howItWorks2.step4.desc',
   },
 ];
 
@@ -59,6 +60,8 @@ const numberVariants = {
 
 /* ─── Component ─── */
 export default function HowItWorks() {
+  const { t } = useTranslation();
+
   return (
     <section id="how-it-works" className="relative overflow-hidden bg-background py-12 sm:py-16">
       {/* Background decorative elements */}
@@ -77,13 +80,13 @@ export default function HowItWorks() {
           transition={{ duration: 0.6 }}
         >
           <span className="badge-gold inline-block px-5 py-1.5 text-sm font-semibold">
-            راهنما
+            {t('howItWorks2.badge')}
           </span>
           <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl lg:text-5xl">
-            <span className="gold-gradient-text gold-text-shadow">چطور کار می‌کنه؟</span>
+            <span className="gold-gradient-text gold-text-shadow">{t('howItWorks2.title')}</span>
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
-            با چهار مرحله ساده، سرمایه‌گذاری در طلا را شروع کنید
+            {t('howItWorks2.subtitle')}
           </p>
         </motion.div>
 
@@ -132,10 +135,10 @@ export default function HowItWorks() {
                 </div>
 
                 {/* Title */}
-                <h3 className="mb-2 text-lg font-bold">{step.title}</h3>
+                <h3 className="mb-2 text-lg font-bold">{t(step.titleKey)}</h3>
                 {/* Description */}
                 <p className="max-w-[220px] text-sm leading-relaxed text-muted-foreground">
-                  {step.description}
+                  {t(step.descriptionKey)}
                 </p>
               </motion.div>
             ))}
@@ -188,9 +191,9 @@ export default function HowItWorks() {
 
                 {/* Content card on the left */}
                 <div className="glass-card-enhanced flex-1 rounded-xl p-4 transition-all duration-300 hover:border-gold/20 hover:shadow-lg hover:shadow-gold/5 sm:p-5">
-                  <h3 className="mb-1 text-base font-bold sm:mb-1.5 sm:text-lg">{step.title}</h3>
+                  <h3 className="mb-1 text-base font-bold sm:mb-1.5 sm:text-lg">{t(step.titleKey)}</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    {step.description}
+                    {t(step.descriptionKey)}
                   </p>
                 </div>
               </motion.div>

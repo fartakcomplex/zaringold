@@ -6,16 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/store';
 import { useCMSPage } from '@/hooks/useCMSPage';
-
-/* ------------------------------------------------------------------ */
-/*  Data                                                               */
-/* ------------------------------------------------------------------ */
-
-const miniFeatures = [
-  { icon: Percent, label: 'کارمزد ۱٪' },
-  { icon: Zap, label: 'پرداخت آنی' },
-  { icon: Code, label: 'API ساده' },
-];
+import { useTranslation } from '@/lib/i18n';
+import { type LucideIcon } from 'lucide-react';
 
 /* ------------------------------------------------------------------ */
 /*  Component Props                                                    */
@@ -32,13 +24,14 @@ interface GatewayPromoProps {
 export default function GatewayPromo({ onGetStarted }: GatewayPromoProps) {
   const setLandingPage = useAppStore((s) => s.setLandingPage);
   const { content: cms } = useCMSPage('home');
+  const { t } = useTranslation();
 
   // Icon lookup for CMS feature icons
   const iconLookup: Record<string, typeof Percent> = {
     Percent, Zap, Code,
   };
 
-  // Build display features — CMS or fallback to current hardcoded data
+  // Build display features — CMS or fallback to i18n keys
   const displayFeatures = (() => {
     const raw = cms.gateway_features;
     if (Array.isArray(raw) && (raw as unknown[]).length > 0) {
@@ -47,14 +40,18 @@ export default function GatewayPromo({ onGetStarted }: GatewayPromoProps) {
         label: f.label,
       }));
     }
-    return miniFeatures;
+    return [
+      { icon: Percent, label: t('gateway.feeLabel') },
+      { icon: Zap, label: t('gateway.instantLabel') },
+      { icon: Code, label: t('gateway.apiLabel') },
+    ];
   })();
 
-  // CMS text with fallback to current hardcoded values
-  const gatewayBadge = (cms.gateway_badge as string) || '🔑 درگاه پرداخت طلایی';
-  const gatewayTitle = (cms.gateway_title as string) || 'درگاه پرداخت طلایی';
-  const gatewayDesc = (cms.gateway_desc as string) || 'پذیرندگان و فروشندگان محترم، درگاه پرداخت طلایی زرین گلد را در سایت خود نصب کنید و مشتریانتان با طلای دیجیتال پرداخت کنند.';
-  const gatewayButton = (cms.gateway_button as string) || 'اطلاعات بیشتر';
+  // CMS text with fallback to i18n keys
+  const gatewayBadge = (cms.gateway_badge as string) || t('gateway.badge');
+  const gatewayTitle = (cms.gateway_title as string) || t('gateway.title');
+  const gatewayDesc = (cms.gateway_desc as string) || t('gateway.desc');
+  const gatewayButton = (cms.gateway_button as string) || t('gateway.button');
 
   const handleNavigate = () => {
     setLandingPage('gateway');
@@ -89,7 +86,7 @@ export default function GatewayPromo({ onGetStarted }: GatewayPromoProps) {
 
               {/* Mini feature icons */}
               <div className="mb-8 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-8">
-                {displayFeatures.map((feat, i) => (
+                {displayFeatures.map((feat: { icon: LucideIcon; label: string }, i: number) => (
                   <div key={i} className="flex items-center gap-2.5">
                     <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold/10 ring-1 ring-gold/20">
                       <feat.icon className="h-4 w-4 text-gold" />

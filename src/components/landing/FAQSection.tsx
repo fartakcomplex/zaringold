@@ -230,14 +230,14 @@ export default function FAQSection() {
           >
             <HelpCircle className="size-5 text-gold" />
             <span className="text-sm text-gray-600">
-              هنوز سوالی دارید؟
+              {t('faq.stillHaveQuestion')}
             </span>
             <button className={cn(
               'text-sm font-bold text-gold hover:text-gold-dark',
               'underline underline-offset-4 decoration-gold/30 hover:decoration-gold/60',
               'transition-all duration-200',
             )}>
-              تماس با پشتیبانی
+              {t('faq.contactSupport')}
             </button>
           </div>
         </motion.div>

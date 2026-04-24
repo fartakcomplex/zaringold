@@ -11,76 +11,7 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import { useState, useEffect, useCallback, useRef } from 'react';
-
-/* ─── Testimonials Data ─── */
-const testimonials = [
-  {
-    name: 'علی محمدی',
-    role: 'سرمایه‌گذار حرفه‌ای',
-    initials: 'ع',
-    review:
-      'از وقتی زرین گلد رو شناختم، خرید و فروش طلا برام خیلی راحت‌تر شده. کارمزد خیلی کمه و سرعت معاملات فوق‌العاده‌ست. واقعاً تجربه متفاوتیه.',
-    rating: 5,
-  },
-  {
-    name: 'سارا احمدی',
-    role: 'کارمند',
-    initials: 'س',
-    review:
-      'من برای پس‌انداز ماهانه طلا می‌خرم. رابط کاربری خیلی ساده‌ست و حتی پدرم هم راحت استفاده می‌کنه. پشتیبانیشون هم عالیه.',
-    rating: 5,
-  },
-  {
-    name: 'رضا کریمی',
-    role: 'معامله‌گر',
-    initials: 'ر',
-    review:
-      'قیمت‌ها لحظه‌ای آپدیت میشه و امکان فروش آنی وجود داره. پاداش دعوت هم خیلی جذابه. بهترین پلتفرم معاملات طلا در ایران.',
-    rating: 5,
-  },
-  {
-    name: 'مریم حسینی',
-    role: 'خانه‌دار',
-    initials: 'م',
-    review:
-      'بهترین راه برای پس‌انداز طلا. هیچ‌وقت فکر نمی‌کردم خرید طلا انقدر راحت باشه.',
-    rating: 4,
-  },
-  {
-    name: 'امیر نوری',
-    role: 'دانشجو',
-    initials: 'ا',
-    review:
-      'با بودجه کم هم می‌تونی ماهی چند گرم طلا بخری. عالیه!',
-    rating: 5,
-  },
-  {
-    name: 'فاطمه زارعی',
-    role: 'بازرگان',
-    initials: 'ف',
-    review:
-      'پشتیبانی سریع و قیمت‌های منصفانه. برای کسب‌وکاردم هم استفاده می‌کنم.',
-    rating: 5,
-  },
-];
-
-/* ─── Stats Data ─── */
-const stats = [
-  { icon: Users, value: '۵۰,۰۰۰+', label: 'کاربر فعال' },
-  { icon: Heart, value: '۹۸٪', label: 'رضایت' },
-  { icon: Award, value: '۴.۸', label: 'امتیاز' },
-  { icon: MessageCircle, value: '۱۰۰+', label: 'نظر' },
-];
-
-/* ─── Avatar Gradients ─── */
-const avatarGradients = [
-  'from-amber-400 via-yellow-500 to-orange-500',
-  'from-rose-400 via-pink-500 to-fuchsia-500',
-  'from-sky-400 via-blue-500 to-indigo-500',
-  'from-emerald-400 via-green-500 to-teal-500',
-  'from-violet-400 via-purple-500 to-indigo-500',
-  'from-cyan-400 via-teal-500 to-emerald-500',
-];
+import { useTranslation } from '@/lib/i18n';
 
 /* ─── Animation Variants ─── */
 const statsVariants = {
@@ -106,9 +37,27 @@ const containerVariants = {
 
 /* ─── Component ─── */
 export default function Testimonials() {
+  const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const testimonials = [
+    { name: t('testimonials2.1.name'), role: t('testimonials2.1.role'), initials: t('testimonials2.1.name').charAt(0), review: t('testimonials2.1.review'), rating: 5 },
+    { name: t('testimonials2.2.name'), role: t('testimonials2.2.role'), initials: t('testimonials2.2.name').charAt(0), review: t('testimonials2.2.review'), rating: 5 },
+    { name: t('testimonials2.3.name'), role: t('testimonials2.3.role'), initials: t('testimonials2.3.name').charAt(0), review: t('testimonials2.3.review'), rating: 5 },
+    { name: t('testimonials2.4.name'), role: t('testimonials2.4.role'), initials: t('testimonials2.4.name').charAt(0), review: t('testimonials2.4.review'), rating: 4 },
+    { name: t('testimonials2.5.name'), role: t('testimonials2.5.role'), initials: t('testimonials2.5.name').charAt(0), review: t('testimonials2.5.review'), rating: 5 },
+    { name: t('testimonials2.6.name'), role: t('testimonials2.6.role'), initials: t('testimonials2.6.name').charAt(0), review: t('testimonials2.6.review'), rating: 5 },
+  ];
+
+  const stats = [
+    { icon: Users, value: t('testimonials2.stats.usersValue'), label: t('testimonials2.stats.usersLabel') },
+    { icon: Heart, value: t('testimonials2.stats.satisfactionValue'), label: t('testimonials2.stats.satisfactionLabel') },
+    { icon: Award, value: t('testimonials2.stats.scoreValue'), label: t('testimonials2.stats.scoreLabel') },
+    { icon: MessageCircle, value: t('testimonials2.stats.reviewsValue'), label: t('testimonials2.stats.reviewsLabel') },
+  ];
+
   const totalCards = testimonials.length;
 
   /* Auto-scroll every 4 seconds */
@@ -159,10 +108,10 @@ export default function Testimonials() {
           transition={{ duration: 0.6 }}
         >
           <span className="badge-gold inline-block px-5 py-1.5 text-sm font-semibold">
-            اعتماد کاربران
+            {t('testimonials2.badge')}
           </span>
           <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl lg:text-5xl">
-            <span className="gold-gradient-text gold-text-shadow">نظر کاربران</span> ما
+            <span className="gold-gradient-text gold-text-shadow">{t('testimonials2.title')}</span>{t('testimonials2.us') ? ` ${t('testimonials2.us')}` : ''}
           </h2>
         </motion.div>
 
@@ -206,10 +155,10 @@ export default function Testimonials() {
             onTouchStart={() => setIsPaused(true)}
             onTouchEnd={() => setIsPaused(false)}
           >
-            {testimonials.map((t, i) => (
+            {testimonials.map((item, i) => (
               <TestimonialCard
                 key={i}
-                testimonial={t}
+                testimonial={item}
                 gradient={avatarGradients[i % avatarGradients.length]}
                 isActive={i === currentIndex}
               />
@@ -227,7 +176,7 @@ export default function Testimonials() {
                     ? 'w-6 bg-gold shadow-sm shadow-gold/30'
                     : 'w-2 bg-gold/25 hover:bg-gold/40'
                 }`}
-                aria-label={`نظر ${i + 1}`}
+                aria-label={`${t('testimonials2.ariaReview')} ${i + 1}`}
               />
             ))}
           </div>
@@ -241,10 +190,10 @@ export default function Testimonials() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
         >
-          {testimonials.map((t, i) => (
+          {testimonials.map((item, i) => (
             <motion.div key={i} variants={cardVariants}>
               <TestimonialCard
-                testimonial={t}
+                testimonial={item}
                 gradient={avatarGradients[i % avatarGradients.length]}
               />
             </motion.div>
@@ -255,13 +204,23 @@ export default function Testimonials() {
   );
 }
 
+/* ─── Avatar Gradients ─── */
+const avatarGradients = [
+  'from-amber-400 via-yellow-500 to-orange-500',
+  'from-rose-400 via-pink-500 to-fuchsia-500',
+  'from-sky-400 via-blue-500 to-indigo-500',
+  'from-emerald-400 via-green-500 to-teal-500',
+  'from-violet-400 via-purple-500 to-indigo-500',
+  'from-cyan-400 via-teal-500 to-emerald-500',
+];
+
 /* ─── Individual Testimonial Card ─── */
 function TestimonialCard({
-  testimonial: t,
+  testimonial: item,
   gradient,
   isActive = false,
 }: {
-  testimonial: (typeof testimonials)[number];
+  testimonial: { name: string; role: string; initials: string; review: string; rating: number };
   gradient: string;
   isActive?: boolean;
 }) {
@@ -285,7 +244,7 @@ function TestimonialCard({
 
         {/* Review text */}
         <p className="flex-1 text-sm leading-7 text-muted-foreground">
-          &ldquo;{t.review}&rdquo;
+          &ldquo;{item.review}&rdquo;
         </p>
 
         {/* Star rating */}
@@ -294,7 +253,7 @@ function TestimonialCard({
             <Star
               key={j}
               className={`size-4 ${
-                j < t.rating
+                j < item.rating
                   ? 'fill-gold text-gold'
                   : 'text-muted-foreground/25'
               }`}
@@ -308,12 +267,12 @@ function TestimonialCard({
           <div
             className={`flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-sm font-bold text-white shadow-lg shadow-black/10 sm:size-11 ${gradient}`}
           >
-            {t.initials}
+            {item.initials}
           </div>
           <div className="flex flex-1 items-center gap-1.5">
             <div>
-              <p className="text-sm font-bold">{t.name}</p>
-              <p className="text-xs text-muted-foreground">{t.role}</p>
+              <p className="text-sm font-bold">{item.name}</p>
+              <p className="text-xs text-muted-foreground">{item.role}</p>
             </div>
             {/* Verified badge */}
             <ShieldCheck className="size-4 shrink-0 text-gold" />

@@ -60,6 +60,7 @@ function FloatingElement({ children, className, delay = '0s' }: {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 function PhoneMockup() {
+  const { t, locale } = useTranslation();
   return (
     <div className="relative mx-auto w-[220px] sm:w-[260px] lg:w-[280px]">
       {/* Animated ring behind phone */}
@@ -113,7 +114,7 @@ function PhoneMockup() {
         >
           {/* Status bar */}
           <div className="flex items-center justify-between px-5 pt-3 pb-1">
-            <span className="text-[8px] text-white/60 font-medium">۹:۴۱</span>
+            <span className="text-[8px] text-white/60 font-medium">{locale === 'en' ? '9:41' : '۹:۴۱'}</span>
             <div className="h-1.5 w-8 rounded-full bg-white/15" />
             <div className="flex items-center gap-1">
               <div className="size-1 rounded-full bg-white/40" />
@@ -126,8 +127,8 @@ function PhoneMockup() {
           <div className="px-4 pt-3 pb-2">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-[10px] font-bold text-white/90">زرین گلد</div>
-                <div className="text-[7px] text-white/40 mt-0.5">خوش آمدید 👋</div>
+                <div className="text-[10px] font-bold text-white/90">{t('common.zarrinGold')}</div>
+                <div className="text-[7px] text-white/40 mt-0.5">{locale === 'en' ? 'Welcome 👋' : 'خوش آمدید 👋'}</div>
               </div>
               <div
                 className="flex items-center justify-center rounded-full size-7"
@@ -151,14 +152,14 @@ function PhoneMockup() {
               backgroundSize: '12px 12px',
             }} />
             <div className="relative">
-              <div className="text-[7px] text-black/50 font-medium">موجودی طلا</div>
-              <div className="text-lg font-extrabold text-black mt-0.5 drop-shadow-sm">۱۲.۵۴ <span className="text-[10px]">گرم</span></div>
+              <div className="text-[7px] text-black/50 font-medium">{locale === 'en' ? 'Gold Balance' : 'موجودی طلا'}</div>
+              <div className="text-lg font-extrabold text-black mt-0.5 drop-shadow-sm">{locale === 'en' ? '12.54' : '۱۲.۵۴'} <span className="text-[10px]">{locale === 'en' ? 'g' : 'گرم'}</span></div>
               <div className="mt-2 flex items-center gap-2">
                 <div className="flex-1 rounded-lg bg-black/20 py-1.5 text-center text-[8px] font-bold text-black/80 backdrop-blur-sm">
-                  خرید
+                  {t('price.buy')}
                 </div>
                 <div className="flex-1 rounded-lg bg-black/20 py-1.5 text-center text-[8px] font-bold text-black/80 backdrop-blur-sm">
-                  فروش
+                  {t('price.sell')}
                 </div>
               </div>
             </div>
@@ -167,10 +168,10 @@ function PhoneMockup() {
           {/* Quick actions */}
           <div className="mx-3 mt-3 grid grid-cols-4 gap-1.5">
             {[
-              { label: 'خرید', color: '#4ade80' },
-              { label: 'فروش', color: '#f87171' },
-              { label: 'پس‌انداز', color: '#60a5fa' },
-              { label: 'بازار', color: '#D4AF37' },
+              { label: t('price.buy'), color: '#4ade80' },
+              { label: t('price.sell'), color: '#f87171' },
+              { label: locale === 'en' ? 'Save' : 'پس‌انداز', color: '#60a5fa' },
+              { label: t('nav.market'), color: '#D4AF37' },
             ].map((item) => (
               <div key={item.label} className="flex flex-col items-center gap-1">
                 <div
@@ -194,9 +195,9 @@ function PhoneMockup() {
             border: '1px solid rgba(212, 175, 55, 0.08)',
           }}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[7px] text-white/60 font-medium">قیمت لحظه‌ای طلا</span>
+              <span className="text-[7px] text-white/60 font-medium">{locale === 'en' ? 'Live Gold Price' : 'قیمت لحظه‌ای طلا'}</span>
               <span className="text-[7px] font-bold text-green-400 bg-green-400/10 px-1.5 py-0.5 rounded-full">
-                +۲.۴٪
+                {locale === 'en' ? '+2.4%' : '+۲.۴٪'}
               </span>
             </div>
             <svg viewBox="0 0 200 50" className="w-full h-8" fill="none">
@@ -468,7 +469,7 @@ export default function AppDownloadSection() {
                     {t('app.scanQr')}
                   </div>
                   <div className="text-[10px] text-gray-500">
-                    با دوربین گوشی اسکن کنید
+                    {t('app.scanQrDesc')}
                   </div>
                 </div>
               </div>
@@ -487,12 +488,12 @@ export default function AppDownloadSection() {
             >
               <Smartphone className="size-5 text-gold/60" />
               <div className="flex-1">
-                <div className="text-xs font-bold text-gray-900">{locale === "en" ? "Over 100,000 Downloads" : "بیش از ۱۰۰,۰۰۰ دانلود"}</div>
+                <div className="text-xs font-bold text-gray-900">{t('app.downloadsLabel')}</div>
                 <div className="flex items-center gap-1 mt-0.5">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star key={i} className="size-3 fill-gold text-gold" />
                   ))}
-                  <span className="text-[10px] text-gray-500 mr-1">{locale === "en" ? "4.8 / 5" : "۴.۸ از ۵"}</span>
+                  <span className="text-[10px] text-gray-500 mr-1">{t('app.ratingLabel')}</span>
                 </div>
               </div>
             </motion.div>

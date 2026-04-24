@@ -1353,3 +1353,42 @@ Stage Summary:
 - Online indicator dots: changed bg-background to bg-white/90
 - Avatar borders: changed border-background to border-white/80
 - QA verified: both dark and light modes pass readability check via VLM analysis
+
+---
+Task ID: 3
+Agent: landing-i18n-fixer
+Task: Fix i18n for all landing page section components
+
+Work Log:
+- Read worklog.md for project context (14 prior tasks)
+- Analyzed i18n.ts structure: ~2058 lines, fa/en sections with 1000+ keys each
+- Read all 13 landing section component files to identify hardcoded Persian strings
+- Identified components with NO i18n: Testimonials.tsx, HowItWorks.tsx, Pricing.tsx, GoldCalcSection.tsx, GatewayPromo.tsx, AppCTA.tsx
+- Identified components with PARTIAL i18n: AppDownloadSection.tsx, CTASection.tsx, FAQSection.tsx, PartnersSection.tsx
+- Identified components with FULL i18n already: HowItWorksSection.tsx, TestimonialsSection.tsx
+- Identified ComparisonSection.tsx has i18n for headers but hardcoded Persian numbers in cell data
+- Added ~200+ new translation keys to both fa and en sections in i18n.ts using automated Node.js script
+- New namespaces added: testimonials2.*, howItWorks2.*, cta.*, pricing.*, calcSection.*, gateway.*, appCta.*
+- New keys added to existing namespaces: faq.*, app.*, partners.*, comparison.*
+- Rewrote Testimonials.tsx: replaced hardcoded data arrays with useTranslation() calls, 6 testimonials + 6 stats entries
+- Rewrote HowItWorks.tsx: replaced hardcoded step data with useTranslation() calls, 4 steps + header
+- Fixed AppDownloadSection.tsx: replaced 2 inline locale checks with t() calls (scanQrDesc, downloadsLabel, ratingLabel)
+- Rewrote CTASection.tsx: replaced inline locale checks with t() calls (title, subtitle, benefits, trust indicators, tagline), removed trustItemsFa/trustItemsEn arrays
+- Fixed FAQSection.tsx: replaced 2 hardcoded strings (stillHaveQuestion, contactSupport) with t() calls
+- Rewrote Pricing.tsx: replaced ALL hardcoded strings with t() calls (badge, title, subtitle, fees, 3 plan tiers with features, mostPopular, free, freeForever)
+- Rewrote ComparisonSection.tsx: replaced hardcoded Persian cell values with locale-aware t() calls via buildRows() function
+- Rewrote GoldCalcSection.tsx: replaced ALL hardcoded strings with t() calls (badge, title, subtitle, 4 coin features)
+- Rewrote GatewayPromo.tsx: added useTranslation(), replaced hardcoded fallback strings with t() calls, kept CMS override support
+- Fixed PartnersSection.tsx: replaced "تأیید شده ✓" and 4 hardcoded stats with t() calls
+- Rewrote AppCTA.tsx: replaced ALL hardcoded strings with t() calls (title, subtitle, highlights, buttons, trust text)
+- Verified zero lint errors in all 13 modified component files
+- Dev server compiling successfully with no errors
+
+Stage Summary:
+- All 13 landing page section components now fully use i18n translation system
+- 200+ new translation keys added to both fa and en sections in i18n.ts
+- All existing translation keys left unchanged
+- Components properly import and call useTranslation() hook
+- Locale-aware number formatting handled via translation keys (not runtime conversion)
+- No visual styling or layout logic was changed
+- Zero lint errors introduced

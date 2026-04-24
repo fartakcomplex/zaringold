@@ -38,25 +38,19 @@ const sparkles = [
 /*  Trust Indicators                                                          */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
-const trustItemsFa = [
-  { icon: Shield, label: 'امنیت بانکی', sublabel: 'رمزگذاری AES-256' },
-  { icon: Clock, label: 'پشتیبانی ۲۴/۷', sublabel: 'پاسخگویی سریع' },
-  { icon: Award, label: 'مجوز رسمی', sublabel: 'تحت نظارت بورس' },
+const trustItems = [
+  { icon: Shield, labelKey: 'cta.trust.security.label', sublabelKey: 'cta.trust.security.sublabel' },
+  { icon: Clock, labelKey: 'cta.trust.support.label', sublabelKey: 'cta.trust.support.sublabel' },
+  { icon: Award, labelKey: 'cta.trust.license.label', sublabelKey: 'cta.trust.license.sublabel' },
 ];
 
-const trustItemsEn = [
-  { icon: Shield, label: 'Banking Security', sublabel: 'AES-256 Encryption' },
-  { icon: Clock, label: '24/7 Support', sublabel: 'Quick Response' },
-  { icon: Award, label: 'Official License', sublabel: 'Regulated Exchange' },
-];
+const benefitKeys = ['cta.benefit1', 'cta.benefit2', 'cta.benefit3', 'cta.benefit4'];
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  Component                                                                */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function CTASection({ onGetStarted }: CTASectionProps) {
-  const { locale } = useTranslation();
-  const trustItems = locale === 'en' ? trustItemsEn : trustItemsFa;
   const { t, dir } = useTranslation();
 
   return (
@@ -158,12 +152,12 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
 
           {/* ── Large Heading ── */}
           <h2 className="gold-gradient-text mb-4 text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl gold-text-shadow leading-tight">
-            همین حالا شروع کنید
+            {t('cta.title')}
           </h2>
 
           {/* ── Subheading ── */}
           <p className="text-base sm:text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
-            {locale === 'en' ? 'Join the largest gold trading platform in Iran' : 'به بزرگترین پلتفرم معاملات طلای ایران بپیوندید'}
+            {t('cta.subtitle')}
           </p>
 
           {/* ── User count badge ── */}
@@ -187,15 +181,18 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
                   style={{ background: color }}
                 >
                   <span className="text-[8px] font-bold text-black">
-                    {['ع', 'س', 'م', 'ف'][i]}
+                    {t('testimonials2.1.name').charAt(0)}
+                    {i === 1 && t('testimonials2.2.name').charAt(0)}
+                    {i === 2 && t('testimonials2.3.name').charAt(0)}
+                    {i === 3 && t('testimonials2.4.name').charAt(0)}
                   </span>
                 </div>
               ))}
             </div>
             <div className="flex items-center gap-1.5">
               <Users className="size-4 text-gold" />
-              <span className="text-sm font-bold text-gray-900">+۱۰۰,۰۰۰</span>
-              <span className="text-xs text-gray-500">{locale === 'en' ? 'Active Users' : 'کاربر فعال'}</span>
+              <span className="text-sm font-bold text-gray-900">{t('cta.userCount')}</span>
+              <span className="text-xs text-gray-500">{t('cta.activeUsers')}</span>
             </div>
           </motion.div>
 
@@ -232,7 +229,7 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
               )}
             >
               <Sparkles className="size-5 sm:size-6" />
-              <span>شروع رایگان</span>
+              <span>{t('cta.freeStart')}</span>
               <ArrowRight className="size-4 sm:size-5 opacity-70" />
             </button>
           </motion.div>
@@ -244,9 +241,9 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6 }}
           >
-            {(locale === 'en' ? ['Free Registration', 'No Initial Fees', 'Start from 10,000 Toman', '24/7 Support'] : ['ثبت‌نام رایگان', 'بدون کارمزد اولیه', 'خرید از ۱۰,۰۰۰ تومان', 'پشتیبانی ۲۴/۷']).map((item, i) => (
+            {benefitKeys.map((key) => (
               <span
-                key={item}
+                key={key}
                 className="inline-flex items-center gap-1.5 text-xs text-muted-foreground px-3 py-1.5 rounded-full"
                 style={{
                   background: 'oklch(0.75 0.15 85 / 5%)',
@@ -254,7 +251,7 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
                 }}
               >
                 <span className="inline-block size-1.5 rounded-full bg-gold/50" />
-                {item}
+                {t(key)}
               </span>
             ))}
           </motion.div>
@@ -271,7 +268,7 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
                 const Icon = item.icon;
                 return (
                   <motion.div
-                    key={item.label}
+                    key={item.labelKey}
                     className="flex items-center gap-3 rounded-2xl p-4 card-spotlight hover-lift-sm"
                     style={{
                       background: 'linear-gradient(135deg, oklch(0.95 0.015 85 / 70%), oklch(0.97 0.01 85 / 80%))',
@@ -291,8 +288,8 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
                       <Icon className="size-4.5 text-gold" />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-xs font-bold text-gray-900">{item.label}</div>
-                      <div className="text-[10px] text-gray-500">{item.sublabel}</div>
+                      <div className="text-xs font-bold text-gray-900">{t(item.labelKey)}</div>
+                      <div className="text-[10px] text-gray-500">{t(item.sublabelKey)}</div>
                     </div>
                   </motion.div>
                 );
@@ -307,7 +304,7 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1 }}
           >
-            {locale === 'en' ? 'Zarrin Gold — Smart Gold Investment, Peace of Mind' : 'زرین گلد — سرمایه‌گذاری هوشمند طلا، با خیال راحت'}
+            {t('cta.tagline')}
           </motion.p>
         </motion.div>
       </div>
