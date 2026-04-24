@@ -312,3 +312,34 @@ Stage Summary:
 - FAQ quick buttons provide quick-start experience in empty state (graceful fallback if API unavailable)
 - AI status indicator dynamically adapts header based on connection state and operator availability
 - User experience: AI-assisted chat feels distinct from human operator chat
+
+---
+Task ID: 10
+Agent: Main Agent
+Task: Add Gold Transfer (انتقال طلا) and Gold Card (کارت طلایی) to main navigation menu
+
+Work Log:
+- Created GoldTransferView.tsx as a full-page standalone component (~1724 lines)
+  - Gold-themed design with gradient accents, shimmer effects, step indicator
+  - 4-step transfer flow: Input → Confirm (with captcha) → OTP → Success
+  - Features: card search, recipient preview, fee calculation, balance display
+  - Quick amount buttons (0.01g–1g), math captcha, auto-submit OTP
+  - Recent transfers section with mock data
+- Updated page.tsx routing: added `gold-transfer` case mapping to GoldTransferView
+- Updated AppSidebar.tsx navigation:
+  - Moved `gold-transfer` (انتقال طلا) and `gold-card` (کارت طلایی) from "Trust" section to "Main" section
+  - Added `Send` icon import for gold-transfer
+  - Both marked as `isNew: true`
+- Updated BottomNav.tsx:
+  - Changed "انتقال" tab from `gold-card` to `gold-transfer` ( Send icon)
+  - Added `gold-transfer` to the "More" drawer menu
+- Fixed AdminChats.tsx compile error: moved eslint-disable-line comments above useEffect calls
+- i18n translations already existed: `nav.goldTransfer` = 'انتقال طلا' (fa) / 'Gold Transfer' (en)
+
+Stage Summary:
+- Gold Transfer (انتقال طلا / کارت به کارت طلا) is now a standalone page accessible from main menu
+- Both Gold Transfer and Gold Card are prominently placed in the main navigation section
+- Bottom nav "انتقال" tab now points to the dedicated gold transfer page
+- Mobile users see gold-transfer in both bottom nav (tab) and more drawer (grid item)
+- Desktop users see gold-transfer and gold-card right after trade in the sidebar
+- AdminChats.tsx compile error fixed (eslint comment placement caused SWC parse issue)

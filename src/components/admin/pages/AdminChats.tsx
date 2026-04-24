@@ -421,7 +421,8 @@ function FAQTab() {
     setLoading(false);
   }, [categoryFilter]);
 
-  useEffect(() => { fetchFAQs(); // eslint-disable-line react-hooks/set-state-in-effect }, [fetchFAQs]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { fetchFAQs(); }, [fetchFAQs]);
 
   const handleSave = async () => {
     if (!form.question.trim() || !form.answer.trim()) return;
@@ -635,7 +636,8 @@ function OperatorsTab() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchOperators(); // eslint-disable-line react-hooks/set-state-in-effect }, [fetchOperators]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { fetchOperators(); }, [fetchOperators]);
 
   const handleAdd = async () => {
     if (!form.name.trim() || !form.phone.trim()) return;
@@ -853,7 +855,8 @@ function AISettingsTab() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchConfig(); // eslint-disable-line react-hooks/set-state-in-effect }, [fetchConfig]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { fetchConfig(); }, [fetchConfig]);
 
   const handleSave = async () => {
     if (!config) return;
