@@ -224,9 +224,9 @@ function getPromoSlides(t: (key: string) => string) {
 function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) {
   if (!active || !payload || !payload.length) return null;
   return (
-    <div className="rounded-lg border border-gold/20 bg-card px-3 py-2 shadow-lg">
-      <p className="mb-1 text-xs text-muted-foreground">{label}</p>
-      <p className="text-sm font-bold text-gold">{formatToman(payload[0].value)}</p>
+    <div className="rounded-xl border border-gold/20 bg-card/80 px-4 py-2.5 shadow-lg shadow-gold/5 backdrop-blur-xl">
+      <p className="mb-1 text-[11px] font-medium text-muted-foreground">{label}</p>
+      <p className="text-sm font-bold tabular-nums text-gold-gradient">{formatToman(payload[0].value)}</p>
     </div>
   );
 }
@@ -1485,7 +1485,7 @@ const GOLD_NEWS = [
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-muted-foreground">{t('dashboard.estimatedValue')}</p>
                   <p className="mt-1 text-xl font-bold tabular-nums gold-gradient-text">
-                    {formatGrams(goldWallet.goldGrams)}
+                    {formatToman(goldValueInToman)}
                   </p>
                   <p className="mt-0.5 text-xs tabular-nums text-muted-foreground">
                     {goldValueInToman > 0 ? formatPrice(goldValueInToman) + ` ${t('common.toman')}` : t('common.noBalance')}
@@ -1676,7 +1676,8 @@ const GOLD_NEWS = [
                         outerRadius={72}
                         paddingAngle={4}
                         dataKey="value"
-                        stroke="none"
+                        stroke="var(--card, #fff)"
+                        strokeWidth={2}
                       >
                         {portfolioData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
@@ -2129,7 +2130,7 @@ const GOLD_NEWS = [
                       <div className="text-left">
                         <p className="text-sm font-semibold tabular-nums text-foreground">
                           {tx.type === 'buy_gold' || tx.type === 'withdrawal' ? '-' : '+'}
-                          {tx.amountFiat > 0 ? formatPrice(tx.amountFiat) : formatGrams(tx.amountGold)}
+                          {tx.amountFiat > 0 ? formatPrice(tx.amountFiat) : formatToman(tx.amountGold * (goldPrice?.buyPrice ?? 0))}
                         </p>
                         <Badge
                           variant="outline"
@@ -2208,7 +2209,7 @@ const GOLD_NEWS = [
                     <div className="mb-3 flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">{t('dashboard.amount')}</span>
                       <span className="text-sm font-bold tabular-nums text-foreground">
-                        {formatGrams(selectedQuickBuyGram)}
+                        {formatToman(Math.round(selectedQuickBuyGram * goldPrice.buyPrice))}
                       </span>
                     </div>
                     <div className="mb-4 flex items-center justify-between">

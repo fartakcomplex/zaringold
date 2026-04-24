@@ -27,6 +27,7 @@ import EmailSettings from '@/components/email/EmailSettings';
 import TelegramBotAdmin from './TelegramBotAdmin';
 import AdminRoles from './pages/AdminRoles';
 import AdminInsurance from './AdminInsurance';
+import AdminServices from './AdminServices';
 import ToastContainer from '@/components/shared/ToastContainer';
 import {
   Sheet,
@@ -66,6 +67,9 @@ function AdminPageRouter() {
     case 'insurance': return <AdminInsurance />;
     case 'security': return <AdminSecurity />;
     case 'landing-builder': return <AdminLandingBuilder />;
+    case 'admin-services': return <AdminServices defaultTab="utility" />;
+    case 'admin-services-car': return <AdminServices defaultTab="car" />;
+    case 'admin-services-insurance': return <AdminServices defaultTab="insurance" />;
     default: return <AdminDashboard />;
   }
 }

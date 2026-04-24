@@ -570,6 +570,47 @@ Stage Summary:
 - Dev server compiles without errors
 
 ---
+Task ID: 15
+Agent: Main Agent
+Task: Full-width Wallet, convert gold units to Toman across WalletView and DashboardView
+
+Work Log:
+- **helpers.ts**: Changed `formatToman()` and `formatGoldValue()` output from "واحد طلایی" to "تومان"
+- **WalletView.tsx** — Full-width layout:
+  - Changed main grid from `md:grid-cols-2` to `md:grid-cols-1` (single column, 100% width)
+  - Removed all `md:col-span-2` classes (4 occurrences: PortfolioSkeleton, Portfolio Card, Monthly Summary, Transaction History)
+- **WalletView.tsx** — Unit conversion (gold grams → Toman):
+  - Removed `formatGrams` import (no longer needed)
+  - Updated DEPOSIT_QUICK_AMOUNTS: 0.1g/0.5g/1g/5g → 500K/1M/5M/10M تومان
+  - Updated WITHDRAW_QUICK_AMOUNTS: same conversion to toman values
+  - Portfolio card: "طلایی: {formatGrams(goldGrams)}" → "ارزش طلا: {formatToman(goldValue)}"
+  - Portfolio breakdown legend: "طلایی ({formatGrams(...)})" → "کیف پول ({formatToman(fiatWallet.balance)})"
+  - Portfolio history stats: 3× "گرم طلا" → "تومان"
+  - Portfolio history tooltip: `{value.toLocaleString('fa-IR')} گرم طلا` → `{new Intl.NumberFormat('fa-IR').format(value)} تومان`
+  - Gold wallet balance: `formatGrams(goldWallet.goldGrams)` → `formatToman(goldValue)`
+  - Frozen gold: `formatGrams(frozenGold)` → `formatToman(frozenGold * buyPrice)`
+  - Available gold: `formatGrams(goldAvailable)` → `formatToman(goldAvailable * buyPrice)`
+  - Transaction amount: `formatGrams(tx.amountGold)` → `formatToman(tx.amountGold * buyPrice)`
+  - Deposit dialog label: "مقدار (گرم طلا)" → "مقدار (تومان)", unit badge: "گرم طلا" → "تومان"
+  - Withdraw dialog label: "مقدار (گرم طلا)" → "مقدار (تومان)", unit badge: "گرم طلا" → "تومان"
+- **DashboardView.tsx** — Unit conversion:
+  - Gold wallet card: `formatGrams(goldWallet.goldGrams)` → `formatToman(goldValueInToman)` (kept toman sub-text)
+  - Transaction list: `formatGrams(tx.amountGold)` → `formatToman(tx.amountGold * buyPrice)`
+  - Quick buy amount: `formatGrams(selectedQuickBuyGram)` → `formatToman(grams * buyPrice)`
+  - Gold card `formatGrams(totalGold)` kept as-is (shows gold card physical balance)
+- Fixed syntax error (missing `)` in ternary) at line 1272
+- Lint: zero errors in WalletView.tsx, DashboardView.tsx, helpers.ts
+- Dev server compiles successfully
+
+Stage Summary:
+- WalletView now renders at full width (100%) on desktop instead of 50%
+- All gold gram displays converted to Toman across WalletView and DashboardView
+- Gold Card (MobileGoldenCard) retains gram display for physical gold balance
+- Quick deposit/withdraw amounts changed from gram-based to toman-based values
+- Consistent "تومان" unit throughout the application
+- Zero new lint errors introduced
+
+---
 Task ID: 6
 Agent: full-stack-developer
 Task: Enhance Testimonials, FAQ, AppDownload, CTA landing page sections
@@ -1637,4 +1678,76 @@ Stage Summary:
 - API routes return mock/simulated data (utility APIs don't connect to real providers)
 - Container limitation: processes get killed periodically, need watchdog for auto-restart
 - For development changes: run `npx next build` then restart ultra-server.js
+
+---
+Task ID: 16
+Agent: Main Agent
+Task: Make Charts Professional Quality — upgrade recharts-compat, improve tooltips and chart styles
+
+Work Log:
+- Analyzed the existing `@/lib/recharts-compat.tsx` — found it was a minimal SVG/CSS replacement layer with no-ops for Tooltip, XAxis, YAxis, CartesianGrid, etc.
+- Charts rendered as simple SVG paths (area) or CSS conic-gradients (pie) with no interactivity, gradients, or professional styling
+- **Complete rewrite of `recharts-compat.tsx`** (~380 lines) with professional-quality chart rendering:
+
+  **AreaChart improvements:**
+  - Catmull-Rom → cubic Bezier smooth curve interpolation (tension 0.35)
+  - Proper SVG `<defs>` passthrough for gradient fills (linearGradient references via url(#id))
+  - Horizontal dashed grid lines with subtle `oklch(0.7 0.01 260 / 8%)` color
+  - Y-axis labels with auto-formatting (K/M suffixes)
+  - X-axis labels with smart interval calculation
+  - Interactive hover: vertical guide line, active dot with glow, larger highlighted dot
+  - Mouse-tracking tooltip positioning with percentage-based SVG→DOM coordinate conversion
+  - Multi-series support (multiple Area children rendered as overlapping layers)
+  - Proper stroke width (2.5px), strokeLinecap round, strokeLinejoin round
+
+  **PieChart improvements:**
+  - Replaced CSS conic-gradient with proper SVG arc paths (`describeArc` function)
+  - Supports innerRadius/outerRadius ratios for donut charts
+  - Per-slice stroke with configurable color/width (default: card bg, 2px)
+  - Padding angle (gaps between slices)
+  - Interactive hover detection via angle/distance calculation from center
+  - Hover effect: slice translates outward + brightness filter + drop shadow
+  - Reads Cell children for per-slice colors
+  - Tooltip support with mouse tracking
+
+  **BarChart improvements:**
+  - Horizontal layout support (`layout="vertical"`) with category labels
+  - Per-bar colors from Cell children
+  - Gradient fills: `linear-gradient(90deg, color-cc, color)` for horizontal / `linear-gradient(180deg, ...)` for vertical
+  - Rounded corners via CSS border-radius from Bar radius prop
+  - Multi-series support (grouped bars)
+  - Value labels displayed inside bars
+  - Smooth CSS transitions (700ms ease-out)
+  - Subtle glow shadows on bars
+
+  **LineChart improvements:**
+  - Smooth Bezier interpolation matching AreaChart
+  - Grid lines and Y-axis labels
+  - Dot markers on data points
+
+- **WalletView.tsx** — Updated 3 tooltip components:
+  - BarTooltip: Glass-morphism with `bg-card/80 backdrop-blur-xl`, gold border/shadow, `text-gold-gradient`
+  - PieTooltip: Same professional glass-morphism styling
+  - PortfolioHistoryTooltip: Same professional glass-morphism styling
+  - Added `stroke="var(--card, #fff)" strokeWidth={2}` to both portfolio PieChart instances (small and breakdown)
+
+- **DashboardView.tsx** — Updated tooltip and PieChart:
+  - ChartTooltip: Glass-morphism styling matching WalletView tooltips
+  - Added `stroke="var(--card, #fff)" strokeWidth={2}` to portfolio donut PieChart
+
+- All `displayName` props set on collector components for reliable child extraction
+- Fixed React hooks rules: all hooks (useRef, useState, useCallback) called before conditional returns
+- Fixed immutability rule: replaced `cum += span` mutation with Array.reduce pattern in PieChart
+- Zero lint errors in all 3 modified files (recharts-compat, WalletView, DashboardView)
+- Dev server compiles successfully
+
+Stage Summary:
+- recharts-compat.tsx completely rewritten with professional SVG charts
+- AreaChart: smooth curves, gradient fills, grid, axis labels, hover tooltips, multi-series
+- PieChart: SVG arcs, stroke borders, gap padding, hover animation, inner/outer radius
+- BarChart: horizontal/vertical, per-bar colors, gradient fills, rounded corners, multi-series
+- All tooltips upgraded to glass-morphism design (bg-card/80, backdrop-blur-xl, border-gold/20)
+- Pie charts now have visible card-colored stroke borders between slices
+- Interactive hover effects on all chart types
+- Backward compatible with all existing usages across WalletView, DashboardView, MarketView
 - For full dev server: use `bun run dev` (heavier, ~10s compile time)

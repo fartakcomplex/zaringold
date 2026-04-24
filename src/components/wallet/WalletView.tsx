@@ -54,7 +54,6 @@ import { useTranslation } from '@/lib/i18n';
 import { usePageEvent } from '@/hooks/use-page-event';
 import {
   formatToman,
-  formatGrams,
   formatNumber,
 } from '@/lib/helpers';
 
@@ -72,17 +71,17 @@ import {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 const DEPOSIT_QUICK_AMOUNTS = [
-  { value: 0.1, label: '۰.۱ گرم' },
-  { value: 0.5, label: '۰.۵ گرم' },
-  { value: 1, label: '۱ گرم' },
-  { value: 5, label: '۵ گرم' },
+  { value: 500000, label: '۵۰۰ هزار تومان' },
+  { value: 1000000, label: '۱ میلیون تومان' },
+  { value: 5000000, label: '۵ میلیون تومان' },
+  { value: 10000000, label: '۱۰ میلیون تومان' },
 ];
 
 const WITHDRAW_QUICK_AMOUNTS = [
-  { value: 0.1, label: '۰.۱ گرم' },
-  { value: 0.5, label: '۰.۵ گرم' },
-  { value: 1, label: '۱ گرم' },
-  { value: 5, label: '۵ گرم' },
+  { value: 1000000, label: '۱ میلیون تومان' },
+  { value: 5000000, label: '۵ میلیون تومان' },
+  { value: 10000000, label: '۱۰ میلیون تومان' },
+  { value: 50000000, label: '۵۰ میلیون تومان' },
 ];
 
 const MONTHLY_SUMMARY = [
@@ -177,9 +176,9 @@ function BarTooltip({ active, payload }: { active?: boolean; payload?: Array<{ p
   if (!active || !payload || !payload.length) return null;
   const d = payload[0].payload;
   return (
-    <div className="rounded-lg border border-border bg-card px-3 py-2 shadow-lg">
-      <p className="text-xs font-medium text-muted-foreground">{d.type}</p>
-      <p className="text-sm font-bold tabular-nums text-foreground">{formatToman(d.amount)}</p>
+    <div className="rounded-xl border border-gold/20 bg-card/80 px-4 py-2.5 shadow-lg shadow-gold/5 backdrop-blur-xl">
+      <p className="mb-1 text-[11px] font-medium text-muted-foreground">{d.type}</p>
+      <p className="text-sm font-bold tabular-nums text-gold-gradient">{formatToman(d.amount)}</p>
     </div>
   );
 }
@@ -191,9 +190,9 @@ function BarTooltip({ active, payload }: { active?: boolean; payload?: Array<{ p
 function PieTooltip({ active, payload }: { active?: boolean; payload?: Array<{ name: string; value: number }> }) {
   if (!active || !payload || !payload.length) return null;
   return (
-    <div className="rounded-lg border border-border bg-card px-3 py-2 shadow-lg">
-      <p className="text-xs font-medium text-muted-foreground">{payload[0].name}</p>
-      <p className="text-sm font-bold tabular-nums text-foreground">
+    <div className="rounded-xl border border-gold/20 bg-card/80 px-4 py-2.5 shadow-lg shadow-gold/5 backdrop-blur-xl">
+      <p className="mb-1 text-[11px] font-medium text-muted-foreground">{payload[0].name}</p>
+      <p className="text-sm font-bold tabular-nums text-gold-gradient">
         {formatToman(payload[0].value)}
       </p>
     </div>
@@ -215,10 +214,10 @@ function PortfolioHistoryTooltip({
 }) {
   if (!active || !payload || !payload.length) return null;
   return (
-    <div className="rounded-lg border border-gold/30 bg-card px-3 py-2 shadow-lg">
-      <p className="text-xs font-medium text-muted-gold">{label}</p>
+    <div className="rounded-xl border border-gold/20 bg-card/80 px-4 py-2.5 shadow-lg shadow-gold/5 backdrop-blur-xl">
+      <p className="mb-1 text-[11px] font-medium text-muted-foreground">{label}</p>
       <p className="text-sm font-bold tabular-nums text-gold-gradient">
-        {payload[0].value.toLocaleString('fa-IR')} گرم طلا
+        {new Intl.NumberFormat('fa-IR').format(payload[0].value)} تومان
       </p>
     </div>
   );
@@ -272,7 +271,7 @@ function TxIcon({ type }: { type: string }) {
 
 function PortfolioSkeleton() {
   return (
-    <Card className="overflow-hidden border-gold/15 md:col-span-2">
+    <Card className="overflow-hidden border-gold/15">
       <CardContent className="p-4 md:p-6">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-2">
@@ -533,7 +532,7 @@ export default function WalletView() {
 
   return (
     <motion.div
-      className="mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-6"
+      className="mx-auto max-w-6xl grid grid-cols-1 gap-6"
       variants={containerVariants}
       initial="hidden"
       animate="show"
@@ -544,7 +543,7 @@ export default function WalletView() {
       {isLoading ? (
         <PortfolioSkeleton />
       ) : (
-        <motion.div variants={itemVariants} className="md:col-span-2">
+        <motion.div variants={itemVariants}>
           <Card className="overflow-hidden border-gold/20 bg-gradient-to-l from-gold/[0.06] via-card to-gold/[0.06] ring-1 ring-gold/10">
             <CardContent className="p-4 md:p-6">
               <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-between">
@@ -560,8 +559,8 @@ export default function WalletView() {
                     </span>
                     <Separator orientation="vertical" className="h-3" />
                     <span>
-                      طلایی:{' '}
-                      <span className="font-semibold gold-gradient-text">{formatGrams(goldWallet.goldGrams)}</span>
+                      ارزش طلا:{' '}
+                      <span className="font-semibold gold-gradient-text">{formatToman(goldValue)}</span>
                     </span>
                   </div>
                 </div>
@@ -579,7 +578,8 @@ export default function WalletView() {
                           outerRadius={55}
                           paddingAngle={3}
                           dataKey="value"
-                          stroke="none"
+                          stroke="var(--card, #fff)"
+                          strokeWidth={2}
                         >
                           {pieData.map((_, index) => (
                             <Cell key={index} fill={PIE_COLORS[index]} />
@@ -632,7 +632,8 @@ export default function WalletView() {
                         outerRadius={85}
                         paddingAngle={4}
                         dataKey="value"
-                        stroke="none"
+                        stroke="var(--card, #fff)"
+                        strokeWidth={2}
                         animationBegin={0}
                         animationDuration={1200}
                         animationEasing="ease-out"
@@ -656,7 +657,7 @@ export default function WalletView() {
                 <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
                   <div className="flex items-center gap-2">
                     <div className="size-3 rounded-full bg-gold" />
-                    <span className="text-xs text-muted-foreground">طلایی ({formatGrams(goldWallet.goldGrams)})</span>
+                    <span className="text-xs text-muted-foreground">کیف پول ({formatToman(fiatWallet.balance)})</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="size-3 rounded-full bg-emerald-500" />
@@ -776,21 +777,21 @@ export default function WalletView() {
                     <p className="mt-0.5 text-sm font-bold tabular-nums text-gold-gradient">
                       {minValue.toLocaleString('fa-IR')}
                     </p>
-                    <p className="text-[9px] text-muted-gold">گرم طلا</p>
+                    <p className="text-[9px] text-muted-gold">تومان</p>
                   </div>
                   <div className="rounded-xl bg-muted/30 p-3 text-center">
                     <p className="text-[10px] text-muted-foreground">بیشترین</p>
                     <p className="mt-0.5 text-sm font-bold tabular-nums text-gold-gradient">
                       {maxValue.toLocaleString('fa-IR')}
                     </p>
-                    <p className="text-[9px] text-muted-gold">گرم طلا</p>
+                    <p className="text-[9px] text-muted-gold">تومان</p>
                   </div>
                   <div className="rounded-xl bg-muted/30 p-3 text-center">
                     <p className="text-[10px] text-muted-foreground">میانگین</p>
                     <p className="mt-0.5 text-sm font-bold tabular-nums text-gold-gradient">
                       {avgValue.toLocaleString('fa-IR')}
                     </p>
-                    <p className="text-[9px] text-muted-gold">گرم طلا</p>
+                    <p className="text-[9px] text-muted-gold">تومان</p>
                   </div>
                 </div>
               </CardContent>
@@ -803,7 +804,7 @@ export default function WalletView() {
       {/*  Monthly Spending/Income Summary                        */}
       {/* ──────────────────────────────────────────────────────── */}
       {!isLoading && (
-        <motion.div variants={itemVariants} className="md:col-span-2">
+        <motion.div variants={itemVariants}>
           <Card className="overflow-hidden">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base font-bold">
@@ -1048,7 +1049,7 @@ export default function WalletView() {
                   <div className="mb-4">
                     <p className="text-sm text-muted-foreground">موجودی طلای شما</p>
                     <p className="mt-1 text-2xl font-bold tabular-nums gold-gradient-text sm:text-3xl">
-                      {formatGrams(goldWallet.goldGrams)}
+                      {formatToman(goldValue)}
                     </p>
                   </div>
 
@@ -1084,13 +1085,13 @@ export default function WalletView() {
                     <div className="rounded-xl border bg-muted/30 p-4">
                       <p className="text-xs text-muted-foreground">طلای مسدود</p>
                       <p className="mt-1 text-base font-semibold tabular-nums text-amber-600 dark:text-amber-400">
-                        {formatGrams(goldWallet.frozenGold)}
+                        {formatToman(goldWallet.frozenGold * (goldPrice?.buyPrice ?? 0))}
                       </p>
                     </div>
                     <div className="rounded-xl border bg-emerald-50/50 p-4 dark:bg-emerald-950/20">
                       <p className="text-xs text-muted-foreground">طلای آزاد</p>
                       <p className="mt-1 text-base font-semibold tabular-nums text-emerald-600 dark:text-emerald-400">
-                        {formatGrams(Math.max(0, goldAvailable))}
+                        {formatToman(Math.max(0, goldAvailable) * (goldPrice?.buyPrice ?? 0))}
                       </p>
                     </div>
                   </div>
@@ -1185,7 +1186,7 @@ export default function WalletView() {
       {/*  Transaction History                                     */}
       {/* ──────────────────────────────────────────────────────── */}
       {!isLoading && (
-        <motion.div variants={itemVariants} className="md:col-span-2">
+        <motion.div variants={itemVariants}>
           <Card className="overflow-hidden">
             <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between">
               <CardTitle className="flex items-center gap-2 text-base font-bold">
@@ -1270,7 +1271,7 @@ export default function WalletView() {
                             >
                               {isIncoming ? '+' : '-'}
                               {tx.amountGold > 0 && tx.amountFiat === 0
-                                ? formatGrams(tx.amountGold)
+                                ? formatToman(tx.amountGold * (goldPrice?.buyPrice ?? 0))
                                 : formatPrice(tx.amountFiat)}
                             </p>
                             {tx.fee > 0 && (
@@ -1322,7 +1323,7 @@ export default function WalletView() {
 
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label htmlFor="deposit-amount">مقدار (گرم طلا)</Label>
+              <Label htmlFor="deposit-amount">مقدار (تومان)</Label>
               <div className="relative">
                 <Input
                   id="deposit-amount"
@@ -1334,7 +1335,7 @@ export default function WalletView() {
                   min={0}
                 />
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                  گرم طلا
+                  تومان
                 </span>
               </div>
             </div>
@@ -1421,7 +1422,7 @@ export default function WalletView() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="withdraw-amount">مقدار (گرم طلا)</Label>
+              <Label htmlFor="withdraw-amount">مقدار (تومان)</Label>
               <div className="relative">
                 <Input
                   id="withdraw-amount"
@@ -1434,7 +1435,7 @@ export default function WalletView() {
                   max={fiatAvailable}
                 />
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                  گرم طلا
+                  تومان
                 </span>
               </div>
             </div>

@@ -16,11 +16,11 @@ export function formatPrice(price: number): string {
 }
 
 export function formatToman(amount: number): string {
-  return `${formatNumber(amount)} واحد طلایی`;
+  return `${formatNumber(amount)} تومان`;
 }
 
 export function formatGoldValue(amount: number): string {
-  return `${formatNumber(amount)} واحد طلایی`;
+  return `${formatNumber(amount)} تومان`;
 }
 
 export function formatGrams(grams: number): string {

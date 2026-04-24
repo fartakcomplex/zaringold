@@ -28,6 +28,8 @@ import {
   Bot,
   ShieldHalf,
   Umbrella,
+  Smartphone,
+  Car,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useAppStore } from '@/lib/store';
@@ -96,9 +98,11 @@ const adminNavSections: { title: string; items: AdminNavItem[] }[] = [
     ],
   },
   {
-    title: 'بیمه و خدمات',
+    title: 'سرویس‌ها',
     items: [
-      { label: 'مدیریت بیمه', page: 'insurance', icon: Umbrella },
+      { label: 'خدمات کاربردی', page: 'admin-services', icon: Smartphone, badge: 'Utility' },
+      { label: 'خدمات خودرو', page: 'admin-services-car', icon: Car, badge: 'Car' },
+      { label: 'بیمه', page: 'admin-services-insurance', icon: Umbrella, badge: 'Insurance' },
     ],
   },
   {
