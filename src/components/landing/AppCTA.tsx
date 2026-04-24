@@ -212,7 +212,7 @@ export default function AppCTA({ onGetStarted }: AppCTAProps) {
                 )}
               >
                 <ArrowLeft className="size-5" />
-                شروع معامله
+                <span>شروع معامله</span>
               </Button>
             </motion.div>
 
@@ -229,7 +229,7 @@ export default function AppCTA({ onGetStarted }: AppCTAProps) {
                 )}
               >
                 <BookOpen className="size-5 ml-1.5" />
-                یادگیری بیشتر
+                <span>یادگیری بیشتر</span>
               </Button>
             </motion.div>
           </motion.div>

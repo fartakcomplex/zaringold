@@ -489,7 +489,7 @@ export default function CalculatorSection({ onLogin }: CalculatorSectionProps) {
                     'shadow-lg shadow-gold/20 hover:shadow-xl hover:shadow-gold/30',
                   )}
                 >
-                  {t('landing.getStarted')}
+                  <span>{t('landing.getStarted')}</span>
                 </button>
               </div>
             </div>

@@ -1017,3 +1017,35 @@ Stage Summary:
 - Step number circles now display properly above the cards on all breakpoints
 - Root cause: `.card-spotlight` class has `overflow: hidden` which clips absolutely positioned children
 - Solution: Restructure layout to place circles outside the overflow-clip container
+---
+Task ID: 3
+Agent: Main Agent
+Task: Fix button hover state - font becomes invisible when buttons turn gold
+
+Work Log:
+- Comprehensive audit of ALL buttons across the entire landing page (15+ components)
+- Identified root cause: CSS pseudo-elements (::before z-index:0, ::after z-index:1) paint ON TOP of raw text nodes which have no z-index
+- Two CSS classes affected: `btn-gold-outline` (gold fill on hover via ::before) and `btn-gold-shine` (shine sweep via ::after)
+
+CSS Fixes (globals.css):
+- Added `.btn-gold-shine > * { position: relative; z-index: 2; }` to elevate child elements above shine sweep
+- Verified `.btn-gold-outline span, .btn-gold-outline > *` already has z-index:1 protection
+
+Text Wrapping Fixes (raw text nodes → wrapped in <span>):
+- HeroSection.tsx: Primary CTA "getStarted" text + Secondary CTA "learnMore" text
+- CalculatorSection.tsx: CTA button "getStarted" text
+- ContactPage.tsx: Submit button "ارسال پیام" text
+- AppCTA.tsx: Primary CTA "شروع معامله" + Secondary "یادگیری بیشتر" text
+- LandingHero.tsx: Primary CTA "getStarted" + Secondary "learnMore" text
+- CTASection.tsx: Already wrapped (no change needed)
+
+Verification:
+- Zero new lint errors
+- All compilations successful
+- 6 files modified, ~10 text nodes wrapped in spans
+
+Stage Summary:
+- Global CSS fix ensures all future buttons with btn-gold-shine class will have proper text visibility
+- All existing landing page buttons now have properly visible text on hover
+- The shine effect now sweeps UNDER the text content instead of over it
+- The gold fill on btn-gold-outline hover now properly shows dark text on gold background

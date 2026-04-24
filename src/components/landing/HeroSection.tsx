@@ -567,7 +567,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
                 )}
               >
                 <Zap className="size-5 sm:size-6" />
-                {t('landing.getStarted')}
+                <span>{t('landing.getStarted')}</span>
                 <ArrowLeft className="size-4 sm:size-5" />
               </button>
             </div>
@@ -588,7 +588,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
               )}
             >
               <Gem className="size-5 sm:size-6" />
-              {t('landing.learnMore')}
+              <span>{t('landing.learnMore')}</span>
             </button>
           </motion.div>
 

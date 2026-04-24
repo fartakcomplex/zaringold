@@ -1173,6 +1173,12 @@ html {
   animation: gold-shine-sweep 0.8s ease-in-out;
 }
 
+/* Ensure button content stays above the shine sweep */
+.btn-gold-shine > * {
+  position: relative;
+  z-index: 2;
+}
+
 /* ── card-spotlight: Cursor-following spotlight glow ── */
 .card-spotlight {
   position: relative;

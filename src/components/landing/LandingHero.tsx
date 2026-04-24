@@ -198,7 +198,7 @@ export default function LandingHero({ onGetStarted }: LandingHeroProps) {
               )}
             >
               <Zap className="size-5" />
-              {t('landing.getStarted')}
+              <span>{t('landing.getStarted')}</span>
             </Button>
           </div>
 
@@ -214,7 +214,7 @@ export default function LandingHero({ onGetStarted }: LandingHeroProps) {
             )}
           >
             <CircleDot className="ml-1.5 size-5" />
-            {t('landing.learnMore')}
+            <span>{t('landing.learnMore')}</span>
           </Button>
         </motion.div>
 

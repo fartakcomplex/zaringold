@@ -244,7 +244,7 @@ export default function ContactPage({ onBack, onLogin }: SubPageProps) {
                   />
                 </div>
                 <Button className="w-full bg-gradient-to-l from-gold-dark to-gold text-gold-foreground hover:from-gold hover:to-gold-light font-semibold h-11 rounded-xl shadow-lg shadow-gold/20 transition-all hover:shadow-gold/30 btn-gold-shine">
-                  ارسال پیام
+                  <span>ارسال پیام</span>
                   <Send className="size-4 mr-2" />
                 </Button>
               </div>
