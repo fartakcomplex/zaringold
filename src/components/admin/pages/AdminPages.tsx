@@ -16,6 +16,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Globe, Home, Sparkles, ListOrdered, Calculator, Shield, Handshake,
   MessageSquareQuote, GitCompareArrows, HelpCircle, Smartphone,
@@ -116,6 +117,12 @@ export default function AdminPages() {
   const [deleting, setDeleting] = useState(false);
   const [creatingPage, setCreatingPage] = useState(false);
 
+  /* ── Preview Dialog state ── */
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewPage, setPreviewPage] = useState<CMSPageItem | null>(null);
+  const [previewComponents, setPreviewComponents] = useState<CMSComponentItem[]>([]);
+  const [previewLoading, setPreviewLoading] = useState(false);
+
   /* ── Fetch ── */
   const fetchSettings = useCallback(async () => {
     try {
@@ -181,8 +188,8 @@ export default function AdminPages() {
   }, []);
 
   /* ── Fetch CMS Pages ── */
-  const fetchCmsPages = useCallback(async () => {
-    setCmsPagesLoading(true);
+  const fetchCmsPages = useCallback(async (showLoading = true) => {
+    if (showLoading) setCmsPagesLoading(true);
     try {
       const res = await fetch('/api/cms/pages');
       if (res.ok) {
@@ -193,22 +200,13 @@ export default function AdminPages() {
     setCmsPagesLoading(false);
   }, []);
 
-  /* Fetch pages when switching to the pages tab */
-  useEffect(() => {
-    if (activeTab !== 'pages') return;
-    let mounted = true;
-    (async () => {
-      try {
-        const res = await fetch('/api/cms/pages');
-        if (res.ok && mounted) {
-          const data = await res.json();
-          setCmsPages(data.pages || []);
-        }
-      } catch { /* ignore */ }
-      if (mounted) setCmsPagesLoading(false);
-    })();
-    return () => { mounted = false; };
-  }, [activeTab]);
+  /* ── Handle Tab Change ── */
+  const handleTabChange = useCallback((tab: string) => {
+    setActiveTab(tab);
+    if (tab === 'pages') {
+      fetchCmsPages(false);
+    }
+  }, [fetchCmsPages]);
 
   /* ── Create New Page ── */
   const handleCreatePage = async () => {
@@ -304,6 +302,518 @@ export default function AdminPages() {
     }
     setBuilderLoading(false);
   };
+
+  /* ── Open Preview Dialog ── */
+  const openPreviewDialog = async (page: CMSPageItem) => {
+    setPreviewPage(page);
+    setPreviewComponents(page.components || []);
+    setPreviewLoading(true);
+    setPreviewOpen(true);
+
+    /* If components are not already loaded, fetch them */
+    if (!page.components || page.components.length === 0) {
+      try {
+        const detailRes = await fetch(`/api/cms/pages/${page.id}`);
+        if (detailRes.ok) {
+          const detailData = await detailRes.json();
+          if (detailData.success && detailData.page?.components) {
+            setPreviewComponents(detailData.page.components);
+          }
+        }
+      } catch { /* ignore */ }
+    }
+
+    setPreviewLoading(false);
+  };
+
+  /* ── Helpers: extract preview info from components ── */
+  const COMPONENT_TYPE_LABELS: Record<string, string> = {
+    'heading': 'عنوان',
+    'text-editor': 'متن',
+    'features-grid': 'ویژگی‌ها',
+    'accordion': 'آکاردئون',
+    'table': 'جدول',
+    'cta-section': 'دعوت به اقدام',
+    'card': 'کارت',
+    'spacer': 'فاصله‌گذار',
+    'divider': 'خط جداکننده',
+    'image': 'تصویر',
+    'video': 'ویدئو',
+    'button': 'دکمه',
+    'icon': 'آیکون',
+    'icon-list': 'لیست آیکون',
+    'counter': 'شمارنده',
+    'progress-bar': 'نوار پیشرفت',
+    'alert': 'جعبه پیام',
+    'team-member': 'عضو تیم',
+    'testimonial': 'نظر مشتری',
+    'testimonials-carousel': 'کاروسل نظرات',
+    'pricing-card': 'کارت قیمت',
+    'pricing-table': 'جدول قیمت',
+    'timeline': 'تایم‌لاین',
+    'gallery': 'گالری',
+    'tabs': 'تب‌ها',
+    'hero-section': 'بخش اصلی',
+    'steps': 'مراحل',
+    'stats-counter': 'آمار',
+    'partners-logos': 'لوگوی شرکا',
+    'blog-posts': 'مقالات',
+    'faq-section': 'سوالات متداول',
+    'image-carousel': 'کاروسل تصاویر',
+    'google-map': 'نقشه',
+  };
+
+  /** Strip HTML tags and return plain text */
+  function stripHtml(html: string): string {
+    return html.replace(/<[^>]*>/g, '').trim();
+  }
+
+  /** Get first meaningful text excerpt from a page's components */
+  function getPageExcerpt(components: CMSComponentItem[]): string {
+    for (const comp of components) {
+      const props = safeParseJSON<Record<string, unknown>>(comp.props, {});
+      switch (comp.type) {
+        case 'text-editor': {
+          const text = stripHtml(String(props.content || ''));
+          if (text.length > 0) return text.slice(0, 120) + (text.length > 120 ? '...' : '');
+          break;
+        }
+        case 'heading': {
+          const text = String(props.text || '');
+          if (text.length > 0) return text.slice(0, 80) + (text.length > 80 ? '...' : '');
+          break;
+        }
+        case 'hero-section': {
+          const text = String(props.subtitle || props.heading || '');
+          if (text.length > 0) return text.slice(0, 120) + (text.length > 120 ? '...' : '');
+          break;
+        }
+        case 'cta-section': {
+          const text = String(props.subtitle || props.heading || '');
+          if (text.length > 0) return text.slice(0, 120) + (text.length > 120 ? '...' : '');
+          break;
+        }
+        case 'accordion': {
+          const items = Array.isArray(props.items) ? props.items : [];
+          const first = items[0] as Record<string, unknown> | undefined;
+          if (first) {
+            const text = String(first.answer || first.title || '');
+            if (text.length > 0) return text.slice(0, 120) + (text.length > 120 ? '...' : '');
+          }
+          break;
+        }
+        case 'faq-section': {
+          const items = Array.isArray(props.items) ? props.items : [];
+          const first = items[0] as Record<string, unknown> | undefined;
+          if (first) {
+            const text = String(first.answer || first.question || '');
+            if (text.length > 0) return text.slice(0, 120) + (text.length > 120 ? '...' : '');
+          }
+          break;
+        }
+        case 'alert': {
+          const text = String(props.content || props.title || '');
+          if (text.length > 0) return text.slice(0, 120) + (text.length > 120 ? '...' : '');
+          break;
+        }
+      }
+    }
+    return '';
+  }
+
+  /** Get first heading text from components */
+  function getFirstHeadingText(components: CMSComponentItem[]): string {
+    for (const comp of components) {
+      if (comp.type === 'heading') {
+        const props = safeParseJSON<Record<string, unknown>>(comp.props, {});
+        return String(props.text || '');
+      }
+      if (comp.type === 'hero-section') {
+        const props = safeParseJSON<Record<string, unknown>>(comp.props, {});
+        return String(props.heading || '');
+      }
+      if (comp.type === 'features-grid' || comp.type === 'steps' || comp.type === 'faq-section') {
+        const props = safeParseJSON<Record<string, unknown>>(comp.props, {});
+        return String(props.heading || '');
+      }
+    }
+    return '';
+  }
+
+  /** Get unique component types (max 3) with labels */
+  function getComponentBadges(components: CMSComponentItem[]): Array<{ type: string; label: string }> {
+    const seen = new Set<string>();
+    const result: Array<{ type: string; label: string }> = [];
+    for (const comp of components) {
+      if (!seen.has(comp.type)) {
+        seen.add(comp.type);
+        result.push({
+          type: comp.type,
+          label: COMPONENT_TYPE_LABELS[comp.type] || comp.type,
+        });
+        if (result.length >= 3) break;
+      }
+    }
+    return result;
+  }
+
+  /** Mini-render a single component for preview dialog */
+  function renderComponentPreview(comp: CMSComponentItem, index: number): React.ReactNode {
+    const props = safeParseJSON<Record<string, unknown>>(comp.props, {});
+    const label = COMPONENT_TYPE_LABELS[comp.type] || comp.type;
+
+    return (
+      <div
+        key={comp.id || index}
+        className="mb-3 p-3 rounded-lg bg-muted/30 border border-border/40"
+        dir="rtl"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <Badge variant="outline" className="text-[10px] border-gold/30 text-gold">{label}</Badge>
+          <span className="text-[10px] text-muted-foreground">#{index + 1}</span>
+        </div>
+        <div className="text-xs text-foreground/80 leading-relaxed">
+          {renderComponentContent(comp.type, props)}
+        </div>
+      </div>
+    );
+  }
+
+  /** Render component content based on type */
+  function renderComponentContent(type: string, props: Record<string, unknown>): React.ReactNode {
+    switch (type) {
+      case 'heading':
+        return (
+          <div className="font-bold text-sm" style={{ color: String(props.color || '#ffffff') }}>
+            {String(props.text || 'عنوان')}
+          </div>
+        );
+
+      case 'text-editor':
+        return (
+          <div
+            className="prose prose-invert prose-sm max-w-none"
+            dangerouslySetInnerHTML={{ __html: String(props.content || '<p>بدون محتوا</p>') }}
+          />
+        );
+
+      case 'hero-section':
+        return (
+          <div className="space-y-1">
+            {props.badge && <Badge className="text-[10px] bg-gold/20 text-gold">{String(props.badge)}</Badge>}
+            <div className="font-bold text-base">{String(props.heading || '')}</div>
+            <div className="text-muted-foreground text-xs">{String(props.subtitle || '')}</div>
+          </div>
+        );
+
+      case 'features-grid': {
+        const items = (Array.isArray(props.items) ? props.items : []).slice(0, 3) as Array<Record<string, unknown>>;
+        return (
+          <div className="space-y-1">
+            <div className="font-bold text-sm">{String(props.heading || '')}</div>
+            {props.subtitle && <div className="text-muted-foreground text-[11px]">{String(props.subtitle)}</div>}
+            {items.map((item, i) => (
+              <div key={i} className="flex items-start gap-2 mt-1">
+                <span className="text-gold mt-0.5">◆</span>
+                <div>
+                  <span className="font-medium text-xs">{String(item.title || '')}</span>
+                  {item.description && <p className="text-muted-foreground text-[10px]">{String(item.description)}</p>}
+                </div>
+              </div>
+            ))}
+            {items.length === 0 && <span className="text-muted-foreground text-[10px]">بدون آیتم</span>}
+          </div>
+        );
+      }
+
+      case 'steps': {
+        const items = (Array.isArray(props.items) ? props.items : []).slice(0, 4) as Array<Record<string, unknown>>;
+        return (
+          <div className="space-y-1">
+            <div className="font-bold text-sm">{String(props.heading || '')}</div>
+            {items.map((item, i) => (
+              <div key={i} className="flex items-center gap-2 mt-1">
+                <span className="size-5 rounded-full bg-gold/20 text-gold text-[10px] flex items-center justify-center font-bold shrink-0">
+                  {String(item.number || i + 1)}
+                </span>
+                <div>
+                  <span className="font-medium text-xs">{String(item.title || '')}</span>
+                  {item.description && <p className="text-muted-foreground text-[10px]">{String(item.description)}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      case 'accordion':
+      case 'faq-section': {
+        const items = (Array.isArray(props.items) ? props.items : []).slice(0, 4) as Array<Record<string, unknown>>;
+        const qKey = type === 'faq-section' ? 'question' : 'title';
+        const aKey = type === 'faq-section' ? 'answer' : 'content';
+        return (
+          <div className="space-y-1">
+            {props.heading && <div className="font-bold text-sm">{String(props.heading)}</div>}
+            {items.map((item, i) => (
+              <div key={i} className="border border-border/30 rounded-md p-2 mt-1">
+                <div className="font-medium text-xs text-gold">{String(item[qKey] || '')}</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">{String(item[aKey] || '')}</div>
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      case 'cta-section':
+        return (
+          <div className="space-y-1 p-3 rounded-lg bg-gold/5 border border-gold/15">
+            <div className="font-bold text-sm">{String(props.heading || '')}</div>
+            <div className="text-muted-foreground text-xs">{String(props.subtitle || '')}</div>
+            {props.buttonText && (
+              <Badge className="mt-1 text-[10px] bg-gold/20 text-gold">{String(props.buttonText)}</Badge>
+            )}
+          </div>
+        );
+
+      case 'table': {
+        const headers = String(props.headers || '').split(',');
+        const rows = String(props.rows || '').split('\n');
+        return (
+          <div className="space-y-1">
+            <div className="font-bold text-sm">جدول ({headers.length} ستون، {rows.length} ردیف)</div>
+            <div className="flex flex-wrap gap-1 mt-1">
+              {headers.map((h, i) => (
+                <Badge key={i} variant="outline" className="text-[9px]">{h.trim()}</Badge>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      case 'card':
+        return (
+          <div className="space-y-1">
+            <div className="font-bold text-sm">{String(props.title || '')}</div>
+            <div className="text-[10px] text-muted-foreground">{String(props.description || '').slice(0, 100)}</div>
+          </div>
+        );
+
+      case 'pricing-card':
+      case 'pricing-table': {
+        const items = type === 'pricing-table'
+          ? (Array.isArray(props.items) ? props.items : []).slice(0, 3) as Array<Record<string, unknown>>
+          : [props];
+        return (
+          <div className="space-y-1">
+            {items.map((item, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <span className="font-bold text-gold text-xs">{String(item.name || '')}</span>
+                <span className="text-[10px] text-muted-foreground">{String(item.price || '')}</span>
+                <span className="text-[10px] text-muted-foreground">{String(item.period || '')}</span>
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      case 'testimonials-carousel': {
+        const items = (Array.isArray(props.items) ? props.items : []).slice(0, 2) as Array<Record<string, unknown>>;
+        return (
+          <div className="space-y-1">
+            {props.heading && <div className="font-bold text-sm">{String(props.heading)}</div>}
+            {items.map((item, i) => (
+              <div key={i} className="text-[10px] italic text-muted-foreground">
+                &quot;{String(item.text || '').slice(0, 80)}&quot;
+                <span className="block font-medium not-italic text-foreground/60">— {String(item.name || '')}</span>
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      case 'image':
+        return props.url ? (
+          <div className="text-[10px]">
+            تصویر: <span className="text-muted-foreground" dir="ltr">{String(props.url).slice(0, 60)}</span>
+            {props.alt && <span className="mr-1">({String(props.alt)})</span>}
+          </div>
+        ) : (
+          <span className="text-muted-foreground text-[10px]">تصویر بدون آدرس</span>
+        );
+
+      case 'video':
+        return (
+          <div className="text-[10px]">
+            ویدئو: <span className="text-muted-foreground" dir="ltr">{String(props.url || '').slice(0, 60)}</span>
+          </div>
+        );
+
+      case 'button':
+        return (
+          <div className="flex items-center gap-2">
+            <Badge className="text-[10px] bg-gold/20 text-gold">{String(props.text || 'دکمه')}</Badge>
+            {props.link && <span className="text-[10px] text-muted-foreground" dir="ltr">{String(props.link).slice(0, 40)}</span>}
+          </div>
+        );
+
+      case 'spacer':
+        return <span className="text-muted-foreground text-[10px]">فاصله‌گذار — {String(props.height || '40')}px</span>;
+
+      case 'divider':
+        return <span className="text-muted-foreground text-[10px]">خط جداکننده</span>;
+
+      case 'icon':
+        return <span className="text-muted-foreground text-[10px]">آیکون: {String(props.name || '')} ({String(props.size || '24')}px)</span>;
+
+      case 'icon-list': {
+        const items = (Array.isArray(props.items) ? props.items : []).slice(0, 5) as Array<Record<string, unknown>>;
+        return (
+          <div className="space-y-0.5">
+            {items.map((item, i) => (
+              <div key={i} className="flex items-center gap-1.5 text-[10px]">
+                <span className="text-gold">✓</span>
+                <span>{String(item.text || '')}</span>
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      case 'counter':
+        return (
+          <div className="text-[10px]">
+            شمارنده: {String(props.startValue || '0')} → {String(props.endValue || '0')}{String(props.suffix || '')}
+          </div>
+        );
+
+      case 'progress-bar':
+        return (
+          <div className="space-y-1">
+            <div className="flex justify-between text-[10px]">
+              <span>{String(props.label || '')}</span>
+              <span>{String(props.value || '0')}%</span>
+            </div>
+            <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+              <div className="h-full bg-gold rounded-full" style={{ width: `${Math.min(Number(props.value) || 0, 100)}%` }} />
+            </div>
+          </div>
+        );
+
+      case 'alert':
+        return (
+          <div className="p-2 rounded-md bg-blue-500/10 border border-blue-500/20 text-[10px]">
+            <div className="font-medium">{String(props.title || '')}</div>
+            <div className="text-muted-foreground">{String(props.content || '')}</div>
+          </div>
+        );
+
+      case 'team-member':
+        return (
+          <div className="space-y-0.5">
+            <div className="font-bold text-xs">{String(props.name || '')}</div>
+            <div className="text-[10px] text-muted-foreground">{String(props.role || '')}</div>
+            <div className="text-[10px]">{String(props.bio || '').slice(0, 80)}</div>
+          </div>
+        );
+
+      case 'testimonial':
+        return (
+          <div className="text-[10px] italic text-muted-foreground">
+            &quot;{String(props.text || '').slice(0, 80)}&quot;
+            <span className="block font-medium not-italic text-foreground/60">— {String(props.name || '')}</span>
+          </div>
+        );
+
+      case 'timeline': {
+        const items = (Array.isArray(props.items) ? props.items : []).slice(0, 3) as Array<Record<string, unknown>>;
+        return (
+          <div className="space-y-1">
+            {items.map((item, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <span className="size-2 rounded-full bg-gold mt-1.5 shrink-0" />
+                <div>
+                  <span className="font-medium text-xs">{String(item.title || '')}</span>
+                  {item.date && <span className="text-[10px] text-muted-foreground mr-2">{String(item.date)}</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      case 'gallery': {
+        const items = (Array.isArray(props.items) ? props.items : []) as Array<Record<string, unknown>>;
+        return (
+          <div className="text-[10px] text-muted-foreground">
+            گالری تصاویر — {items.length} تصویر ({String(props.columns || '3')} ستون)
+          </div>
+        );
+      }
+
+      case 'tabs': {
+        const items = (Array.isArray(props.items) ? props.items : []).slice(0, 3) as Array<Record<string, unknown>>;
+        return (
+          <div className="space-y-1">
+            <div className="flex gap-1">
+              {items.map((item, i) => (
+                <Badge key={i} variant="outline" className="text-[9px]">{String(item.title || `تب ${i + 1}`)}</Badge>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      case 'stats-counter': {
+        const items = (Array.isArray(props.items) ? props.items : []).slice(0, 3) as Array<Record<string, unknown>>;
+        return (
+          <div className="space-y-1">
+            {props.heading && <div className="font-bold text-sm">{String(props.heading)}</div>}
+            <div className="flex gap-3 flex-wrap">
+              {items.map((item, i) => (
+                <div key={i} className="text-[10px]">
+                  <span className="font-bold text-gold">{String(item.prefix || '')}{String(item.value || '0')}{String(item.suffix || '')}</span>
+                  <span className="text-muted-foreground mr-1">{String(item.label || '')}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      case 'partners-logos': {
+        const items = (Array.isArray(props.items) ? props.items : []).slice(0, 4) as Array<Record<string, unknown>>;
+        return (
+          <div className="space-y-1">
+            {props.heading && <div className="font-bold text-sm">{String(props.heading)}</div>}
+            <div className="flex flex-wrap gap-1">
+              {items.map((item, i) => (
+                <Badge key={i} variant="outline" className="text-[9px]">{String(item.name || 'شرکت')}</Badge>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      case 'image-carousel': {
+        const items = (Array.isArray(props.items) ? props.items : []) as Array<Record<string, unknown>>;
+        return <span className="text-muted-foreground text-[10px]">کاروسل تصاویر — {items.length} تصویر</span>;
+      }
+
+      case 'blog-posts':
+        return (
+          <div className="space-y-1">
+            <div className="font-bold text-sm">{String(props.heading || '')}</div>
+            <span className="text-muted-foreground text-[10px]">{String(props.count || '3')} مقاله</span>
+          </div>
+        );
+
+      case 'google-map':
+        return <span className="text-muted-foreground text-[10px]">نقشه — ارتفاع {String(props.height || '400')}px</span>;
+
+      default:
+        return <span className="text-muted-foreground text-[10px]">نوع: {type}</span>;
+    }
+  }
 
   /* ── Helpers ── */
   const isEnabled = (groupId: string): boolean =>
@@ -1357,75 +1867,136 @@ export default function AdminPages() {
       {/* ── Pages List ── */}
       {!cmsPagesLoading && cmsPages.length > 0 && (
         <div className="space-y-2">
-          {cmsPages.map((page) => (
-            <Card
-              key={page.id}
-              className="transition-all duration-200 overflow-hidden border-border/50 hover:border-gold/20"
-            >
-              <CardContent className="p-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                  {/* Page Icon + Info */}
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div className="size-10 rounded-xl bg-gold/10 flex items-center justify-center shrink-0">
-                      <FileText className="size-5 text-gold" />
+          {cmsPages.map((page) => {
+            const components = page.components || [];
+            const excerpt = getPageExcerpt(components);
+            const firstHeading = getFirstHeadingText(components);
+            const typeBadges = getComponentBadges(components);
+            const compCount = components.length || 0;
+
+            return (
+              <Card
+                key={page.id}
+                className="transition-all duration-200 overflow-hidden border-border/50 hover:border-gold/20"
+              >
+                <CardContent className="p-4">
+                  {/* ── Row 1: Title, badges, actions ── */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                    {/* Page Icon + Info */}
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="size-10 rounded-xl bg-gold/10 flex items-center justify-center shrink-0">
+                        <FileText className="size-5 text-gold" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-sm font-bold truncate">{page.title}</span>
+                          <Badge className={cn(
+                            'text-[10px]',
+                            page.isPublished
+                              ? 'bg-emerald-500/15 text-emerald-500'
+                              : 'bg-amber-500/15 text-amber-500',
+                          )}>
+                            {page.isPublished ? 'منتشر شده' : 'پیش‌نویس'}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-3 mt-1">
+                          <span className="text-[11px] text-muted-foreground flex items-center gap-1" dir="ltr">
+                            <Globe className="size-3" />
+                            /{page.slug}
+                          </span>
+                          <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                            <Layers className="size-3" />
+                            {compCount} کامپوننت
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-bold truncate">{page.title}</span>
-                        <Badge className={cn(
-                          'text-[10px]',
-                          page.isPublished
-                            ? 'bg-emerald-500/15 text-emerald-500'
-                            : 'bg-amber-500/15 text-amber-500',
-                        )}>
-                          {page.isPublished ? 'منتشر شده' : 'پیش‌نویس'}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center gap-3 mt-1">
-                        <span className="text-[11px] text-muted-foreground flex items-center gap-1" dir="ltr">
-                          <Globe className="size-3" />
-                          /{page.slug}
-                        </span>
-                        <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                          <Layers className="size-3" />
-                          {(page.components?.length ?? 0)} کامپوننت
-                        </span>
-                      </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-1.5 shrink-0 w-full sm:w-auto">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 sm:flex-initial border-gold/20 hover:bg-gold/5 text-gold text-xs px-3"
+                        onClick={() => openPreviewDialog(page)}
+                        title="پیش‌نمایش صفحه"
+                      >
+                        <Eye className="size-3.5 ml-1" />
+                        پیش‌نمایش
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="flex-1 sm:flex-initial bg-[#D4AF37] hover:bg-[#B8962E] text-black font-bold text-xs px-3"
+                        onClick={() => openCmsPageBuilder(page)}
+                        disabled={builderLoading}
+                      >
+                        {builderLoading ? (
+                          <Loader2 className="size-3.5 ml-1 animate-spin" />
+                        ) : (
+                          <Wand2 className="size-3.5 ml-1" />
+                        )}
+                        ویرایش با المنتوری
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="size-8 text-red-500 hover:bg-red-500/10"
+                        title="حذف صفحه"
+                        onClick={() => {
+                          setDeleteTargetPage(page);
+                          setDeleteConfirmOpen(true);
+                        }}
+                      >
+                        <Trash2 className="size-3.5" />
+                      </Button>
                     </div>
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
-                    <Button
-                      size="sm"
-                      className="flex-1 sm:flex-initial bg-[#D4AF37] hover:bg-[#B8962E] text-black font-bold text-xs px-3"
-                      onClick={() => openCmsPageBuilder(page)}
-                      disabled={builderLoading}
-                    >
-                      {builderLoading ? (
-                        <Loader2 className="size-3.5 ml-1 animate-spin" />
-                      ) : (
-                        <Wand2 className="size-3.5 ml-1" />
-                      )}
-                      ویرایش با المنتوری
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="size-8 text-red-500 hover:bg-red-500/10"
-                      title="حذف صفحه"
-                      onClick={() => {
-                        setDeleteTargetPage(page);
-                        setDeleteConfirmOpen(true);
-                      }}
-                    >
-                      <Trash2 className="size-3.5" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  {/* ── Row 2: Content preview ── */}
+                  {compCount > 0 && (
+                    <div className="mt-3 pt-3 border-t border-border/30">
+                      {/* Component type badges */}
+                      <div className="flex items-center gap-1.5 flex-wrap mb-2">
+                        {typeBadges.map((badge) => (
+                          <Badge
+                            key={badge.type}
+                            variant="outline"
+                            className="text-[10px] border-gold/20 text-gold/80 bg-gold/5"
+                          >
+                            {badge.label}
+                          </Badge>
+                        ))}
+                        {compCount > typeBadges.length && (
+                          <Badge variant="outline" className="text-[10px] text-muted-foreground border-border/50">
+                            +{compCount - typeBadges.length} دیگر
+                          </Badge>
+                        )}
+                      </div>
+
+                      {/* First heading + excerpt */}
+                      <div className="space-y-0.5">
+                        {firstHeading && (
+                          <p className="text-[11px] font-medium text-foreground/70 truncate">
+                            {firstHeading}
+                          </p>
+                        )}
+                        {excerpt && (
+                          <p className="text-[10px] text-muted-foreground leading-relaxed line-clamp-2">
+                            {excerpt}
+                          </p>
+                        )}
+                        {!firstHeading && !excerpt && (
+                          <p className="text-[10px] text-muted-foreground italic">
+                            {compCount} کامپوننت بدون محتوای متنی
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
 
@@ -1474,6 +2045,87 @@ export default function AdminPages() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* ── Preview Dialog ── */}
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="sm:max-w-3xl max-h-[85vh] overflow-hidden flex flex-col" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Eye className="size-5 text-gold" />
+              پیش‌نمایش: {previewPage?.title}
+            </DialogTitle>
+            <DialogDescription>
+              نمایش محتوای کامپوننت‌های صفحه (فقط خواندنی)
+              {previewPage && (
+                <span className="block mt-1 text-[10px] text-muted-foreground flex items-center gap-2">
+                  <span className="flex items-center gap-1" dir="ltr">
+                    <Globe className="size-3" />/{previewPage.slug}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Layers className="size-3" />
+                    {previewComponents.length} کامپوننت
+                  </span>
+                  <Badge className={cn(
+                    'text-[9px]',
+                    previewPage.isPublished
+                      ? 'bg-emerald-500/15 text-emerald-500'
+                      : 'bg-amber-500/15 text-amber-500',
+                  )}>
+                    {previewPage.isPublished ? 'منتشر شده' : 'پیش‌نویس'}
+                  </Badge>
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Preview Content */}
+          <div className="flex-1 overflow-hidden mt-2">
+            {previewLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="size-6 animate-spin text-gold" />
+              </div>
+            ) : previewComponents.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="size-12 rounded-xl bg-muted/30 flex items-center justify-center mb-3">
+                  <FileText className="size-6 text-muted-foreground/40" />
+                </div>
+                <p className="text-sm text-muted-foreground">این صفحه هنوز کامپوننتی ندارد</p>
+                <p className="text-xs text-muted-foreground mt-1">با «ویرایش با المنتوری» کامپوننت اضافه کنید</p>
+              </div>
+            ) : (
+              <ScrollArea className="h-full max-h-[60vh]">
+                <div className="space-y-1 px-1">
+                  {previewComponents.map((comp, index) =>
+                    renderComponentPreview(comp, index)
+                  )}
+                </div>
+              </ScrollArea>
+            )}
+          </div>
+
+          <DialogFooter className="flex gap-2 pt-3 border-t border-border/30 mt-3">
+            <Button
+              variant="outline"
+              onClick={() => setPreviewOpen(false)}
+              className="flex-1"
+            >
+              بستن
+            </Button>
+            {previewPage && (
+              <Button
+                className="flex-1 bg-[#D4AF37] hover:bg-[#B8962E] text-black font-bold text-xs"
+                onClick={() => {
+                  setPreviewOpen(false);
+                  openCmsPageBuilder(previewPage);
+                }}
+              >
+                <Wand2 className="size-3.5 ml-1" />
+                ویرایش با المنتوری
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 
@@ -1484,7 +2136,7 @@ export default function AdminPages() {
   return (
     <Tabs
       value={activeTab}
-      onValueChange={setActiveTab}
+      onValueChange={handleTabChange}
       dir="rtl"
       className="w-full"
     >

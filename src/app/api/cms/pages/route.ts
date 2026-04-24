@@ -1,20 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
-// GET: List all pages
+// GET: List all pages (with components for preview)
 export async function GET() {
   try {
     const pages = await db.cMSPage.findMany({
       orderBy: { createdAt: 'desc' },
+      include: {
+        components: {
+          orderBy: { order: 'asc' },
+        },
+      },
     });
     
     // Attach component count to each page
-    const pagesWithCount = await Promise.all(
-      pages.map(async (p) => {
-        const count = await db.cMSComponent.count({ where: { pageId: p.id } });
-        return { ...p, componentCount: count };
-      })
-    );
+    const pagesWithCount = pages.map((p) => ({
+      ...p,
+      componentCount: p.components.length,
+    }));
     
     return NextResponse.json({ success: true, pages: pagesWithCount });
   } catch (error) {
