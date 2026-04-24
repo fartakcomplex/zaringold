@@ -112,3 +112,39 @@ Stage Summary:
   8. تنظیمات (Settings) — SMTP config, tracking, daily limits
 - All API routes connected to SQLite via Prisma ORM
 - Fallback mock data provided when API returns empty results
+
+---
+Task ID: 5
+Agent: Main Agent
+Task: Integrate Telegram Bot System into Admin Panel
+
+Work Log:
+- Discovered existing comprehensive Telegram bot at mini-services/telegram-bot/index.ts (grammy framework)
+- Bot has 15 API routes, 8+ commands, but NO Prisma models and NO admin panel
+- Added 6 new Prisma models to schema.prisma:
+  - TelegramUser (linked to User), TelegramAlert, TelegramSubscription
+  - TelegramB2BCustomer, TelegramSupportMessage, TelegramInvoice
+- Pushed schema to database with `bun run db:push`
+- Added TelegramUser relation to User model
+- Created comprehensive TelegramBotAdmin.tsx component (~600 lines) with 8 tabs:
+  1. داشبورد — Stats cards, bot status indicator, quick actions, feature list
+  2. کاربران — User table with search, subscription badges, B2B badge
+  3. ارسال پیام — Broadcast to all/active/subscribed/B2B users with preview
+  4. تنظیمات — Bot token, price update interval, welcome message editor
+  5. هشدارها — Price alerts table with asset/condition/status
+  6. فاکتورها — B2B invoices table with amounts and status
+  7. پشتیبانی — Support message threads with reply functionality
+  8. B2B مشتریان — B2B customer list with total spent/gold
+- Added Bot icon import to AdminSidebar.tsx
+- Added "ربات تلگرام" entry to Marketing section in admin sidebar
+- Imported TelegramBotAdmin in AdminLayout.tsx
+- Added telegram-bot route to AdminPageRouter
+- All components compile without errors, dev server running stable
+
+Stage Summary:
+- Telegram Bot admin panel fully integrated into admin panel
+- Accessible via: پنل مدیریت → مارکتینگ → ربات تلگرام
+- Bot features: Live price, charts, alerts, AI analysis, B2B toolkit, support, referral
+- Database models synced, API routes verified (/api/telegram/status returns 200)
+- Fallback mock data provided when DB is empty
+- Existing bot at mini-services/telegram-bot/ has full command set

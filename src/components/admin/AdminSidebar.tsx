@@ -25,6 +25,7 @@ import {
   Package,
   Layers,
   Mail,
+  Bot,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useAppStore } from '@/lib/store';
@@ -81,6 +82,7 @@ const adminNavSections: { title: string; items: AdminNavItem[] }[] = [
     items: [
       { label: 'پیامک', page: 'sms-marketing', icon: MessageSquare, badge: 'SMS' },
       { label: 'ایمیل', page: 'email-marketing', icon: Mail, badge: 'EMAIL' },
+      { label: 'ربات تلگرام', page: 'telegram-bot', icon: Bot, badge: 'BOT' },
     ],
   },
   {
