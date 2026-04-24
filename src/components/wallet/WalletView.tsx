@@ -78,6 +78,13 @@ const DEPOSIT_QUICK_AMOUNTS = [
   { value: 5, label: '۵ گرم' },
 ];
 
+const WITHDRAW_QUICK_AMOUNTS = [
+  { value: 0.1, label: '۰.۱ گرم' },
+  { value: 0.5, label: '۰.۵ گرم' },
+  { value: 1, label: '۱ گرم' },
+  { value: 5, label: '۵ گرم' },
+];
+
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  Animation Variants                                                       */
 /* ═══════════════════════════════════════════════════════════════════════════ */
