@@ -43,9 +43,9 @@ export async function GET(request: NextRequest) {
         sellingPrice: o.plan.sellingPrice,
         duration: o.plan.durationLabel || '',
         durationDays: o.plan.durationDays || 365,
-        coverages: o.plan.coveragesJson ? JSON.parse(o.plan.coveragesJson) : [],
-        status: o.plan.status || 'active',
-        isPopular: o.plan.isPopular || false,
+        coverages: o.plan.coverages ? JSON.parse(o.plan.coverages) : [],
+        status: o.plan.isActive ? 'active' : 'inactive',
+        isPopular: o.plan.sortOrder === 0,
       } : undefined,
       category: o.category ? {
         id: o.category.id,
