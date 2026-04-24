@@ -85,6 +85,13 @@ const WITHDRAW_QUICK_AMOUNTS = [
   { value: 5, label: '۵ گرم' },
 ];
 
+const MONTHLY_SUMMARY = [
+  { label: 'واریز', icon: 'deposit', amount: 0, positive: true, change: 0 },
+  { label: 'برداشت', icon: 'withdraw', amount: 0, positive: false, change: 0 },
+  { label: 'خرید طلا', icon: 'buy', amount: 0, positive: true, change: 0 },
+  { label: 'فروش طلا', icon: 'sell', amount: 0, positive: true, change: 0 },
+];
+
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  Animation Variants                                                       */
 /* ═══════════════════════════════════════════════════════════════════════════ */
