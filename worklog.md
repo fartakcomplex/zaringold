@@ -148,3 +148,65 @@ Stage Summary:
 - Database models synced, API routes verified (/api/telegram/status returns 200)
 - Fallback mock data provided when DB is empty
 - Existing bot at mini-services/telegram-bot/ has full command set
+
+---
+Task ID: 3b
+Agent: Sub Agent
+Task: Add Telegram trading API routes
+
+Work Log:
+- Read existing API routes (link, alerts, status) to match coding patterns
+- Confirmed import convention: `import { db } from '@/lib/db'`
+- Confirmed Prisma schema models: Wallet, GoldWallet, GoldCard, Transaction, GoldPrice, TelegramUser
+- Created 4 new API routes under /api/telegram/trade/:
+  1. POST /api/telegram/trade/buy — Buy gold (deduct fiat → add gold, 0.5% fee)
+  2. POST /api/telegram/trade/sell — Sell gold (deduct gold → add fiat, 0.5% fee)
+  3. GET /api/telegram/trade/balance — Fiat balance, gold balance, gold value, GoldCard info, recent 5 transactions
+  4. GET /api/telegram/trade/portfolio — Total gold, invested, avg buy price, current value, P&L
+- All routes use Prisma transactions for atomic operations
+- Fallback prices: buyPrice 3,750,000 / sellPrice 3,650,000 when no GoldPrice record exists
+- Error messages in Persian matching existing codebase convention
+- TypeScript compilation verified: zero errors in new files
+
+Stage Summary:
+- 4 new API routes created for Telegram bot trading features
+- Buy route: validates balance → deducts fiat → adds gold → creates transaction (atomic $tx)
+- Sell route: validates gold (available = goldGrams - frozenGold) → deducts gold → adds fiat → creates transaction (atomic $tx)
+- Balance route: returns wallet, gold, goldCard (masked card number, limits), recent transactions
+- Portfolio route: aggregates buy/sell transactions for total invested, avg price, P&L calculation
+- All endpoints return `{ success: boolean, data: any, message?: string }` format
+
+---
+Task ID: 6
+Agent: Main Agent
+Task: Add buy/sell gold, account balance, and gold card features to Telegram bot
+
+Work Log:
+- Read existing Telegram bot code at mini-services/telegram-bot/index.ts (grammy framework)
+- Added 5 new commands to the bot:
+  - /buy - Multi-step gold purchase with price calculation, confirmation, wallet deduction
+  - /sell - Multi-step gold sale with balance check, confirmation, wallet credit
+  - /balance - Full account balance (fiat + gold + card) with recent transactions
+  - /goldcard - Gold card status, limits, recent card transactions
+  - /portfolio - Portfolio summary with gold value and total assets
+  - /orders - Active orders view
+  - /dailyreport - Daily P/L report with risk assessment
+- Added conversation state maps: buyConversations, sellConversations
+- Updated /start main menu keyboard with all new trading buttons
+- Updated /help command with new command documentation
+- Created 4 new API routes:
+  - POST /api/telegram/trade/buy - Buy gold (atomic transaction)
+  - POST /api/telegram/trade/sell - Sell gold (atomic transaction)
+  - GET /api/telegram/trade/balance - Get full account balance
+  - GET /api/telegram/trade/portfolio - Get portfolio with P/L calculation
+- Updated AdminTelegram.tsx admin panel with new "معاملات ربات" (Bot Trading) tab
+- Features use 0.5% fee on both buy and sell
+- All operations use Prisma transactions for data integrity
+- Prisma client regenerated, database schema in sync
+
+Stage Summary:
+- 7 new Telegram bot commands fully implemented (buy, sell, balance, goldcard, portfolio, orders, dailyreport)
+- 4 new API routes for trading features
+- Admin panel updated with trading dashboard
+- Main menu keyboard updated with 12 interactive buttons
+- Help command updated with full command list

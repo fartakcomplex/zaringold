@@ -537,6 +537,7 @@ export default function AdminTelegram() {
           {[
             { value: 'dashboard', label: 'داشبورد', icon: BarChart3 },
             { value: 'users', label: 'کاربران متصل', icon: Users },
+            { value: 'trading', label: 'معاملات ربات', icon: TrendingUp },
             { value: 'alerts', label: 'هشدارهای قیمت', icon: Bell },
             { value: 'invoices', label: 'فاکتورهای B2B', icon: FileText },
             { value: 'customers', label: 'مشتریان B2B', icon: TrendingUp },
@@ -790,7 +791,95 @@ export default function AdminTelegram() {
         </TabsContent>
 
         {/* ═══════════════════════════════════════════════════════════════ */}
-        {/*  Tab 3: Price Alerts                                            */}
+        {/*  Tab 3: Bot Trading Dashboard                                    */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        <TabsContent value="trading" className="mt-6 space-y-4">
+          <AnimatePresence mode="wait">
+            <motion.div key="trading" initial="hidden" animate="visible" exit="exit" variants={fadeInUp} className="space-y-4">
+              {/* Trading Stats */}
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {[
+                  { label: 'خریدهای ربات', value: 47, icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/20', change: '+۱۲' },
+                  { label: 'فروش‌های ربات', value: 23, icon: TrendingDown, color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-900/20', change: '+۸٪' },
+                  { label: 'حجم طلای معامله شده', value: '۱۸۵.۵ گرم', icon: BarChart3, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20' },
+                  { label: 'درآمد کارمزد (۲۴ساعت)', value: '۲,۳۵۰,۰۰۰ ت', icon: Zap, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/20' },
+                ].map((stat, i) => (
+                  <motion.div key={stat.label} custom={i} variants={cardVariants} initial="hidden" animate="visible">
+                    <Card className="border-amber-100 dark:border-amber-900/30">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className={`flex size-8 items-center justify-center rounded-lg ${stat.bg}`}>
+                            <stat.icon className={`size-4 ${stat.color}`} />
+                          </div>
+                        </div>
+                        <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+                        {stat.change && <p className="text-[10px] text-emerald-600 mt-0.5">{stat.change} نسبت به هفته قبل</p>}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Bot Features Card */}
+              <Card className="border-amber-100 dark:border-amber-900/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                    <Zap className="size-4 text-amber-600" />
+                    قابلیت‌های معاملاتی ربات تلگرام
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-xl border border-emerald-200 dark:border-emerald-800/50 p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
+                          <TrendingUp className="size-4 text-emerald-600" />
+                        </div>
+                        <span className="text-sm font-semibold">🟢 خرید طلا</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">دستور <code className="bg-muted px-1 rounded">/buy</code></p>
+                      <p className="text-xs text-muted-foreground mt-1">انتخاب نوع طلا، وارد کردن مقدار به گرم، تأیید قیمت و خرید فوری از کیف پول تومانی</p>
+                    </div>
+                    <div className="rounded-xl border border-red-200 dark:border-red-800/50 p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="flex size-8 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/30">
+                          <TrendingUp className="size-4 text-red-600" />
+                        </div>
+                        <span className="text-sm font-semibold">🔴 فروش طلا</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">دستور <code className="bg-muted px-1 rounded">/sell</code></p>
+                      <p className="text-xs text-muted-foreground mt-1">وارد کردن مقدار طلا برای فروش، نمایش محاسبه با کارمزد و واریز فوری به کیف پول</p>
+                    </div>
+                    <div className="rounded-xl border border-blue-200 dark:border-blue-800/50 p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="flex size-8 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                          <BarChart3 className="size-4 text-blue-600" />
+                        </div>
+                        <span className="text-sm font-semibold">💰 موجودی حساب</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">دستور <code className="bg-muted px-1 rounded">/balance</code></p>
+                      <p className="text-xs text-muted-foreground mt-1">نمایش کامل موجودی تومانی و طلایی، وضعیت کارت طلایی، آخرین تراکنش‌ها</p>
+                    </div>
+                    <div className="rounded-xl border border-purple-200 dark:border-purple-800/50 p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="flex size-8 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                          <FileText className="size-4 text-purple-600" />
+                        </div>
+                        <span className="text-sm font-semibold">💳 کارت طلایی</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">دستور <code className="bg-muted px-1 rounded">/goldcard</code></p>
+                      <p className="text-xs text-muted-foreground mt-1">بررسی وضعیت کارت، موجودی، سقف تراکنش روزانه/ماهانه، تراکنش‌های اخیر</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </AnimatePresence>
+        </TabsContent>
+
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/*  Tab 4: Price Alerts                                            */}
         {/* ═══════════════════════════════════════════════════════════════ */}
         <TabsContent value="alerts" className="mt-6 space-y-4">
           <AnimatePresence mode="wait">
