@@ -998,3 +998,22 @@ Stage Summary:
 - Unused code and imports cleaned up for better code quality
 - No breaking changes - all other HeroSection elements (trust badge, heading, CTAs, feature grid, price ticker) remain intact
 - Cron job creation for webDevReview returned 401 (authorization issue - may need to be retried)
+---
+Task ID: 2
+Agent: Main Agent
+Task: Fix HowItWorksSection numbered circles being clipped/hidden behind cards
+
+Work Log:
+- Analyzed user screenshot (pasted_image_1777044788532.png) using VLM
+- Identified the issue: numbered step circles (1,2,3,4) were being clipped by the `.card-spotlight` CSS class which has `overflow: hidden`
+- The circles were previously positioned with `absolute -top-7` inside the card container, causing them to be cut off
+- Fix: Moved the StepNumberCircle component OUTSIDE the card container, above it
+- Removed `pt-10` from the card (no longer needed since circle is not inside)
+- Added `mb-4` gap between circle and card
+- Adjusted desktop connector alignment from `pt-14` to `mt-8` to align with the new layout
+- Verified: zero lint errors, successful compilation
+
+Stage Summary:
+- Step number circles now display properly above the cards on all breakpoints
+- Root cause: `.card-spotlight` class has `overflow: hidden` which clips absolutely positioned children
+- Solution: Restructure layout to place circles outside the overflow-clip container

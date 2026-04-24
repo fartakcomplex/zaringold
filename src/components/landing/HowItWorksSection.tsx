@@ -208,20 +208,19 @@ function DesktopStepCard({ step, index }: { step: StepItem; index: number }) {
         ease: [0.22, 1, 0.36, 1],
       }}
     >
+      {/* Floating step number - outside the card to avoid overflow:hidden clipping */}
+      <div className="mb-4">
+        <StepNumberCircle number={step.number} size="lg" />
+      </div>
+
       {/* Glass card with shimmer border */}
       <div
         className={cn(
           'shimmer-border glass-card-enhanced relative w-full rounded-2xl p-6',
           'border border-gold/10 transition-all duration-400 ease-out',
           'hover:border-gold/30 card-spotlight',
-          'pt-10',
         )}
       >
-        {/* Floating step number - positioned on top */}
-        <div className="absolute -top-7 left-1/2 -translate-x-1/2">
-          <StepNumberCircle number={step.number} size="lg" />
-        </div>
-
         {/* Icon */}
         <div
           className={cn(
@@ -336,7 +335,7 @@ export default function HowItWorksSection() {
                 {/* Animated gold connector between steps */}
                 {index < steps.length - 1 && (
                   <motion.div
-                    className="flex items-center justify-center w-8 xl:w-12 shrink-0 pt-14"
+                    className="flex items-center justify-center w-8 xl:w-12 shrink-0 mt-8"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5, delay: index * 0.15 + 0.4 }}
