@@ -70,6 +70,9 @@ import {
   ChevronRight,
   Download,
   MoreVertical,
+  UserPlus,
+  Key,
+  Copy,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -994,6 +997,302 @@ function MobileUserCard({
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
+/*  Create User Dialog                                                         */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+function CreateUserDialog({
+  open,
+  onClose,
+  onCreated,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onCreated: () => void;
+}) {
+  const [phone, setPhone] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('user');
+  const [isVerified, setIsVerified] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [generatedPassword, setGeneratedPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const resetForm = () => {
+    setPhone('');
+    setFullName('');
+    setEmail('');
+    setPassword('');
+    setRole('user');
+    setIsVerified(false);
+    setGeneratedPassword('');
+    setShowPassword(false);
+    setCopied(false);
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
+  const handleCreate = async () => {
+    // Validate
+    if (!phone.trim()) {
+      useAppStore.getState().addToast('شماره موبایل الزامی است', 'error');
+      return;
+    }
+    const normalized = phone.replace(/^(\+98|0)/, '98').trim();
+    if (!/^98\d{10}$/.test(normalized)) {
+      useAppStore.getState().addToast('فرمت شماره نامعتبر (مثال: 09123456789)', 'error');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: normalized,
+          fullName: fullName.trim() || undefined,
+          email: email.trim() || undefined,
+          password: password.trim() || undefined,
+          role,
+          isVerified,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        useAppStore.getState().addToast(data.message || 'کاربر با موفقیت ایجاد شد', 'success');
+        if (data.user?.generatedPassword) {
+          setGeneratedPassword(data.user.generatedPassword);
+        }
+        resetForm();
+        onCreated();
+        // Don't close dialog yet so user can see generated password
+      } else {
+        useAppStore.getState().addToast(data.message || 'خطا در ایجاد کاربر', 'error');
+      }
+    } catch {
+      useAppStore.getState().addToast('خطا در ارتباط با سرور', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCopyPassword = () => {
+    if (generatedPassword) {
+      navigator.clipboard.writeText(generatedPassword);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const roleItems = [
+    { value: 'user', label: 'کاربر عادی', color: 'text-gray-400', bg: 'bg-gray-500/15' },
+    { value: 'admin', label: 'مدیر سیستم', color: 'text-amber-400', bg: 'bg-amber-500/15' },
+    { value: 'super_admin', label: 'مدیر ارشد', color: 'text-yellow-400', bg: 'bg-yellow-500/15' },
+    { value: 'support_admin', label: 'مدیر پشتیبانی', color: 'text-blue-400', bg: 'bg-blue-500/15' },
+    { value: 'finance_admin', label: 'مدیر مالی', color: 'text-emerald-400', bg: 'bg-emerald-500/15' },
+    { value: 'support_agent', label: 'اپراتور پشتیبانی', color: 'text-violet-400', bg: 'bg-violet-500/15' },
+    { value: 'viewer', label: 'بازدیدکننده', color: 'text-gray-400', bg: 'bg-gray-500/15' },
+  ];
+
+  const selectedRole = roleItems.find((r) => r.value === role) || roleItems[0];
+
+  return (
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-md" dir="rtl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <div className="rounded-xl p-2 bg-gold/15">
+              <UserPlus className="size-5 text-gold" />
+            </div>
+            ایجاد کاربر جدید
+          </DialogTitle>
+          <DialogDescription>
+            یک کاربر جدید با نقش مدیری یا عادی بسازید
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 mt-2">
+          {/* Phone */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">
+              شماره موبایل <span className="text-red-400">*</span>
+            </Label>
+            <Input
+              placeholder="09123456789"
+              dir="ltr"
+              className="text-left font-mono"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+          </div>
+
+          {/* Full Name */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">نام و نام خانوادگی</Label>
+            <Input
+              placeholder="نام کامل کاربر"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
+          </div>
+
+          {/* Email */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">ایمیل (اختیاری)</Label>
+            <Input
+              placeholder="user@example.com"
+              dir="ltr"
+              type="email"
+              className="text-left"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          {/* Password */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium flex items-center gap-2">
+              <Key className="size-3.5" />
+              رمز عبور
+              {!password.trim() && (
+                <span className="text-[10px] text-muted-foreground font-normal">(خالی = خودکار ساخته میشه)</span>
+              )}
+            </Label>
+            <div className="relative">
+              <Input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="حداقل ۶ کاراکتر"
+                dir="ltr"
+                className="text-left pl-10"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground text-xs"
+              >
+                {showPassword ? ' مخفی' : ' نمایش'}
+              </button>
+            </div>
+          </div>
+
+          {/* Role Selection */}
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold flex items-center gap-2">
+              <Crown className="size-4 text-gold" />
+              نقش کاربر
+            </Label>
+            <div className="grid grid-cols-2 gap-2">
+              {roleItems.map((r) => (
+                <button
+                  key={r.value}
+                  type="button"
+                  onClick={() => setRole(r.value)}
+                  className={cn(
+                    'flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border text-sm transition-all',
+                    role === r.value
+                      ? `${r.bg} ${r.color} border-current`
+                      : 'border-border/50 hover:border-border text-muted-foreground hover:bg-muted/30'
+                  )}
+                >
+                  {r.value === 'super_admin' && <Crown className="size-3.5" />}
+                  {r.value === 'admin' && <Shield className="size-3.5" />}
+                  {r.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Verify Toggle */}
+          <div className="flex items-center justify-between p-3 rounded-lg border border-border/50">
+            <div>
+              <p className="text-sm font-medium">تایید شده</p>
+              <p className="text-[10px] text-muted-foreground">حساب کاربر از ابتدا تایید شده باشد</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsVerified(!isVerified)}
+              className={cn(
+                'relative w-11 h-6 rounded-full transition-colors',
+                isVerified ? 'bg-gold' : 'bg-muted'
+              )}
+            >
+              <span
+                className={cn(
+                  'absolute top-0.5 left-0.5 size-5 rounded-full bg-white transition-transform shadow-sm',
+                  isVerified && 'translate-x-5'
+                )}
+              />
+            </button>
+          </div>
+
+          {/* Generated Password Notice */}
+          {generatedPassword && (
+            <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
+              <p className="text-xs font-medium text-amber-400 mb-2 flex items-center gap-1.5">
+                <Key className="size-3.5" />
+                رمز عبور خودکار ساخته شده:
+              </p>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 text-sm font-mono bg-black/20 p-2 rounded text-amber-300" dir="ltr">
+                  {generatedPassword}
+                </code>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-amber-500/30 text-amber-400 hover:bg-amber-500/20 h-9 px-2"
+                  onClick={handleCopyPassword}
+                >
+                  {copied ? <CheckCircle className="size-4" /> : <Copy className="size-4" />}
+                </Button>
+              </div>
+              <p className="text-[10px] text-amber-400/70 mt-1.5">
+                ⚠️ این رمز فقط یکبار نمایش داده میشه، حتماً کپی کنید!
+              </p>
+            </div>
+          )}
+        </div>
+
+        <DialogFooter className="gap-2 mt-4">
+          <Button variant="outline" onClick={handleClose} className="flex-1">
+            انصراف
+          </Button>
+          <Button
+            onClick={handleCreate}
+            disabled={loading || !phone.trim()}
+            className={cn(
+              'flex-1 bg-gold text-white hover:bg-gold/90',
+              loading && 'opacity-70 cursor-not-allowed'
+            )}
+          >
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <span className="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                در حال ایجاد...
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <UserPlus className="size-4" />
+                ایجاد کاربر
+              </span>
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
 /*  Main Component: AdminUsers                                                */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -1010,6 +1309,7 @@ export default function AdminUsers() {
   const [detailUser, setDetailUser] = useState<AdminUser | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [goldPrice, setGoldPrice] = useState(35000000);
+  const [createOpen, setCreateOpen] = useState(false);
   const perPage = 15;
 
   /* ── Fetch users ── */
@@ -1221,16 +1521,25 @@ export default function AdminUsers() {
             </p>
           </div>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleExportCSV}
-          className="border-gold/20 text-gold hover:bg-gold/10"
-        >
-          <Download className="size-4 ml-1.5" />
-          خروجی CSV
-        </Button>
-      </div>
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            onClick={() => setCreateOpen(true)}
+            className="bg-gold text-white hover:bg-gold/90"
+          >
+            <UserPlus className="size-4 ml-1.5" />
+            افزودن کاربر
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportCSV}
+            className="border-gold/20 text-gold hover:bg-gold/10"
+          >
+            <Download className="size-4 ml-1.5" />
+            خروجی CSV
+          </Button>
+        </div>
 
       {/* ── Stats Dashboard Row (6 cards) ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
