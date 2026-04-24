@@ -24,6 +24,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { useAppStore } from '@/lib/store';
 import { usePageEvent } from '@/hooks/use-page-event';
+import { useTranslation } from '@/lib/i18n';
 import { formatToman, formatNumber, formatDate, cn } from '@/lib/helpers';
 
 /* ═══════════════════════════════════════════════════════════════ */
@@ -156,6 +157,7 @@ function VIPSkeleton() {
 
 export default function VIPMembershipView() {
   const { user, addToast } = useAppStore();
+  const { t, locale } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<VIPStatus | null>(null);
   const [subscribing, setSubscribing] = useState<string | null>(null);

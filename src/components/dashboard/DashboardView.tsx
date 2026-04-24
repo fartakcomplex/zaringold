@@ -145,14 +145,74 @@ interface GoldNewsItem {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/*  Portfolio Performance Mock Data                                          */
+/*  Portfolio / Services / Promo data factories (locale-aware)                */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
-const PORTFOLIO_DATA = [
-  { name: 'طلا', value: 65, color: '#D4AF37' },
-  { name: 'نقد', value: 25, color: '#94a3b8' },
-  { name: 'پس‌انداز', value: 10, color: '#64748b' },
-];
+function getPortfolioData(t: (key: string) => string) {
+  return [
+    { name: t('dashboard.portfolioGold'), value: 65, color: '#D4AF37' },
+    { name: t('dashboard.portfolioCash'), value: 25, color: '#94a3b8' },
+    { name: t('dashboard.portfolioSavings'), value: 10, color: '#64748b' },
+  ];
+}
+
+function getMobileServices(t: (key: string) => string) {
+  return [
+    { icon: Coins, label: t('dashboard.serviceBuyGold'), iconColor: '#D4AF37', glowColor: 'rgba(212,175,55,0.35)', page: 'trade' },
+    { icon: TrendingDown, label: t('dashboard.serviceSellGold'), iconColor: '#F87171', glowColor: 'rgba(248,113,113,0.30)', page: 'trade' },
+    { icon: Activity, label: t('dashboard.serviceLiveRate'), iconColor: '#34D399', glowColor: 'rgba(52,211,153,0.30)', page: 'market' },
+    { icon: Wallet, label: t('dashboard.serviceWallet'), iconColor: '#60A5FA', glowColor: 'rgba(96,165,250,0.30)', page: 'wallet' },
+    { icon: PiggyBank, label: t('dashboard.serviceSavings'), iconColor: '#FB923C', glowColor: 'rgba(251,146,60,0.30)', page: 'savings' },
+    { icon: Banknote, label: t('dashboard.serviceLoan'), iconColor: '#C084FC', glowColor: 'rgba(192,132,252,0.30)', page: 'loans' },
+    { icon: Gift, label: t('dashboard.serviceGift'), iconColor: '#F472B6', glowColor: 'rgba(244,114,182,0.30)', page: 'gifts' },
+    { icon: CreditCard, label: t('dashboard.serviceGoldCard'), iconColor: '#FACC15', glowColor: 'rgba(250,204,21,0.30)', page: 'goldCard' },
+    { icon: Trophy, label: t('dashboard.serviceAchievements'), iconColor: '#FBBF24', glowColor: 'rgba(251,191,36,0.30)', page: 'achievements' },
+    { icon: CalendarCheck, label: t('dashboard.serviceCheckin'), iconColor: '#2DD4BF', glowColor: 'rgba(45,212,191,0.30)', page: 'checkin' },
+    { icon: Crown, label: t('dashboard.serviceVip'), iconColor: '#A78BFA', glowColor: 'rgba(167,139,250,0.30)', page: 'vip' },
+    { icon: LayoutGrid, label: t('dashboard.serviceMore'), iconColor: '#D1D5DB', glowColor: 'rgba(209,213,219,0.20)', page: 'dashboard' },
+  ];
+}
+
+function getPromoSlides(t: (key: string) => string) {
+  return [
+    {
+      bg: 'from-[#4C1D95] via-[#5B21B6] to-[#6D28D9]',
+      shadow: 'shadow-purple-500/10',
+      icon: <Gift className="size-7 text-[#FCD34D]" />,
+      title: t('dashboard.promo1Title'),
+      desc: t('dashboard.promo1Desc'),
+      btn: t('dashboard.promo1Btn'),
+      page: 'gifts',
+    },
+    {
+      bg: 'from-[#92400E] via-[#B45309] to-[#D97706]',
+      shadow: 'shadow-amber-500/10',
+      icon: <Coins className="size-7 text-[#FEF3C7]" />,
+      title: t('dashboard.promo2Title'),
+      desc: t('dashboard.promo2Desc'),
+      btn: t('dashboard.promo2Btn'),
+      page: 'trade',
+    },
+    {
+      bg: 'from-[#065F46] via-[#047857] to-[#059669]',
+      shadow: 'shadow-emerald-500/10',
+      icon: <TrendingUp className="size-7 text-[#A7F3D0]" />,
+      title: t('dashboard.promo3Title'),
+      desc: t('dashboard.promo3Desc'),
+      btn: t('dashboard.promo3Btn'),
+      page: 'market',
+    },
+    {
+      bg: 'from-[#7C2D12] via-[#9A3412] to-[#C2410C]',
+      shadow: 'shadow-orange-500/10',
+      icon: <CreditCard className="size-7 text-[#FED7AA]" />,
+      title: t('dashboard.promo4Title'),
+      desc: t('dashboard.promo4Desc'),
+      btn: t('dashboard.promo4Btn'),
+      page: 'goldCard',
+    },
+  ];
+}
 
 // COIN_PRICES now comes from useRealGoldPrice hook (real-time API data)
 // Falls back to static defaults when API is unavailable
@@ -289,24 +349,7 @@ function TransactionIcon({ type }: { type: string }) {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/*  Mobile Services Grid Data                                                */
-/* ═══════════════════════════════════════════════════════════════════════════ */
-
-const MOBILE_SERVICES = [
-  { icon: Coins, label: 'خرید طلا', iconColor: '#D4AF37', glowColor: 'rgba(212,175,55,0.35)', page: 'trade' },
-  { icon: TrendingDown, label: 'فروش طلا', iconColor: '#F87171', glowColor: 'rgba(248,113,113,0.30)', page: 'trade' },
-  { icon: Activity, label: 'نرخ لحظه‌ای', iconColor: '#34D399', glowColor: 'rgba(52,211,153,0.30)', page: 'market' },
-  { icon: Wallet, label: 'کیف پول', iconColor: '#60A5FA', glowColor: 'rgba(96,165,250,0.30)', page: 'wallet' },
-  { icon: PiggyBank, label: 'پس‌انداز', iconColor: '#FB923C', glowColor: 'rgba(251,146,60,0.30)', page: 'savings' },
-  { icon: Banknote, label: 'وام طلایی', iconColor: '#C084FC', glowColor: 'rgba(192,132,252,0.30)', page: 'loans' },
-  { icon: Gift, label: 'هدیه طلایی', iconColor: '#F472B6', glowColor: 'rgba(244,114,182,0.30)', page: 'gifts' },
-  { icon: CreditCard, label: 'کارت طلایی', iconColor: '#FACC15', glowColor: 'rgba(250,204,21,0.30)', page: 'goldCard' },
-  { icon: Trophy, label: 'دستاوردها', iconColor: '#FBBF24', glowColor: 'rgba(251,191,36,0.30)', page: 'achievements' },
-  { icon: CalendarCheck, label: 'چک‌این', iconColor: '#2DD4BF', glowColor: 'rgba(45,212,191,0.30)', page: 'checkin' },
-  { icon: Crown, label: 'VIP', iconColor: '#A78BFA', glowColor: 'rgba(167,139,250,0.30)', page: 'vip' },
-  { icon: LayoutGrid, label: 'بیشتر', iconColor: '#D1D5DB', glowColor: 'rgba(209,213,219,0.20)', page: 'dashboard' },
-];
+/* MOBILE_SERVICES is now generated by getMobileServices(t) inside the component */
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  Mobile Golden Art Card Component                                          */
@@ -361,6 +404,7 @@ function MobileGoldenCard({
   goldPriceVal: number;
   isLoading: boolean;
 }) {
+  const { t } = useTranslation();
   const [cardData, setCardData] = useState<Record<string, unknown> | null>(null);
   const [cardLoading, setCardLoading] = useState(true);
 
@@ -439,7 +483,7 @@ function MobileGoldenCard({
                 ZARRIN GOLD
               </p>
               <p className={`text-sm font-extrabold tracking-wide ${designConfig.text} mt-0.5`}>
-                زرین گلد
+                {t('dashboard.goldCardName')}
               </p>
             </div>
             <Wifi className={`size-4 ${designConfig.sub} rotate-90`} />
@@ -447,7 +491,7 @@ function MobileGoldenCard({
 
           {/* Gold balance — centered, prominent */}
           <div className="flex flex-col items-center gap-0.5 py-0.5 mb-auto">
-            <span className={`${designConfig.text} text-[9px] font-bold opacity-80`}>موجودی طلا</span>
+            <span className={`${designConfig.text} text-[9px] font-bold opacity-80`}>{t('dashboard.goldBalance')}</span>
             <span className={`${designConfig.text} text-lg font-black tabular-nums leading-none`}>
               {formatGrams(totalGold)}
             </span>
@@ -472,25 +516,25 @@ function MobileGoldenCard({
           {/* Bottom row */}
           <div className="flex items-end justify-between">
             <div>
-              <p className={`text-[8px] font-semibold ${designConfig.sub}`}>نوع کارت</p>
+              <p className={`text-[8px] font-semibold ${designConfig.sub}`}>{t('dashboard.cardType')}</p>
               <p className={`text-[10px] font-bold ${designConfig.text}`}>
-                {cardData ? (cardData.cardType === 'virtual' ? '🥇 مجازی' : '💳 فیزیکی') : 'درخواست نشده'}
+                {cardData ? (cardData.cardType === 'virtual' ? t('dashboard.cardVirtual') : t('dashboard.cardPhysical')) : t('dashboard.cardNotRequested')}
               </p>
             </div>
 
             <div className="text-center">
-              <p className={`text-[8px] font-semibold ${designConfig.sub}`}>وضعیت</p>
+              <p className={`text-[8px] font-semibold ${designConfig.sub}`}>{t('dashboard.cardStatus')}</p>
               <p className={`text-[10px] font-bold ${designConfig.text}`}>
                 {cardData
-                  ? (cardData.status === 'active' ? '✅ فعال' : cardData.status === 'frozen' ? '❄️ مسدود' : '🔴 بسته')
-                  : '🆕 جدید'}
+                  ? (cardData.status === 'active' ? t('dashboard.cardActive') : cardData.status === 'frozen' ? t('dashboard.cardFrozen') : t('dashboard.cardClosed'))
+                  : t('dashboard.cardNew')}
               </p>
             </div>
 
             <div className="text-left">
-              <p className={`text-[8px] font-semibold ${designConfig.sub}`}>دارنده کارت</p>
+              <p className={`text-[8px] font-semibold ${designConfig.sub}`}>{t('dashboard.cardHolder')}</p>
               <p className={`text-[10px] font-bold ${designConfig.text} max-w-[80px] truncate`}>
-                {userName || 'کاربر زرین گلد'}
+                {userName || t('dashboard.zarrinGoldUser')}
               </p>
             </div>
           </div>
@@ -505,9 +549,11 @@ function MobileGoldenCard({
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 function MobileServicesGrid({ onNavigate }: { onNavigate: (page: string) => void }) {
+  const { t } = useTranslation();
+  const mobileServices = getMobileServices(t);
   return (
     <div className="grid grid-cols-4 gap-2">
-      {MOBILE_SERVICES.map((service) => {
+      {mobileServices.map((service) => {
         const Icon = service.icon;
         return (
           <button
@@ -546,59 +592,20 @@ function MobileServicesGrid({ onNavigate }: { onNavigate: (page: string) => void
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/*  Mobile Promotional Slider Component                                        */
-/* ═══════════════════════════════════════════════════════════════════════════ */
-
-const PROMO_SLIDES = [
-  {
-    bg: 'from-[#4C1D95] via-[#5B21B6] to-[#6D28D9]',
-    shadow: 'shadow-purple-500/10',
-    icon: <Gift className="size-7 text-[#FCD34D]" />,
-    title: 'طلای خود را هدیه بدهید!',
-    desc: 'با ارسال طلای رایگان به دوستانتان، از پاداش ویژه بهره‌مند شوید',
-    btn: 'ارسال هدیه',
-    page: 'gifts',
-  },
-  {
-    bg: 'from-[#92400E] via-[#B45309] to-[#D97706]',
-    shadow: 'shadow-amber-500/10',
-    icon: <Coins className="size-7 text-[#FEF3C7]" />,
-    title: 'خرید طلا با کارمزد صفر',
-    desc: 'همین الان طلای خود را با بهترین قیمت و بدون کارمزد بخرید',
-    btn: 'خرید طلا',
-    page: 'trade',
-  },
-  {
-    bg: 'from-[#065F46] via-[#047857] to-[#059669]',
-    shadow: 'shadow-emerald-500/10',
-    icon: <TrendingUp className="size-7 text-[#A7F3D0]" />,
-    title: 'سود روزانه طلای شما',
-    desc: 'طلای شما هر روز بر اساس نرخ لحظه‌ای بازار ارزش‌گذاری می‌شود',
-    btn: 'مشاهده سود',
-    page: 'market',
-  },
-  {
-    bg: 'from-[#7C2D12] via-[#9A3412] to-[#C2410C]',
-    shadow: 'shadow-orange-500/10',
-    icon: <CreditCard className="size-7 text-[#FED7AA]" />,
-    title: 'کارت طلایی زرین گلد',
-    desc: 'با کارت طلایی، طلای خود را به خرید روزمره تبدیل کنید',
-    btn: 'درخواست کارت',
-    page: 'goldCard',
-  },
-];
+/* PROMO_SLIDES is now generated by getPromoSlides(t) inside the component */
 
 function MobilePromoSlider({ onNavigate }: { onNavigate: (page: string) => void }) {
+  const { t, dir } = useTranslation();
+  const promoSlides = getPromoSlides(t);
   const [current, setCurrent] = useState(0);
 
   /* Auto-rotate every 4 seconds */
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % PROMO_SLIDES.length);
+      setCurrent((prev) => (prev + 1) % promoSlides.length);
     }, 4000);
     return () => clearInterval(timer);
-  }, []);
+  }, [promoSlides.length]);
 
   return (
     <div className="relative overflow-hidden rounded-2xl">
@@ -609,7 +616,7 @@ function MobilePromoSlider({ onNavigate }: { onNavigate: (page: string) => void 
           className="flex transition-transform duration-500 ease-in-out"
           style={{ transform: `translateX(-${current * 100}%)` }}
         >
-          {PROMO_SLIDES.map((slide, i) => (
+          {promoSlides.map((slide, i) => (
             <div
               key={i}
               className={`relative w-full shrink-0 bg-gradient-to-l ${slide.bg} p-4 shadow-lg ${slide.shadow}`}
@@ -618,7 +625,7 @@ function MobilePromoSlider({ onNavigate }: { onNavigate: (page: string) => void 
               <div className="pointer-events-none absolute left-0 bottom-0 size-20 rounded-full bg-white/[0.06]" />
               <div className="pointer-events-none absolute right-0 top-0 size-24 rounded-full bg-white/[0.04]" />
 
-              <div className="relative z-10 flex items-center gap-3" dir="rtl">
+              <div className="relative z-10 flex items-center gap-3" dir={dir}>
                 {/* Icon */}
                 <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white/10">
                   {slide.icon}
@@ -646,7 +653,7 @@ function MobilePromoSlider({ onNavigate }: { onNavigate: (page: string) => void 
 
       {/* Dots indicator */}
       <div className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
-        {PROMO_SLIDES.map((_, i) => (
+        {promoSlides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
@@ -683,8 +690,11 @@ export default function DashboardView() {
     emitPageEvent,
   } = useAppStore();
 
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const isMobile = useIsMobile();
+
+  /* ── Computed locale-aware data ── */
+  const portfolioData = getPortfolioData(t);
 
   /* ── Real-time Gold Prices ── */
   const { coinPrices: realCoinPrices, prices: realPrices, isLive, source: priceSource, refresh: refreshPrices } = useRealGoldPrice();
@@ -853,7 +863,7 @@ const GOLD_NEWS = [
       const mockData: ChartDataPoint[] = Array.from({ length: 24 }).map((_, i) => {
         const d = new Date(now.getTime() - (23 - i) * 3600000);
         return {
-          time: new Intl.DateTimeFormat('fa-IR', { hour: '2-digit', minute: '2-digit' }).format(d),
+          time: new Intl.DateTimeFormat(locale === 'fa' ? 'fa-IR' : 'en-US', { hour: '2-digit', minute: '2-digit' }).format(d),
           price: goldPrice?.marketPrice
             ? goldPrice.marketPrice + (Math.random() - 0.5) * 500000
             : 34000000 + i * 200000 + (Math.random() - 0.5) * 300000,
@@ -864,7 +874,7 @@ const GOLD_NEWS = [
     }
 
     const data = priceHistory.map((p) => ({
-      time: new Intl.DateTimeFormat('fa-IR', {
+      time: new Intl.DateTimeFormat(locale === 'fa' ? 'fa-IR' : 'en-US', {
         hour: '2-digit',
         minute: '2-digit',
       }).format(new Date(p.timestamp)),
@@ -900,10 +910,10 @@ const GOLD_NEWS = [
     try {
       await navigator.clipboard.writeText(referralData.referralCode);
       setCopied(true);
-      addToast('کد دعوت کپی شد', 'success');
+      addToast(t('dashboard.referralCopied'), 'success');
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      addToast('خطا در کپی کد', 'error');
+      addToast(t('dashboard.copyError'), 'error');
     }
   };
 
@@ -926,7 +936,7 @@ const GOLD_NEWS = [
         addToast(data.message, 'error');
       }
     } catch {
-      addToast('خطا در ارتباط با سرور', 'error');
+      addToast(t('dashboard.serverError'), 'error');
     } finally {
       setDepositSubmitting(false);
     }
@@ -951,7 +961,7 @@ const GOLD_NEWS = [
         addToast(data.message, 'error');
       }
     } catch {
-      addToast('خطا در ارتباط با سرور', 'error');
+      addToast(t('dashboard.serverError'), 'error');
     } finally {
       setWithdrawSubmitting(false);
     }
@@ -992,7 +1002,7 @@ const GOLD_NEWS = [
         addToast(data.message, 'error');
       }
     } catch {
-      addToast('خطا در تغییر وضعیت هشدار', 'error');
+      addToast(t('dashboard.alertStatusError'), 'error');
     }
   };
 
@@ -1007,7 +1017,7 @@ const GOLD_NEWS = [
         addToast(data.message, 'error');
       }
     } catch {
-      addToast('خطا در حذف هشدار', 'error');
+      addToast(t('dashboard.alertDeleteError'), 'error');
     }
   };
 
@@ -1039,7 +1049,7 @@ const GOLD_NEWS = [
         addToast(data.message, 'error');
       }
     } catch {
-      addToast('خطا در ایجاد هشدار', 'error');
+      addToast(t('dashboard.alertCreateError'), 'error');
     } finally {
       setAlertSubmitting(false);
     }
@@ -1116,14 +1126,14 @@ const GOLD_NEWS = [
                             ? 'text-red-400'
                             : 'text-gold-gradient',
                       )}>
-                        {kycStatus === 'pending' && 'مدارک در حال بررسی است'}
-                        {kycStatus === 'rejected' && 'احراز هویت رد شد — تلاش مجدد کنید'}
-                        {kycStatus === 'none' && 'احراز هویت خود را تکمیل کنید'}
+                        {kycStatus === 'pending' && t('dashboard.kycMobilePendingTitle')}
+                        {kycStatus === 'rejected' && t('dashboard.kycRejectedTitle')}
+                        {kycStatus === 'none' && t('dashboard.kycNoneTitle')}
                       </h3>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {kycStatus === 'pending' && 'نتیجه از طریق اعلان اطلاع داده می‌شود'}
-                        {kycStatus === 'rejected' && 'با تکمیل مجدد مدارک، امکانات ویژه فعال می‌شود'}
-                        {kycStatus === 'none' && 'برداشت، وام طلایی و مزایای ویژه منتظر شماست'}
+                        {kycStatus === 'pending' && t('dashboard.kycMobilePendingDesc')}
+                        {kycStatus === 'rejected' && t('dashboard.kycMobileRejectedDesc')}
+                        {kycStatus === 'none' && t('dashboard.kycMobileNoneDesc')}
                       </p>
                     </div>
                     {kycStatus !== 'pending' && (
@@ -1135,13 +1145,13 @@ const GOLD_NEWS = [
                   {kycStatus === 'none' && (
                     <div className="mt-3 flex items-center gap-2 rounded-xl bg-gold/[0.06] border border-gold/10 p-2.5">
                       <Gem className="size-3.5 text-gold shrink-0" />
-                      <span className="text-[11px] text-foreground/70">برداشت تا ۱ کیلوگرم</span>
+                      <span className="text-[11px] text-foreground/70">{t('dashboard.kycBenefitWithdraw')}</span>
                       <span className="text-foreground/20">|</span>
                       <Sparkles className="size-3.5 text-gold shrink-0" />
-                      <span className="text-[11px] text-foreground/70">کارمزد ویژه</span>
+                      <span className="text-[11px] text-foreground/70">{t('dashboard.kycBenefitFee')}</span>
                       <span className="text-foreground/20">|</span>
                       <Headphones className="size-3.5 text-gold shrink-0" />
-                      <span className="text-[11px] text-foreground/70">پشتیبانی VIP</span>
+                      <span className="text-[11px] text-foreground/70">{t('dashboard.kycBenefitSupport')}</span>
                     </div>
                   )}
                 </div>
@@ -1162,20 +1172,20 @@ const GOLD_NEWS = [
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <ArrowDownToLine className="size-5 text-blue-500" />
-                واریز به کیف پول
+                {t('dashboard.depositDescription')}
               </DialogTitle>
               <DialogDescription>
-                مبلغ مورد نظر را وارد کنید یا یکی از مبالغ پیشنهادی را انتخاب نمایید.
+                {t('dashboard.depositDialogDesc')}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4 py-2">
               <div className="space-y-2">
-                <Label htmlFor="deposit-amount">مقدار (گرم طلا)</Label>
+                <Label htmlFor="deposit-amount">{t('dashboard.depositAmountLabel')}</Label>
                 <Input
                   id="deposit-amount"
                   type="number"
-                  placeholder="مبلغ را وارد کنید"
+                  placeholder={t('dashboard.enterAmount')}
                   value={depositAmount}
                   onChange={(e) => setDepositAmount(e.target.value)}
                   className="text-left tabular-nums"
@@ -1194,7 +1204,7 @@ const GOLD_NEWS = [
                         : 'border-border text-foreground'
                     }`}
                   >
-                    {formatPrice(amount)} گرم طلا
+                    {formatPrice(amount)} {t('common.gram')}
                   </button>
                 ))}
               </div>
@@ -1202,7 +1212,7 @@ const GOLD_NEWS = [
 
             <DialogFooter className="gap-2 sm:gap-0">
               <Button variant="outline" onClick={() => { setDepositOpen(false); setDepositAmount(''); }}>
-                انصراف
+                {t('common.cancel')}
               </Button>
               <Button
                 onClick={handleDeposit}
@@ -1212,10 +1222,10 @@ const GOLD_NEWS = [
                 {depositSubmitting ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
-                    در حال پردازش...
+                    {t('dashboard.processing')}
                   </>
                 ) : (
-                  'واریز'
+                  t('dashboard.deposit')
                 )}
               </Button>
             </DialogFooter>
@@ -1228,17 +1238,17 @@ const GOLD_NEWS = [
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <ArrowUpFromLine className="size-5 text-amber-500" />
-                برداشت از کیف پول
+                {t('dashboard.withdrawDescription')}
               </DialogTitle>
               <DialogDescription>
-                مبلغ مورد نظر برای برداشت را وارد کنید.
+                {t('dashboard.withdrawDialogDesc')}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4 py-2">
               <div className="rounded-lg border border-border/50 bg-muted/30 p-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">موجودی قابل برداشت:</span>
+                  <span className="text-xs text-muted-foreground">{t('dashboard.withdrawableBalance')}</span>
                   <span className="text-sm font-bold tabular-nums text-foreground">
                     {formatToman(fiatWallet.balance - fiatWallet.frozenBalance)}
                   </span>
@@ -1246,11 +1256,11 @@ const GOLD_NEWS = [
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="withdraw-amount">مقدار (گرم طلا)</Label>
+                <Label htmlFor="withdraw-amount">{t('dashboard.depositAmountLabel')}</Label>
                 <Input
                   id="withdraw-amount"
                   type="number"
-                  placeholder="مبلغ را وارد کنید"
+                  placeholder={t('dashboard.enterAmount')}
                   value={withdrawAmount}
                   onChange={(e) => setWithdrawAmount(e.target.value)}
                   className="text-left tabular-nums"
@@ -1258,7 +1268,7 @@ const GOLD_NEWS = [
                   max={fiatWallet.balance - fiatWallet.frozenBalance}
                 />
                 {Number(withdrawAmount) > fiatWallet.balance - fiatWallet.frozenBalance && (
-                  <p className="text-xs text-red-500">مبلغ وارد شده از موجودی قابل برداشت بیشتر است.</p>
+                  <p className="text-xs text-red-500">{t('dashboard.exceedsBalance')}</p>
                 )}
               </div>
 
@@ -1273,7 +1283,7 @@ const GOLD_NEWS = [
                         : 'border-border text-foreground'
                     }`}
                   >
-                    {formatPrice(amount)} گرم طلا
+                    {formatPrice(amount)} {t('common.gram')}
                   </button>
                 ))}
               </div>
@@ -1281,15 +1291,14 @@ const GOLD_NEWS = [
               <div className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50/80 p-3 dark:border-amber-900/50 dark:bg-amber-950/30">
                 <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400" />
                 <p className="text-xs leading-relaxed text-amber-700 dark:text-amber-300">
-                  برای برداشت وجه، احراز هویت (KYC) شما باید تأیید شده باشد. حداکثر مبلغ برداشت در روز
-                  ۱ کیلوگرم طلا است.
+                  {t('dashboard.kycWithdrawNote')}
                 </p>
               </div>
             </div>
 
             <DialogFooter className="gap-2 sm:gap-0">
               <Button variant="outline" onClick={() => { setWithdrawOpen(false); setWithdrawAmount(''); }}>
-                انصراف
+                {t('common.cancel')}
               </Button>
               <Button
                 onClick={handleWithdraw}
@@ -1304,10 +1313,10 @@ const GOLD_NEWS = [
                 {withdrawSubmitting ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
-                    در حال پردازش...
+                    {t('dashboard.processing')}
                   </>
                 ) : (
-                  'ثبت درخواست برداشت'
+                  t('dashboard.submitWithdraw')
                 )}
               </Button>
             </DialogFooter>
@@ -1323,35 +1332,35 @@ const GOLD_NEWS = [
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Bell className="size-5 text-[#D4AF37]" />
-                افزودن هشدار قیمت
+                {t('dashboard.newAlertTitle')}
                 <span className="text-gold-gradient">🔔</span>
               </DialogTitle>
               <DialogDescription>
-                هشدار قیمت جدید تنظیم کنید تا از تغییرات بازار مطلع شوید.
+                {t('dashboard.newAlertDesc')}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4 py-2">
               <div className="space-y-2">
-                <Label>نوع هشدار</Label>
+                <Label>{t('dashboard.alertTypeLabel')}</Label>
                 <Select
                   value={newAlertType}
                   onValueChange={(val: string) => setNewAlertType(val as 'buy' | 'sell')}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="انتخاب کنید" />
+                    <SelectValue placeholder={t('dashboard.selectType')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="buy">
                       <span className="flex items-center gap-2">
                         <TrendingUp className="size-4 text-emerald-500" />
-                        خرید طلا
+                        {t('dashboard.buyGold')}
                       </span>
                     </SelectItem>
                     <SelectItem value="sell">
                       <span className="flex items-center gap-2">
                         <TrendingDown className="size-4 text-red-500" />
-                        فروش طلا
+                        {t('dashboard.sellGold')}
                       </span>
                     </SelectItem>
                   </SelectContent>
@@ -1359,27 +1368,26 @@ const GOLD_NEWS = [
               </div>
 
               <div className="space-y-2">
-                <Label>شرط</Label>
+                <Label>{t('dashboard.alertCondition')}</Label>
                 <Select
                   value={newAlertCondition}
                   onValueChange={(val: string) => setNewAlertCondition(val as 'above' | 'below')}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="انتخاب کنید" />
+                    <SelectValue placeholder={t('dashboard.selectType')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="above">بالای</SelectItem>
-                    <SelectItem value="below">زیر</SelectItem>
+                    <SelectItem value="above">{t('dashboard.alertAbove')}</SelectItem>
+                    <SelectItem value="below">{t('dashboard.alertBelow')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="alert-price">قیمت هدف (واحد طلا)</Label>
+                <Label htmlFor="alert-price">{t('dashboard.alertPrice')}</Label>
                 <Input
                   id="alert-price"
                   type="number"
-                  placeholder="مثلاً: ۴۰,۰۰۰,۰۰۰"
                   value={newAlertPrice}
                   onChange={(e) => setNewAlertPrice(e.target.value)}
                   className="text-left tabular-nums"
@@ -1389,12 +1397,12 @@ const GOLD_NEWS = [
 
               {newAlertPrice && Number(newAlertPrice) > 0 && (
                 <div className="rounded-lg border border-[#D4AF37]/20 bg-[#D4AF37]/[0.04] p-3">
-                  <p className="text-xs text-muted-foreground">پیش‌نمایش:</p>
+                  <p className="text-xs text-muted-foreground">{t('dashboard.preview')}</p>
                   <p className="mt-1 text-sm font-medium text-foreground">
-                    {newAlertType === 'buy' ? 'خرید' : 'فروش'} طلا وقتی قیمت{' '}
-                    {newAlertCondition === 'above' ? 'بالای' : 'زیر'}{' '}
+                    {newAlertType === 'buy' ? t('dashboard.buyGold') : t('dashboard.sellGold')} {t('dashboard.alertPreviewText')}{' '}
+                    {newAlertCondition === 'above' ? t('dashboard.alertAbove') : t('dashboard.alertBelow')}{' '}
                     <span className="font-bold tabular-nums text-[#D4AF37]">
-                      {formatPrice(Number(newAlertPrice))} واحد
+                      {formatPrice(Number(newAlertPrice))} {t('dashboard.goldUnit')}
                     </span>
                   </p>
                 </div>
@@ -1403,7 +1411,7 @@ const GOLD_NEWS = [
 
             <DialogFooter className="gap-2 sm:gap-0">
               <Button variant="outline" onClick={() => setAlertDialogOpen(false)}>
-                انصراف
+                {t('common.cancel')}
               </Button>
               <Button
                 onClick={handleAddAlert}
@@ -1413,10 +1421,10 @@ const GOLD_NEWS = [
                 {alertSubmitting ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
-                    در حال ثبت...
+                    {t('dashboard.registering')}
                   </>
                 ) : (
-                  'ذخیره هشدار'
+                  t('dashboard.saveAlert')
                 )}
               </Button>
             </DialogFooter>
@@ -1582,29 +1590,29 @@ const GOLD_NEWS = [
                           ? 'text-red-400'
                           : 'text-gold-gradient',
                     )}>
-                      {kycStatus === 'pending' && 'مدارک احراز هویت در حال بررسی است'}
-                      {kycStatus === 'rejected' && 'احراز هویت رد شد — تلاش مجدد کنید'}
-                      {kycStatus === 'none' && 'احراز هویت خود را تکمیل کنید'}
+                      {kycStatus === 'pending' && t('dashboard.kycPendingTitle')}
+                      {kycStatus === 'rejected' && t('dashboard.kycRejectedTitle')}
+                      {kycStatus === 'none' && t('dashboard.kycNoneTitle')}
                     </h3>
                     {kycStatus === 'none' && (
                       <Badge variant="outline" className="text-xs border-amber-500/30 bg-amber-500/5 text-muted-foreground">
                         <AlertTriangle className="size-3 ml-1" />
-                        ضروری
+                        {t('dashboard.kycRequired')}
                       </Badge>
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground mt-0.5">
-                    {kycStatus === 'pending' && 'کارشناسان ما مدارک شما را بررسی می‌کنند. نتیجه از طریق اعلان اعلام خواهد شد.'}
-                    {kycStatus === 'rejected' && 'با ارسال مجدد مدارک، تمام امکانات ویژه زرین گلد فعال می‌شود.'}
-                    {kycStatus === 'none' && 'با تکمیل احراز هویت، برداشت طلای فیزیکی، وام طلایی و مزایای VIP در اختیار شما قرار می‌گیرد.'}
+                    {kycStatus === 'pending' && t('dashboard.kycPendingDesc')}
+                    {kycStatus === 'rejected' && t('dashboard.kycRejectedDesc')}
+                    {kycStatus === 'none' && t('dashboard.kycNoneDesc')}
                   </p>
                   {kycStatus === 'none' && (
                     <div className="mt-3 flex items-center gap-3 flex-wrap">
                       {[
-                        { icon: Gem, text: 'برداشت تا ۱ کیلوگرم' },
-                        { icon: Sparkles, text: 'کارمزد معاملات ویژه' },
-                        { icon: Crown, text: 'وام طلایی' },
-                        { icon: Headphones, text: 'پشتیبانی ۲۴/۷' },
+                        { icon: Gem, text: t('dashboard.kycBenefitWithdraw') },
+                        { icon: Sparkles, text: t('dashboard.kycBenefitFee') },
+                        { icon: Crown, text: t('dashboard.kycBenefitLoan') },
+                        { icon: Headphones, text: t('dashboard.kycBenefitSupport247') },
                       ].map((b, i) => {
                         const BIcon = b.icon;
                         return (
@@ -1623,7 +1631,7 @@ const GOLD_NEWS = [
                       'text-sm font-bold',
                       kycStatus === 'rejected' ? 'text-red-400' : 'text-gold',
                     )}>
-                      {kycStatus === 'rejected' ? 'تلاش مجدد' : 'شروع احراز'}
+                      {kycStatus === 'rejected' ? t('dashboard.kycRetry') : t('dashboard.kycStart')}
                     </span>
                     <ChevronLeft className={cn(
                       'size-5',
@@ -1661,7 +1669,7 @@ const GOLD_NEWS = [
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
-                        data={PORTFOLIO_DATA}
+                        data={portfolioData}
                         cx="50%"
                         cy="50%"
                         innerRadius={50}
@@ -1670,7 +1678,7 @@ const GOLD_NEWS = [
                         dataKey="value"
                         stroke="none"
                       >
-                        {PORTFOLIO_DATA.map((entry, index) => (
+                        {portfolioData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
@@ -1687,7 +1695,7 @@ const GOLD_NEWS = [
 
                 {/* Legend */}
                 <div className="flex flex-1 flex-col gap-3">
-                  {PORTFOLIO_DATA.map((item) => (
+                  {portfolioData.map((item) => (
                     <div key={item.name} className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
                         <span
@@ -1822,14 +1830,14 @@ const GOLD_NEWS = [
                   </div>
                   <Separator orientation="vertical" className="hidden h-4 sm:block" />
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">قیمت فروش:</span>
+                    <span className="text-xs text-muted-foreground">{t('price.sellPrice')}</span>
                     <span className="text-sm font-bold tabular-nums text-red-500 dark:text-red-400">
                       {formatToman(goldPrice.sellPrice)}
                     </span>
                   </div>
                   <Separator orientation="vertical" className="hidden h-4 sm:block" />
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">اسپرد:</span>
+                    <span className="text-xs text-muted-foreground">{t('dashboard.spreadLabel')}</span>
                     <span className="text-sm font-medium tabular-nums text-muted-foreground">
                       {formatToman(goldPrice.spread)}
                     </span>
@@ -1837,7 +1845,7 @@ const GOLD_NEWS = [
                   <div className="flex items-center gap-1.5">
                     <Activity className="size-3 text-gold" />
                     <span className="text-[11px] text-muted-foreground">
-                      آخرین بروزرسانی: {new Intl.DateTimeFormat('fa-IR', { hour: '2-digit', minute: '2-digit' }).format(new Date())}
+                      {t('dashboard.lastUpdateLabel')} {new Intl.DateTimeFormat(locale === 'fa' ? 'fa-IR' : 'en-US', { hour: '2-digit', minute: '2-digit' }).format(new Date())}
                     </span>
                   </div>
                 </div>
@@ -1940,11 +1948,11 @@ const GOLD_NEWS = [
                   onClick={() => setPage('payment-gateway')}
                   className="card-float group relative flex flex-col items-center gap-2 rounded-xl border border-gold/10 bg-gradient-to-br from-gold/5 to-gold/0 p-4 transition-all hover:border-gold/30 hover:shadow-md hover:shadow-gold/5 active:scale-[0.97]"
                 >
-                  <Badge className="badge-gold absolute -top-1.5 -left-1.5 text-[9px] px-1.5 py-0"> جدید</Badge>
+                  <Badge className="badge-gold absolute -top-1.5 -left-1.5 text-[9px] px-1.5 py-0">{t('common.new')}</Badge>
                   <div className="flex size-11 items-center justify-center rounded-xl bg-blue-100 transition-colors group-hover:bg-blue-200 dark:bg-blue-900/40 dark:group-hover:bg-blue-900/60">
                     <Landmark className="size-5 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <span className="text-sm font-semibold text-foreground">درگاه پرداخت</span>
+                  <span className="text-sm font-semibold text-foreground">{t('dashboard.paymentGateway')}</span>
                 </button>
 
                 {/* Withdraw */}
@@ -2198,13 +2206,13 @@ const GOLD_NEWS = [
                 >
                   <div className="rounded-xl border border-[#D4AF37]/20 bg-[#D4AF37]/[0.03] p-4">
                     <div className="mb-3 flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">مقدار:</span>
+                      <span className="text-sm text-muted-foreground">{t('dashboard.amount')}</span>
                       <span className="text-sm font-bold tabular-nums text-foreground">
                         {formatGrams(selectedQuickBuyGram)}
                       </span>
                     </div>
                     <div className="mb-4 flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">مبلغ کل:</span>
+                      <span className="text-sm text-muted-foreground">{t('dashboard.totalPrice')}</span>
                       <span className="text-base font-bold tabular-nums text-[#D4AF37]">
                         {formatToman(Math.round(selectedQuickBuyGram * goldPrice.buyPrice))}
                       </span>
@@ -2212,12 +2220,12 @@ const GOLD_NEWS = [
                     <Button
                       className="btn-gold-gradient w-full"
                       onClick={() => {
-                        addToast('خرید شما با موفقیت انجام شد', 'success');
+                        addToast(t('dashboard.purchaseSuccess'), 'success');
                         setSelectedQuickBuyGram(null);
                       }}
                     >
                       <ShoppingCart className="ml-2 size-4" />
-                      تأیید خرید
+                      {t('dashboard.confirmPurchase')}
                     </Button>
                   </div>
                 </motion.div>
@@ -2234,13 +2242,13 @@ const GOLD_NEWS = [
           <Card className="card-gold-border card-glass-premium overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle className="flex items-center gap-2 text-base font-bold">
-                📰 اخبار بازار طلا
+                📰 {t('dashboard.goldMarketNews')}
               </CardTitle>
               <button
                 onClick={() => setPage('market')}
                 className="text-xs font-medium text-gold transition-colors hover:text-gold-light hover:underline"
               >
-                مشاهده همه
+                {t('common.viewAll')}
               </button>
             </CardHeader>
             <CardContent>
@@ -2290,26 +2298,26 @@ const GOLD_NEWS = [
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base font-bold">
                 <Scale className="size-4 text-[#D4AF37]" />
-                ⚖️ مقایسه نرخ
+                ⚖️ {t('dashboard.rateComparison')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               {/* Three Key Metrics */}
               <div className="mb-4 grid grid-cols-3 gap-3">
                 <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 p-3 text-center dark:border-emerald-900/50 dark:bg-emerald-950/20">
-                  <p className="text-xs text-muted-foreground">قیمت خرید</p>
+                  <p className="text-xs text-muted-foreground">{t('price.buyPrice')}</p>
                   <p className="mt-1 text-sm font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
                     {goldPrice ? formatPrice(goldPrice.buyPrice) : '---'}
                   </p>
                 </div>
                 <div className="rounded-lg border border-red-200 bg-red-50/50 p-3 text-center dark:border-red-900/50 dark:bg-red-950/20">
-                  <p className="text-xs text-muted-foreground">قیمت فروش</p>
+                  <p className="text-xs text-muted-foreground">{t('price.sellPrice')}</p>
                   <p className="mt-1 text-sm font-bold tabular-nums text-red-500 dark:text-red-400">
                     {goldPrice ? formatPrice(goldPrice.sellPrice) : '---'}
                   </p>
                 </div>
                 <div className="rounded-lg border border-[#D4AF37]/20 bg-[#D4AF37]/5 p-3 text-center">
-                  <p className="text-xs text-muted-foreground">اسپرد (کارمزد)</p>
+                  <p className="text-xs text-muted-foreground">{t('dashboard.spreadFee')}</p>
                   <p className="mt-1 text-sm font-bold tabular-nums text-[#D4AF37]">
                     {goldPrice ? ((goldPrice.spread / goldPrice.buyPrice) * 100).toFixed(2) + '٪' : '---'}
                   </p>
@@ -2323,46 +2331,46 @@ const GOLD_NEWS = [
                     className="absolute inset-y-0 flex items-center justify-center bg-[#D4AF37]/15"
                     style={{ left: '30%', right: '30%' }}
                   >
-                    <span className="whitespace-nowrap text-xs font-bold text-[#D4AF37]">اسپرد</span>
+                    <span className="whitespace-nowrap text-xs font-bold text-[#D4AF37]">{t('dashboard.spreadLabel')}</span>
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#D4AF37]/30" />
                 </div>
                 <div className="mt-1 flex justify-between text-[10px] text-muted-foreground">
-                  <span>خرید</span>
-                  <span>فروش</span>
+                  <span>{t('price.buy')}</span>
+                  <span>{t('price.sell')}</span>
                 </div>
               </div>
 
               {/* Competitor Comparison Table */}
               <div className="overflow-hidden rounded-lg border border-border/50">
                 <div className="grid grid-cols-3 gap-0 bg-muted/50 px-3 py-2">
-                  <span className="text-xs font-semibold text-muted-foreground">پلتفرم</span>
-                  <span className="text-center text-xs font-semibold text-muted-foreground">اسپرد</span>
-                  <span className="text-left text-xs font-semibold text-muted-foreground">وضعیت</span>
+                  <span className="text-xs font-semibold text-muted-foreground">{t('dashboard.platform')}</span>
+                  <span className="text-center text-xs font-semibold text-muted-foreground">{t('dashboard.spreadLabel')}</span>
+                  <span className="text-left text-xs font-semibold text-muted-foreground">{t('dashboard.statusLabel')}</span>
                 </div>
                 <div className="table-row-hover-gold grid grid-cols-3 gap-0 border-t border-border/40 px-3 py-2.5">
-                  <span className="text-sm text-foreground">بانک ملی</span>
+                  <span className="text-sm text-foreground">{t('dashboard.bankMelli')}</span>
                   <span className="text-center text-sm font-medium tabular-nums text-red-500">۳.۲٪</span>
                   <span className="text-left text-xs text-muted-foreground">—</span>
                 </div>
                 <div className="table-row-hover-gold grid grid-cols-3 gap-0 border-t border-border/40 px-3 py-2.5">
-                  <span className="text-sm text-foreground">صرافی‌های دیگر</span>
+                  <span className="text-sm text-foreground">{t('dashboard.otherExchanges')}</span>
                   <span className="text-center text-sm font-medium tabular-nums text-amber-500">۲.۵٪</span>
                   <span className="text-left text-xs text-muted-foreground">—</span>
                 </div>
                 <div className="table-row-hover-gold grid grid-cols-3 gap-0 border-t border-border/40 bg-[#D4AF37]/[0.04] px-3 py-2.5">
-                  <span className="text-sm font-bold text-foreground">زرین گلد</span>
+                  <span className="text-sm font-bold text-foreground">{t('common.zarrinGold')}</span>
                   <span className="text-center text-sm font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
                     {goldPrice ? ((goldPrice.spread / goldPrice.buyPrice) * 100).toFixed(2) + '٪' : '---'}
                   </span>
                   <span className="text-left">
-                    <Badge className="badge-success-green text-[10px]">بهترین نرخ</Badge>
+                    <Badge className="badge-success-green text-[10px]">{t('dashboard.bestRate')}</Badge>
                   </span>
                 </div>
               </div>
 
               <p className="mt-3 text-center text-[11px] text-muted-foreground/80">
-                ✨ کارمزد زرین گلد از پایین‌ترین در بازار
+                {t('dashboard.lowestFeeNote')}
               </p>
             </CardContent>
           </Card>
@@ -2383,24 +2391,24 @@ const GOLD_NEWS = [
                   <div className="flex items-center gap-2">
                     <Gift className="size-5 text-gold" />
                     <h3 className="text-base font-bold text-foreground">
-                      دعوت از دوستان و کسب جایزه
+                      {t('dashboard.referralTitle')}
                     </h3>
                   </div>
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    با دعوت دوستانتان به زرین گلد، از هر معامله آن‌ها جایزه دریافت کنید.
+                    {t('dashboard.referralDesc')}
                   </p>
 
                   <div className="flex flex-wrap gap-4 pt-1">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-muted-foreground">تاکنون</span>
+                      <span className="text-xs text-muted-foreground">{t('dashboard.invitedSoFar')}</span>
                       <span className="text-sm font-bold tabular-nums text-foreground">
                         {formatNumber(referralData?.totalInvited ?? 0)}
                       </span>
-                      <span className="text-xs text-muted-foreground">نفر دعوت کرده‌اید</span>
+                      <span className="text-xs text-muted-foreground">{t('dashboard.peopleInvited')}</span>
                     </div>
                     <Separator orientation="vertical" className="hidden h-4 sm:block" />
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-muted-foreground">مجموع جوایز:</span>
+                      <span className="text-xs text-muted-foreground">{t('dashboard.totalRewardsLabel')}</span>
                       <span className="text-sm font-bold tabular-nums text-gold">
                         {formatToman(referralData?.totalRewarded ?? 0)}
                       </span>
@@ -2433,7 +2441,7 @@ const GOLD_NEWS = [
                     className="bg-gold text-gold-dark hover:bg-gold/90"
                     onClick={() => setPage('referral')}
                   >
-                    اشتراک‌گذاری کد دعوت
+                    {t('dashboard.shareReferralCode')}
                   </Button>
                 </div>
               </div>
@@ -2448,7 +2456,7 @@ const GOLD_NEWS = [
                 <Bell className="size-4 text-[#D4AF37]" />
                 {t('dashboard.priceAlerts')}
                 <Badge className="badge-gold mr-1 text-[10px]">
-                  {priceAlerts.filter(a => a.isActive).length} فعال
+                  {priceAlerts.filter(a => a.isActive).length} {t('dashboard.activeLabel')}
                 </Badge>
               </CardTitle>
               <Button
@@ -2481,7 +2489,7 @@ const GOLD_NEWS = [
                   <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-muted">
                     <Bell className="size-5 text-muted-foreground" />
                   </div>
-                  <p className="text-sm font-medium text-muted-foreground">هشداری ثبت نشده</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('dashboard.noAlerts')}</p>
                   <p className="mt-1 text-xs text-muted-foreground/70">
                     {t('dashboard.priceAlertDesc')}
                   </p>
@@ -2518,14 +2526,14 @@ const GOLD_NEWS = [
                       {/* Alert Info */}
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-foreground">
-                          {alert.type === 'buy' ? 'خرید' : 'فروش'} طلا وقتی قیمت{' '}
-                          {alert.condition === 'above' ? 'بالای' : 'زیر'}{' '}
+                          {alert.type === 'buy' ? t('dashboard.buyGold') : t('dashboard.sellGold')} {t('dashboard.alertPreviewText')}{' '}
+                          {alert.condition === 'above' ? t('dashboard.alertAbove') : t('dashboard.alertBelow')}{' '}
                           <span className="text-gold-gradient font-bold tabular-nums">
-                            {formatPrice(alert.targetPrice)} واحد
+                            {formatPrice(alert.targetPrice)} {t('dashboard.goldUnit')}
                           </span>
                         </p>
                         <p className="mt-0.5 text-[10px] text-muted-foreground">
-                          {alert.isActive ? 'فعال' : 'غیرفعال'}
+                          {alert.isActive ? t('dashboard.alertActiveStatus') : t('dashboard.alertInactiveStatus')}
                         </p>
                       </div>
 
@@ -2540,7 +2548,7 @@ const GOLD_NEWS = [
                       <button
                         onClick={() => handleDeleteAlert(alert.id)}
                         className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-red-100 hover:text-red-500 dark:hover:bg-red-900/30"
-                        aria-label="حذف هشدار"
+                        aria-label={t('dashboard.deleteAlert')}
                       >
                         <Trash2 className="size-3.5" />
                       </button>
@@ -2562,20 +2570,20 @@ const GOLD_NEWS = [
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <ArrowDownToLine className="size-5 text-blue-500" />
-              واریز به کیف پول
+              {t('dashboard.depositDescription')}
             </DialogTitle>
             <DialogDescription>
-              مبلغ مورد نظر را وارد کنید یا یکی از مبالغ پیشنهادی را انتخاب نمایید.
+              {t('dashboard.depositDialogDesc')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label htmlFor="deposit-amount">مقدار (گرم طلا)</Label>
+              <Label htmlFor="deposit-amount">{t('dashboard.depositAmountLabel')}</Label>
               <Input
                 id="deposit-amount"
                 type="number"
-                placeholder="مبلغ را وارد کنید"
+                placeholder={t('dashboard.enterAmount')}
                 value={depositAmount}
                 onChange={(e) => setDepositAmount(e.target.value)}
                 className="text-left tabular-nums"
@@ -2594,7 +2602,7 @@ const GOLD_NEWS = [
                       : 'border-border text-foreground'
                   }`}
                 >
-                  {formatPrice(amount)} گرم طلا
+                  {formatPrice(amount)} {t('common.gram')}
                 </button>
               ))}
             </div>
@@ -2602,7 +2610,7 @@ const GOLD_NEWS = [
 
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => { setDepositOpen(false); setDepositAmount(''); }}>
-              انصراف
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleDeposit}
@@ -2612,10 +2620,10 @@ const GOLD_NEWS = [
               {depositSubmitting ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
-                  در حال پردازش...
+                  {t('dashboard.processing')}
                 </>
               ) : (
-                'واریز'
+                t('dashboard.deposit')
               )}
             </Button>
           </DialogFooter>
@@ -2630,10 +2638,10 @@ const GOLD_NEWS = [
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <ArrowUpFromLine className="size-5 text-amber-500" />
-              برداشت از کیف پول
+              {t('dashboard.withdrawDescription')}
             </DialogTitle>
             <DialogDescription>
-              مبلغ مورد نظر برای برداشت را وارد کنید.
+              {t('dashboard.withdrawDialogDesc')}
             </DialogDescription>
           </DialogHeader>
 
@@ -2641,7 +2649,7 @@ const GOLD_NEWS = [
             {/* Balance Info */}
             <div className="rounded-lg border border-border/50 bg-muted/30 p-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">موجودی قابل برداشت:</span>
+                <span className="text-xs text-muted-foreground">{t('dashboard.withdrawableBalance')}</span>
                 <span className="text-sm font-bold tabular-nums text-foreground">
                   {formatToman(fiatWallet.balance - fiatWallet.frozenBalance)}
                 </span>
@@ -2649,11 +2657,11 @@ const GOLD_NEWS = [
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="withdraw-amount">مقدار (گرم طلا)</Label>
+              <Label htmlFor="withdraw-amount">{t('dashboard.depositAmountLabel')}</Label>
               <Input
                 id="withdraw-amount"
                 type="number"
-                placeholder="مبلغ را وارد کنید"
+                placeholder={t('dashboard.enterAmount')}
                 value={withdrawAmount}
                 onChange={(e) => setWithdrawAmount(e.target.value)}
                 className="text-left tabular-nums"
@@ -2661,7 +2669,7 @@ const GOLD_NEWS = [
                 max={fiatWallet.balance - fiatWallet.frozenBalance}
               />
               {Number(withdrawAmount) > fiatWallet.balance - fiatWallet.frozenBalance && (
-                <p className="text-xs text-red-500">مبلغ وارد شده از موجودی قابل برداشت بیشتر است.</p>
+                <p className="text-xs text-red-500">{t('dashboard.exceedsBalance')}</p>
               )}
             </div>
 
@@ -2676,7 +2684,7 @@ const GOLD_NEWS = [
                       : 'border-border text-foreground'
                   }`}
                 >
-                  {formatPrice(amount)} گرم طلا
+                  {formatPrice(amount)} {t('common.gram')}
                 </button>
               ))}
             </div>
@@ -2685,15 +2693,14 @@ const GOLD_NEWS = [
             <div className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50/80 p-3 dark:border-amber-900/50 dark:bg-amber-950/30">
               <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400" />
               <p className="text-xs leading-relaxed text-amber-700 dark:text-amber-300">
-                برای برداشت وجه، احراز هویت (KYC) شما باید تأیید شده باشد. حداکثر مبلغ برداشت در روز
-                ۱ کیلوگرم طلا است.
+                {t('dashboard.kycWithdrawNote')}
               </p>
             </div>
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => { setWithdrawOpen(false); setWithdrawAmount(''); }}>
-              انصراف
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleWithdraw}
@@ -2708,10 +2715,10 @@ const GOLD_NEWS = [
               {withdrawSubmitting ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
-                  در حال پردازش...
+                  {t('dashboard.processing')}
                 </>
               ) : (
-                'ثبت درخواست برداشت'
+                t('dashboard.submitWithdraw')
               )}
             </Button>
           </DialogFooter>
@@ -2730,36 +2737,36 @@ const GOLD_NEWS = [
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Bell className="size-5 text-[#D4AF37]" />
-              افزودن هشدار قیمت
+              {t('dashboard.newAlertTitle')}
               <span className="text-gold-gradient">🔔</span>
             </DialogTitle>
             <DialogDescription>
-              هشدار قیمت جدید تنظیم کنید تا از تغییرات بازار مطلع شوید.
+              {t('dashboard.newAlertDesc')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-2">
             {/* Alert Type */}
             <div className="space-y-2">
-              <Label>نوع هشدار</Label>
+              <Label>{t('dashboard.alertTypeLabel')}</Label>
               <Select
                 value={newAlertType}
                 onValueChange={(val: string) => setNewAlertType(val as 'buy' | 'sell')}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="انتخاب کنید" />
+                  <SelectValue placeholder={t('dashboard.selectType')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="buy">
                     <span className="flex items-center gap-2">
                       <TrendingUp className="size-4 text-emerald-500" />
-                      خرید طلا
+                      {t('dashboard.buyGold')}
                     </span>
                   </SelectItem>
                   <SelectItem value="sell">
                     <span className="flex items-center gap-2">
                       <TrendingDown className="size-4 text-red-500" />
-                      فروش طلا
+                      {t('dashboard.sellGold')}
                     </span>
                   </SelectItem>
                 </SelectContent>
@@ -2768,28 +2775,27 @@ const GOLD_NEWS = [
 
             {/* Condition */}
             <div className="space-y-2">
-              <Label>شرط</Label>
+              <Label>{t('dashboard.alertCondition')}</Label>
               <Select
                 value={newAlertCondition}
                 onValueChange={(val: string) => setNewAlertCondition(val as 'above' | 'below')}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="انتخاب کنید" />
+                  <SelectValue placeholder={t('dashboard.selectType')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="above">بالای</SelectItem>
-                  <SelectItem value="below">زیر</SelectItem>
+                  <SelectItem value="above">{t('dashboard.alertAbove')}</SelectItem>
+                  <SelectItem value="below">{t('dashboard.alertBelow')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Target Price */}
             <div className="space-y-2">
-              <Label htmlFor="alert-price">قیمت هدف (واحد طلا)</Label>
+              <Label htmlFor="alert-price">{t('dashboard.alertPrice')}</Label>
               <Input
                 id="alert-price"
                 type="number"
-                placeholder="مثلاً: ۴۰,۰۰۰,۰۰۰"
                 value={newAlertPrice}
                 onChange={(e) => setNewAlertPrice(e.target.value)}
                 className="text-left tabular-nums"
@@ -2800,12 +2806,12 @@ const GOLD_NEWS = [
             {/* Preview */}
             {newAlertPrice && Number(newAlertPrice) > 0 && (
               <div className="rounded-lg border border-[#D4AF37]/20 bg-[#D4AF37]/[0.04] p-3">
-                <p className="text-xs text-muted-foreground">پیش‌نمایش:</p>
+                <p className="text-xs text-muted-foreground">{t('dashboard.preview')}</p>
                 <p className="mt-1 text-sm font-medium text-foreground">
-                  {newAlertType === 'buy' ? 'خرید' : 'فروش'} طلا وقتی قیمت{' '}
-                  {newAlertCondition === 'above' ? 'بالای' : 'زیر'}{' '}
+                  {newAlertType === 'buy' ? t('dashboard.buyGold') : t('dashboard.sellGold')} {t('dashboard.alertPreviewText')}{' '}
+                  {newAlertCondition === 'above' ? t('dashboard.alertAbove') : t('dashboard.alertBelow')}{' '}
                   <span className="font-bold tabular-nums text-[#D4AF37]">
-                    {formatPrice(Number(newAlertPrice))} واحد
+                    {formatPrice(Number(newAlertPrice))} {t('dashboard.goldUnit')}
                   </span>
                 </p>
               </div>
@@ -2814,7 +2820,7 @@ const GOLD_NEWS = [
 
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setAlertDialogOpen(false)}>
-              انصراف
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleAddAlert}
@@ -2824,10 +2830,10 @@ const GOLD_NEWS = [
               {alertSubmitting ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
-                  در حال ثبت...
+                  {t('dashboard.registering')}
                 </>
               ) : (
-                'ذخیره هشدار'
+                t('dashboard.saveAlert')
               )}
             </Button>
           </DialogFooter>

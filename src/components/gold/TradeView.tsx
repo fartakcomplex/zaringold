@@ -70,6 +70,7 @@ import {
 } from '@/components/ui/select';
 import { useAppStore } from '@/lib/store';
 import { usePageEvent } from '@/hooks/use-page-event';
+import { useTranslation } from '@/lib/i18n';
 import {
   formatToman,
   formatGrams,
@@ -1686,6 +1687,7 @@ function MobileQuickTradeSheet({
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function TradeView() {
+  const { t, locale } = useTranslation();
   const {
     user,
     goldPrice,

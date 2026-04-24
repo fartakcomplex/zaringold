@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { UserPlus, Mail, Gift, Loader2, Sparkles } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
+import { useTranslation } from '@/lib/i18n';
 
 interface RegisterDialogProps {
   open: boolean;
@@ -27,6 +28,7 @@ export default function RegisterDialog({
   onComplete,
   user,
 }: RegisterDialogProps) {
+  const { t, locale } = useTranslation();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [referralCode, setReferralCode] = useState('');

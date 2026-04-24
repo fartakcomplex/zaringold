@@ -34,6 +34,7 @@ import { useAppStore } from '@/lib/store';
 import { usePageEvent } from '@/hooks/use-page-event';
 import { useRealGoldPrice, getSourceLabel, getSourceColor } from '@/hooks/useRealGoldPrice';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 import {
   formatToman,
 } from '@/lib/helpers';
@@ -65,13 +66,13 @@ const itemVariants = {
 /*  Mock Data — RSI, Moving Averages, Support/Resistance                     */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
-function generateRSIData() {
+function generateRSIData(dateLocale: string) {
   const data = [];
   let rsi = 50;
   for (let i = 30; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    const label = new Intl.DateTimeFormat('fa-IR', {
+    const label = new Intl.DateTimeFormat(dateLocale, {
       month: 'short',
       day: 'numeric',
     }).format(d);
@@ -84,13 +85,13 @@ function generateRSIData() {
   return data;
 }
 
-function generateMovingAverageData() {
+function generateMovingAverageData(dateLocale: string, keys: { price: string; ma7: string; ma21: string; ma50: string }) {
   const data = [];
   let price = 34000000;
   for (let i = 30; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    const label = new Intl.DateTimeFormat('fa-IR', {
+    const label = new Intl.DateTimeFormat(dateLocale, {
       month: 'short',
       day: 'numeric',
     }).format(d);
@@ -100,10 +101,10 @@ function generateMovingAverageData() {
     const ma50 = price + (Math.random() - 0.5) * 1000000;
     data.push({
       date: label,
-      قیمت: Math.round(price),
-      'میانگین ۷': Math.round(ma7),
-      'میانگین ۲۱': Math.round(ma21),
-      'میانگین ۵۰': Math.round(ma50),
+      [keys.price]: Math.round(price),
+      [keys.ma7]: Math.round(ma7),
+      [keys.ma21]: Math.round(ma21),
+      [keys.ma50]: Math.round(ma50),
     });
   }
   return data;
@@ -334,12 +335,10 @@ const MOCK_CALENDAR: CalendarEvent[] = [
 
 interface ComparisonDataPoint {
   date: string;
-  طلا: number;
-  نقره: number;
-  دلار: number;
+  [key: string]: string | number;
 }
 
-function generateComparisonData(): ComparisonDataPoint[] {
+function generateComparisonData(dateLocale: string): ComparisonDataPoint[] {
   const data: ComparisonDataPoint[] = [];
   let gold = 33000000;
   let silver = 850000;
@@ -348,7 +347,7 @@ function generateComparisonData(): ComparisonDataPoint[] {
   for (let i = 29; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    const label = new Intl.DateTimeFormat('fa-IR', {
+    const label = new Intl.DateTimeFormat(dateLocale, {
       month: 'short',
       day: 'numeric',
     }).format(d);
@@ -372,14 +371,15 @@ function generateComparisonData(): ComparisonDataPoint[] {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 function RSITooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) {
+  const { t } = useTranslation();
   if (!active || !payload || !payload.length) return null;
   const rsiVal = payload[0].value;
-  let rsiLabel = 'خنثی';
+  let rsiLabel = t('market.neutral');
   let rsiColor = 'text-amber-500';
-  if (rsiVal > 70) { rsiLabel = 'اشباع خرید'; rsiColor = 'text-red-500'; }
-  else if (rsiVal < 30) { rsiLabel = 'اشباع فروش'; rsiColor = 'text-emerald-500'; }
-  else if (rsiVal > 55) { rsiLabel = 'صعودی'; rsiColor = 'text-emerald-500'; }
-  else if (rsiVal < 45) { rsiLabel = 'نزولی'; rsiColor = 'text-red-500'; }
+  if (rsiVal > 70) { rsiLabel = t('market.overbought'); rsiColor = 'text-red-500'; }
+  else if (rsiVal < 30) { rsiLabel = t('market.oversold'); rsiColor = 'text-emerald-500'; }
+  else if (rsiVal > 55) { rsiLabel = t('market.bullish'); rsiColor = 'text-emerald-500'; }
+  else if (rsiVal < 45) { rsiLabel = t('market.bearish'); rsiColor = 'text-red-500'; }
 
   return (
     <div className="rounded-lg border border-gold/20 bg-card px-3 py-2 shadow-lg">
@@ -433,11 +433,11 @@ function getImpactColor(impact: 'high' | 'medium' | 'low') {
   }
 }
 
-function getImpactLabel(impact: 'high' | 'medium' | 'low') {
+function getImpactLabel(impact: 'high' | 'medium' | 'low', t: (key: string) => string) {
   switch (impact) {
-    case 'high': return 'بالا';
-    case 'medium': return 'متوسط';
-    case 'low': return 'پایین';
+    case 'high': return t('market.high');
+    case 'medium': return t('market.medium');
+    case 'low': return t('market.low');
   }
 }
 
@@ -571,16 +571,13 @@ function ComparisonSkeleton() {
 /* ── Trend Summary Cards ── */
 function TrendSummaryCards() {
   const { goldPrice } = useAppStore();
+  const { t } = useTranslation();
   const currentRSI = 58.3;
-  const rsiSignal = currentRSI > 70 ? 'اشباع خرید' : currentRSI < 30 ? 'اشباع فروش' : currentRSI > 55 ? 'صعودی' : 'نزولی';
+  const rsiSignal = currentRSI > 70 ? t('market.overbought') : currentRSI < 30 ? t('market.oversold') : currentRSI > 55 ? t('market.bullish') : t('market.bearish');
   const rsiColor = currentRSI > 70 ? 'text-red-500' : currentRSI < 30 ? 'text-emerald-500' : currentRSI > 55 ? 'text-emerald-500' : 'text-red-500';
 
-  const maSignal = 'میانگین ۷ روزه بالاتر از ۲۱ روزه — سیگنال صعودی';
   const priceVsMA = goldPrice?.buyPrice ? ((goldPrice.buyPrice - 34200000) / 34200000 * 100) : 0.8;
   const isAboveMA = priceVsMA > 0;
-
-  const trendStrength = 'متوسط';
-  const volatility = 'عادی';
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2 lg:gap-5 lg:grid-cols-4">
@@ -592,7 +589,7 @@ function TrendSummaryCards() {
               <Activity className="size-5 text-gold" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-muted-foreground">شاخص RSI</p>
+              <p className="text-xs font-medium text-muted-foreground">{t('market.rsiIndex')}</p>
               <p className="mt-0.5 text-xl font-bold tabular-nums text-foreground">
                 {formatNumber(currentRSI)}
               </p>
@@ -610,7 +607,7 @@ function TrendSummaryCards() {
               <ArrowUpDown className="size-5 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-muted-foreground">میانگین متحرک</p>
+              <p className="text-xs font-medium text-muted-foreground">{t('market.movingAverage')}</p>
               <div className="mt-0.5 flex items-center gap-1.5">
                 {isAboveMA ? (
                   <ArrowUp className="size-3.5 text-emerald-500" />
@@ -621,7 +618,6 @@ function TrendSummaryCards() {
                   {isAboveMA ? '+' : ''}{formatNumber(Math.round(priceVsMA * 10) / 10)}٪
                 </span>
               </div>
-              <p className="text-[10px] text-muted-foreground truncate">{maSignal}</p>
             </div>
           </div>
         </CardContent>
@@ -635,9 +631,9 @@ function TrendSummaryCards() {
               <Zap className="size-5 text-amber-600 dark:text-amber-400" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-muted-foreground">قدرت روند</p>
-              <p className="mt-0.5 text-xl font-bold text-foreground">{trendStrength}</p>
-              <p className="text-[10px] text-muted-foreground">شاخص ADX: {formatNumber(28.5)}</p>
+              <p className="text-xs font-medium text-muted-foreground">{t('market.trendStrength')}</p>
+              <p className="mt-0.5 text-xl font-bold text-foreground">{t('market.medium')}</p>
+              <p className="text-[10px] text-muted-foreground">ADX: {formatNumber(28.5)}</p>
             </div>
           </div>
         </CardContent>
@@ -651,9 +647,9 @@ function TrendSummaryCards() {
               <Shield className="size-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-muted-foreground">نوسان‌پذیری</p>
-              <p className="mt-0.5 text-xl font-bold text-foreground">{volatility}</p>
-              <p className="text-[10px] text-muted-foreground">باندهای بولینگر: {formatNumber(1.2)}٪</p>
+              <p className="text-xs font-medium text-muted-foreground">{t('market.volatility')}</p>
+              <p className="mt-0.5 text-xl font-bold text-foreground">{t('market.normal')}</p>
+              <p className="text-[10px] text-muted-foreground">Bollinger: {formatNumber(1.2)}٪</p>
             </div>
           </div>
         </CardContent>
@@ -664,6 +660,7 @@ function TrendSummaryCards() {
 
 /* ── RSI Chart ── */
 function RSIChartSection({ data }: { data: Array<{ date: string; rsi: number }> }) {
+  const { t } = useTranslation();
   const [timeRange, setTimeRange] = useState('14d');
   const filteredData = timeRange === '7d' ? data.slice(-7) : data.slice(-14);
 
@@ -672,12 +669,12 @@ function RSIChartSection({ data }: { data: Array<{ date: string; rsi: number }> 
       <CardHeader className="flex flex-col gap-3 pb-2 sm:flex-row sm:items-center sm:justify-between">
         <CardTitle className="flex items-center gap-2 text-base font-bold">
           <Activity className="size-4 text-gold" />
-          شاخص قدرت نسبی (RSI)
+          {t('market.rsiTitle')}
         </CardTitle>
         <div className="flex gap-1.5">
           {[
-            { key: '7d', label: '۷ روز' },
-            { key: '14d', label: '۱۴ روز' },
+            { key: '7d', label: t('chart.7d') },
+            { key: '14d', label: t('market.14days') },
           ].map((range) => (
             <Button
               key={range.key}
@@ -737,7 +734,7 @@ function RSIChartSection({ data }: { data: Array<{ date: string; rsi: number }> 
         <div className="mt-2 flex items-center justify-center gap-6 text-[10px]">
           <div className="flex items-center gap-1.5">
             <span className="inline-block size-2 rounded-full bg-red-500" />
-            <span className="text-muted-foreground">اشباع خرید (۷۰+)</span>
+            <span className="text-muted-foreground">{t('market.overbought70')}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block size-2 rounded-full bg-gold" />
@@ -745,7 +742,7 @@ function RSIChartSection({ data }: { data: Array<{ date: string; rsi: number }> 
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block size-2 rounded-full bg-emerald-500" />
-            <span className="text-muted-foreground">اشباع فروش (۳۰-)</span>
+            <span className="text-muted-foreground">{t('market.oversold30')}</span>
           </div>
         </div>
       </CardContent>
@@ -755,34 +752,42 @@ function RSIChartSection({ data }: { data: Array<{ date: string; rsi: number }> 
 
 /* ── Moving Averages Chart ── */
 function MovingAverageChartSection({ data }: { data: Array<Record<string, number | string>> }) {
+  const { t } = useTranslation();
+  const priceKey = t('market.price');
+  const ma7Key = t('market.ma7');
+  const ma21Key = t('market.ma21');
+  const ma50Key = t('market.ma50');
+
   const [showMA, setShowMA] = useState<Record<string, boolean>>({
-    'میانگین ۷': true,
-    'میانگین ۲۱': true,
-    'میانگین ۵۰': true,
+    ma7: true,
+    ma21: true,
+    ma50: true,
   });
+
+  const maConfig = [
+    { id: 'ma7', label: ma7Key, dataKey: ma7Key, color: '#D4AF37' },
+    { id: 'ma21', label: ma21Key, dataKey: ma21Key, color: '#22c55e' },
+    { id: 'ma50', label: ma50Key, dataKey: ma50Key, color: '#ef4444' },
+  ];
 
   return (
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-col gap-3 pb-2 sm:flex-row sm:items-center sm:justify-between">
         <CardTitle className="flex items-center gap-2 text-base font-bold">
           <BarChart3 className="size-4 text-gold" />
-          میانگین‌های متحرک
+          {t('market.movingAverages')}
         </CardTitle>
         <div className="flex flex-wrap gap-1.5">
-          {[
-            { key: 'میانگین ۷', color: '#D4AF37' },
-            { key: 'میانگین ۲۱', color: '#22c55e' },
-            { key: 'میانگین ۵۰', color: '#ef4444' },
-          ].map((ma) => (
+          {maConfig.map((ma) => (
             <Button
-              key={ma.key}
+              key={ma.id}
               size="sm"
-              variant={showMA[ma.key] ? 'default' : 'outline'}
+              variant={showMA[ma.id] ? 'default' : 'outline'}
               className="text-xs"
-              style={showMA[ma.key] ? { backgroundColor: ma.color, color: '#fff', borderColor: ma.color } : { borderColor: ma.color, color: ma.color }}
-              onClick={() => setShowMA((prev) => ({ ...prev, [ma.key]: !prev[ma.key] }))}
+              style={showMA[ma.id] ? { backgroundColor: ma.color, color: '#fff', borderColor: ma.color } : { borderColor: ma.color, color: ma.color }}
+              onClick={() => setShowMA((prev) => ({ ...prev, [ma.id]: !prev[ma.id] }))}
             >
-              {ma.key}
+              {ma.label}
             </Button>
           ))}
         </div>
@@ -815,20 +820,20 @@ function MovingAverageChartSection({ data }: { data: Array<Record<string, number
               <Tooltip content={<MATooltip />} />
               <Line
                 type="monotone"
-                dataKey="قیمت"
+                dataKey={priceKey}
                 stroke="#D4AF37"
                 strokeWidth={2}
                 dot={false}
                 activeDot={{ r: 4, fill: '#D4AF37', stroke: '#fff', strokeWidth: 2 }}
               />
-              {showMA['میانگین ۷'] && (
-                <Line type="monotone" dataKey="میانگین ۷" stroke="#D4AF37" strokeWidth={1.5} strokeDasharray="4 4" dot={false} />
+              {showMA['ma7'] && (
+                <Line type="monotone" dataKey={ma7Key} stroke="#D4AF37" strokeWidth={1.5} strokeDasharray="4 4" dot={false} />
               )}
-              {showMA['میانگین ۲۱'] && (
-                <Line type="monotone" dataKey="میانگین ۲۱" stroke="#22c55e" strokeWidth={1.5} strokeDasharray="6 3" dot={false} />
+              {showMA['ma21'] && (
+                <Line type="monotone" dataKey={ma21Key} stroke="#22c55e" strokeWidth={1.5} strokeDasharray="6 3" dot={false} />
               )}
-              {showMA['میانگین ۵۰'] && (
-                <Line type="monotone" dataKey="میانگین ۵۰" stroke="#ef4444" strokeWidth={1.5} strokeDasharray="8 4" dot={false} />
+              {showMA['ma50'] && (
+                <Line type="monotone" dataKey={ma50Key} stroke="#ef4444" strokeWidth={1.5} strokeDasharray="8 4" dot={false} />
               )}
             </LineChart>
           </ResponsiveContainer>
@@ -840,12 +845,13 @@ function MovingAverageChartSection({ data }: { data: Array<Record<string, number
 
 /* ── Support / Resistance Levels ── */
 function SupportResistanceSection({ levels }: { levels: SupportResistanceLevel[] }) {
+  const { t } = useTranslation();
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base font-bold">
           <Target className="size-4 text-gold" />
-          سطوح حمایت و مقاومت
+          {t('market.supportResistance')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -881,17 +887,17 @@ function SupportResistanceSection({ levels }: { levels: SupportResistanceLevel[]
                       {level.label}
                     </span>
                     {isCurrent && (
-                      <Badge className="badge-gold text-[10px]">فعلی</Badge>
+                      <Badge className="badge-gold text-[10px]">{t('market.current')}</Badge>
                     )}
                     {!isCurrent && isSupport && (
-                      <Badge className="badge-success-green text-[10px]">حمایت</Badge>
+                      <Badge className="badge-success-green text-[10px]">{t('market.support')}</Badge>
                     )}
                     {!isCurrent && isResistance && (
-                      <Badge className="badge-danger-red text-[10px]">مقاومت</Badge>
+                      <Badge className="badge-danger-red text-[10px]">{t('market.resistance')}</Badge>
                     )}
                   </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span>قدرت: {level.strength === 'strong' ? 'قوی' : level.strength === 'medium' ? 'متوسط' : 'ضعیف'}</span>
+                    <span>{t('market.strength')}: {level.strength === 'strong' ? t('market.strong') : level.strength === 'medium' ? t('market.medium') : t('market.weak')}</span>
                   </div>
                 </div>
                 <span className={`text-sm font-bold tabular-nums ${isCurrent ? 'text-gold' : isSupport ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'}`}>
@@ -908,6 +914,7 @@ function SupportResistanceSection({ levels }: { levels: SupportResistanceLevel[]
 
 /* ── News Feed ── */
 function NewsFeedSection() {
+  const { t, locale } = useTranslation();
   const [news, setNews] = useState<NewsItem[]>(MOCK_NEWS);
   const [blogPosts, setBlogPosts] = useState<Array<{
     id: string;
@@ -930,15 +937,15 @@ function NewsFeedSection() {
         const list = data.posts || data || [];
         if (Array.isArray(list) && list.length > 0) {
           setBlogPosts(list);
-          // Convert blog posts to NewsItem format and merge with MOCK_NEWS
+          const dateLocale = locale === 'fa' ? 'fa-IR' : 'en-US';
           const blogNews: NewsItem[] = list.slice(0, 5).map((post: any, idx: number) => ({
             id: `blog-${post.id}`,
             title: post.title,
             summary: post.excerpt || '',
-            source: post.category?.name || 'وبلاگ زرین گلد',
+            source: post.category?.name || 'Zarrin Gold Blog',
             time: (() => {
               try {
-                return new Intl.DateTimeFormat('fa-IR', { month: 'short', day: 'numeric' }).format(new Date(post.publishedAt));
+                return new Intl.DateTimeFormat(dateLocale, { month: 'short', day: 'numeric' }).format(new Date(post.publishedAt));
               } catch {
                 return post.publishedAt;
               }
@@ -947,7 +954,6 @@ function NewsFeedSection() {
             sentiment: (['positive', 'neutral', 'positive', 'positive', 'neutral'] as const)[idx % 5],
             slug: post.slug,
           }));
-          // Interleave blog posts with mock news
           const merged: NewsItem[] = [];
           const maxLen = Math.max(blogNews.length, MOCK_NEWS.length);
           for (let i = 0; i < maxLen; i++) {
@@ -957,14 +963,13 @@ function NewsFeedSection() {
           setNews(merged);
         }
       } catch {
-        // Fallback to mock news
         setNews(MOCK_NEWS);
       } finally {
         setLoading(false);
       }
     }
     fetchBlogPosts();
-  }, []);
+  }, [locale]);
 
   const visible = news.slice(0, visibleCount);
   const hasMore = visibleCount < news.length;
@@ -983,10 +988,10 @@ function NewsFeedSection() {
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <CardTitle className="flex items-center gap-2 text-base font-bold">
           <Newspaper className="size-4 text-gold" />
-          اخبار بازار طلا
+          {t('market.goldMarketNews')}
         </CardTitle>
         <Badge className="badge-gold text-xs">
-          {formatNumber(news.length)} خبر
+          {formatNumber(news.length)} {t('market.news')}
         </Badge>
       </CardHeader>
       <CardContent>
@@ -1011,7 +1016,7 @@ function NewsFeedSection() {
                   </p>
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     <Badge variant="secondary" className={`${getImpactColor(item.impact)} text-[10px] px-2 py-0`}>
-                      {getImpactLabel(item.impact)}
+                      {getImpactLabel(item.impact, t)}
                     </Badge>
                     <span className="text-[10px] text-muted-foreground">{item.source}</span>
                     <span className="text-[10px] text-muted-foreground/60">·</span>
@@ -1033,7 +1038,7 @@ function NewsFeedSection() {
               className="text-xs text-gold border-gold/30 hover:bg-gold/5"
               onClick={() => setVisibleCount((prev) => prev + 3)}
             >
-              مشاهده اخبار بیشتر
+              {t('common.viewAll')}
             </Button>
           </div>
         )}
@@ -1044,6 +1049,7 @@ function NewsFeedSection() {
 
 /* ── Economic Calendar ── */
 function EconomicCalendarSection({ events }: { events: CalendarEvent[] }) {
+  const { t } = useTranslation();
   const [filterImpact, setFilterImpact] = useState<'all' | 'high' | 'medium' | 'low'>('all');
   const filtered = filterImpact === 'all' ? events : events.filter((e) => e.impact === filterImpact);
 
@@ -1056,10 +1062,10 @@ function EconomicCalendarSection({ events }: { events: CalendarEvent[] }) {
         </CardTitle>
         <div className="flex gap-1.5">
           {[
-            { key: 'all' as const, label: 'همه' },
-            { key: 'high' as const, label: 'بالا' },
-            { key: 'medium' as const, label: 'متوسط' },
-            { key: 'low' as const, label: 'پایین' },
+            { key: 'all' as const, label: t('common.all') },
+            { key: 'high' as const, label: t('market.high') },
+            { key: 'medium' as const, label: t('market.medium') },
+            { key: 'low' as const, label: t('market.low') },
           ].map((f) => (
             <Button
               key={f.key}
@@ -1103,7 +1109,7 @@ function EconomicCalendarSection({ events }: { events: CalendarEvent[] }) {
 
               {/* Impact Badge */}
               <Badge className={`${getImpactColor(event.impact)} text-[10px] shrink-0`}>
-                {getImpactLabel(event.impact)}
+                {getImpactLabel(event.impact, t)}
               </Badge>
 
               {/* Previous */}
@@ -1365,6 +1371,7 @@ function MarketOverviewBar() {
 
 export default function MarketView() {
   const { goldPrice, priceHistory, addToast } = useAppStore();
+  const { t, locale } = useTranslation();
 
   /* ── Loading State ── */
   const [isLoading, setIsLoading] = useState(true);
@@ -1381,16 +1388,24 @@ export default function MarketView() {
 
   /* ── Generate Mock Data on Mount ── */
   useEffect(() => {
+    const dateLocale = locale === 'fa' ? 'fa-IR' : 'en-US';
+    const maKeys = {
+      price: t('market.price'),
+      ma7: t('market.ma7'),
+      ma21: t('market.ma21'),
+      ma50: t('market.ma50'),
+    };
+
     const timer = setTimeout(() => {
-      setRsiData(generateRSIData());
-      setMaData(generateMovingAverageData());
+      setRsiData(generateRSIData(dateLocale));
+      setMaData(generateMovingAverageData(dateLocale, maKeys));
       setSupportResistance(generateSupportResistance());
-      setComparisonData(generateComparisonData());
+      setComparisonData(generateComparisonData(dateLocale));
       setIsLoading(false);
     }, 600);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [locale, t]);
 
   /* ═══════════════════════════════════════════════════════════════════════════ */
   /*  Render                                                                  */
@@ -1460,42 +1475,35 @@ export default function MarketView() {
                         تحلیل کلی بازار
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="rounded-lg bg-gold/5 p-4">
-                        <div className="flex items-start gap-2">
-                          <AlertTriangle className="size-4 shrink-0 text-gold mt-0.5" />
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 shrink-0">
+                            <TrendingUp className="size-4 text-emerald-500" />
+                          </div>
                           <div>
-                            <p className="text-sm font-semibold text-foreground">سیگنال فعلی: صعودی</p>
-                            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                              بر اساس شاخص‌های فنی، روند کوتاه‌مدت طلا صعودی است. RSI در محدوده ۵۸ قرار دارد که نشان‌دهنده قدرت خریداران است. میانگین ۷ روزه بالاتر از میانگین ۲۱ روزه قرار گرفته که سیگنال صعودی محسوب می‌شود.
-                            </p>
+                            <p className="text-sm font-semibold text-foreground">روند صعودی کوتاه‌مدت</p>
+                            <p className="text-xs text-muted-foreground">شاخص RSI بالای ۵۰ و میانگین ۷ روزه بالاتر از ۲۱ روزه، نشان‌دهنده ادامه روند صعودی در کوتاه‌مدت است.</p>
                           </div>
                         </div>
-                      </div>
-
-                      <div className="rounded-lg bg-emerald-50 p-4 dark:bg-emerald-950/20">
-                        <div className="flex items-start gap-2">
-                          <TrendingUp className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
+                        <Separator />
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 shrink-0">
+                            <Shield className="size-4 text-amber-500" />
+                          </div>
                           <div>
-                            <p className="text-sm font-semibold text-foreground">نقاط کلیدی</p>
-                            <ul className="mt-1 space-y-1 text-xs leading-relaxed text-muted-foreground">
-                              <li>• حمایت اصلی: ۹.۸ گرم طلا</li>
-                              <li>• مقاومت اصلی: ۱۰.۱۸ گرم طلا</li>
-                              <li>• در صورت عبور از مقاومت: هدف ۳۶,۰۰۰,۰۰۰</li>
-                              <li>• حد ضرر پیشنهادی: ۳۳,۵۰۰,۰۰۰</li>
-                            </ul>
+                            <p className="text-sm font-semibold text-foreground">سطح مقاومت مهم</p>
+                            <p className="text-xs text-muted-foreground">سطح ۳۵,۱۰۰,۰۰۰ یک مقاومت کلیدی محسوب می‌شود. عبور از این سطح می‌تواند سیگنال خرید قوی باشد.</p>
                           </div>
                         </div>
-                      </div>
-
-                      <div className="rounded-lg bg-muted/50 p-4">
-                        <div className="flex items-start gap-2">
-                          <DollarSign className="size-4 shrink-0 text-muted-foreground mt-0.5" />
+                        <Separator />
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 shrink-0">
+                            <Zap className="size-4 text-blue-500" />
+                          </div>
                           <div>
-                            <p className="text-sm font-semibold text-foreground">توصیه سرمایه‌گذاری</p>
-                            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                              با توجه به شرایط فعلی بازار و کاهش احتمالی نرخ بهره، پیشنهاد می‌شود خرید تدریجی در اصلاحات قیمت انجام شود. مدیریت ریسک و تعیین حد ضرر الزامی است.
-                            </p>
+                            <p className="text-sm font-semibold text-foreground">هشدار نوسان</p>
+                            <p className="text-xs text-muted-foreground">با توجه به تقارب با ۳۵,۱۰۰,۰۰۰ و نوسانات اخیر، ریسک نزول کوتاه‌مدت وجود دارد.</p>
                           </div>
                         </div>
                       </div>
@@ -1506,26 +1514,18 @@ export default function MarketView() {
             )}
           </TabsContent>
 
-          {/* ── Tab: Market News ── */}
-          <TabsContent value="news" className="mt-6">
-            {isLoading ? (
-              <NewsSkeleton />
-            ) : (
-              <NewsFeedSection />
-            )}
+          {/* ── Tab: News ── */}
+          <TabsContent value="news" className="mt-6 space-y-6">
+            <NewsFeedSection />
           </TabsContent>
 
           {/* ── Tab: Economic Calendar ── */}
-          <TabsContent value="calendar" className="mt-6">
-            {isLoading ? (
-              <CalendarSkeleton />
-            ) : (
-              <EconomicCalendarSection events={MOCK_CALENDAR} />
-            )}
+          <TabsContent value="calendar" className="mt-6 space-y-6">
+            <EconomicCalendarSection events={MOCK_CALENDAR} />
           </TabsContent>
 
-          {/* ── Tab: Price Comparison ── */}
-          <TabsContent value="comparison" className="mt-6">
+          {/* ── Tab: Comparison ── */}
+          <TabsContent value="comparison" className="mt-6 space-y-6">
             {isLoading ? (
               <ComparisonSkeleton />
             ) : (

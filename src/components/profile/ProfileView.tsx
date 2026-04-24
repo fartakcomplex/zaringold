@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
+import { useTranslation } from '@/lib/i18n';
 import { formatNumber, formatGrams, getTimeAgo } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -204,6 +205,7 @@ function isLevelUnlocked(userLevel: string, featureLevel: string): boolean {
 
 export default function ProfileView() {
   const { user, addToast } = useAppStore();
+  const { t, locale } = useTranslation();
 
   /* ── Tab & UI state ── */
   const [activeTab, setActiveTab] = useState('personal');
@@ -455,7 +457,7 @@ export default function ProfileView() {
       {/* ─── Page Title ─── */}
       <h1 className="text-2xl font-bold text-gold flex items-center gap-2">
         <User className="size-6" />
-        پروفایل کاربری
+        {locale === 'en' ? 'User Profile' : 'پروفایل کاربری'}
       </h1>
 
       {/* ═══════════════════════════════════════════════════════════ */}

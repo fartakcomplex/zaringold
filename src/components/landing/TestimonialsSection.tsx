@@ -10,7 +10,7 @@ import { useRef, useState, useCallback } from 'react';
 /*  Testimonial Data (hardcoded Persian)                                      */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
-const testimonials = [
+const testimonialsFa = [
   {
     name: 'علی محمدی',
     rating: 5,
@@ -52,6 +52,51 @@ const testimonials = [
     role: 'کاربر جدید',
     text: 'پشتیبانی ۲۴ ساعته عالیه. هر سوالی داشتم سریع جواب دادن.',
     date: '۵ روز پیش',
+  },
+];
+
+const testimonialsEn = [
+  {
+    name: 'Ali Mohammadi',
+    rating: 5,
+    role: 'Regular User',
+    text: 'Trading gold with Zarrin Gold was very easy for me. Low fees and excellent support.',
+    date: '2 weeks ago',
+  },
+  {
+    name: 'Sara Ahmadi',
+    rating: 5,
+    role: 'Investor',
+    text: "Zarrin Gold's gold savings is the best way to invest. Very satisfied.",
+    date: '1 month ago',
+  },
+  {
+    name: 'Mohammad Rezaei',
+    rating: 5,
+    role: 'Professional Trader',
+    text: 'Simple and fast interface. The best gold trading platform in Iran.',
+    date: '3 weeks ago',
+  },
+  {
+    name: 'Fatemeh Karimi',
+    rating: 4,
+    role: 'Active User',
+    text: 'The price alert feature really helped me. Bought at the right time.',
+    date: '2 months ago',
+  },
+  {
+    name: 'Reza Hosseini',
+    rating: 5,
+    role: 'Gold Card Holder',
+    text: "Zarrin Gold's gold card is amazing. I can spend my gold easily.",
+    date: '1 week ago',
+  },
+  {
+    name: 'Maryam Noori',
+    rating: 5,
+    role: 'New User',
+    text: '24/7 support is great. They answered all my questions quickly.',
+    date: '5 days ago',
   },
 ];
 

@@ -23,6 +23,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 import { usePageEvent } from '@/hooks/use-page-event';
+import { useTranslation } from '@/lib/i18n';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -414,6 +415,7 @@ function NotificationSettings() {
 /* ------------------------------------------------------------------ */
 
 export default function NotificationsView() {
+  const { t, locale } = useTranslation();
   const [notifications, setNotifications] =
     useState<Notification[]>(initialNotifications);
   const [activeTab, setActiveTab] = useState('all');

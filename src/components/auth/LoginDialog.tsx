@@ -19,6 +19,7 @@ import {
 import { Phone, ShieldCheck, Loader2, ArrowLeft, KeyRound, Lock, Eye, EyeOff, UserCog } from 'lucide-react';
 import SmartCaptcha from '@/components/shared/SmartCaptcha';
 import { useAppStore } from '@/lib/store';
+import { useTranslation } from '@/lib/i18n';
 
 interface LoginDialogProps {
   open: boolean;
@@ -37,6 +38,7 @@ export default function LoginDialog({
   onOpenChange,
   onSuccess,
 }: LoginDialogProps) {
+  const { t, locale } = useTranslation();
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');

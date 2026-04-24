@@ -50,6 +50,7 @@ import {
 import GoldGiftDialog from '@/components/gold/GoldGiftDialog';
 import PaymentDialog from '@/components/payment/PaymentDialog';
 import { useAppStore } from '@/lib/store';
+import { useTranslation } from '@/lib/i18n';
 import { usePageEvent } from '@/hooks/use-page-event';
 import {
   formatToman,
@@ -87,27 +88,33 @@ const itemVariants = {
 /*  Constants                                                                */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
-const DEPOSIT_QUICK_AMOUNTS = [
-  { value: 500000, label: '۵۰۰ هزار' },
-  { value: 1000000, label: '۱ میلیون' },
-  { value: 5000000, label: '۵ میلیون' },
-  { value: 10000000, label: '۱۰ میلیون' },
-];
+function getDepositQuickAmounts(t: (k: string) => string, locale: string) {
+  return [
+    { value: 500000, label: locale === 'en' ? '500K' : '۵۰۰ هزار' },
+    { value: 1000000, label: locale === 'en' ? '1M' : '۱ میلیون' },
+    { value: 5000000, label: locale === 'en' ? '5M' : '۵ میلیون' },
+    { value: 10000000, label: locale === 'en' ? '10M' : '۱۰ میلیون' },
+  ];
+}
 
-const WITHDRAW_QUICK_AMOUNTS = [
-  { value: 1000000, label: '۱ میلیون' },
-  { value: 5000000, label: '۵ میلیون' },
-  { value: 10000000, label: '۱۰ میلیون' },
-  { value: 50000000, label: '۵۰ میلیون' },
-];
+function getWithdrawQuickAmounts(t: (k: string) => string, locale: string) {
+  return [
+    { value: 1000000, label: locale === 'en' ? '1M' : '۱ میلیون' },
+    { value: 5000000, label: locale === 'en' ? '5M' : '۵ میلیون' },
+    { value: 10000000, label: locale === 'en' ? '10M' : '۱۰ میلیون' },
+    { value: 50000000, label: locale === 'en' ? '50M' : '۵۰ میلیون' },
+  ];
+}
 
-const TX_FILTER_OPTIONS = [
-  { value: 'all', label: 'همه' },
-  { value: 'deposit', label: 'واریز' },
-  { value: 'withdraw', label: 'برداشت' },
-  { value: 'buy_gold,gold_buy', label: 'خرید طلا' },
-  { value: 'sell_gold,gold_sell', label: 'فروش طلا' },
-] as const;
+function getTxFilterOptions(t: (k: string) => string) {
+  return [
+    { value: 'all', label: t('common.all') },
+    { value: 'deposit', label: t('wallet.deposit') },
+    { value: 'withdraw', label: t('wallet.withdraw') },
+    { value: 'buy_gold,gold_buy', label: t('dashboard.buyGold') },
+    { value: 'sell_gold,gold_sell', label: t('dashboard.sellGold') },
+  ] as const;
+}
 
 const PIE_COLORS = ['#D4AF37', '#10b981']; // gold, emerald
 const PAGE_SIZE = 8;
@@ -116,12 +123,14 @@ const PAGE_SIZE = 8;
 /*  Mock Data for Charts                                                     */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
-const MONTHLY_SUMMARY = [
-  { label: 'واریز این ماه', amount: 45000000, change: 12.5, icon: 'deposit' as const, positive: true },
-  { label: 'برداشت این ماه', amount: 18000000, change: -8.3, icon: 'withdraw' as const, positive: false },
-  { label: 'خرید طلا', amount: 32000000, change: 24.1, icon: 'buy' as const, positive: true },
-  { label: 'فروش طلا', amount: 12500000, change: -5.7, icon: 'sell' as const, positive: false },
-];
+function getMonthlySummary(t: (k: string) => string) {
+  return [
+    { label: t('wallet.monthDeposit'), amount: 45000000, change: 12.5, icon: 'deposit' as const, positive: true },
+    { label: t('wallet.monthWithdraw'), amount: 18000000, change: -8.3, icon: 'withdraw' as const, positive: false },
+    { label: t('dashboard.buyGold'), amount: 32000000, change: 24.1, icon: 'buy' as const, positive: true },
+    { label: t('dashboard.sellGold'), amount: 12500000, change: -5.7, icon: 'sell' as const, positive: false },
+  ];
+}
 
 const TX_BREAKDOWN = [
   { type: 'واریز', amount: 45000000, color: '#10b981' },
@@ -292,6 +301,7 @@ export default function WalletView() {
     addTransaction,
     addToast,
   } = useAppStore();
+  const { t, locale } = useTranslation();
 
   /* ── State ── */
   const [isLoading, setIsLoading] = useState(true);

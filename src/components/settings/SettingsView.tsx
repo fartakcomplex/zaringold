@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useTheme } from 'next-themes';
 import { useAppStore } from '@/lib/store';
 import { usePageEvent } from '@/hooks/use-page-event';
+import { useTranslation } from '@/lib/i18n';
 import SmsSettings from '@/components/sms/SmsSettings';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,6 +31,7 @@ import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, A
 export default function SettingsView() {
   const { theme, setTheme } = useTheme();
   const { user, addToast, setPage, reset } = useAppStore();
+  const { t, locale } = useTranslation();
   const [activeTab, setActiveTab] = useState('general');
   const [notifications, setNotifications] = useState({
     trade: true,
@@ -78,7 +80,7 @@ export default function SettingsView() {
                 <div className="flex size-8 items-center justify-center rounded-lg bg-[#D4AF37]/10">
                   <Settings className="size-4 text-[#D4AF37]" />
                 </div>
-                ظاهر
+                {locale === 'en' ? 'Appearance' : 'ظاهر'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 p-4 md:p-6">
@@ -88,8 +90,8 @@ export default function SettingsView() {
                     {theme === 'dark' ? <Moon className="size-5 text-[#D4AF37]" /> : <Sun className="size-5 text-[#D4AF37]" />}
                   </div>
                   <div>
-                    <p className="font-medium">حالت تاریک</p>
-                    <p className="text-sm text-muted-foreground">تغییر تم برنامه بین روشن و تاریک</p>
+                    <p className="font-medium">{locale === 'en' ? 'Dark Mode' : 'حالت تاریک'}</p>
+                    <p className="text-sm text-muted-foreground">{locale === 'en' ? 'Toggle between light and dark theme' : 'تغییر تم برنامه بین روشن و تاریک'}</p>
                   </div>
                 </div>
                 <Switch
@@ -105,8 +107,8 @@ export default function SettingsView() {
                     <Globe className="size-5 text-[#D4AF37]" />
                   </div>
                   <div>
-                    <p className="font-medium">زبان</p>
-                    <p className="text-sm text-muted-foreground">زبان نمایش برنامه</p>
+                    <p className="font-medium">{locale === 'en' ? 'Language' : 'زبان'}</p>
+                    <p className="text-sm text-muted-foreground">{locale === 'en' ? 'Display language' : 'زبان نمایش برنامه'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -126,21 +128,21 @@ export default function SettingsView() {
                 <div className="flex size-8 items-center justify-center rounded-lg bg-[#D4AF37]/10">
                   <User className="size-4 text-[#D4AF37]" />
                 </div>
-                حساب کاربری
+                {locale === 'en' ? 'Account' : 'حساب کاربری'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 p-4 md:p-6">
               <div className="flex items-center justify-between p-3 md:p-4 rounded-lg bg-muted/50">
                 <div>
-                  <p className="text-sm font-medium">وضعیت حساب</p>
-                  <p className="text-xs text-muted-foreground">حساب شما فعال است</p>
+                  <p className="text-sm font-medium">{locale === 'en' ? 'Account Status' : 'وضعیت حساب'}</p>
+                  <p className="text-xs text-muted-foreground">{locale === 'en' ? 'Your account is active' : 'حساب شما فعال است'}</p>
                 </div>
-                <Badge className="bg-emerald-500/20 text-emerald-500">فعال</Badge>
+                <Badge className="bg-emerald-500/20 text-emerald-500">{locale === 'en' ? 'Active' : 'فعال'}</Badge>
               </div>
               <div className="flex items-center justify-between p-3 md:p-4 rounded-lg bg-muted/50">
                 <div>
-                  <p className="text-sm font-medium">احراز هویت</p>
-                  <p className="text-xs text-muted-foreground">مدیریت وضعیت احراز هویت</p>
+                  <p className="text-sm font-medium">{locale === 'en' ? 'Verification' : 'احراز هویت'}</p>
+                  <p className="text-xs text-muted-foreground">{locale === 'en' ? 'Manage verification status' : 'مدیریت وضعیت احراز هویت'}</p>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => setPage('profile')} className="text-gold">
                   مشاهده <ChevronLeft className="size-4 mr-1" />
@@ -162,22 +164,22 @@ export default function SettingsView() {
                 <div className="flex size-8 items-center justify-center rounded-lg bg-[#D4AF37]/10">
                   <Shield className="size-4 text-[#D4AF37]" />
                 </div>
-                امنیت
+                {locale === 'en' ? 'Security' : 'امنیت'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 p-4 md:p-6">
               <div className="flex items-center justify-between p-3 md:p-4 rounded-lg bg-muted/50">
                 <div>
-                  <p className="text-sm font-medium">تأیید دو مرحله‌ای</p>
-                  <p className="text-xs text-muted-foreground">افزایش امنیت ورود به حساب</p>
+                  <p className="text-sm font-medium">{locale === 'en' ? 'Two-Factor Auth' : 'تأیید دو مرحله‌ای'}</p>
+                  <p className="text-xs text-muted-foreground">{locale === 'en' ? 'Increase account security' : 'افزایش امنیت ورود به حساب'}</p>
                 </div>
                 <Switch className="data-[state=checked]:bg-[#D4AF37]" />
               </div>
               <Separator />
               <div className="flex items-center justify-between p-3 md:p-4 rounded-lg bg-muted/50">
                 <div>
-                  <p className="text-sm font-medium">تغییر رمز عبور</p>
-                  <p className="text-xs text-muted-foreground">رمز عبور خود را به‌روزرسانی کنید</p>
+                  <p className="text-sm font-medium">{locale === 'en' ? 'Change Password' : 'تغییر رمز عبور'}</p>
+                  <p className="text-xs text-muted-foreground">{locale === 'en' ? 'Update your password' : 'رمز عبور خود را به‌روزرسانی کنید'}</p>
                 </div>
                 <Button variant="ghost" size="sm" className="text-[#D4AF37] hover:text-[#D4AF37]/80 hover:bg-[#D4AF37]/10">
                   تغییر <ChevronLeft className="size-4 mr-1" />
@@ -193,44 +195,44 @@ export default function SettingsView() {
                 <div className="flex size-8 items-center justify-center rounded-lg bg-red-500/10">
                   <AlertTriangle className="size-4" />
                 </div>
-                منطقه خطر
+                {locale === 'en' ? 'Danger Zone' : 'منطقه خطر'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 p-4 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">خروج از حساب</p>
-                  <p className="text-sm text-muted-foreground">خروج امن از حساب کاربری</p>
+                  <p className="font-medium">{locale === 'en' ? 'Logout' : 'خروج از حساب'}</p>
+                  <p className="text-sm text-muted-foreground">{locale === 'en' ? 'Secure logout' : 'خروج امن از حساب کاربری'}</p>
                 </div>
                 <Button variant="outline" className="btn-danger-outline" onClick={handleLogout}>
                   <LogOut className="size-4 ml-2" />
-                  خروج
+                  {locale === 'en' ? 'Logout' : 'خروج'}
                 </Button>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-red-500">حذف حساب</p>
-                  <p className="text-sm text-muted-foreground">حذف دائمی حساب و تمامی اطلاعات</p>
+                  <p className="font-medium text-red-500">{locale === 'en' ? 'Delete Account' : 'حذف حساب'}</p>
+                  <p className="text-sm text-muted-foreground">{locale === 'en' ? 'Permanently delete your account and all data' : 'حذف دائمی حساب و تمامی اطلاعات'}</p>
                 </div>
                 <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                   <AlertDialogTrigger asChild>
                     <Button variant="outline" className="border-red-500/30 text-red-500 hover:bg-red-500/10">
                       <Trash2 className="size-4 ml-2" />
-                      حذف حساب
+                      {locale === 'en' ? 'Delete Account' : 'حذف حساب'}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle className="text-red-500">حذف حساب کاربری</AlertDialogTitle>
+                      <AlertDialogTitle className="text-red-500">{locale === 'en' ? 'Delete Account' : 'حذف حساب کاربری'}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        آیا مطمئن هستید؟ این عمل قابل بازگشت نیست و تمامی اطلاعات شما حذف خواهد شد.
+                        {locale === 'en' ? 'Are you sure? This action cannot be undone and all your data will be deleted.' : 'آیا مطمئن هستید؟ این عمل قابل بازگشت نیست و تمامی اطلاعات شما حذف خواهد شد.'}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-3">
-                      <AlertDialogCancel variant="outline">انصراف</AlertDialogCancel>
+                      <AlertDialogCancel variant="outline">{locale === 'en' ? 'Cancel' : 'انصراف'}</AlertDialogCancel>
                       <AlertDialogAction className="bg-red-500 text-white hover:bg-red-600" onClick={handleDeleteAccount}>
-                        بله، حذف شود
+                        {locale === 'en' ? 'Yes, Delete' : 'بله، حذف شود'}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -248,7 +250,7 @@ export default function SettingsView() {
                 <div className="flex size-8 items-center justify-center rounded-lg bg-[#D4AF37]/10">
                   <Bell className="size-4 text-[#D4AF37]" />
                 </div>
-                اعلان‌ها
+                {locale === 'en' ? 'Notifications' : 'اعلان‌ها'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 p-4 md:p-6">
@@ -258,8 +260,8 @@ export default function SettingsView() {
                     <Volume2 className="size-4 text-emerald-500" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium">اعلان معاملات</p>
-                    <p className="text-xs text-muted-foreground">اطلاع از خرید و فروش‌های موفق</p>
+                    <p className="text-sm font-medium">{locale === 'en' ? 'Trade Notifications' : 'اعلان معاملات'}</p>
+                    <p className="text-xs text-muted-foreground">{locale === 'en' ? 'Notify about successful trades' : 'اطلاع از خرید و فروش‌های موفق'}</p>
                   </div>
                 </div>
                 <Switch checked={notifications.trade} onCheckedChange={(v) => handleNotificationChange('trade', v)} className="data-[state=checked]:bg-[#D4AF37]" />
@@ -270,8 +272,8 @@ export default function SettingsView() {
                     <Smartphone className="size-4 text-blue-500" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium">اعلان ورود</p>
-                    <p className="text-xs text-muted-foreground">اطلاع از ورود به حساب کاربری</p>
+                    <p className="text-sm font-medium">{locale === 'en' ? 'Login Notifications' : 'اعلان ورود'}</p>
+                    <p className="text-xs text-muted-foreground">{locale === 'en' ? 'Notify about account logins' : 'اطلاع از ورود به حساب کاربری'}</p>
                   </div>
                 </div>
                 <Switch checked={notifications.login} onCheckedChange={(v) => handleNotificationChange('login', v)} className="data-[state=checked]:bg-[#D4AF37]" />
@@ -282,8 +284,8 @@ export default function SettingsView() {
                     <Info className="size-4 text-amber-500" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium">هشدار قیمت</p>
-                    <p className="text-xs text-muted-foreground">اطلاع از تغییرات مهم قیمت طلا</p>
+                    <p className="text-sm font-medium">{locale === 'en' ? 'Price Alerts' : 'هشدار قیمت'}</p>
+                    <p className="text-xs text-muted-foreground">{locale === 'en' ? 'Notify about important price changes' : 'اطلاع از تغییرات مهم قیمت طلا'}</p>
                   </div>
                 </div>
                 <Switch checked={notifications.price} onCheckedChange={(v) => handleNotificationChange('price', v)} className="data-[state=checked]:bg-[#D4AF37]" />
@@ -294,8 +296,8 @@ export default function SettingsView() {
                     <VolumeX className="size-4 text-purple-500" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium">اعلان‌های تبلیغاتی</p>
-                    <p className="text-xs text-muted-foreground">اطلاع از تخفیف‌ها و پیشنهادات ویژه</p>
+                    <p className="text-sm font-medium">{locale === 'en' ? 'Promotional Notifications' : 'اعلان‌های تبلیغاتی'}</p>
+                    <p className="text-xs text-muted-foreground">{locale === 'en' ? 'Notify about discounts and special offers' : 'اطلاع از تخفیف‌ها و پیشنهادات ویژه'}</p>
                   </div>
                 </div>
                 <Switch checked={notifications.promo} onCheckedChange={(v) => handleNotificationChange('promo', v)} className="data-[state=checked]:bg-[#D4AF37]" />
@@ -310,27 +312,27 @@ export default function SettingsView() {
                 <div className="flex size-8 items-center justify-center rounded-lg bg-[#D4AF37]/10">
                   <Info className="size-4 text-[#D4AF37]" />
                 </div>
-                درباره ما
+                {locale === 'en' ? 'About Us' : 'درباره ما'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 p-4 md:p-6">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">نسخه برنامه</span>
+                <span className="text-muted-foreground">{locale === 'en' ? 'App Version' : 'نسخه برنامه'}</span>
                 <Badge variant="outline">۱.۰.۰</Badge>
               </div>
               <Separator />
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">قوانین و مقررات</span>
+                <span className="text-muted-foreground">{locale === 'en' ? 'Terms & Conditions' : 'قوانین و مقررات'}</span>
                 <ExternalLink className="size-4 text-gold cursor-pointer" />
               </div>
               <Separator />
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">حریم خصوصی</span>
+                <span className="text-muted-foreground">{locale === 'en' ? 'Privacy Policy' : 'حریم خصوصی'}</span>
                 <ExternalLink className="size-4 text-gold cursor-pointer" />
               </div>
               <Separator />
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">تماس با ما</span>
+                <span className="text-muted-foreground">{locale === 'en' ? 'Contact Us' : 'تماس با ما'}</span>
                 <Badge variant="outline" className="text-xs">support@zarringold.ir</Badge>
               </div>
             </CardContent>

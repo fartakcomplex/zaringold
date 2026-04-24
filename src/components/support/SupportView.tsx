@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAppStore } from '@/lib/store';
 import { usePageEvent } from '@/hooks/use-page-event';
+import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -136,6 +137,7 @@ interface TicketMessage {
 
 export default function SupportView() {
   const { user, addToast } = useAppStore();
+  const { t, locale } = useTranslation();
 
   /* ── State ── */
   const [tickets, setTickets] = useState<Ticket[]>([]);

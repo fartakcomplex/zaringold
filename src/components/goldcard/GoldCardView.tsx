@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAppStore } from '@/lib/store';
+import { useTranslation } from '@/lib/i18n';
 import { usePageEvent } from '@/hooks/use-page-event';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -1294,6 +1295,7 @@ function WelcomeScreen({ onRequest, loading }: { onRequest: () => void; loading:
 
 export default function GoldCardView() {
   const { user, addToast } = useAppStore();
+  const { t, locale } = useTranslation();
 
   /* ── State ── */
   const [card, setCard] = useState<GoldCardData | null>(null);
@@ -1557,19 +1559,19 @@ export default function GoldCardView() {
           <TabsList className="w-full grid grid-cols-4 h-11 bg-card border border-border/50 rounded-xl p-1">
             <TabsTrigger value="card" data-goldcard-tab="card" className="rounded-lg data-[state=active]:bg-[#D4AF37] data-[state=active]:text-[#2a1a00] text-xs font-medium gap-1">
               <CreditCard className="size-3.5" />
-              کارت من
+              {locale === 'en' ? 'My Card' : 'کارت من'}
             </TabsTrigger>
             <TabsTrigger value="transactions" data-goldcard-tab="transactions" className="rounded-lg data-[state=active]:bg-[#D4AF37] data-[state=active]:text-[#2a1a00] text-xs font-medium gap-1" onClick={fetchAllTransactions}>
               <ShoppingCart className="size-3.5" />
-              تراکنش‌ها
+              {locale === 'en' ? 'Transactions' : 'تراکنش‌ها'}
             </TabsTrigger>
             <TabsTrigger value="transfer" data-goldcard-tab="transfer" className="rounded-lg data-[state=active]:bg-[#D4AF37] data-[state=active]:text-[#2a1a00] text-xs font-medium gap-1">
               <ArrowLeftRight className="size-3.5" />
-              انتقال
+              {locale === 'en' ? 'Transfer' : 'انتقال'}
             </TabsTrigger>
-            <TabsTrigger value="settings" data-goldcard-tab="settings" className="rounded-lg data-[state=active]:bg-[#D4AF37] data-[state=active]:text-[#2a1a00] text-xs font-medium gap-1">
+            <TabsTrigger value="settings" data-goldcard-tab="settings" className="rounded-lg data-[state=active]:bg-[#D4AF37] data-[state=active]:text-[2a1a00] text-xs font-medium gap-1">
               <Gauge className="size-3.5" />
-              تنظیمات
+              {locale === 'en' ? 'Settings' : 'تنظیمات'}
             </TabsTrigger>
           </TabsList>
 
