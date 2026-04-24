@@ -1197,7 +1197,7 @@ export default function WalletView() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {TX_FILTER_OPTIONS.map((opt) => (
+                  {getTxFilterOptions(t).map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
                       {opt.label}
                     </SelectItem>
