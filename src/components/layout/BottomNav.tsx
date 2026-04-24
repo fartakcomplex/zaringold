@@ -79,7 +79,7 @@ const mainItems: BottomNavItem[] = [
   { labelKey: '__wallet__', page: 'wallet', icon: Wallet },
   { labelKey: '__trade__', page: 'trade', icon: ArrowLeftRight },
   { labelKey: '__home__', page: 'dashboard', icon: Home },
-  { labelKey: '__transfer__', page: 'gold-card', icon: Send },
+  { labelKey: '__transfer__', page: 'gold-transfer', icon: Send },
   { labelKey: '__more__', page: '__more__', icon: LayoutDashboard },
 ];
 
@@ -123,6 +123,7 @@ const moreMenuItems: MoreMenuItem[] = [
 
   /* ── Gold Card & Trust ── */
   { labelKey: 'nav.goldCard', page: 'gold-card', icon: CreditCard },
+  { labelKey: 'nav.goldTransfer', page: 'gold-transfer', icon: Send },
   { labelKey: 'nav.vault', page: 'vault', icon: Vault },
   { labelKey: 'nav.emergencySell', page: 'emergency-sell', icon: Shield },
 

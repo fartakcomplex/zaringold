@@ -303,6 +303,7 @@ import GoldVaultView from '@/components/vault/GoldVaultView';
 import EmergencySellButton from '@/components/gold/EmergencySellButton';
 import CreatorHub from '@/components/creator/CreatorHub';
 import GoldCardView from '@/components/goldcard/GoldCardView';
+import GoldTransferView from '@/components/transfer/GoldTransferView';
 import MerchantDashboard from '@/components/merchant/MerchantDashboard';
 import QrPaymentView from '@/components/gateway/QrPaymentView';
 import InvoiceView from '@/components/gateway/InvoiceView';
@@ -355,6 +356,7 @@ function AuthenticatedPage() {
     case 'vault': return <GoldVaultView />;
     case 'emergency-sell': return <EmergencySellButton />;
     case 'gold-card': return <GoldCardView />;
+    case 'gold-transfer': return <GoldTransferView />;
     case 'merchant': return <MerchantDashboard />;
     case 'qr-payment': return <QrPaymentView />;
     case 'invoices': return <InvoiceView />;

@@ -37,6 +37,7 @@ import {
   HandCoins,
   Video,
   CreditCard,
+  Send,
   Landmark,
   Heart,
   QrCode,
@@ -78,6 +79,8 @@ const navSections: NavSection[] = [
     items: [
       { labelKey: 'nav.dashboard', page: 'dashboard', icon: LayoutDashboard },
       { labelKey: 'nav.trade', page: 'trade', icon: ArrowLeftRight },
+      { labelKey: 'nav.goldTransfer', page: 'gold-transfer', icon: Send, isNew: true },
+      { labelKey: 'nav.goldCard', page: 'gold-card', icon: CreditCard, isNew: true },
       { labelKey: 'nav.wallet', page: 'wallet', icon: Wallet },
       { labelKey: 'nav.transactions', page: 'transactions', icon: Receipt },
       { labelKey: 'nav.market', page: 'market', icon: BarChart3 },
@@ -125,7 +128,6 @@ const navSections: NavSection[] = [
     items: [
       { labelKey: 'nav.merchantPanel', page: 'merchant', icon: Store, isNew: true },
       { labelKey: 'nav.apiDocs', page: 'api-docs', icon: BookOpen, isNew: true },
-      { labelKey: 'nav.goldCard', page: 'gold-card', icon: CreditCard, isNew: true },
       { labelKey: 'nav.qrPayments', page: 'qr-payment', icon: QrCode, isNew: true },
       { labelKey: 'nav.invoices', page: 'invoices', icon: FileText, isNew: true },
       { labelKey: 'nav.loyalty', page: 'loyalty', icon: Heart, isNew: true },
