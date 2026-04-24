@@ -177,26 +177,35 @@ model Notification {
 }
 
 model SupportTicket {
-  id         String   @id @default(cuid())
-  userId     String
-  subject    String
-  category   String   @default("general")
-  status     String   @default("open")
-  priority   String   @default("normal")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id          String    @id @default(cuid())
+  userId      String
+  subject     String
+  category    String    @default("general")
+  status      String    @default("open")
+  priority    String    @default("normal")
+  department  String    @default("support")
+  assignedTo  String?
+  rating      Int?
+  feedback    String?
+  slaDeadline DateTime?
+  closedAt    DateTime?
+  firstReplyAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   messages TicketMessage[]
 }
 
 model TicketMessage {
-  id        String   @id @default(cuid())
-  ticketId  String
-  senderId  String
-  content   String
-  isAdmin   Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  ticketId    String
+  senderId    String
+  content     String
+  isAdmin     Boolean  @default(false)
+  isInternal  Boolean  @default(false)
+  attachments String   @default("[]")
+  createdAt   DateTime @default(now())
 
   ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }
@@ -1308,6 +1317,25 @@ model TelegramSupportMessage {
   createdAt       DateTime @default(now())
 
   telegramUser TelegramUser @relation(fields: [telegramUserId], references: [id], onDelete: Cascade)
+}
+
+model CannedResponse {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  category  String   @default("general")
+  isAdmin   Boolean  @default(true)
+  useCount  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TicketRating {
+  id        String   @id @default(cuid())
+  ticketId  String
+  score     Int
+  comment   String?
+  createdAt DateTime @default(now())
 }
 
 model TelegramInvoice {
