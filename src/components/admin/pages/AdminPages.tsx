@@ -240,6 +240,24 @@ export default function AdminPages() {
     setCreatingPage(false);
   };
 
+  /* ── Re-seed Default Pages ── */
+  const handleSeedDefaultPages = async () => {
+    setCmsPagesLoading(true);
+    try {
+      const res = await fetch('/api/cms/seed-pages', { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        addToast(`${data.pages?.length || 0} صفحه پیش‌فرض بازنشانی شد`, 'success');
+        await fetchCmsPages();
+      } else {
+        addToast('خطا در بازنشانی صفحات', 'error');
+      }
+    } catch {
+      addToast('خطا در ارتباط با سرور', 'error');
+    }
+    setCmsPagesLoading(false);
+  };
+
   /* ── Delete Page ── */
   const handleDeletePage = async () => {
     if (!deleteTargetPage) return;
@@ -1272,19 +1290,31 @@ export default function AdminPages() {
             </p>
           </div>
         </div>
-        <Button
-          size="sm"
-          className="bg-gold hover:bg-gold-dark text-black font-bold text-xs"
-          onClick={handleCreatePage}
-          disabled={creatingPage}
-        >
-          {creatingPage ? (
-            <Loader2 className="size-3.5 ml-1 animate-spin" />
-          ) : (
-            <Plus className="size-3.5 ml-1" />
-          )}
-          ایجاد صفحه جدید
-        </Button>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button
+            size="sm"
+            className="bg-gold hover:bg-gold-dark text-black font-bold text-xs"
+            onClick={handleCreatePage}
+            disabled={creatingPage}
+          >
+            {creatingPage ? (
+              <Loader2 className="size-3.5 ml-1 animate-spin" />
+            ) : (
+              <Plus className="size-3.5 ml-1" />
+            )}
+            ایجاد صفحه جدید
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-amber-500/20 hover:bg-amber-500/5 text-amber-600 text-xs"
+            onClick={handleSeedDefaultPages}
+            disabled={cmsPagesLoading}
+          >
+            <RotateCcw className="size-3.5 ml-1" />
+            بازنشانی پیش‌فرض
+          </Button>
+        </div>
       </div>
 
       {/* ── Info Banner ── */}

@@ -494,6 +494,341 @@ export async function POST() {
           },
         ],
       },
+
+      // ─────────────────── GATEWAY PAGE ───────────────────
+      {
+        slug: 'gateway',
+        title: 'درگاه پرداخت طلایی',
+        isPublished: true,
+        seoTitle: 'درگاه پرداخت طلایی زرین گلد | پرداخت آنی با طلا',
+        seoDesc: 'درگاه پرداخت طلایی زرین گلد — پذیرش پرداخت با طلای دیجیتال در وب‌سایت و اپلیکیشن شما',
+        content: '',
+        components: [
+          {
+            order: 0,
+            type: 'heading',
+            props: { text: 'درگاه پرداخت طلایی', tag: 'h1', alignment: 'center', color: '#D4AF37', fontSize: '28' },
+          },
+          {
+            order: 1,
+            type: 'text-editor',
+            props: {
+              content: '<p>درگاه پرداخت طلایی زرین گلد به کسب‌وکارها اجازه می‌دهد پرداخت‌های آنلاین خود را با طلای دیجیتال دریافت کنند. با یکپارچه‌سازی ساده و امن، مشتریان شما می‌توانند به‌راحتی با طلای دیجیتال پرداخت کنند.</p>',
+              fontSize: '16',
+              color: '#e2e8f0',
+              alignment: 'center',
+            },
+          },
+          {
+            order: 2,
+            type: 'heading',
+            props: { text: 'نحوه شروع کار', tag: 'h2', alignment: 'center', color: '#ffffff', fontSize: '22' },
+          },
+          {
+            order: 3,
+            type: 'features-grid',
+            props: {
+              heading: '',
+              subtitle: '',
+              columns: '4',
+              items: [
+                { icon: 'UserPlus', title: 'ثبت‌نام', description: 'ثبت‌نام در پنل درگاه و تکمیل اطلاعات کسب‌وکار' },
+                { icon: 'Key', title: 'دریافت API', description: 'دریافت کلید API و مستندات فنی یکپارچه‌سازی' },
+                { icon: 'Link', title: 'اتصال سایت', description: 'نصب ماژول یا استفاده از API در وب‌سایت' },
+                { icon: 'Coins', title: 'دریافت پرداخت', description: 'پرداخت‌های طلایی مشتریان را دریافت کنید' },
+              ],
+            },
+          },
+          {
+            order: 4,
+            type: 'spacer',
+            props: { height: '30' },
+          },
+          {
+            order: 5,
+            type: 'heading',
+            props: { text: 'ویژگی‌های درگاه طلایی', tag: 'h2', alignment: 'center', color: '#ffffff', fontSize: '22' },
+          },
+          {
+            order: 6,
+            type: 'features-grid',
+            props: {
+              heading: '',
+              subtitle: '',
+              columns: '2',
+              items: [
+                { icon: 'Zap', title: 'پرداخت آنی', description: 'تراکنش‌ها در کمتر از ۳ ثانیه تأیید و تسویه می‌شوند' },
+                { icon: 'ShieldCheck', title: 'امنیت بالا', description: 'رمزنگاری AES-256 و تأیید هویت دو مرحله‌ای' },
+                { icon: 'Percent', title: 'کارمزد پایین', description: 'کمترین کارمزد در بازار — از ۰.۵٪ شروع' },
+                { icon: 'Headphones', title: 'پشتیبانی ۲۴/۷', description: 'تیم فنی همیشه آماده پاسخگویی و رفع مشکل' },
+              ],
+            },
+          },
+          {
+            order: 7,
+            type: 'spacer',
+            props: { height: '30' },
+          },
+          {
+            order: 8,
+            type: 'heading',
+            props: { text: 'نمونه کد یکپارچه‌سازی', tag: 'h2', alignment: 'center', color: '#ffffff', fontSize: '22' },
+          },
+          {
+            order: 9,
+            type: 'text-editor',
+            props: {
+              content: '<pre style="direction:ltr;text-align:left;background:#1a1a2e;padding:20px;border-radius:12px;overflow-x:auto;font-family:monospace;font-size:13px;line-height:1.6;color:#e2e8f0"><code>// نصب SDK\n// npm install @zarringold/payment-sdk\n\nimport { ZarinGoldPayment } from \'@zarringold/payment-sdk\';\n\nconst payment = new ZarinGoldPayment({\n  apiKey: \'YOUR_API_KEY\',\n  environment: \'production\',\n  callbackUrl: \'https://yoursite.ir/payment/callback\',\n});\n\n// ایجاد تراکنش\nconst transaction = await payment.create({\n  amount: 500000,      // مبلغ به ریال\n  currency: \'gold\',     // پرداخت با طلای دیجیتال\n  orderId: \'ORD-12345\',\n  description: \'خرید محصول\',\n  metadata: {\n    customerName: \'علی محمدی\',\n    customerEmail: \'ali@example.com\',\n  },\n});\n\n// هدایت کاربر به صفحه پرداخت\nwindow.location.href = transaction.paymentUrl;\n\n// بررسی وضعیت تراکنش\nconst status = await payment.verify(transaction.id);\nconsole.log(status.isPaid);  // true / false</code></pre>',
+              fontSize: '14',
+              color: '#e2e8f0',
+              alignment: 'center',
+            },
+          },
+          {
+            order: 10,
+            type: 'spacer',
+            props: { height: '30' },
+          },
+          {
+            order: 11,
+            type: 'heading',
+            props: { text: 'پلن‌های درگاه پرداخت', tag: 'h2', alignment: 'center', color: '#ffffff', fontSize: '22' },
+          },
+          {
+            order: 12,
+            type: 'features-grid',
+            props: {
+              heading: '',
+              subtitle: '',
+              columns: '3',
+              items: [
+                { icon: 'Rocket', title: 'پایه', description: 'کارمزد ۰.۵٪ — تا ۱۰ میلیون تراکنش ماهانه — پشتیبانی تیکت — مناسب کسب‌وکارهای کوچک' },
+                { icon: 'Crown', title: 'حرفه‌ای', description: 'کارمزد ۰.۳٪ — تا ۱۰۰ میلیون تراکنش ماهانه — پشتیبانی اختصاصی — وب‌هوک و API پیشرفته' },
+                { icon: 'Building2', title: 'سازمانی', description: 'کارمزد سفارشی — تراکنش نامحدود — مدیر حساب اختصاصی — SLA ۹۹.۹٪ — یکپارچه‌سازی سفارشی' },
+              ],
+            },
+          },
+          {
+            order: 13,
+            type: 'spacer',
+            props: { height: '30' },
+          },
+          {
+            order: 14,
+            type: 'faq-section',
+            props: {
+              heading: 'سوالات متداول درگاه پرداخت',
+              items: [
+                { question: 'درگاه پرداخت طلایی چیست؟', answer: 'درگاهی که به مشتریان شما اجازه می‌دهد با طلای دیجیتال حساب زرین گلد خود پرداخت کنند. معادل ریالی بلافاصله به حساب شما واریز می‌شود.' },
+                { question: 'نحوه یکپارچه‌سازی چطور است؟', answer: 'با استفاده از SDK موجود یا API RESTful می‌توانید درگاه را در هر پلتفرمی (ورپرس، جوملا، لاراول، ری‌اکت و ...) نصب کنید. مستندات کامل و نمونه کد در پنل درگاه موجود است.' },
+                { question: 'کارمزد تراکنش‌ها چقدر است؟', answer: 'کارمزد بسته به پلن انتخابی از ۰.۵٪ تا سفارشی متغیر است. تسویه‌حساب روزانه و خودکار انجام می‌شود.' },
+                { question: 'آیا پشتیبانی از محیط تستی وجود دارد؟', answer: 'بله، با ثبت‌نام رایگان به محیط Sandbox (تست) با کلید API آزمایشی دسترسی خواهید داشت.' },
+              ],
+            },
+          },
+          {
+            order: 15,
+            type: 'cta-section',
+            props: {
+              heading: 'همین الان شروع کنید',
+              subtitle: 'ثبت‌نام رایگان و دریافت کلید API در کمتر از ۵ دقیقه',
+              buttonText: 'ثبت‌نام و دریافت API',
+              backgroundStyle: 'gradient',
+            },
+          },
+        ],
+      },
+
+      // ─────────────────── BLOG PAGE ───────────────────
+      {
+        slug: 'blog',
+        title: 'بلاگ زرین گلد',
+        isPublished: true,
+        seoTitle: 'بلاگ زرین گلد | اخبار، آموزش و تحلیل بازار طلا',
+        seoDesc: 'آخرین اخبار بازار طلا، آموزش سرمایه‌گذاری در طلا و تحلیل‌های تخصصی',
+        content: '',
+        components: [
+          {
+            order: 0,
+            type: 'heading',
+            props: { text: 'بلاگ زرین گلد', tag: 'h1', alignment: 'center', color: '#D4AF37', fontSize: '28' },
+          },
+          {
+            order: 1,
+            type: 'text-editor',
+            props: {
+              content: '<p>به بلاگ زرین گلد خوش آمدید. اینجا می‌توانید آخرین اخبار بازار طلا، مقالات آموزشی سرمایه‌گذاری و تحلیل‌های تخصصی را مطالعه کنید.</p>',
+              fontSize: '16',
+              color: '#e2e8f0',
+              alignment: 'center',
+            },
+          },
+          {
+            order: 2,
+            type: 'text-editor',
+            props: {
+              content: '<p style="text-align:right">✨ <strong>به زرین گلد خوش آمدید!</strong> ما در اینجا مقالاتی درباره سرمایه‌گذاری هوشمند در طلا، بررسی روند بازار جهانی و داخلی، نکات آموزشی برای مبتدیان و حرفه‌ای‌ها و مصاحبه با متخصصان بازار سرمایه منتشر می‌کنیم. با عضویت در خبرنامه، آخرین مقالات را در ایمیل خود دریافت کنید.</p>',
+              fontSize: '14',
+              color: '#cbd5e1',
+              alignment: 'right',
+            },
+          },
+          {
+            order: 3,
+            type: 'spacer',
+            props: { height: '20' },
+          },
+          {
+            order: 4,
+            type: 'heading',
+            props: { text: 'دسته‌بندی مقالات', tag: 'h2', alignment: 'center', color: '#ffffff', fontSize: '22' },
+          },
+          {
+            order: 5,
+            type: 'features-grid',
+            props: {
+              heading: '',
+              subtitle: '',
+              columns: '3',
+              items: [
+                { icon: 'Newspaper', title: 'اخبار طلا', description: 'آخرین اخبار بازار طلای ایران و جهان، نوسانات قیمت و تحولات اقتصادی مؤثر بر بازار' },
+                { icon: 'GraduationCap', title: 'آموزش', description: 'مقالات آموزشی سرمایه‌گذاری در طلا، راهنمای مبتدیان و نکات حرفه‌ای مدیریت سبد دارایی' },
+                { icon: 'TrendingUp', title: 'تحلیل بازار', description: 'تحلیل‌های تکنیکال و فاندامنتال بازار طلا، پیش‌بینی قیمت و بررسی روندهای آینده' },
+              ],
+            },
+          },
+          {
+            order: 6,
+            type: 'spacer',
+            props: { height: '30' },
+          },
+          {
+            order: 7,
+            type: 'cta-section',
+            props: {
+              heading: 'عضویت در خبرنامه',
+              subtitle: 'آخرین مقالات و اخبار بازار طلا را در ایمیل خود دریافت کنید',
+              buttonText: 'عضویت در خبرنامه',
+              backgroundStyle: 'gradient',
+            },
+          },
+        ],
+      },
+
+      // ─────────────────── PRICING PAGE ───────────────────
+      {
+        slug: 'pricing',
+        title: 'تعرفه‌ها و کارمزد',
+        isPublished: true,
+        seoTitle: 'تعرفه‌ها و کارمزد زرین گلد | جدول کامل قیمت‌ها',
+        seoDesc: 'تعرفه‌های معاملات طلای دیجیتال، کارمزد خرید و فروش، پلن‌های کاربری و مقایسه سطوح خدمات',
+        content: '',
+        components: [
+          {
+            order: 0,
+            type: 'heading',
+            props: { text: 'تعرفه‌ها و کارمزد', tag: 'h1', alignment: 'center', color: '#D4AF37', fontSize: '28' },
+          },
+          {
+            order: 1,
+            type: 'text-editor',
+            props: {
+              content: '<p>زرین گلد با شفافیت کامل، تعرفه‌های خدمات خود را منتشر کرده تا شما پیش از هر معامله، از هزینه‌ها مطلع شوید.</p>',
+              fontSize: '16',
+              color: '#e2e8f0',
+              alignment: 'center',
+            },
+          },
+          {
+            order: 2,
+            type: 'spacer',
+            props: { height: '20' },
+          },
+          {
+            order: 3,
+            type: 'heading',
+            props: { text: 'سطوح کاربری', tag: 'h2', alignment: 'center', color: '#ffffff', fontSize: '22' },
+          },
+          {
+            order: 4,
+            type: 'card',
+            props: {
+              title: '🥉 سطح برنز',
+              description: 'کارمزد خرید ۰.۵٪ — کارمزد فروش ۰.۵٪ — حداقل خرید ۰.۰۱۵ گرم — حداکثر تراکنش روزانه ۵ میلیون تومان — پشتیبانی تیکت — مناسب شروع سرمایه‌گذاری',
+              image: '',
+              showButton: false,
+            },
+          },
+          {
+            order: 5,
+            type: 'card',
+            props: {
+              title: '🥈 سطح نقره',
+              description: 'کارمزد خرید ۰.۳٪ — کارمزد فروش ۰.۴٪ — حداقل خرید ۰.۰۱ گرم — حداکثر تراکنش روزانه ۵۰ میلیون تومان — پس‌انداز خودکار — هشدار قیمت — پشتیبانی تلگرام — مناسب سرمایه‌گذاران متوسط',
+              image: '',
+              showButton: false,
+            },
+          },
+          {
+            order: 6,
+            type: 'card',
+            props: {
+              title: '🥇 سطح طلا',
+              description: 'کارمزد خرید ۰.۱۵٪ — کارمزد فروش ۰.۲٪ — حداقل خرید بدون محدودیت — حداکثر تراکنش بدون محدودیت — API اختصاصی — درگاه پرداخت طلایی — کارت طلایی — مشاور اختصاصی — مناسب سرمایه‌گذاران حرفه‌ای و سازمانی',
+              image: '',
+              showButton: false,
+            },
+          },
+          {
+            order: 7,
+            type: 'spacer',
+            props: { height: '30' },
+          },
+          {
+            order: 8,
+            type: 'heading',
+            props: { text: 'جدول مقایسه سطوح', tag: 'h2', alignment: 'center', color: '#ffffff', fontSize: '22' },
+          },
+          {
+            order: 9,
+            type: 'table',
+            props: {
+              headers: 'ویژگی,برنز,نقره,طلا',
+              rows: 'کارمزد خرید,۰.۵٪,۰.۳٪,۰.۱۵٪\nکارمزد فروش,۰.۵٪,۰.۴٪,۰.۲٪\nحداقل خرید,۰.۰۱۵ گرم,۰.۰۱ گرم,بدون محدودیت\nحداکثر تراکنش روزانه,۵ میلیون,۵۰ میلیون,نامحدود\nپشتیبانی تیکت,✅,✅,✅\nپشتیبانی تلگرام,❌,✅,✅\nپس‌انداز خودکار,❌,✅,✅\nهشدار قیمت,❌,✅,✅\nAPI اختصاصی,❌,❌,✅\nدرگاه پرداخت طلایی,❌,❌,✅\nکارت طلایی,❌,❌,✅\nمشاور اختصاصی,❌,❌,✅',
+              bordered: true,
+              striped: true,
+            },
+          },
+          {
+            order: 10,
+            type: 'spacer',
+            props: { height: '30' },
+          },
+          {
+            order: 11,
+            type: 'faq-section',
+            props: {
+              heading: 'سوالات متداول تعرفه‌ها',
+              items: [
+                { question: 'چطور سطح کاربری‌ام ارتقا می‌یابد؟', answer: 'سطح کاربری بر اساس حجم معاملات ۳۰ روز اخیر خودکار ارتقا می‌یابد. از سطح برنز با خرید اول شروع می‌کنید.' },
+                { question: 'آیا کارمزد اضافه‌ای وجود دارد؟', answer: 'خیر، فقط کارمزد خرید و فروش stated در تعرفه‌ها. واریز ریالی و برداشت ریالی رایگان است. برداشت طلای فیزیکی هزینه ارسال جداگانه دارد.' },
+                { question: 'آیا تعرفه‌ها قابل تغییر هستند؟', answer: 'تعرفه‌ها ثابت هستند و تغییرات فقط با اطلاع‌رسانی حداقل ۱۵ روزه اعمال می‌شود. تاریخچه تغییرات در بخش قوانین قابل مشاهده است.' },
+                { question: 'کارمزد درگاه پرداخت طلایی جداگانه است؟', answer: 'بله، کارمزد درگاه پرداخت طلایی بر اساس پلن درگاه جداگانه محاسبه می‌شود و ربطی به سطح کاربری معاملاتی ندارد.' },
+              ],
+            },
+          },
+          {
+            order: 12,
+            type: 'cta-section',
+            props: {
+              heading: 'شروع سرمایه‌گذاری',
+              subtitle: 'ثبت‌نام رایگان و شروع خرید طلا با کمترین کارمزد بازار',
+              buttonText: 'ثبت‌نام رایگان',
+              backgroundStyle: 'gradient',
+            },
+          },
+        ],
+      },
     ];
 
     const results: { slug: string; title: string; componentCount: number }[] = [];
