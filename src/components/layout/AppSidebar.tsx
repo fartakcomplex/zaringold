@@ -45,6 +45,7 @@ import {
   ShieldAlert,
   BookOpen,
   Store,
+  Umbrella,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useAppStore } from '@/lib/store';
@@ -134,6 +135,12 @@ const navSections: NavSection[] = [
       { labelKey: 'nav.fraudAlerts', page: 'fraud-alerts', icon: ShieldAlert, isNew: true },
       { labelKey: 'nav.vault', page: 'vault', icon: Shield, isNew: true },
       { labelKey: 'nav.emergencySell', page: 'emergency-sell', icon: Vault, isNew: true },
+    ],
+  },
+  {
+    titleKey: 'nav.insurance',
+    items: [
+      { labelKey: 'nav.insuranceBuy', page: 'insurance', icon: Umbrella, isNew: true },
     ],
   },
   {

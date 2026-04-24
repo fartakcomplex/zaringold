@@ -117,6 +117,8 @@ const translations: Record<Locale, TranslationMap> = {
     'nav.cashback': 'کش‌بک',
     'nav.vault': 'صرافی طلای من',
     'nav.emergencySell': 'فروش اضطراری',
+    'nav.insurance': 'بیمه',
+    'nav.insuranceBuy': 'خرید بیمه',
     'nav.main': 'اصلی',
     'nav.smartTools': 'ابزارهای هوشمند',
     'nav.saving': 'پس‌انداز و وام',
@@ -1832,6 +1834,8 @@ const translations: Record<Locale, TranslationMap> = {
     'nav.cashback': 'Cashback',
     'nav.vault': 'Gold Vault',
     'nav.emergencySell': 'Emergency Sell',
+    'nav.insurance': 'Insurance',
+    'nav.insuranceBuy': 'Buy Insurance',
     'nav.main': 'Main',
     'nav.smartTools': 'Smart Tools',
     'nav.saving': 'Saving & Loans',
@@ -3615,6 +3619,7 @@ export function getPageTitleKey(page: string): string {
     'invoices': 'nav.invoices',
     'fraud-alerts': 'nav.fraudAlerts',
     'loyalty': 'nav.loyalty',
+    insurance: 'nav.insuranceBuy',
   };
   return map[page] ?? 'common.zarrinGold';
 }

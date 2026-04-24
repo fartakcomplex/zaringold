@@ -1410,3 +1410,61 @@ Stage Summary:
 - Both runtime errors resolved
 - SecuritySection.tsx: hydration error fixed with deterministic sparkle positions
 - WalletView.tsx: DEPOSIT_QUICK_AMOUNTS constant defined with Persian labels
+
+---
+Task ID: 2-b
+Agent: UI Components Agent
+Task: Build insurance module UI components
+
+Work Log:
+- Created InsuranceView.tsx (main container with tab navigation and state management)
+- Created InsuranceCategories.tsx (2-column grid with 8 Lucide icon categories, hover effects, loading skeletons)
+- Created InsuranceForm.tsx (multi-step form with personal info, vehicle, health/travel, fire/life sections)
+- Created InsurancePlans.tsx (plan listing with sort options, provider avatars, expandable coverages)
+- Created InsuranceCheckout.tsx (order confirmation, price breakdown, terms checkbox, payment flow)
+- Created InsuranceOrderHistory.tsx (order history with status filter tabs, pending/active/expired)
+- Created InsuranceOrderDetail.tsx (detailed view with timeline, coverages, holder info)
+- Created types.ts (shared TypeScript interfaces for all insurance data models)
+- Created 4 API routes: categories, providers, plans, orders (GET+POST)
+- Wired InsuranceView into page.tsx router (case 'insurance')
+- Zero lint errors in all insurance component files
+
+Stage Summary:
+- Complete insurance UI module built with 7 components + 1 types file
+- Gold theme styling consistent with platform design (gold-gradient-text, gold borders, gold badges)
+- Mobile-first responsive layout (1 col mobile, 2 cols tablet+)
+- Loading states with Skeleton components and error handling included
+- Fallback data provided when API is unavailable
+- All hardcoded Farsi strings marked with // i18n comments for future translation
+- Uses motion from framer-compat for subtle entrance animations
+- All API routes connect to existing Prisma InsuranceProvider/InsuranceCategory/InsurancePlan/InsuranceOrder models
+
+---
+Task ID: 2-a
+Agent: Schema & API Agent
+Task: Build insurance database schema and API routes
+
+Work Log:
+- Read worklog.md for project context (16+ prior tasks)
+- Read current Prisma schema (1507 lines, 40+ models)
+- Added 4 insurance models to Prisma schema: InsuranceProvider, InsuranceCategory, InsurancePlan, InsuranceOrder
+- Added insuranceOrders InsuranceOrder[] relation to User model
+- Added stale-cache detection to db.ts (invalidates old PrismaClient when new models are added)
+- Pushed schema to database with bun run db:push (successful, generated Prisma Client)
+- Created 6 API route files under /api/insurance/:
+  1. GET /api/insurance/categories — active categories with plan count and provider info
+  2. GET /api/insurance/providers — active providers with plan counts
+  3. GET /api/insurance/plans — plans filtered by categoryId/providerId, sorted by price
+  4. GET/POST /api/insurance/orders — list user orders / create new order with commission calc
+  5. GET/PATCH /api/insurance/orders/[id] — order details / update status (payment callback)
+  6. GET /api/insurance/seed — seed demo data (idempotent, only if no data exists)
+- Seeded database directly via Node.js script (18 plans across 8 categories from 4 providers)
+- Verified seed: 4 providers, 8 categories, 18 plans
+- All code passes lint (no new errors from insurance files)
+
+Stage Summary:
+- Database schema ready for insurance module (4 new models + User relation)
+- All 6 CRUD API routes created with proper error handling
+- Seed data available: 4 providers, 8 categories, 18 plans with realistic Toman prices
+- Commission calculation implemented (percentage + fixed from provider)
+- db.ts enhanced with stale-cache auto-detection

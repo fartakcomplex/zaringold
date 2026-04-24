@@ -313,6 +313,7 @@ import InvoiceView from '@/components/gateway/InvoiceView';
 import FraudAlertsView from '@/components/gateway/FraudAlertsView';
 import LoyaltyView from '@/components/gateway/LoyaltyView';
 import ApiDocsView from '@/components/gateway/ApiDocsView';
+import InsuranceView from '@/components/insurance/InsuranceView';
 
 /* ------------------------------------------------------------------ */
 /*  Authenticated Page Router (User Panel)                             */
@@ -366,6 +367,7 @@ function AuthenticatedPage() {
     case 'fraud-alerts': return <FraudAlertsView />;
     case 'loyalty': return <LoyaltyView />;
     case 'api-docs': return <ApiDocsView />;
+    case 'insurance': return <InsuranceView />;
 
     /* ── Account ── */
     case 'notifications': return <NotificationsView />;
