@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// ─── In-Memory Mock Data (shared reference) ─────────────────────────────
+// ─── In-Memory Mock Data ────────────────────────────────────────────────
 interface Campaign {
   id: string
   name: string
@@ -11,124 +11,90 @@ interface Campaign {
   deliveredCount: number
   failedCount: number
   message: string
-  scheduledAt: string | null
+  scheduledAt?: string
   createdAt: string
   cost: number
 }
 
-// Re-declare campaigns so this route is self-contained
 let campaigns: Campaign[] = [
   {
-    id: 'camp_001',
-    name: 'تخفیف نوروزی طلای آبشده',
+    id: 'c1',
+    name: 'تخفیف نوروزی',
     type: 'marketing',
     segment: 'all',
     status: 'completed',
-    recipientCount: 2400,
-    deliveredCount: 2280,
-    failedCount: 120,
-    message: '🎁 زرین گلد: تخفیف ویژه نوروز! خرید طلای آبشده با کارمزد صفر تا پایان فروردین.',
-    scheduledAt: null,
-    createdAt: '2025-03-15T10:00:00Z',
-    cost: 108000,
-  },
-  {
-    id: 'camp_002',
-    name: 'خوش‌آمدگویی کاربران جدید',
-    type: 'transactional',
-    segment: 'new_users',
-    status: 'completed',
-    recipientCount: 320,
-    deliveredCount: 315,
-    failedCount: 5,
-    message: 'به خانواده زرین گلد خوش آمدید! 🌟 با ثبت‌نام شما، ۵ گرم طلای رایگان هدیه می‌گیرید.',
-    scheduledAt: null,
-    createdAt: '2025-03-18T08:30:00Z',
-    cost: 14400,
-  },
-  {
-    id: 'camp_003',
-    name: 'هشدار قیمت طلا - اوج تاریخی',
-    type: 'notification',
-    segment: 'gold_holders',
-    status: 'completed',
-    recipientCount: 890,
-    deliveredCount: 860,
-    failedCount: 30,
-    message: '⚡ قیمت طلا به بالاترین حد ۶ ماه اخیر رسید!',
-    scheduledAt: null,
-    createdAt: '2025-03-20T14:15:00Z',
-    cost: 40050,
-  },
-  {
-    id: 'camp_004',
-    name: 'کمپین تراکنش VIP',
-    type: 'marketing',
-    segment: 'vip',
-    status: 'scheduled',
-    recipientCount: 450,
-    deliveredCount: 0,
-    failedCount: 0,
-    message: '💎 ویژه مشتریان VIP: خرید اوراق طلا با تخفیف ۲٪',
-    scheduledAt: '2025-04-25T09:00:00Z',
-    createdAt: '2025-03-22T11:00:00Z',
-    cost: 20250,
-  },
-  {
-    id: 'camp_005',
-    name: 'تبریک عید فطر',
-    type: 'marketing',
-    segment: 'active',
-    status: 'draft',
-    recipientCount: 1800,
-    deliveredCount: 0,
-    failedCount: 0,
-    message: '🌙 عید سعید فطر مبارک!',
-    scheduledAt: null,
-    createdAt: '2025-03-25T16:00:00Z',
-    cost: 81000,
-  },
-  {
-    id: 'camp_006',
-    name: 'یادآوری تکمیل احراز هویت',
-    type: 'notification',
-    segment: 'kyc_verified',
-    status: 'completed',
     recipientCount: 1200,
-    deliveredCount: 1185,
-    failedCount: 15,
-    message: '🔐 احراز هویت شما ناقص است.',
-    scheduledAt: null,
-    createdAt: '2025-03-10T09:00:00Z',
+    deliveredCount: 1150,
+    failedCount: 50,
+    message: 'عید نوروز مبارک! تخفیف ویژه زرین گلد',
+    createdAt: '2024-03-15T10:00:00Z',
     cost: 54000,
   },
   {
-    id: 'camp_007',
-    name: 'گزارش ماهانه سرمایه‌گذاری',
-    type: 'transactional',
-    segment: 'gold_holders',
-    status: 'cancelled',
-    recipientCount: 890,
-    deliveredCount: 0,
-    failedCount: 0,
-    message: '📊 گزارش ماهانه سرمایه‌گذاری شما آماده است.',
-    scheduledAt: '2025-04-01T07:00:00Z',
-    createdAt: '2025-03-28T12:00:00Z',
-    cost: 40050,
+    id: 'c2',
+    name: 'هشدار افزایش قیمت',
+    type: 'price_alert',
+    segment: 'active',
+    status: 'sending',
+    recipientCount: 800,
+    deliveredCount: 340,
+    failedCount: 12,
+    message: 'قیمت طلا افزایش یافت! همین الان خرید کنید',
+    createdAt: '2024-03-20T14:30:00Z',
+    cost: 15660,
   },
   {
-    id: 'camp_008',
-    name: 'پیشنهاد ویژه فروش طلای آبشده',
+    id: 'c3',
+    name: 'کمپین VIP',
+    type: 'promotional',
+    segment: 'vip',
+    status: 'scheduled',
+    recipientCount: 200,
+    deliveredCount: 0,
+    failedCount: 0,
+    message: 'پیشنهاد ویژه فقط برای شما!',
+    scheduledAt: '2024-03-25T09:00:00Z',
+    createdAt: '2024-03-22T11:00:00Z',
+    cost: 0,
+  },
+  {
+    id: 'c4',
+    name: 'خوش‌آمدگویی',
     type: 'marketing',
+    segment: 'new',
+    status: 'completed',
+    recipientCount: 500,
+    deliveredCount: 490,
+    failedCount: 10,
+    message: 'به زرین گلد خوش آمدید!',
+    createdAt: '2024-03-10T08:00:00Z',
+    cost: 22500,
+  },
+  {
+    id: 'c5',
+    name: 'یادآوری KYC',
+    type: 'transactional',
     segment: 'all',
-    status: 'sending',
-    recipientCount: 2400,
-    deliveredCount: 1450,
-    failedCount: 42,
-    message: '🔥 بهترین زمان فروش طلای آبشده!',
-    scheduledAt: null,
-    createdAt: '2025-03-29T15:30:00Z',
-    cost: 108000,
+    status: 'draft',
+    recipientCount: 0,
+    deliveredCount: 0,
+    failedCount: 0,
+    message: 'لطفاً احراز هویت خود را تکمیل کنید',
+    createdAt: '2024-03-28T16:00:00Z',
+    cost: 0,
+  },
+  {
+    id: 'c6',
+    name: 'کمپین هدیه',
+    type: 'birthday',
+    segment: 'all',
+    status: 'completed',
+    recipientCount: 150,
+    deliveredCount: 145,
+    failedCount: 5,
+    message: 'تولدت مبارک! هدیه ویژه زرین گلد',
+    createdAt: '2024-03-18T10:00:00Z',
+    cost: 6750,
   },
 ]
 
@@ -142,9 +108,9 @@ export async function POST(
     const body = await req.json()
     const action = body.action as string
 
-    if (!action) {
+    if (!action || !['send', 'cancel', 'duplicate'].includes(action)) {
       return NextResponse.json(
-        { success: false, message: 'اکشن مشخص نشده است' },
+        { success: false, message: 'اکشن نامعتبر. اکشن‌های مجاز: send, cancel, duplicate' },
         { status: 400 }
       )
     }
@@ -159,7 +125,6 @@ export async function POST(
 
     const campaign = campaigns[campaignIndex]
 
-    // ─── ACTION: send ─────────────────────────────────────────────────
     if (action === 'send') {
       if (campaign.status === 'sending' || campaign.status === 'completed') {
         return NextResponse.json(
@@ -173,23 +138,20 @@ export async function POST(
 
       campaigns[campaignIndex] = {
         ...campaign,
-        status: 'completed',
+        status: 'sending',
         deliveredCount,
         failedCount,
       }
 
-      return NextResponse.json({
-        success: true,
-        message: `کمپین با موفقیت ارسال شد — ${deliveredCount} پیام تحویل داده شد`,
-        data: {
-          delivered: deliveredCount,
-          failed: failedCount,
-          totalCost: campaign.cost,
-        },
-      })
+      // Simulate completion after a short delay for demo purposes
+      campaigns[campaignIndex] = {
+        ...campaigns[campaignIndex],
+        status: 'completed',
+      }
+
+      return NextResponse.json(campaigns[campaignIndex])
     }
 
-    // ─── ACTION: cancel ───────────────────────────────────────────────
     if (action === 'cancel') {
       if (campaign.status !== 'scheduled' && campaign.status !== 'draft') {
         return NextResponse.json(
@@ -203,36 +165,31 @@ export async function POST(
         status: 'cancelled',
       }
 
-      return NextResponse.json({
-        success: true,
-        message: 'کمپین با موفقیت لغو شد',
-        data: campaigns[campaignIndex],
-      })
+      return NextResponse.json(campaigns[campaignIndex])
     }
 
-    // ─── ACTION: duplicate ────────────────────────────────────────────
     if (action === 'duplicate') {
       const duplicated: Campaign = {
         ...campaign,
-        id: `camp_${Date.now()}`,
+        id: `c${Date.now()}`,
         name: `${campaign.name} (کپی)`,
         status: 'draft',
         deliveredCount: 0,
         failedCount: 0,
+        cost: 0,
         createdAt: new Date().toISOString(),
       }
 
-      campaigns.unshift(duplicated)
+      // Remove scheduledAt on duplicate
+      delete duplicated.scheduledAt
 
-      return NextResponse.json({
-        success: true,
-        message: 'کمپین با موفقیت کپی شد',
-        data: duplicated,
-      })
+      campaigns.push(duplicated)
+
+      return NextResponse.json(duplicated)
     }
 
     return NextResponse.json(
-      { success: false, message: 'اکشن نامعتبر است. اکشن‌های مجاز: send, cancel, duplicate' },
+      { success: false, message: 'اکشن نامعتبر' },
       { status: 400 }
     )
   } catch (error) {
@@ -260,21 +217,9 @@ export async function DELETE(
       )
     }
 
-    const campaign = campaigns[campaignIndex]
-
-    if (campaign.status === 'sending' || campaign.status === 'completed') {
-      return NextResponse.json(
-        { success: false, message: 'امکان حذف کمپین در حال ارسال یا تکمیل‌شده وجود ندارد' },
-        { status: 400 }
-      )
-    }
-
     campaigns.splice(campaignIndex, 1)
 
-    return NextResponse.json({
-      success: true,
-      message: 'کمپین با موفقیت حذف شد',
-    })
+    return NextResponse.json({ success: true, message: 'کمپین با موفقیت حذف شد' })
   } catch (error) {
     console.error('[SMS Campaign DELETE]', error)
     return NextResponse.json(

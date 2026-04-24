@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { phones, message, type = 'marketing', senderNumber = '' } = body
+    const { phones, message, type } = body
 
     if (!phones || !Array.isArray(phones) || phones.length === 0) {
       return NextResponse.json(
@@ -20,70 +20,25 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (phones.length > 500) {
-      return NextResponse.json(
-        { success: false, message: 'حداکثر ۵۰۰ شماره در هر ارسال مجاز است' },
-        { status: 400 }
-      )
-    }
-
     // Validate phone numbers (Iranian format)
-    const validPhones: string[] = []
-    const invalidPhones: string[] = []
     const phoneRegex = /^09\d{9}$/
+    const validPhones = phones.filter((phone: string) => phoneRegex.test(String(phone).replace(/\s+/g, '')))
 
-    for (const phone of phones) {
-      const cleaned = String(phone).replace(/\s+/g, '')
-      if (phoneRegex.test(cleaned)) {
-        validPhones.push(cleaned)
-      } else {
-        invalidPhones.push(String(phone))
-      }
-    }
-
-    // Mock blacklist check
-    const blacklistPhones = new Set(['09121234567', '09351234567', '09191234567'])
-    const filteredPhones = validPhones.filter((p) => !blacklistPhones.has(p))
-    const skippedByBlacklist = validPhones.length - filteredPhones.length
-
-    if (filteredPhones.length === 0) {
+    if (validPhones.length === 0) {
       return NextResponse.json(
-        {
-          success: false,
-          message: invalidPhones.length > 0
-            ? 'هیچ شماره معتبری وجود ندارد. شماره‌ها باید با 09 شروع شوند و ۱۱ رقم باشند.'
-            : 'تمام شماره‌ها در لیست سیاه هستند',
-        },
+        { success: false, message: 'هیچ شماره معتبری وجود ندارد' },
         { status: 400 }
       )
     }
 
     const costPerSms = 45
-    const failedCount = Math.floor(filteredPhones.length * (Math.random() * 0.04))
-    const deliveredCount = filteredPhones.length - failedCount
-    const totalCost = deliveredCount * costPerSms
-
-    const results = filteredPhones.map((phone, idx) => ({
-      phone,
-      status: idx < deliveredCount ? 'delivered' : 'failed',
-      messageId: `msg_${Date.now()}_${idx}`,
-      sentAt: new Date().toISOString(),
-    }))
+    const sent = validPhones.length
+    const cost = sent * costPerSms
 
     return NextResponse.json({
       success: true,
-      message: `پیامک با موفقیت ارسال شد — ${deliveredCount} پیام تحویل داده شد`,
-      data: {
-        results,
-        delivered: deliveredCount,
-        failed: failedCount,
-        skipped: {
-          blacklist: skippedByBlacklist,
-          invalid: invalidPhones.length,
-        },
-        totalCost,
-        costPerSms,
-      },
+      sent,
+      cost,
     })
   } catch (error) {
     console.error('[SMS Quick-Send POST]', error)

@@ -1,40 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+
+// ─── In-Memory Mock Data ────────────────────────────────────────────────
+interface BlacklistEntry {
+  id: string
+  phone: string
+  reason: string
+  addedAt: string
+}
+
+let blacklist: BlacklistEntry[] = [
+  { id: 'bl1', phone: '09121234567', reason: 'درخواست کاربر', addedAt: '2024-03-10T08:00:00Z' },
+  { id: 'bl2', phone: '09351234567', reason: 'شکایات مکرر', addedAt: '2024-03-12T14:30:00Z' },
+  { id: 'bl3', phone: '09191234567', reason: 'شماره غیرمعتبر', addedAt: '2024-03-15T10:00:00Z' },
+  { id: 'bl4', phone: '09381234567', reason: 'بازخورد منفی', addedAt: '2024-03-18T09:15:00Z' },
+]
 
 // ─── GET: List blacklisted phones ──────────────────────────────────────
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const { searchParams } = req.nextUrl
-    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)))
-    const phone = searchParams.get('phone') || ''
-
-    const where: Record<string, unknown> = {}
-    if (phone) where.phone = { contains: phone }
-
-    const [blacklist, total] = await Promise.all([
-      db.smsBlacklist.findMany({
-        where,
-        orderBy: { createdAt: 'desc' },
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      db.smsBlacklist.count({ where }),
-    ])
-
-    return NextResponse.json({
-      success: true,
-      message: 'لیست شماره‌های مسدود',
-      data: {
-        blacklist,
-        pagination: {
-          page,
-          limit,
-          total,
-          totalPages: Math.ceil(total / limit),
-        },
-      },
-    })
+    return NextResponse.json(blacklist)
   } catch (error) {
     console.error('[SMS Blacklist GET]', error)
     return NextResponse.json(
@@ -48,7 +32,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { phone, reason = '' } = body
+    const { phone, reason } = body
 
     if (!phone) {
       return NextResponse.json(
@@ -58,7 +42,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if already blacklisted
-    const existing = await db.smsBlacklist.findUnique({ where: { phone } })
+    const existing = blacklist.find((b) => b.phone === phone)
     if (existing) {
       return NextResponse.json(
         { success: false, message: 'این شماره قبلاً در لیست سیاه قرار گرفته است' },
@@ -66,15 +50,16 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const entry = await db.smsBlacklist.create({
-      data: { phone, reason },
-    })
+    const entry: BlacklistEntry = {
+      id: `bl${Date.now()}`,
+      phone,
+      reason: reason || '',
+      addedAt: new Date().toISOString(),
+    }
 
-    return NextResponse.json({
-      success: true,
-      message: 'شماره با موفقیت به لیست سیاه اضافه شد',
-      data: entry,
-    })
+    blacklist.push(entry)
+
+    return NextResponse.json(entry)
   } catch (error) {
     console.error('[SMS Blacklist POST]', error)
     return NextResponse.json(
@@ -87,8 +72,8 @@ export async function POST(req: NextRequest) {
 // ─── DELETE: Remove phone from blacklist ───────────────────────────────
 export async function DELETE(req: NextRequest) {
   try {
-    const { searchParams } = req.nextUrl
-    const phone = searchParams.get('phone')
+    const body = await req.json()
+    const { phone } = body
 
     if (!phone) {
       return NextResponse.json(
@@ -97,20 +82,17 @@ export async function DELETE(req: NextRequest) {
       )
     }
 
-    const existing = await db.smsBlacklist.findUnique({ where: { phone } })
-    if (!existing) {
+    const entryIndex = blacklist.findIndex((b) => b.phone === phone)
+    if (entryIndex === -1) {
       return NextResponse.json(
         { success: false, message: 'شماره در لیست سیاه یافت نشد' },
         { status: 404 }
       )
     }
 
-    await db.smsBlacklist.delete({ where: { phone } })
+    blacklist.splice(entryIndex, 1)
 
-    return NextResponse.json({
-      success: true,
-      message: 'شماره با موفقیت از لیست سیاه حذف شد',
-    })
+    return NextResponse.json({ success: true, message: 'شماره با موفقیت از لیست سیاه حذف شد' })
   } catch (error) {
     console.error('[SMS Blacklist DELETE]', error)
     return NextResponse.json(

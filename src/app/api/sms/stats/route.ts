@@ -19,26 +19,20 @@ export async function GET() {
         { day: 'شنبه', count: 450 },
         { day: 'یکشنبه', count: 380 },
         { day: 'دوشنبه', count: 520 },
-        { day: 'سه‌شنبه', count: 290 },
-        { day: 'چهارشنبه', count: 610 },
-        { day: 'پنجشنبه', count: 440 },
-        { day: 'جمعه', count: 320 },
+        { day: 'سه‌شنبه', count: 310 },
+        { day: 'چهارشنبه', count: 480 },
+        { day: 'پنجشنبه', count: 290 },
+        { day: 'جمعه', count: 150 },
       ],
       topSegments: [
-        { name: 'all', label: 'همه کاربران', count: 2400 },
-        { name: 'active', label: 'کاربران فعال', count: 1800 },
-        { name: 'vip', label: 'VIP', count: 450 },
-        { name: 'new_users', label: 'کاربران جدید', count: 320 },
-        { name: 'kyc_verified', label: 'احراز شده', count: 1200 },
-        { name: 'gold_holders', label: 'داران طلای آبشده', count: 890 },
+        { name: 'all', count: 2400 },
+        { name: 'active', count: 1800 },
+        { name: 'vip', count: 450 },
+        { name: 'new', count: 320 },
       ],
     }
 
-    return NextResponse.json({
-      success: true,
-      message: 'آمار داشبورد پیامکی',
-      data: stats,
-    })
+    return NextResponse.json(stats)
   } catch (error) {
     console.error('[SMS Stats GET]', error)
     return NextResponse.json(

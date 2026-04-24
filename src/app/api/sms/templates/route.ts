@@ -8,156 +8,106 @@ interface Template {
   content: string
   type: string
   variables: string[]
-  isDefault: boolean
-  isActive: boolean
-  createdAt: string
-  updatedAt: string
+  active: boolean
 }
 
 let templates: Template[] = [
   {
-    id: 'tpl_001',
+    id: 't1',
     name: 'خوش‌آمدگویی',
     slug: 'welcome',
-    content: 'به خانواده زرین گلد خوش آمدید {name} عزیز! 🌟 حساب شما با موفقیت ایجاد شد. همین حالا سرمایه‌گذاری در طلای آبشده را شروع کنید.',
-    type: 'transactional',
-    variables: ['name'],
-    isDefault: true,
-    isActive: true,
-    createdAt: '2025-01-01T08:00:00Z',
-    updatedAt: '2025-01-01T08:00:00Z',
+    content: 'به زرین گلد خوش آمدید {name} عزیز!',
+    type: 'marketing',
+    variables: ['{name}'],
+    active: true,
   },
   {
-    id: 'tpl_002',
-    name: 'تراکنش مالی',
+    id: 't2',
+    name: 'تراکنش',
     slug: 'transaction',
-    content: 'تراکنش {type} شما با مبلغ {amount} تومان با موفقیت انجام شد. مانده کیف پول: {balance} تومان. شناسه تراکنش: {refId}',
+    content: 'تراکنش {type} به مبلغ {amount} تومان انجام شد',
     type: 'transactional',
-    variables: ['type', 'amount', 'balance', 'refId'],
-    isDefault: true,
-    isActive: true,
-    createdAt: '2025-01-01T08:00:00Z',
-    updatedAt: '2025-02-15T10:00:00Z',
+    variables: ['{type}', '{amount}'],
+    active: true,
   },
   {
-    id: 'tpl_003',
-    name: 'هشدار قیمت طلا',
+    id: 't3',
+    name: 'هشدار قیمت',
     slug: 'price_alert',
-    content: '⚡ هشدار قیمت طلا\nقیمت لحظه‌ای هر گرم طلای آبشده: {price} تومان\nتغییر نسبت به دیروز: {change}%\n{direction}',
-    type: 'notification',
-    variables: ['price', 'change', 'direction'],
-    isDefault: false,
-    isActive: true,
-    createdAt: '2025-01-10T09:00:00Z',
-    updatedAt: '2025-03-01T14:00:00Z',
+    content: 'قیمت طلا {direction}: خرید {buyPrice} / فروش {sellPrice}',
+    type: 'price_alert',
+    variables: ['{direction}', '{buyPrice}', '{sellPrice}'],
+    active: true,
   },
   {
-    id: 'tpl_004',
-    name: 'تبریک تولد',
+    id: 't4',
+    name: 'تولد',
     slug: 'birthday',
-    content: '🎂 تولد شما مبارک {name} عزیز!\nزرین گلد بهترین‌ها را برای شما آرزو می‌کند.\n🎁 ۵ گرم طلای رایگان هدیه تولد به کیف پول شما واریز شد.',
-    type: 'marketing',
-    variables: ['name'],
-    isDefault: true,
-    isActive: true,
-    createdAt: '2025-01-15T12:00:00Z',
-    updatedAt: '2025-01-15T12:00:00Z',
+    content: 'تولدت مبارک {name}! زرین گلد یه هدیه ویژه برات داره 🎂',
+    type: 'birthday',
+    variables: ['{name}', '{gift_code}'],
+    active: true,
   },
   {
-    id: 'tpl_005',
-    name: 'امنیت حساب',
+    id: 't5',
+    name: 'امنیتی',
     slug: 'security',
-    content: '🔐 هشدار امنیتی زرین گلد\nورود جدید از دستگاه {device} در {location}\nاگر این ورود توسط شما نبوده، فوراً رمز عبور خود را تغییر دهید.',
-    type: 'transactional',
-    variables: ['device', 'location'],
-    isDefault: true,
-    isActive: true,
-    createdAt: '2025-01-05T10:00:00Z',
-    updatedAt: '2025-01-05T10:00:00Z',
+    content: 'ورود جدید به حساب شما از {ip}. اگر شما نیستید سریعاً اقدام کنید',
+    type: 'security',
+    variables: ['{ip}'],
+    active: true,
   },
   {
-    id: 'tpl_006',
-    name: 'برداشت از کیف پول',
+    id: 't6',
+    name: 'برداشت',
     slug: 'withdrawal',
-    content: '💰 برداشت از کیف پول\nمبلغ {amount} تومان از کیف پول زرین گلد شما برداشت شد.\nمانده فعلی: {balance} تومان\nشناسه: {refId}',
+    content: 'مبلغ {amount} تومان از کیف پول شما برداشت شد. موجودی: {balance}',
     type: 'transactional',
-    variables: ['amount', 'balance', 'refId'],
-    isDefault: true,
-    isActive: true,
-    createdAt: '2025-01-01T08:00:00Z',
-    updatedAt: '2025-01-01T08:00:00Z',
+    variables: ['{amount}', '{balance}'],
+    active: true,
   },
   {
-    id: 'tpl_007',
-    name: 'واریز به کیف پول',
+    id: 't7',
+    name: 'واریز',
     slug: 'deposit',
-    content: '✅ واریز به کیف پول\nمبلغ {amount} تومان به کیف پول زرین گلد شما واریز شد.\nمانده فعلی: {balance} تومان\nشناسه: {refId}',
+    content: 'مبلغ {amount} تومان به کیف پول شما واریز شد. موجودی: {balance}',
     type: 'transactional',
-    variables: ['amount', 'balance', 'refId'],
-    isDefault: true,
-    isActive: true,
-    createdAt: '2025-01-01T08:00:00Z',
-    updatedAt: '2025-01-01T08:00:00Z',
+    variables: ['{amount}', '{balance}'],
+    active: true,
   },
   {
-    id: 'tpl_008',
-    name: 'کد تأیید (OTP)',
+    id: 't8',
+    name: 'کد تایید',
     slug: 'otp',
-    content: '🔑 کد تأیید زرین گلد: {code}\nاین کد تا {expires} دقیقه اعتبار دارد.\nهرگز این کد را به کسی ارسال نکنید.',
-    type: 'transactional',
-    variables: ['code', 'expires'],
-    isDefault: true,
-    isActive: true,
-    createdAt: '2025-01-01T08:00:00Z',
-    updatedAt: '2025-01-01T08:00:00Z',
+    content: 'کد تایید شما: {code}. این کد ۲ دقیقه اعتبار دارد',
+    type: 'otp',
+    variables: ['{code}'],
+    active: true,
   },
   {
-    id: 'tpl_009',
-    name: 'هدیه و جایزه',
+    id: 't9',
+    name: 'هدیه',
     slug: 'gift',
-    content: '🎁 هدیه ویژه زرین گلد!\n{name} عزیز، {amount} گرم طلای آبشده به کیف پول شما واریز شد.\nبرای استفاده وارد پنل شوید.',
-    type: 'marketing',
-    variables: ['name', 'amount'],
-    isDefault: false,
-    isActive: true,
-    createdAt: '2025-02-01T11:00:00Z',
-    updatedAt: '2025-02-01T11:00:00Z',
+    content: '{sender} عزیز یه هدیه طلا برات فرستاده! کد هدیه: {gift_code}',
+    type: 'gift',
+    variables: ['{sender}', '{gift_code}'],
+    active: true,
   },
   {
-    id: 'tpl_010',
-    name: 'وفاداری مشتری',
+    id: 't10',
+    name: 'وفاداری',
     slug: 'loyalty',
-    content: '⭐ سطح وفاداری شما ارتقا یافت!\n{name} عزیز، شما اکنون در سطح {level} هستید.\nمزایا: {benefits}',
-    type: 'marketing',
-    variables: ['name', 'level', 'benefits'],
-    isDefault: false,
-    isActive: true,
-    createdAt: '2025-02-20T16:00:00Z',
-    updatedAt: '2025-02-20T16:00:00Z',
+    content: '{x} امتیاز وفاداری به حساب شما اضافه شد! مجموع: {total} امتیاز',
+    type: 'loyalty',
+    variables: ['{x}', '{total}'],
+    active: true,
   },
 ]
 
 // ─── GET: List all templates ───────────────────────────────────────────
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const { searchParams } = req.nextUrl
-    const type = searchParams.get('type') || ''
-    const search = searchParams.get('search') || ''
-
-    let filtered = templates.filter((t) => t.isActive)
-
-    if (type) {
-      filtered = filtered.filter((t) => t.type === type)
-    }
-    if (search) {
-      filtered = filtered.filter((t) => t.name.includes(search) || t.slug.includes(search))
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: 'لیست قالب‌های پیامکی',
-      data: filtered,
-    })
+    return NextResponse.json(templates)
   } catch (error) {
     console.error('[SMS Templates GET]', error)
     return NextResponse.json(
@@ -171,7 +121,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { name, slug, content, type = 'transactional', variables = [], isDefault = false } = body
+    const { name, slug, content, type, variables } = body
 
     if (!name || !slug || !content) {
       return NextResponse.json(
@@ -189,41 +139,75 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Extract variables from content
-    const variableRegex = /\{(\w+)\}/g
-    const extractedVars: string[] = []
-    let match
-    while ((match = variableRegex.exec(content)) !== null) {
-      if (!extractedVars.includes(match[1])) {
-        extractedVars.push(match[1])
-      }
-    }
-
-    const now = new Date().toISOString()
     const newTemplate: Template = {
-      id: `tpl_${Date.now()}`,
+      id: `t${Date.now()}`,
       name,
       slug,
       content,
-      type,
-      variables: variables.length > 0 ? variables : extractedVars,
-      isDefault,
-      isActive: true,
-      createdAt: now,
-      updatedAt: now,
+      type: type || 'marketing',
+      variables: variables || [],
+      active: true,
     }
 
     templates.push(newTemplate)
 
-    return NextResponse.json({
-      success: true,
-      message: 'قالب جدید با موفقیت ایجاد شد',
-      data: newTemplate,
-    })
+    return NextResponse.json(newTemplate)
   } catch (error) {
     console.error('[SMS Templates POST]', error)
     return NextResponse.json(
       { success: false, message: 'خطا در ایجاد قالب' },
+      { status: 500 }
+    )
+  }
+}
+
+// ─── PUT: Update existing template ────────────────────────────────────
+export async function PUT(req: NextRequest) {
+  try {
+    const body = await req.json()
+    const { id, name, slug, content, type, variables, active } = body
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, message: 'شناسه قالب الزامی است' },
+        { status: 400 }
+      )
+    }
+
+    const templateIndex = templates.findIndex((t) => t.id === id)
+    if (templateIndex === -1) {
+      return NextResponse.json(
+        { success: false, message: 'قالب یافت نشد' },
+        { status: 404 }
+      )
+    }
+
+    // Check slug uniqueness if changed
+    if (slug) {
+      const existing = templates.find((t) => t.slug === slug && t.id !== id)
+      if (existing) {
+        return NextResponse.json(
+          { success: false, message: 'این شناسه قبلاً استفاده شده است' },
+          { status: 409 }
+        )
+      }
+    }
+
+    templates[templateIndex] = {
+      ...templates[templateIndex],
+      ...(name !== undefined && { name }),
+      ...(slug !== undefined && { slug }),
+      ...(content !== undefined && { content }),
+      ...(type !== undefined && { type }),
+      ...(variables !== undefined && { variables }),
+      ...(active !== undefined && { active }),
+    }
+
+    return NextResponse.json(templates[templateIndex])
+  } catch (error) {
+    console.error('[SMS Templates PUT]', error)
+    return NextResponse.json(
+      { success: false, message: 'خطا در بروزرسانی قالب' },
       { status: 500 }
     )
   }
