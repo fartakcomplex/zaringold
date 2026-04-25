@@ -1,0 +1,149 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: nextjs-app-policy
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "zaringold.labels" . | nindent 4 }}
+    app.kubernetes.io/component: nextjs
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "zaringold.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    {{- if .Values.networkPolicy.allowIngress }}- Ingress{{- end }}
+    {{- if .Values.networkPolicy.allowEgress }}- Egress{{- end }}
+  {{- if .Values.networkPolicy.allowIngress }}
+  ingress:
+    - from:
+        {{- range .Values.networkPolicy.ingressNamespaces }}
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ . }}
+        {{- end }}
+      ports:
+        - protocol: TCP
+          port: {{ .Values.service.port }}
+  {{- end }}
+  {{- if .Values.networkPolicy.allowEgress }}
+  egress:
+    # Allow DNS
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Allow configured endpoints
+    {{- range .Values.networkPolicy.egressEndpoints }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: {{ include "zaringold.name" $ }}
+      ports:
+        - protocol: TCP
+          port: {{ .port }}
+    {{- end }}
+  {{- end }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: chat-service-policy
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "zaringold.labels" . | nindent 4 }}
+    app.kubernetes.io/component: chat-service
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "zaringold.chatSelectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+        - podSelector:
+            matchLabels:
+              {{- include "zaringold.selectorLabels" . | nindent 14 }}
+      ports:
+        - protocol: TCP
+          port: {{ .Values.chatService.port }}
+  egress:
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: {{ include "zaringold.name" . }}
+              app.kubernetes.io/component: redis
+      ports:
+        - protocol: TCP
+          port: 6379
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: price-service-policy
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "zaringold.labels" . | nindent 4 }}
+    app.kubernetes.io/component: price-service
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "zaringold.priceSelectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "zaringold.selectorLabels" . | nindent 14 }}
+      ports:
+        - protocol: TCP
+          port: 3006
+  egress:
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: {{ include "zaringold.name" . }}
+              app.kubernetes.io/component: redis
+      ports:
+        - protocol: TCP
+          port: 6379
+    # Allow external API calls (TGJU)
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 443
+{{- end }}

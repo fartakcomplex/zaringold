@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-service
+  namespace: zaringold
+  labels:
+    app.kubernetes.io/name: zaringold
+    app.kubernetes.io/component: chat-service
+    app.kubernetes.io/part-of: zaringold
+    app.kubernetes.io/service: chat-service
+spec:
+  type: ClusterIP
+  # Session affinity for Socket.IO sticky sessions
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 3600
+  ports:
+    - name: http
+      port: 3005
+      targetPort: http
+      protocol: TCP
+      appProtocol: http
+  selector:
+    app.kubernetes.io/name: zaringold
+    app.kubernetes.io/component: chat-service
+---
+# Headless service for Socket.IO direct pod addressing
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-service-headless
+  namespace: zaringold
+  labels:
+    app.kubernetes.io/name: zaringold
+    app.kubernetes.io/component: chat-service
+    app.kubernetes.io/part-of: zaringold
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: http
+      port: 3005
+      targetPort: http
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: zaringold
+    app.kubernetes.io/component: chat-service

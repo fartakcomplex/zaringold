@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-service
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "zaringold.labels" . | nindent 4 }}
+    app.kubernetes.io/component: chat-service
+    app.kubernetes.io/service: chat-service
+spec:
+  type: {{ .Values.chatService.type }}
+  sessionAffinity: {{ .Values.chatService.sessionAffinity }}
+  {{- with .Values.chatService.sessionAffinityTimeout }}
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: {{ . }}
+  {{- end }}
+  ports:
+    - name: http
+      port: {{ .Values.chatService.port }}
+      targetPort: http
+      protocol: TCP
+      appProtocol: http
+  selector:
+    {{- include "zaringold.chatSelectorLabels" . | nindent 4 }}
+---
+{{- if .Values.chatService.headless }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-service-headless
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "zaringold.labels" . | nindent 4 }}
+    app.kubernetes.io/component: chat-service
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: http
+      port: {{ .Values.chatService.port }}
+      targetPort: http
+      protocol: TCP
+  selector:
+    {{- include "zaringold.chatSelectorLabels" . | nindent 4 }}
+{{- end }}

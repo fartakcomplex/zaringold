@@ -1,0 +1,27 @@
+apiVersion: v2
+name: zaringold
+description: >-
+  ZarinGold (زرین گلد) - Production-grade gold trading and investment platform.
+  Helm chart for deploying the full-stack Next.js application with Socket.IO chat,
+  price service, Redis, PostgreSQL, and monitoring to Kubernetes.
+type: application
+version: 3.0.0
+appVersion: "v3.0.0"
+keywords:
+  - gold-trading
+  - investment
+  - nextjs
+  - socket-io
+  - kubernetes
+  - zaringold
+home: https://github.com/fartakcomplex/zaringold
+sources:
+  - https://github.com/fartakcomplex/zaringold
+maintainers:
+  - name: ZarinGold Team
+    email: dev@zaringold.ir
+    url: https://zaringold.ir
+icon: https://zaringold.ir/logo.svg
+annotations:
+  category: Finance
+  licenses: MIT

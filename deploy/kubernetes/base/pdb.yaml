@@ -1,0 +1,47 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: nextjs-app-pdb
+  namespace: zaringold
+  labels:
+    app.kubernetes.io/name: zaringold
+    app.kubernetes.io/component: nextjs
+    app.kubernetes.io/part-of: zaringold
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: zaringold
+      app.kubernetes.io/component: nextjs
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: chat-service-pdb
+  namespace: zaringold
+  labels:
+    app.kubernetes.io/name: zaringold
+    app.kubernetes.io/component: chat-service
+    app.kubernetes.io/part-of: zaringold
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: zaringold
+      app.kubernetes.io/component: chat-service
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: price-service-pdb
+  namespace: zaringold
+  labels:
+    app.kubernetes.io/name: zaringold
+    app.kubernetes.io/component: price-service
+    app.kubernetes.io/part-of: zaringold
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: zaringold
+      app.kubernetes.io/component: price-service

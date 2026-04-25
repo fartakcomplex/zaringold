@@ -1,0 +1,115 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: zaringold-staging
+
+# Reference base manifests
+resources:
+  - ../../base
+
+# Common labels for staging
+commonLabels:
+  app.kubernetes.io/environment: staging
+  team: platform
+  cost-center: development
+
+# Override namespace in resources
+namePrefix: staging-
+
+# Staging secret generator
+secretGenerator:
+  - name: zaringold-secrets
+    envs:
+      - .env.secrets
+    options:
+      disableNameSuffixHash: false
+
+# ConfigMap patches for staging
+configMapGenerator:
+  - name: zaringold-config
+    behavior: merge
+    literals:
+      - LOG_LEVEL=debug
+      - ENABLE_CHAT=true
+      - ENABLE_REALTIME_PRICES=true
+      - RATE_LIMIT_MAX_REQUESTS=200
+      - CORS_ALLOWED_ORIGINS=https://staging.zaringold.ir,https://*.space.z.ai
+
+# Patches
+patches:
+  # Smaller replicas for staging
+  - target:
+      kind: Deployment
+      name: nextjs-app
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 2
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: "1"
+            memory: 1Gi
+
+  - target:
+      kind: Deployment
+      name: chat-service
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 1
+
+  - target:
+      kind: Deployment
+      name: price-service
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 1
+
+  # Reduce HPA for staging
+  - target:
+      kind: HorizontalPodAutoscaler
+      name: nextjs-app-hpa
+    patch: |
+      - op: replace
+        path: /spec/minReplicas
+        value: 2
+      - op: replace
+        path: /spec/maxReplicas
+        value: 10
+
+  - target:
+      kind: HorizontalPodAutoscaler
+      name: chat-service-hpa
+    patch: |
+      - op: replace
+        path: /spec/minReplicas
+        value: 1
+      - op: replace
+        path: /spec/maxReplicas
+        value: 5
+
+  - target:
+      kind: HorizontalPodAutoscaler
+      name: price-service-hpa
+    patch: |
+      - op: replace
+        path: /spec/minReplicas
+        value: 1
+      - op: replace
+        path: /spec/maxReplicas
+        value: 3
+
+# Images - staging tag
+images:
+  - name: ghcr.io/fartakcomplex/zaringold
+    newTag: staging
+  - name: ghcr.io/fartakcomplex/zaringold-chat
+    newTag: staging
+  - name: ghcr.io/fartakcomplex/zaringold-price
+    newTag: staging

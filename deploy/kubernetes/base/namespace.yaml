@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: zaringold
+  labels:
+    app.kubernetes.io/name: zaringold
+    app.kubernetes.io/part-of: zaringold
+    app.kubernetes.io/environment: base
+    team: platform
+    managed-by: kustomize

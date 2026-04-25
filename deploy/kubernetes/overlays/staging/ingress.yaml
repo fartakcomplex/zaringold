@@ -1,0 +1,60 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zaringold-ingress
+  namespace: zaringold-staging
+  labels:
+    app.kubernetes.io/name: zaringold
+    app.kubernetes.io/component: ingress
+    app.kubernetes.io/part-of: zaringold
+    app.kubernetes.io/environment: staging
+  annotations:
+    # NGINX Ingress Controller
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
+    # Relaxed rate limiting for staging
+    nginx.ingress.kubernetes.io/limit-rps: "50"
+    nginx.ingress.kubernetes.io/limit-connections: "30"
+
+    # CORS - allow all origins in staging
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, PATCH, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "*"
+
+    # WebSocket support
+    nginx.ingress.kubernetes.io/websocket-services: "chat-service"
+
+    # Socket.IO sticky sessions
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "ZG_CHAT_SID_STG"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "86400"
+
+    # Cert Manager (staging issuer)
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - staging.zaringold.ir
+      secretName: zaringold-staging-tls
+  rules:
+    - host: staging.zaringold.ir
+      http:
+        paths:
+          - path: /socket.io
+            pathType: Prefix
+            backend:
+              service:
+                name: chat-service
+                port:
+                  number: 3005
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nextjs-app
+                port:
+                  number: 3000

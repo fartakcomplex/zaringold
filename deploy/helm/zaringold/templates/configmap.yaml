@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "zaringold.fullname" . }}-config
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "zaringold.labels" . | nindent 4 }}
+    app.kubernetes.io/component: config
+data:
+  NODE_ENV: {{ .Values.config.nodeEnv | quote }}
+  NEXT_TELEMETRY_DISABLED: {{ .Values.config.nextTelemetryDisabled | quote }}
+  PORT: {{ .Values.config.port | quote }}
+  HOSTNAME: {{ .Values.config.hostname | quote }}
+  DATABASE_PROVIDER: {{ .Values.config.databaseProvider | quote }}
+  REDIS_DB: {{ .Values.config.redisDb | quote }}
+  REDIS_KEY_PREFIX: {{ .Values.config.redisKeyPrefix | quote }}
+  PRICE_UPDATE_INTERVAL: {{ .Values.config.priceUpdateInterval | quote }}
+  ENABLE_CHAT: {{ .Values.config.enableChat | quote }}
+  ENABLE_REALTIME_PRICES: {{ .Values.config.enableRealtimePrices | quote }}
+  ENABLE_GOLD_CARD: {{ .Values.config.enableGoldCard | quote }}
+  ENABLE_MERCHANT_GATEWAY: {{ .Values.config.enableMerchantGateway | quote }}
+  ENABLE_GAMIFICATION: {{ .Values.config.enableGamification | quote }}
+  ENABLE_INSURANCE: {{ .Values.config.enableInsurance | quote }}
+  ENABLE_TELEGRAM_BOT: {{ .Values.config.enableTelegramBot | quote }}
+  ENABLE_AI_CHAT: {{ .Values.config.enableAiChat | quote }}
+  ENABLE_MULTILINGUAL: {{ .Values.config.enableMultilingual | quote }}
+  RATE_LIMIT_WINDOW_MS: {{ .Values.config.rateLimitWindowMs | quote }}
+  RATE_LIMIT_MAX_REQUESTS: {{ .Values.config.rateLimitMaxRequests | quote }}
+  RATE_LIMIT_MAX_OTP: {{ .Values.config.rateLimitMaxOtp | quote }}
+  SESSION_TTL_HOURS: {{ .Values.config.sessionTtlHours | quote }}
+  LOG_LEVEL: {{ .Values.config.logLevel | quote }}
+  LOG_FORMAT: {{ .Values.config.logFormat | quote }}
+  CORS_ALLOWED_ORIGINS: {{ .Values.config.corsAllowedOrigins | quote }}

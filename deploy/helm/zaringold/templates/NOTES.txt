@@ -1,0 +1,81 @@
+{{/*
+NOTES.txt - Displayed after helm install/upgrade
+*/}}
+
+   ╔══════════════════════════════════════════════════════════════╗
+   ║                                                              ║
+   ║     🥇  ZarinGold (زرین گلد) - Gold Trading Platform        ║
+   ║                                                              ║
+   ║     Helm Chart v{{ .Chart.Version }} | App v{{ .Chart.AppVersion }}                    ║
+   ║                                                              ║
+   ╚══════════════════════════════════════════════════════════════╝
+
+Thank you for installing ZarinGold! Here's what was deployed:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  📋 Deployment Summary:
+
+    • Namespace:      {{ .Values.namespace | default .Release.Namespace }}
+    • Next.js Replicas: {{ .Values.replicaCount }}
+    • Chat Replicas:    {{ .Values.chatReplicaCount }}
+    • Price Replicas:   {{ .Values.priceReplicaCount }}
+
+    • Next.js Image:    {{ include "zaringold.image" . }}
+    • Chat Image:       {{ include "zaringold.chatImage" . }}
+    • Price Image:      {{ include "zaringold.priceImage" . }}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  🔗 Access Points:
+
+  {{- if .Values.ingress.enabled }}
+    {{- range .Values.ingress.hosts }}
+    • https://{{ .host }}
+    {{- end }}
+  {{- else }}
+    • Next.js:   http://nextjs-app.{{ .Values.namespace | default .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}
+    • Chat:      http://chat-service.{{ .Values.namespace | default .Release.Namespace }}.svc.cluster.local:{{ .Values.chatService.port }}
+    • Price:     http://price-service.{{ .Values.namespace | default .Release.Namespace }}.svc.cluster.local:3006
+  {{- end }}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  📊 Autoscaling:
+
+    • Next.js: {{ .Values.autoscaling.minReplicas }}-{{ .Values.autoscaling.maxReplicas }} pods
+      (CPU: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}%)
+    • Chat:    {{ .Values.chatAutoscaling.minReplicas }}-{{ .Values.chatAutoscaling.maxReplicas }} pods
+      (CPU: {{ .Values.chatAutoscaling.targetCPUUtilizationPercentage }}%)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ⚡ Quick Commands:
+
+    # Check deployment status
+    kubectl -n {{ .Values.namespace | default .Release.Namespace }} get pods -l app.kubernetes.io/name={{ include "zaringold.name" . }}
+
+    # Watch rollout
+    kubectl -n {{ .Values.namespace | default .Release.Namespace }} rollout status deployment/nextjs-app
+
+    # View logs
+    kubectl -n {{ .Values.namespace | default .Release.Namespace }} logs -f deployment/nextjs-app --tail=100
+
+    # Port-forward for local testing
+    kubectl -n {{ .Values.namespace | default .Release.Namespace }} port-forward svc/nextjs-app {{ .Values.service.port }}:{{ .Values.service.port }}
+
+    # Scale manually
+    kubectl -n {{ .Values.namespace | default .Release.Namespace }} scale deployment nextjs-app --replicas=5
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ⚠️  Post-Install Checklist:
+
+    1. Configure secrets:  helm upgrade --set secrets.databaseUrl="postgresql://..." {{ .Release.Name }}
+    2. Run DB migrations:   kubectl exec -it deployment/nextjs-app -- npx prisma migrate deploy
+    3. Verify health:       curl http://nextjs-app.{{ .Values.namespace | default .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}/api/health
+    4. Check TLS certs:     kubectl -n {{ .Values.namespace | default .Release.Namespace }} get ingress
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For support, visit: https://github.com/fartakcomplex/zaringold

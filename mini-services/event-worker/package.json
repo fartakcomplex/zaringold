@@ -1,0 +1,18 @@
+{
+  "name": "zarrin-gold-event-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Standalone event worker service for ZarinGold platform. Processes background events and jobs.",
+  "scripts": {
+    "dev": "bun --hot index.ts",
+    "start": "bun index.ts",
+    "health": "curl -s http://localhost:3008/health | jq"
+  },
+  "dependencies": {
+    "ioredis": "^5.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "bun-types": "^1.3.4"
+  }
+}

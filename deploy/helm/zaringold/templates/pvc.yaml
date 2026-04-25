@@ -1,0 +1,21 @@
+{{- if .Values.persistence.uploads.enabled }}
+{{- if not .Values.persistence.uploads.existingClaim }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "zaringold.fullname" . }}-uploads
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "zaringold.labels" . | nindent 4 }}
+    app.kubernetes.io/component: uploads
+spec:
+  accessModes:
+    - {{ .Values.persistence.uploads.accessMode | default "ReadWriteMany" }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.uploads.size | default "20Gi" }}
+  {{- with .Values.persistence.uploads.storageClass }}
+  storageClassName: {{ . }}
+  {{- end }}
+{{- end }}
+{{- end }}

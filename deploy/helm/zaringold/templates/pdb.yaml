@@ -1,0 +1,43 @@
+{{- if .Values.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: nextjs-app-pdb
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "zaringold.labels" . | nindent 4 }}
+    app.kubernetes.io/component: nextjs
+spec:
+  minAvailable: {{ .Values.pdb.nextjsMinAvailable }}
+  selector:
+    matchLabels:
+      {{- include "zaringold.selectorLabels" . | nindent 6 }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: chat-service-pdb
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "zaringold.labels" . | nindent 4 }}
+    app.kubernetes.io/component: chat-service
+spec:
+  minAvailable: {{ .Values.pdb.chatMinAvailable }}
+  selector:
+    matchLabels:
+      {{- include "zaringold.chatSelectorLabels" . | nindent 6 }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: price-service-pdb
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "zaringold.labels" . | nindent 4 }}
+    app.kubernetes.io/component: price-service
+spec:
+  maxUnavailable: {{ .Values.pdb.priceMaxUnavailable }}
+  selector:
+    matchLabels:
+      {{- include "zaringold.priceSelectorLabels" . | nindent 6 }}
+{{- end }}

@@ -210,3 +210,160 @@ Stage Summary:
 - Mobile black screen issue fixed (content area was 0px height due to CSS bug)
 - Mobile scrolling fixed (re-enabled user-select on scrollable content area)
 - Changed files: `src/components/layout/AppLayout.tsx`, `src/app/globals.css`
+
+---
+Task ID: 3 (Docker & K8s)
+Agent: Main Agent
+Task: Create Docker & Kubernetes deployment configs for scaling to 1M+ concurrent users
+
+Work Log:
+- Created 38 deployment configuration files across Docker, Kubernetes, and Helm
+- Created `Dockerfile` - Multi-stage production build (deps → build → runner) with:
+  - node:20-alpine base, corepack + bun support
+  - Prisma client generation in build stage
+  - Standalone Next.js output with dumb-init entrypoint
+  - Non-root user (nextjs:1001), read-only filesystem, dropped capabilities
+  - Health check on /api/health, 60s grace period
+- Created `.dockerignore` - Comprehensive Next.js dockerignore (excludes node_modules, .next, .env, deploy/, db/, docs/, etc.)
+- Created `docker-compose.yml` - Full development/staging stack with:
+  - nextjs-app (port 3000), chat-service (port 3005), price-service (port 3006), telegram-bot
+  - redis (7-alpine, 512mb maxmemory, LRU, AOF persistence, auth)
+  - postgres (16-alpine, production migration path)
+  - nginx (reverse proxy with SSL-ready config)
+  - prometheus + grafana (monitoring with dashboards)
+  - 3 isolated networks (backend/internal, frontend, monitoring/internal)
+  - 8 persistent volumes (app-data, uploads, chat-logs, redis, postgres, nginx-logs, prometheus, grafana)
+  - Resource limits, health checks, structured logging for all services
+- Created `deploy/kubernetes/base/` - 11 base K8s manifests:
+  - namespace.yaml (zaringold namespace with labels)
+  - configmap.yaml (feature flags, Redis config, rate limits, CORS, session TTL, logging)
+  - secret.yaml (template with DATABASE_URL, REDIS, JWT, ZarinPal, SMS, SMTP, Telegram, AI keys)
+  - service-account.yaml (automountServiceAccountToken: false)
+  - nextjs-deployment.yaml (3 replicas, rolling update, topologySpreadConstraints for multi-zone,
+    podAntiAffinity, initContainers for Redis/Postgres wait, liveness/readiness/startup probes,
+    2 CPU / 2Gi memory limits, PVC for uploads, emptyDir tmp+cache, preStop lifecycle)
+  - chat-service-deployment.yaml (2 replicas, Socket.IO ready, ClientIP session affinity)
+  - price-service-deployment.yaml (2 replicas, external API egress)
+  - nextjs-service.yaml (ClusterIP port 3000)
+  - chat-service-service.yaml (ClusterIP + headless service for Socket.IO direct pod addressing)
+  - hpa.yaml (Next.js: 3-50 pods CPU70%/Mem80%, Chat: 2-20 pods, Price: 2-10 pods, custom scaleUp/scaleDown behavior)
+  - pdb.yaml (minAvailable: 1 for nextjs/chat, maxUnavailable: 1 for price)
+  - network-policy.yaml (3 policies restricting pod communication, DNS/Redis/Postgres egress)
+- Created `deploy/kubernetes/overlays/production/` - Production kustomize overlay:
+  - kustomization.yaml (5 replicas, 4CPU/4Gi limits, production labels, env secrets, configmap merge)
+  - hpa-patch.yaml (scale 5-100 pods with aggressive scaleUp: 200%/15s, conservative scaleDown)
+  - ingress.yaml (NGINX Ingress with TLS, rate limiting 100rps/30conn, CORS, security headers,
+    CSP, Socket.IO sticky sessions via cookie affinity, WebSocket support, cert-manager annotations)
+- Created `deploy/kubernetes/overlays/staging/` - Staging kustomize overlay:
+  - kustomization.yaml (2 replicas, 1Gi limits, namePrefix: staging-, relaxed rate limits, debug logging)
+  - ingress.yaml (single host staging.zaringold.ir, letsencrypt-staging, wildcard CORS)
+- Created `deploy/helm/zaringold/` - Full Helm chart (17 template files):
+  - Chart.yaml (zaringold v3.0.0, type: application)
+  - values.yaml (comprehensive 400+ line config: replicas, resources, autoscaling, ingress,
+    topologySpread, nodeSelector, tolerations, affinity, securityContext, initContainers,
+    probes, lifecycle, persistence, monitoring, Redis/PostgreSQL sub-chart config, networkPolicy)
+  - _helpers.tpl (15 named templates: labels, selectors, image refs, serviceAccount, secretEnvs)
+  - Templates: namespace, configmap, secret, serviceaccount, deployment, chat-deployment,
+    price-deployment, service, chat-service, hpa, ingress, pdb, networkpolicy, pvc, NOTES.txt
+- Created `deploy/scripts/deploy.sh` - Comprehensive deployment script:
+  - Prerequisites check (kubectl, helm, kustomize, cluster access)
+  - Namespace creation with labels
+  - Secrets management from .env.secrets files
+  - Helm deploy/install/uninstall/rollback
+  - Kustomize deploy (as alternative)
+  - Status reporting (pods, services, HPA, ingress, PDB)
+  - Rollout wait with configurable timeout
+  - Log tailing
+  - Colorized output, dry-run, --wait, --timeout flags
+
+Stage Summary:
+- Complete Docker + Kubernetes + Helm deployment infrastructure for 1M+ concurrent users
+- Multi-stage Dockerfile optimized for minimal image size with security hardening
+- docker-compose.yml provides full local/staging environment with monitoring
+- K8s base manifests with production best practices (PodSecurityContext, NetworkPolicy, PDB, topology spread)
+- Production overlay scales to 5-100 pods with aggressive auto-scaling and rate limiting
+- Staging overlay provides cost-effective smaller deployment
+- Helm chart offers maximum configurability with 400+ lines of values
+- Socket.IO handled with sticky sessions (cookie affinity + headless service)
+- Redis configured for pub/sub, caching, and session storage with persistence
+- All deployments include init containers, health probes, resource limits, and lifecycle hooks
+
+---
+Task ID: 8-9-10
+Agent: Main Agent
+Task: Add observability, health checks, and distributed rate limiting for 1M+ concurrent users
+
+Work Log:
+- Created `src/lib/middleware/rate-limiter.ts` - Distributed rate limiter with:
+  - Redis-based sliding window with in-memory fallback (50% limit reduction)
+  - Three strategies: fixed-window, sliding-window, token-bucket
+  - Per-user and per-IP rate limiting via identifier composition
+  - Route-based rate configs: auth (5/min), payment (10/min), gold (30/min), chat (60/min), api (100/min), pages (200/min)
+  - X-RateLimit-Limit/Remaining/Reset + Retry-After headers
+  - Redis Lua scripts for atomic counter operations
+  - Graceful degradation with automatic Redis health checking
+- Created `src/lib/middleware/request-logger.ts` - Structured request logger with:
+  - Pino-compatible JSON output with configurable pretty-print
+  - Request ID generation and tracking (X-Request-ID)
+  - Response time measurement and log correlation
+  - User agent parsing (browser, OS, device type detection)
+  - IP extraction from X-Forwarded-For / X-Real-IP headers
+  - Log levels: debug, info, warn, error, fatal with configurable min level
+  - Sensitive field redaction (password, token, OTP, etc.)
+  - Geolocation stub (GeoInfo interface ready for integration)
+- Created `src/lib/middleware/circuit-breaker.ts` - Circuit breaker pattern with:
+  - Three states: CLOSED, OPEN, HALF_OPEN with configurable transitions
+  - Configurable failure threshold, reset timeout, success threshold, call timeout
+  - Per-service circuit breakers via registry pattern
+  - Async and sync execution through breakers with timeout wrapping
+  - State change callbacks and metric reporting hooks
+  - Pre-configured breakers: payment-gateway, sms-provider, email-provider, gold-price-feed
+- Created `src/lib/observability/metrics.ts` - Prometheus-compatible metrics collector with:
+  - Counter, Histogram, Gauge metric types with custom labels
+  - Pre-registered application metrics: http_requests_total, http_request_duration_ms, http_requests_in_progress, active_connections, cache_operations_total, errors_total, circuit_breaker_state, business_events_total, gold_trades_total, gold_trade_amount, queue_length, rate_limit_total, wallet_operations_total
+  - Default latency buckets (5ms-10s) and size buckets
+  - Histogram timer API (startTimer returns end function)
+  - Approximate percentile calculation from bucket counts
+  - Process-level metrics: uptime, memory (rss, heap, external)
+  - Clean Prometheus text format serialization
+- Created `src/lib/observability/health.ts` - Health check system with:
+  - Database connectivity check (SQLite with query timeout)
+  - Memory usage monitoring (heap, RSS with degradation thresholds)
+  - CPU availability check
+  - Filesystem accessibility check (uploads directory)
+  - External APIs health via circuit breaker status aggregation
+  - Health check registry with per-check timeout configuration
+  - Health history tracking (last 100 checks) with auto-recovery logging
+  - Critical vs non-critical check classification
+  - Periodic health check runner (30s default interval)
+- Created `src/lib/observability/tracer.ts` - Lightweight distributed tracing with:
+  - Span creation with trace/span ID generation (crypto.getRandomValues)
+  - Trace context propagation (W3C traceparent, B3, custom X-Trace-Id headers)
+  - Span events, attributes, error recording, status management
+  - Parent-child span relationships for nested tracing
+  - Configurable sampling rate (0.0-1.0, 10% in production, 100% in dev)
+  - No-op span optimization for unsampled traces
+  - Active span tracking and completed trace history
+  - within() method for automatic span lifecycle management
+- Created `src/app/api/health/live/route.ts` - Liveness probe: returns 200 with PID + uptime
+- Created `src/app/api/health/ready/route.ts` - Readiness probe: runs all health checks, returns 503 on critical failure
+- Created `src/app/api/metrics/route.ts` - Prometheus endpoint: text/plain v0.0.4 format
+- Updated `src/lib/db.ts` - Enhanced database configuration with:
+  - Configurable connection timeout (10s default), query timeout (30s default)
+  - Connection pool size config for PostgreSQL migration path
+  - Retry wrapper with exponential backoff + jitter (3 attempts default)
+  - Query timeout wrapper with Promise.race
+  - Connection health monitoring with 10s cache
+  - Smart error classification for retry decisions (connection/timeout vs constraint/validation)
+  - Config export for observability dashboards
+- Created barrel exports: `src/lib/observability/index.ts`, `src/lib/middleware/index.ts`
+- All TypeScript compiles cleanly (no new errors; pre-existing errors in mini-services/telegram-bot only)
+
+Stage Summary:
+- Full observability stack for production deployment at 1M+ concurrent scale
+- Rate limiting supports Redis distributed mode with automatic in-memory fallback
+- Circuit breaker pattern protects against cascading external service failures
+- Prometheus metrics cover HTTP, business, trading, and infrastructure dimensions
+- Health system distinguishes liveness (process alive) from readiness (all deps OK)
+- Distributed tracing supports W3C and B3 propagation standards
+- All components are lightweight with zero external dependencies

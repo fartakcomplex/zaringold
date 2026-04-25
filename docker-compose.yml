@@ -1,0 +1,386 @@
+# =============================================================================
+# ZarinGold - Docker Compose (Development / Staging)
+# Full-stack gold trading platform
+# =============================================================================
+
+services:
+  # =========================================================================
+  # Main Next.js Application
+  # =========================================================================
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zaringold-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/custom.db
+      - REDIS_URL=redis://redis:6379
+      - CHAT_SERVICE_URL=http://chat-service:3005
+      - SOCKET_URL=http://chat-service:3005
+      - NEXT_PUBLIC_SOCKET_URL=ws://localhost:3005
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+      - ZARINPAL_MERCHANT_ID=${ZARINPAL_MERCHANT_ID:-}
+      - SMS_API_KEY=${SMS_API_KEY:-}
+      - SMS_SENDER=${SMS_SENDER:-}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - JWT_SECRET=${JWT_SECRET:-changeme-in-production}
+      - SESSION_SECRET=${SESSION_SECRET:-changeme-in-production}
+    volumes:
+      - app-data:/app/data
+      - app-uploads:/app/public/uploads
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - zaringold-backend
+      - zaringold-frontend
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # =========================================================================
+  # Chat Service (Socket.IO)
+  # =========================================================================
+  chat-service:
+    build:
+      context: ./mini-services/chat-service
+      dockerfile: Dockerfile
+    container_name: zaringold-chat
+    restart: unless-stopped
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis:6379
+      - CORS_ORIGIN=http://localhost:3000
+    volumes:
+      - chat-logs:/app/logs
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - zaringold-backend
+      - zaringold-frontend
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3005/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "3"
+
+  # =========================================================================
+  # Price Service (Gold Price Feeder)
+  # =========================================================================
+  price-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.price-service
+    container_name: zaringold-prices
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=file:/app/data/custom.db
+      - TGJU_API_URL=https://api.tgju.org/v1
+      - PRICE_UPDATE_INTERVAL=30000
+    volumes:
+      - app-data:/app/data:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - zaringold-backend
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3006/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # =========================================================================
+  # Telegram Bot
+  # =========================================================================
+  telegram-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.telegram
+    container_name: zaringold-telegram
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - DATABASE_URL=file:/app/data/custom.db
+      - REDIS_URL=redis://redis:6379
+      - CHAT_SERVICE_URL=http://chat-service:3005
+    volumes:
+      - app-data:/app/data:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - zaringold-backend
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # =========================================================================
+  # Redis (Cache + Pub/Sub + Sessions)
+  # =========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: zaringold-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+        --maxmemory 512mb
+        --maxmemory-policy allkeys-lru
+        --appendonly yes
+        --appendfsync everysec
+        --save 60 1000
+        --save 300 100
+        --save 900 10
+        --tcp-backlog 511
+        --timeout 300
+        --tcp-keepalive 60
+        --requirepass ${REDIS_PASSWORD:-zaringold_redis_dev}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - zaringold-backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-zaringold_redis_dev}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 768M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+
+  # =========================================================================
+  # PostgreSQL (Production migration path)
+  # =========================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: zaringold-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-zaringold}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-zaringold_pg_dev}
+      - POSTGRES_DB=${POSTGRES_DB:-zaringold}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - zaringold-backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zaringold} -d ${POSTGRES_DB:-zaringold}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+
+  # =========================================================================
+  # NGINX Reverse Proxy
+  # =========================================================================
+  nginx:
+    image: nginx:alpine
+    container_name: zaringold-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deploy/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./deploy/nginx/ssl:/etc/nginx/ssl:ro
+      - nginx-logs:/var/log/nginx
+    depends_on:
+      nextjs-app:
+        condition: service_healthy
+      chat-service:
+        condition: service_healthy
+    networks:
+      - zaringold-frontend
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256M
+        reservations:
+          cpus: "0.25"
+          memory: 64M
+
+  # =========================================================================
+  # Prometheus (Metrics Collection)
+  # =========================================================================
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: zaringold-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--web.enable-lifecycle"
+    volumes:
+      - ./deploy/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./deploy/monitoring/prometheus/alerts:/etc/prometheus/alerts:ro
+      - prometheus-data:/prometheus
+    networks:
+      - zaringold-backend
+      - zaringold-monitoring
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # =========================================================================
+  # Grafana (Dashboards & Visualization)
+  # =========================================================================
+  grafana:
+    image: grafana/grafana:10.4.1
+    container_name: zaringold-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-zaringold_grafana}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=redis-datasource
+      - GF_SERVER_ROOT_URL=http://localhost:3001
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./deploy/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    networks:
+      - zaringold-monitoring
+      - zaringold-frontend
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  zaringold-backend:
+    driver: bridge
+    internal: true
+  zaringold-frontend:
+    driver: bridge
+  zaringold-monitoring:
+    driver: bridge
+    internal: true
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  app-data:
+    driver: local
+  app-uploads:
+    driver: local
+  chat-logs:
+    driver: local
+  redis-data:
+    driver: local
+  postgres-data:
+    driver: local
+  nginx-logs:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
