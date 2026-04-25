@@ -108,10 +108,22 @@ interface AppState {
   reset: () => void;
 }
 
+const DEV_SUPER_ADMIN: User = {
+  id: 'dev-super-admin',
+  phone: '09120000000',
+  email: 'admin@zarringold.ir',
+  fullName: 'مدیر کل سیستم',
+  isVerified: true,
+  isActive: true,
+  referralCode: 'ADMIN001',
+  role: 'super_admin',
+  sessionToken: 'dev-token',
+};
+
 const initialState = {
-  user: null,
-  isAuthenticated: false,
-  currentPage: "landing",
+  user: DEV_SUPER_ADMIN,
+  isAuthenticated: true,
+  currentPage: "dashboard",
   adminPage: "dashboard",
   fiatWallet: { balance: 0, frozenBalance: 0 },
   goldWallet: { goldGrams: 0, frozenGold: 0 },
