@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>زرین گلد — پروپوزال پلتفرم معاملات طلای هوشمند</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+@page { size: A4; margin: 0; }
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #f8f8f8; font-family: 'Vazirmatn', sans-serif; }
+:root {
+  --gold: #D4AF37;
+  --gold-dark: #B8860B;
+  --gold-light: #F5E6B8;
+  --dark: #1a1a2e;
+  --dark2: #16213e;
+  --text: #2d2d2d;
+  --text-light: #666;
+  --white: #ffffff;
+  --gray: #f0f0f0;
+  --gray2: #e0e0e0;
+  --success: #22C55E;
+  --danger: #EF4444;
+}
+@media screen {
+  html { background: #e8e8e8; }
+  .page { box-shadow: 0 4px 20px rgba(0,0,0,0.15); margin: 20px auto; }
+}
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  background: var(--white);
+  position: relative;
+  page-break-after: always;
+  overflow: hidden;
+}
+.page:last-child { page-break-after: auto; }
+/* Cover Page */
+.cover {
+  background: linear-gradient(160deg, var(--dark) 0%, var(--dark2) 50%, #0f3460 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 297mm;
+  position: relative;
+  color: white;
+}
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(212,175,55,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.cover::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  left: -80px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.cover-content { position: relative; z-index: 2; padding: 40px; }
+.cover-logo { font-size: 72px; margin-bottom: 16px; }
+.cover-title-fa { font-size: 42px; font-weight: 900; color: var(--gold); margin-bottom: 8px; letter-spacing: -0.5px; }
+.cover-title-en { font-size: 24px; font-weight: 300; color: rgba(255,255,255,0.7); margin-bottom: 40px; direction: ltr; }
+.cover-line { width: 80px; height: 3px; background: var(--gold); margin: 0 auto 40px; }
+.cover-subtitle { font-size: 18px; color: rgba(255,255,255,0.85); line-height: 1.8; max-width: 500px; margin: 0 auto; }
+.cover-meta { margin-top: 60px; display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+.cover-badge { background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.3); border-radius: 20px; padding: 6px 18px; font-size: 11px; color: var(--gold); }
+.cover-bottom { position: absolute; bottom: 30px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,0.4); font-size: 11px; z-index: 2; }
+
+/* Content pages */
+.content-page { padding: 40px 48px; min-height: 297mm; }
+.section-header { text-align: center; margin-bottom: 36px; }
+.section-number { display: inline-block; width: 40px; height: 40px; background: var(--gold); color: var(--dark); border-radius: 50%; line-height: 40px; font-weight: 800; font-size: 18px; margin-bottom: 12px; }
+.section-title { font-size: 26px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+.section-title-en { font-size: 14px; color: var(--text-light); direction: ltr; text-align: center; }
+.section-divider { width: 60px; height: 3px; background: var(--gold); margin: 16px auto 0; }
+
+h3 { font-size: 17px; font-weight: 700; color: var(--dark); margin: 24px 0 10px; padding-right: 12px; border-right: 3px solid var(--gold); }
+p { font-size: 13px; line-height: 2; color: var(--text); text-align: justify; margin-bottom: 12px; }
+p.en { direction: ltr; text-align: left; color: var(--text-light); font-size: 12px; line-height: 1.8; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 12px; }
+th { background: var(--dark); color: white; padding: 10px 12px; text-align: right; font-weight: 600; font-size: 11px; }
+th.en-th { text-align: left; direction: ltr; }
+td { padding: 9px 12px; border-bottom: 1px solid var(--gray2); color: var(--text); }
+tr:nth-child(even) { background: #fafafa; }
+tr:hover { background: var(--gold-light); }
+td.en-td { direction: ltr; text-align: left; }
+
+/* Highlight box */
+.highlight-box { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #f59e0b40; border-radius: 10px; padding: 20px 24px; margin: 20px 0; }
+.highlight-box h4 { font-size: 15px; color: var(--gold-dark); margin: 0 0 10px; }
+.highlight-box ul { margin: 0; padding: 0 20px 0 0; }
+.highlight-box li { font-size: 13px; line-height: 2; color: var(--text); }
+
+/* Stat cards */
+.stats-row { display: flex; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
+.stat-card { flex: 1; min-width: 100px; background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 100%); border-radius: 10px; padding: 16px; text-align: center; color: white; }
+.stat-value { font-size: 28px; font-weight: 900; color: var(--gold); display: block; }
+.stat-label { font-size: 11px; opacity: 0.8; margin-top: 4px; display: block; }
+
+/* Feature grid */
+.feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+.feature-card { background: var(--gray); border-radius: 10px; padding: 16px; border-right: 3px solid var(--gold); }
+.feature-card h4 { font-size: 13px; font-weight: 700; color: var(--dark); margin: 0 0 6px; border: none; padding: 0; }
+.feature-card p { font-size: 11px; margin: 0; line-height: 1.8; }
+
+/* Architecture diagram */
+.arch-box { background: var(--dark); color: white; border-radius: 10px; padding: 20px; margin: 20px 0; text-align: center; direction: ltr; }
+.arch-layer { background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 11px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.arch-layer-item { background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 6px; font-size: 11px; }
+.arch-arrow { text-align: center; color: var(--gold); font-size: 18px; margin: 4px 0; }
+
+/* Security layers */
+.security-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 8px; margin: 16px 0; }
+.security-item { background: linear-gradient(180deg, var(--dark) 0%, var(--dark2) 100%); color: white; border-radius: 8px; padding: 14px 8px; text-align: center; }
+.security-num { display: inline-block; width: 28px; height: 28px; background: var(--gold); color: var(--dark); border-radius: 50%; line-height: 28px; font-weight: 800; font-size: 13px; margin-bottom: 8px; }
+.security-text { font-size: 10px; line-height: 1.6; opacity: 0.9; }
+
+/* Roadmap */
+.roadmap { display: flex; gap: 8px; margin: 16px 0; direction: ltr; }
+.roadmap-phase { flex: 1; border-radius: 10px; padding: 16px; color: white; text-align: center; }
+.roadmap-phase h4 { font-size: 12px; font-weight: 700; margin: 0 0 6px; color: inherit; border: none; padding: 0; }
+.roadmap-phase ul { list-style: none; padding: 0; margin: 0; text-align: left; direction: ltr; }
+.roadmap-phase li { font-size: 10px; padding: 2px 0; opacity: 0.9; }
+.phase-1 { background: linear-gradient(135deg, #1a1a2e, #16213e); }
+.phase-2 { background: linear-gradient(135deg, #0f3460, #1a1a2e); }
+.phase-3 { background: linear-gradient(135deg, #D4AF37, #B8860B); }
+
+/* Competitive table */
+.vs-table th { font-size: 11px; }
+.vs-table .yes { color: var(--success); font-weight: 700; }
+.vs-table .no { color: var(--danger); }
+
+/* Footer */
+.page-footer { position: absolute; bottom: 20px; left: 48px; right: 48px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--gray2); padding-top: 10px; }
+.page-footer span { font-size: 9px; color: #aaa; }
+
+/* Revenue bars */
+.revenue-bar { display: flex; align-items: center; margin: 6px 0; }
+.revenue-label { width: 150px; font-size: 11px; text-align: right; flex-shrink: 0; }
+.revenue-track { flex: 1; height: 24px; background: var(--gray); border-radius: 12px; overflow: hidden; position: relative; direction: ltr; }
+.revenue-fill { height: 100%; border-radius: 12px; display: flex; align-items: center; padding-left: 10px; font-size: 10px; color: white; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER PAGE ==================== -->
+<div class="page cover">
+  <div class="cover-content">
+    <div class="cover-logo">&#9670;</div>
+    <div class="cover-title-fa">زرین گلد</div>
+    <div class="cover-title-en">ZARINGOLD</div>
+    <div class="cover-line"></div>
+    <div class="cover-subtitle">
+      پلتفرم جامع معاملات طلای هوشمند<br>
+      Smart Gold Trading Platform
+    </div>
+    <div class="cover-meta">
+      <div class="cover-badge">v2.9.4</div>
+      <div class="cover-badge">Next.js 16</div>
+      <div class="cover-badge">React 19</div>
+      <div class="cover-badge">TypeScript</div>
+      <div class="cover-badge">Prisma ORM</div>
+    </div>
+  </div>
+  <div class="cover-bottom">Fartak Complex &copy; 2025 &mdash; Proprietary &amp; Confidential</div>
+</div>
+
+<!-- ==================== TABLE OF CONTENTS ==================== -->
+<div class="page content-page" dir="rtl">
+  <div class="section-header">
+    <div class="section-number">&#9670;</div>
+    <div class="section-title">فهرست مطالب</div>
+    <div class="section-title-en">Table of Contents</div>
+    <div class="section-divider"></div>
+  </div>
+  <table style="border:none;">
+    <tr style="background:none;"><td style="border:none; padding:10px 0; font-size:15px; font-weight:700; color:var(--gold-dark);">فارسی</td><td style="border:none; padding:10px 0; font-size:15px; font-weight:700; color:var(--gold-dark); direction:ltr; text-align:left;">English</td></tr>
+    <tr style="background:none;"><td style="border:none; padding:8px 0; font-size:13px;">۱. چکیده اجرایی</td><td style="border:none; padding:8px 0; font-size:13px; direction:ltr; text-align:left;">1. Executive Summary</td></tr>
+    <tr style="background:none;"><td style="border:none; padding:8px 0; font-size:13px;">۲. بیان مسئله</td><td style="border:none; padding:8px 0; font-size:13px; direction:ltr; text-align:left;">2. Problem Statement</td></tr>
+    <tr style="background:none;"><td style="border:none; padding:8px 0; font-size:13px;">۳. راه‌حل پیشنهادی</td><td style="border:none; padding:8px 0; font-size:13px; direction:ltr; text-align:left;">3. Proposed Solution</td></tr>
+    <tr style="background:none;"><td style="border:none; padding:8px 0; font-size:13px;">۴. معماری سیستم</td><td style="border:none; padding:8px 0; font-size:13px; direction:ltr; text-align:left;">4. System Architecture</td></tr>
+    <tr style="background:none;"><td style="border:none; padding:8px 0; font-size:13px;">۵. ماژول‌ها و امکانات</td><td style="border:none; padding:8px 0; font-size:13px; direction:ltr; text-align:left;">5. Modules &amp; Features</td></tr>
+    <tr style="background:none;"><td style="border:none; padding:8px 0; font-size:13px;">۶. طراحی رابط کاربری</td><td style="border:none; padding:8px 0; font-size:13px; direction:ltr; text-align:left;">6. UI/UX Design</td></tr>
+    <tr style="background:none;"><td style="border:none; padding:8px 0; font-size:13px;">۷. امنیت و حریم خصوصی</td><td style="border:none; padding:8px 0; font-size:13px; direction:ltr; text-align:left;">7. Security &amp; Privacy</td></tr>
+    <tr style="background:none;"><td style="border:none; padding:8px 0; font-size:13px;">۸. زیرساخت فنی</td><td style="border:none; padding:8px 0; font-size:13px; direction:ltr; text-align:left;">8. Technical Infrastructure</td></tr>
+    <tr style="background:none;"><td style="border:none; padding:8px 0; font-size:13px;">۹. تحلیل بازار</td><td style="border:none; padding:8px 0; font-size:13px; direction:ltr; text-align:left;">9. Market Analysis</td></tr>
+    <tr style="background:none;"><td style="border:none; padding:8px 0; font-size:13px;">۱۰. مدل درآمدی</td><td style="border:none; padding:8px 0; font-size:13px; direction:ltr; text-align:left;">10. Revenue Model</td></tr>
+    <tr style="background:none;"><td style="border:none; padding:8px 0; font-size:13px;">۱۱. نقشه راه توسعه</td><td style="border:none; padding:8px 0; font-size:13px; direction:ltr; text-align:left;">11. Development Roadmap</td></tr>
+    <tr style="background:none;"><td style="border:none; padding:8px 0; font-size:13px;">۱۲. تکنولوژی‌ها</td><td style="border:none; padding:8px 0; font-size:13px; direction:ltr; text-align:left;">12. Tech Stack</td></tr>
+    <tr style="background:none;"><td style="border:none; padding:8px 0; font-size:13px;">۱۳. ساختار پروژه</td><td style="border:none; padding:8px 0; font-size:13px; direction:ltr; text-align:left;">13. Project Structure</td></tr>
+  </table>
+  <div class="page-footer"><span>زرین گلد &mdash; پروپوزال پلتفرم معاملات طلای هوشمند</span><span>v2.9.4</span></div>
+</div>
+
+<!-- ==================== SECTION 1: EXECUTIVE SUMMARY ==================== -->
+<div class="page content-page" dir="rtl">
+  <div class="section-header">
+    <div class="section-number">۱</div>
+    <div class="section-title">چکیده اجرایی</div>
+    <div class="section-title-en">Executive Summary</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <p>زرین گلد یک پلتفرم فین‌تک جامع و یکپارچه برای معاملات و سرمایه‌گذاری طلای دیجیتال است که با هدف دگرگونی بازار سنتی طلا در ایران طراحی و توسعه یافته است. این پلتفرم با استفاده از فناوری‌های نوین وب، هوش مصنوعی و زیرساخت‌های پرداخت امن، تجربه‌ای مدرن و قابل اعتماد برای خرید، فروش و مدیریت سرمایه طلایی کاربران فراهم می‌کند.</p>
+  <p class="en">Zaringold is a comprehensive fintech platform designed to revolutionize gold trading and investment in Iran. Built with cutting-edge web technologies, artificial intelligence, and secure payment infrastructure, it delivers a modern and trustworthy experience for buying, selling, and managing digital gold assets.</p>
+
+  <div class="stats-row">
+    <div class="stat-card"><span class="stat-value">$30B+</span><span class="stat-label">حجم بازار سالانه</span></div>
+    <div class="stat-card"><span class="stat-value">92%</span><span class="stat-label">معاملات سنتی فیزیکی</span></div>
+    <div class="stat-card"><span class="stat-value">70%+</span><span class="stat-label">نفوذ اینترنت موبایل</span></div>
+    <div class="stat-card"><span class="stat-value">35%</span><span class="stat-label">رشد فین‌تک (CAGR)</span></div>
+  </div>
+
+  <div class="highlight-box">
+    <h4>&#9670; ارزش پیشنهادی کلیدی</h4>
+    <ul>
+      <li><strong>معاملات لحظه‌ای طلا</strong> با قیمت‌گذاری آنلاین و اتصال به بازار جهانی</li>
+      <li><strong>کیف پول دوگانه</strong> (ریالی + طلایی) با مدیریت یکپارچه دارایی‌ها</li>
+      <li><strong>هوش مصنوعی</strong> برای مشاوره سرمایه‌گذاری، تحلیل بازار و پشتیبانی هوشمند</li>
+      <li><strong>درگاه پرداخت طلایی</strong> برای پذیرندگان تجاری</li>
+      <li><strong>گیمیفیکیشن</strong> برای افزایش تعامل و آموزش مالی کاربران</li>
+      <li><strong>API توسعه‌دهندگان</strong> برای ایجاد اکوسیستم مالی مبتنی بر طلا</li>
+    </ul>
+  </div>
+
+  <h3>مخاطبان هدف / Target Audience</h3>
+  <table>
+    <thead><tr><th>بخش</th><th>توضیحات</th><th class="en-th">Segment</th><th class="en-th">Description</th></tr></thead>
+    <tbody>
+      <tr><td>سرمایه‌گذاران خرد</td><td>افراد عادی با پس‌انداز کم</td><td class="en-td">Retail Investors</td><td class="en-td">Everyday individuals</td></tr>
+      <tr><td>معامله‌گران حرفه‌ای</td><td>فعالان بازار طلا</td><td class="en-td">Professional Traders</td><td class="en-td">Active market participants</td></tr>
+      <tr><td>پذیرندگان تجاری</td><td>کسب‌وکارها و فروشگاه‌ها</td><td class="en-td">Merchants</td><td class="en-td">Businesses &amp; e-commerce</td></tr>
+      <tr><td>جوانان نسل Z</td><td>علاقه‌مند به فین‌تک</td><td class="en-td">Gen Z Users</td><td class="en-td">Tech-savvy youth</td></tr>
+      <tr><td>توسعه‌دهندگان</td><td>برنامه‌نویسان و استارتاپ‌ها</td><td class="en-td">Developers</td><td class="en-td">Programmers &amp; startups</td></tr>
+    </tbody>
+  </table>
+  <div class="page-footer"><span>زرین گلد &mdash; پروپوزال</span><span>صفحه ۳</span></div>
+</div>
+
+<!-- ==================== SECTION 2: PROBLEM STATEMENT ==================== -->
+<div class="page content-page" dir="rtl">
+  <div class="section-header">
+    <div class="section-number">۲</div>
+    <div class="section-title">بیان مسئله</div>
+    <div class="section-title-en">Problem Statement</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <p>بازار طلای ایران با وجود سابقه طولانی و حجم بالای معاملات، با چالش‌های ساختاری متعددی روبه‌رو است. بیش از ۹۰ درصد معاملات طلا هنوز به روش‌های سنتی و فیزیکی انجام می‌شود و بخش عمده‌ای از بازار فاقد زیرساخت‌های لازم برای تحول دیجیتال است.</p>
+
+  <h3>چالش‌های اصلی / Key Challenges</h3>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h4>بازار تکه‌تکه و نامتمرکز</h4>
+      <p>معاملات در هزاران طلافروشی خرد انجام می‌شود. عدم شفافیت قیمت، اسپرد بالا، عدم امکان مقایسه آنی قیمت‌ها</p>
+    </div>
+    <div class="feature-card">
+      <h4>فقدان زیرساخت دیجیتال</h4>
+      <p>۹۲٪ معاملات فیزیکی، ۵٪ پلتفرم آنلاین، ۳٪ صندوق طلای بورس. بیش از ۱۲,۰۰۰ طلافروشی سنتی فعال</p>
+    </div>
+    <div class="feature-card">
+      <h4>مسائل اعتماد و امنیت</h4>
+      <p>خطر سرقت فیزیکی، تقلب در عیار و وزن، عدم شفافیت در منشأ طلا، نبود ضمانت‌های قانونی کافی</p>
+    </div>
+    <div class="feature-card">
+      <h4>موانع دسترسی</h4>
+      <p>ساعات محدود کاری (۹-۶)، نیاز به حضور حضوری، حداقل مبلغ خرید بالا، عدم امکان معامله خرد</p>
+    </div>
+  </div>
+
+  <h3>وضعیت فعلی بازار طلای ایران</h3>
+  <div style="margin:16px 0;">
+    <div style="display:flex; align-items:center; gap:12px; margin:8px 0; direction:ltr;">
+      <span style="width:120px; font-size:12px; text-align:left;">Physical Transactions</span>
+      <div style="flex:1; height:28px; background:#f0f0f0; border-radius:14px; overflow:hidden;"><div style="width:92%; height:100%; background:linear-gradient(90deg,#EF4444,#DC2626); border-radius:14px; display:flex; align-items:center; padding-left:12px; color:white; font-size:11px; font-weight:600;">92%</div></div>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px; margin:8px 0; direction:ltr;">
+      <span style="width:120px; font-size:12px; text-align:left;">Online Platforms</span>
+      <div style="flex:1; height:28px; background:#f0f0f0; border-radius:14px; overflow:hidden;"><div style="width:5%; height:100%; background:linear-gradient(90deg,#F59E0B,#D97706); border-radius:14px; display:flex; align-items:center; padding-left:8px; color:white; font-size:11px; font-weight:600;">5%</div></div>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px; margin:8px 0; direction:ltr;">
+      <span style="width:120px; font-size:12px; text-align:left;">Exchange Gold</span>
+      <div style="flex:1; height:28px; background:#f0f0f0; border-radius:14px; overflow:hidden;"><div style="width:3%; height:100%; background:linear-gradient(90deg,#D4AF37,#B8860B); border-radius:14px;"></div></div>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px; margin:8px 0; direction:ltr;">
+      <span style="width:120px; font-size:12px; text-align:left;">Digital Tokens</span>
+      <div style="flex:1; height:28px; background:#f0f0f0; border-radius:14px; overflow:hidden;"><div style="width:0%; height:100%; background:linear-gradient(90deg,#22C55E,#16A34A); border-radius:14px;"></div></div>
+    </div>
+  </div>
+  <div class="page-footer"><span>زرین گلد &mdash; پروپوزال</span><span>صفحه ۴</span></div>
+</div>
+
+<!-- ==================== SECTION 3: PROPOSED SOLUTION ==================== -->
+<div class="page content-page" dir="rtl">
+  <div class="section-header">
+    <div class="section-number">۳</div>
+    <div class="section-title">راه‌حل پیشنهادی</div>
+    <div class="section-title-en">Proposed Solution</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <h3>مزیت‌های رقابتی / Competitive Advantages</h3>
+  <table class="vs-table">
+    <thead><tr><th>ویژگی</th><th>زرین گلد</th><th>رقبا</th><th class="en-th">Feature</th><th class="en-th">Zaringold</th><th class="en-th">Competitors</th></tr></thead>
+    <tbody>
+      <tr><td>معاملات لحظه‌ای</td><td class="yes">&#10003; WebSocket</td><td class="no">&#10007; ۱-۵ دقیقه تأخیر</td><td class="en-td">Real-time</td><td class="en-td yes">&#10003;</td><td class="en-td no">&#10007;</td></tr>
+      <tr><td>کیف پول طلایی</td><td class="yes">&#10003; ریالی + طلایی</td><td class="no">&#10007; فقط ریالی</td><td class="en-td">Gold Wallet</td><td class="en-td yes">&#10003;</td><td class="en-td no">&#10007;</td></tr>
+      <tr><td>هوش مصنوعی</td><td class="yes">&#10003; مشاور + تحلیل</td><td class="no">&#10007; ندارد</td><td class="en-td">AI Intelligence</td><td class="en-td yes">&#10003;</td><td class="en-td no">&#10007;</td></tr>
+      <tr><td>درگاه پرداخت</td><td class="yes">&#10003; طلای دیجیتال</td><td class="no">&#10007; فقط بانکی</td><td class="en-td">Payment GW</td><td class="en-td yes">&#10003;</td><td class="en-td no">&#10007;</td></tr>
+      <tr><td>گیمیفیکیشن</td><td class="yes">&#10003; XP + لول کامل</td><td class="no">&#10007; محدود</td><td class="en-td">Gamification</td><td class="en-td yes">&#10003;</td><td class="en-td no">&#10007;</td></tr>
+      <tr><td>API توسعه‌دهندگان</td><td class="yes">&#10003; ۳ زبان SDK</td><td class="no">&#10007; محدود</td><td class="en-td">Developer API</td><td class="en-td yes">&#10003;</td><td class="en-td no">&#10007;</td></tr>
+      <tr><td>خدمات جانبی</td><td class="yes">&#10003; بیمه+خودرو+قبض</td><td class="no">&#10007; ندارد</td><td class="en-td">Auxiliary</td><td class="en-td yes">&#10003;</td><td class="en-td no">&#10007;</td></tr>
+    </tbody>
+  </table>
+
+  <h3>انطباق با مقررات / Regulatory Compliance</h3>
+  <div class="highlight-box">
+    <h4>&#128274; KYC &mdash; احراز هویت سه‌مرحله‌ای</h4>
+    <ul>
+      <li><strong>Level 1:</strong> شماره موبایل + نام و نام خانوادگی &rarr; مشاهده + معامله تا ۵ گرم</li>
+      <li><strong>Level 2:</strong> کد ملی + سلفی + کارت ملی &rarr; معامله تا ۵۰ گرم</li>
+      <li><strong>Level 3:</strong> مدارک مالی + آدرس &rarr; بدون محدودیت معاملاتی</li>
+    </ul>
+  </div>
+  <div class="page-footer"><span>زرین گلد &mdash; پروپوزال</span><span>صفحه ۵</span></div>
+</div>
+
+<!-- ==================== SECTION 4: SYSTEM ARCHITECTURE ==================== -->
+<div class="page content-page" dir="rtl">
+  <div class="section-header">
+    <div class="section-number">۴</div>
+    <div class="section-title">معماری سیستم</div>
+    <div class="section-title-en">System Architecture</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="arch-box" dir="ltr">
+    <div style="font-size:16px; font-weight:700; color:var(--gold); margin-bottom:12px;">Zaringold Platform Architecture</div>
+    <div class="arch-layer"><div class="arch-layer-item">Next.js 16 + React 19</div><div class="arch-layer-item">shadcn/ui + Tailwind CSS 4</div><div class="arch-layer-item">Framer Motion + Recharts</div></div>
+    <div class="arch-arrow">&#9660;</div>
+    <div class="arch-layer"><div class="arch-layer-item">Zustand (Client State)</div><div class="arch-layer-item">TanStack Query (Server Cache)</div><div class="arch-layer-item">Socket.IO Client (Real-time)</div></div>
+    <div class="arch-arrow">&#9660;</div>
+    <div class="arch-layer"><div class="arch-layer-item">Caddy Reverse Proxy + SSL</div><div class="arch-layer-item">80+ REST API Endpoints</div><div class="arch-layer-item">Socket.IO (Chat + Prices)</div></div>
+    <div class="arch-arrow">&#9660;</div>
+    <div class="arch-layer"><div class="arch-layer-item">Prisma ORM (80+ Models)</div><div class="arch-layer-item">SQLite Database</div><div class="arch-layer-item">z-ai-web-sdk (AI Engine)</div></div>
+  </div>
+
+  <h3>طراحی پایگاه داده / Database Design</h3>
+  <p>پایگاه داده با بیش از <strong>۸۰ مدل</strong> Prisma طراحی شده و شامل ماژول‌های احراز هویت، کیف پول، معاملات طلا، پرداخت‌ها، درگاه پذیرندگان، بیمه، وام، گیمیفیکیشن، چت، محتوا، کارت طلایی، VIP، شبکه اجتماعی، بازاریابی و امنیت است.</p>
+
+  <h3>موتور ارتباط لحظه‌ای / Real-time Engine</h3>
+  <table>
+    <thead><tr><th>رویداد / Event</th><th>فرکانس / Frequency</th><th class="en-th">اتصال / Channel</th></tr></thead>
+    <tbody>
+      <tr><td>gold:price:update</td><td>هر ثانیه / Every second</td><td class="en-td">gold:market</td></tr>
+      <tr><td>chat:message:new</td><td>بلادرنگ / Real-time</td><td class="en-td">chat:support:{ticketId}</td></tr>
+      <tr><td>notification:push</td><td>رویدادمحور / Event-driven</td><td class="en-td">user:{userId}</td></tr>
+      <tr><td>gold:alert:trigger</td><td>رویدادمحور / Event-driven</td><td class="en-td">user:{userId}</td></tr>
+      <tr><td>trade:status:update</td><td>رویدادمحور / Event-driven</td><td class="en-td">user:{userId}</td></tr>
+    </tbody>
+  </table>
+  <div class="page-footer"><span>زرین گلد &mdash; پروپوزال</span><span>صفحه ۶</span></div>
+</div>
+
+<!-- ==================== SECTION 5: MODULES & FEATURES ==================== -->
+<div class="page content-page" dir="rtl">
+  <div class="section-header">
+    <div class="section-number">۵</div>
+    <div class="section-title">ماژول‌ها و امکانات</div>
+    <div class="section-title-en">Modules &amp; Features</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <h3>۵.۱ معاملات هسته‌ای طلا / Core Gold Trading</h3>
+  <div class="feature-grid">
+    <div class="feature-card"><h4>خرید/فروش لحظه‌ای</h4><p>معامله با قیمت زنده بازار از طریق WebSocket</p></div>
+    <div class="feature-card"><h4>نمودار پیشرفته</h4><p>نمودار شمعی و خطی با تایم‌فریم‌های مختلف</p></div>
+    <div class="feature-card"><h4>هدیه طلایی</h4><p>ارسال و دریافت هدیه طلایی بین کاربران</p></div>
+    <div class="feature-card"><h4>آلارم قیمت</h4><p>هشدار رسیدن به قیمت دلخواه</p></div>
+  </div>
+
+  <h3>۵.۲ هوش مصنوعی / AI &amp; Smart Tools</h3>
+  <div class="feature-grid">
+    <div class="feature-card"><h4>چت هوشمند</h4><p>پاسخگویی خودکار ۲۴/۷ با LLM</p></div>
+    <div class="feature-card"><h4>مشاور خرید هوشمند</h4><p>پیشنهاد بهترین زمان خرید طلا</p></div>
+    <div class="feature-card"><h4>مربی ثروت AI</h4><p>مشاوره شخصی‌سازی‌شده سرمایه‌گذاری</p></div>
+    <div class="feature-card"><h4>اسکنر بازار</h4><p>تحلیل الگوها و روندهای بازار</p></div>
+  </div>
+
+  <h3>۵.۳ گیمیفیکیشن / Gamification</h3>
+  <div class="feature-grid">
+    <div class="feature-card"><h4>چک‌این روزانه</h4><p>پاداش XP و طلای میل‌گرمی</p></div>
+    <div class="feature-card"><h4>پیش‌بینی قیمت</h4><p>بازی پیش‌بینی قیمت فردا</p></div>
+    <div class="feature-card"><h4>سیستم دستاوردها</h4><p>نشان‌ها و مدال‌های افتخار</p></div>
+    <div class="feature-card"><h4>باشگاه سازندگان</h4><p>ایجاد محتوای آموزشی + کسب پاداش</p></div>
+  </div>
+
+  <h3>۵.۴ خدمات جانبی / Auxiliary Services</h3>
+  <div class="feature-grid">
+    <div class="feature-card"><h4>بیمه</h4><p>شخص ثالث، آتش‌سوزی، بدنه، عمر</p></div>
+    <div class="feature-card"><h4>شارژ سیم‌کارت</h4><p>MCI، Irancell، Rightel، Taliya</p></div>
+    <div class="feature-card"><h4>پرداخت قبوض</h4><p>آب، برق، گاز، تلفن</p></div>
+    <div class="feature-card"><h4>سرویس خودرو</h4><p>تعویض روغن، بیمه، معاینه فنی</p></div>
+  </div>
+
+  <h3>۵.۵ درگاه پذیرندگان / Merchant Gateway</h3>
+  <div class="feature-grid">
+    <div class="feature-card"><h4>پرداخت طلایی</h4><p>مشتریان با طلای دیجیتال پرداخت کنند</p></div>
+    <div class="feature-card"><h4>QR Payment</h4><p>اسکن QR برای پرداخت سریع</p></div>
+    <div class="feature-card"><h4>SDK چندزبانه</h4><p>Node.js, Python, PHP + WordPress</p></div>
+    <div class="feature-card"><h4>تسویه خودکار</h4><p>تسویه ریالی یا طلایی خودکار</p></div>
+  </div>
+  <div class="page-footer"><span>زرین گلد &mdash; پروپوزال</span><span>صفحه ۷</span></div>
+</div>
+
+<!-- ==================== SECTION 6: UI/UX ==================== -->
+<div class="page content-page" dir="rtl">
+  <div class="section-header">
+    <div class="section-number">۶</div>
+    <div class="section-title">طراحی رابط کاربری</div>
+    <div class="section-title-en">UI/UX Design</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <h3>سیستم طراحی / Design System</h3>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:16px 0; direction:ltr;">
+    <div style="height:60px; border-radius:8px; background:#D4AF37; display:flex; align-items:center; justify-content:center; color:#1a1a2e; font-weight:700; font-size:13px;">Primary #D4AF37</div>
+    <div style="height:60px; border-radius:8px; background:#B8860B; display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:13px;">Dark #B8860B</div>
+    <div style="height:60px; border-radius:8px; background:#F5E6B8; display:flex; align-items:center; justify-content:center; color:#1a1a2e; font-weight:700; font-size:13px;">Light #F5E6B8</div>
+    <div style="height:60px; border-radius:8px; background:#1a1a2e; display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:13px;">Dark #1a1a2e</div>
+    <div style="height:60px; border-radius:8px; background:#22C55E; display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:13px;">Success #22C55E</div>
+    <div style="height:60px; border-radius:8px; background:#EF4444; display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:13px;">Danger #EF4444</div>
+  </div>
+
+  <h3>اصول طراحی / Design Principles</h3>
+  <table>
+    <thead><tr><th>اصل / Principle</th><th>توضیحات / Description</th></tr></thead>
+    <tbody>
+      <tr><td><strong>موبایل اول / Mobile-First</strong></td><td>طراحی ابتدا برای موبایل، سپس واکنش‌گرا برای دسکتاپ</td></tr>
+      <tr><td><strong>حس اپلیکیشن / App-Like</strong></td><td>Bottom Navigation، Swipe، Pull-to-Refresh</td></tr>
+      <tr><td><strong>RTL اولیه / RTL-First</strong></td><td>فارسی پیش‌فرض + پشتیبانی کامل انگلیسی</td></tr>
+      <tr><td><strong>Glass-morphism</strong></td><td>افکت‌های شیشه‌ای برای عمق بصری</td></tr>
+      <tr><td><strong>تم دوگانه / Dual Theme</strong></td><td>تم روشن و تاریک با انتقال روان</td></tr>
+      <tr><td><strong>لمس بهینه / Touch-Optimized</strong></td><td>حداقل 44px برای عناصر تعاملی</td></tr>
+    </tbody>
+  </table>
+
+  <h3>تایپوگرافی / Typography</h3>
+  <table>
+    <thead><tr><th>فونت / Font</th><th>نوع / Type</th><th>وزن‌ها / Weights</th></tr></thead>
+    <tbody>
+      <tr><td>IRANSansWeb / Vazirmatn</td><td>فارسی / Persian</td><td>UltraLight, Light, Regular, Medium, Bold, Black</td></tr>
+      <tr><td>Inter / System UI</td><td>انگلیسی / English</td><td>300, 400, 500, 600, 700</td></tr>
+    </tbody>
+  </table>
+  <div class="page-footer"><span>زرین گلد &mdash; پروپوزال</span><span>صفحه ۸</span></div>
+</div>
+
+<!-- ==================== SECTION 7: SECURITY ==================== -->
+<div class="page content-page" dir="rtl">
+  <div class="section-header">
+    <div class="section-number">۷</div>
+    <div class="section-title">امنیت و حریم خصوصی</div>
+    <div class="section-title-en">Security &amp; Privacy</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <h3>معماری امنیتی ۵ لایه‌ای / 5-Layer Security</h3>
+  <div class="security-grid">
+    <div class="security-item">
+      <div class="security-num">۱</div>
+      <div class="security-text">شبکه / Network<br>SSL/TLS, DDoS, Rate Limit, CORS</div>
+    </div>
+    <div class="security-item">
+      <div class="security-num">۲</div>
+      <div class="security-text">احراز هویت / Auth<br>OTP, JWT, Session, RBAC, 2FA</div>
+    </div>
+    <div class="security-item">
+      <div class="security-num">۳</div>
+      <div class="security-text">هویت / Identity<br>KYC Level 1, 2, 3</div>
+    </div>
+    <div class="security-item">
+      <div class="security-num">۴</div>
+      <div class="security-text">داده / Data<br>AES-256, bcrypt, Audit Log</div>
+    </div>
+    <div class="security-item">
+      <div class="security-num">۵</div>
+      <div class="security-text">تقلب / Fraud<br>Pattern Analysis, CAPTCHA, IP Scoring</div>
+    </div>
+  </div>
+
+  <h3>رمزنگاری داده‌ها / Data Encryption</h3>
+  <table>
+    <thead><tr><th>نوع داده / Data Type</th><th>روش / Method</th><th class="en-th">Details</th></tr></thead>
+    <tbody>
+      <tr><td>رمز عبور / Passwords</td><td>bcrypt</td><td class="en-td">cost factor: 12</td></tr>
+      <tr><td>اطلاعات حساس / Sensitive</td><td>AES-256-GCM</td><td class="en-td">Field-level encryption</td></tr>
+      <tr><td>توکن‌ها / Tokens</td><td>JWT RS256</td><td class="en-td">Configurable expiry</td></tr>
+      <tr><td>اتصالات / Connections</td><td>TLS 1.3</td><td class="en-td">Via Caddy proxy</td></tr>
+    </tbody>
+  </table>
+
+  <h3>محدودیت نرخ / Rate Limiting</h3>
+  <div class="stats-row">
+    <div class="stat-card"><span class="stat-value">5/m</span><span class="stat-label">احراز هویت / Auth</span></div>
+    <div class="stat-card"><span class="stat-value">30/m</span><span class="stat-label">معاملات / Trades</span></div>
+    <div class="stat-card"><span class="stat-value">100/m</span><span class="stat-label">API عمومی / Public</span></div>
+    <div class="stat-card"><span class="stat-value">10/s</span><span class="stat-label">WebSocket</span></div>
+  </div>
+  <div class="page-footer"><span>زرین گلد &mdash; پروپوزال</span><span>صفحه ۹</span></div>
+</div>
+
+<!-- ==================== SECTION 8: INFRASTRUCTURE ==================== -->
+<div class="page content-page" dir="rtl">
+  <div class="section-header">
+    <div class="section-number">۸</div>
+    <div class="section-title">زیرساخت فنی</div>
+    <div class="section-title-en">Technical Infrastructure</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="arch-box" dir="ltr">
+    <div style="font-size:14px; font-weight:700; color:var(--gold); margin-bottom:10px;">Production Server Architecture</div>
+    <div class="arch-layer"><div class="arch-layer-item">Caddy (:443) &mdash; SSL + Reverse Proxy</div></div>
+    <div class="arch-arrow">&#9660;</div>
+    <div class="arch-layer">
+      <div class="arch-layer-item">Next.js (:3000)</div>
+      <div class="arch-layer-item">Chat Service (:3005)</div>
+    </div>
+    <div class="arch-arrow">&#9660;</div>
+    <div class="arch-layer">
+      <div class="arch-layer-item">SQLite (Prisma)</div>
+      <div class="arch-layer-item">File Storage</div>
+      <div class="arch-layer-item">Logs</div>
+    </div>
+  </div>
+
+  <h3>نقشه مقیاس‌پذیری / Scalability Plan</h3>
+  <div class="roadmap">
+    <div class="roadmap-phase phase-1">
+      <h4>Phase 1 (Current)</h4>
+      <ul>
+        <li>Single Server</li>
+        <li>SQLite Database</li>
+        <li>Memory Cache</li>
+        <li>File Storage</li>
+        <li>~10K Users</li>
+      </ul>
+    </div>
+    <div class="roadmap-phase phase-2">
+      <h4>Phase 2 (Growth)</h4>
+      <ul>
+        <li>Load Balancer</li>
+        <li>PostgreSQL</li>
+        <li>Redis Cache</li>
+        <li>Object Storage</li>
+        <li>~100K Users</li>
+      </ul>
+    </div>
+    <div class="roadmap-phase phase-3">
+      <h4>Phase 3 (Scale)</h4>
+      <ul>
+        <li>Kubernetes</li>
+        <li>Service Mesh</li>
+        <li>Event-Driven</li>
+        <li>CDN + Multi-region</li>
+        <li>1M+ Users</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>پشتیبان‌گیری / Backup Strategy</h3>
+  <table>
+    <thead><tr><th>نوع / Type</th><th>فرکانس / Frequency</th><th class="en-th">Location</th></tr></thead>
+    <tbody>
+      <tr><td>بکاپ روزانه</td><td>هر روز ساعت ۱۵:۳۰</td><td class="en-td">db/backups/daily-*</td></tr>
+      <tr><td>بکاپ هفتگی</td><td>هر سه‌شنبه ساعت ۱۵:۳۰</td><td class="en-td">db/backups/weekly-*</td></tr>
+      <tr><td>متادیتا</td><td>هر بکاپ</td><td class="en-td">db/backups/backup-meta.json</td></tr>
+    </tbody>
+  </table>
+  <div class="page-footer"><span>زرین گلد &mdash; پروپوزال</span><span>صفحه ۱۰</span></div>
+</div>
+
+<!-- ==================== SECTION 9: MARKET ANALYSIS ==================== -->
+<div class="page content-page" dir="rtl">
+  <div class="section-header">
+    <div class="section-number">۹</div>
+    <div class="section-title">تحلیل بازار</div>
+    <div class="section-title-en">Market Analysis</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><span class="stat-value">$30B+</span><span class="stat-label">حجم بازار سالانه</span></div>
+    <div class="stat-card"><span class="stat-value">12K+</span><span class="stat-label">طلافروشی فعال</span></div>
+    <div class="stat-card"><span class="stat-value">15M+</span><span class="stat-label">سرمایه‌گذار بالقوه</span></div>
+    <div class="stat-card"><span class="stat-value">35%</span><span class="stat-label">رشد فین‌تک CAGR</span></div>
+  </div>
+
+  <h3>رقبای بازار / Competitive Landscape</h3>
+  <table>
+    <thead><tr><th>رقیب</th><th>نوع</th><th>مزایا</th><th>ضعف‌ها</th></tr></thead>
+    <tbody>
+      <tr><td>طلافروشی‌های سنتی</td><td>فیزیکی</td><td>اعتماد بالا</td><td>قیمت بالا، ساعات محدود</td></tr>
+      <tr><td>صندوق‌های طلای بورس</td><td>سنتی-دیجیتال</td><td>شفافیت</td><td>حداقل سرمایه بالا</td></tr>
+      <tr><td>اپلیکیشن‌های محدود</td><td>دیجیتال</td><td>راحتی</td><td>امکانات محدود، عدم اعتماد</td></tr>
+      <tr style="background:var(--gold-light);"><td><strong>زرین گلد</strong></td><td><strong>دیجیتال جامع</strong></td><td><strong>تمام امکانات</strong></td><td><strong>نیاز به رشد برند</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h3>روندهای بازار / Market Trends</h3>
+  <div class="feature-grid">
+    <div class="feature-card"><h4>طلای دیجیتال</h4><p>رشد سریع توکن‌های پشتوانه طلا در جهان</p></div>
+    <div class="feature-card"><h4>تحول دیجیتال</h4><p>افزایش استفاده از موبایل بانکینگ</p></div>
+    <div class="feature-card"><h4>تورم</h4><p>تمایل بیشتر به سرمایه‌گذاری در طلای واقعی</p></div>
+    <div class="feature-card"><h4>نسل Z</h4><p>علاقه‌مندی فزاینده به فین‌تک و دارایی دیجیتال</p></div>
+  </div>
+  <div class="page-footer"><span>زرین گلد &mdash; پروپوزال</span><span>صفحه ۱۱</span></div>
+</div>
+
+<!-- ==================== SECTION 10: REVENUE MODEL ==================== -->
+<div class="page content-page" dir="rtl">
+  <div class="section-header">
+    <div class="section-number">۱۰</div>
+    <div class="section-title">مدل درآمدی</div>
+    <div class="section-title-en">Revenue Model</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <h3>جریان‌های درآمدی / Revenue Streams</h3>
+  <div class="revenue-bar"><div class="revenue-label">کارمزد معاملات</div><div class="revenue-track" dir="ltr"><div class="revenue-fill" style="width:40%; background:linear-gradient(90deg,#D4AF37,#B8860B);">40%</div></div></div>
+  <div class="revenue-bar"><div class="revenue-label">درگاه پذیرندگان</div><div class="revenue-track" dir="ltr"><div class="revenue-fill" style="width:25%; background:linear-gradient(90deg,#0f3460,#1a1a2e);">25%</div></div></div>
+  <div class="revenue-bar"><div class="revenue-label">خدمات بیمه</div><div class="revenue-track" dir="ltr"><div class="revenue-fill" style="width:15%; background:linear-gradient(90deg,#22C55E,#16A34A);">15%</div></div></div>
+  <div class="revenue-bar"><div class="revenue-label">عضویت VIP</div><div class="revenue-track" dir="ltr"><div class="revenue-fill" style="width:10%; background:linear-gradient(90deg,#F59E0B,#D97706);">10%</div></div></div>
+  <div class="revenue-bar"><div class="revenue-label">خدمات جانبی</div><div class="revenue-track" dir="ltr"><div class="revenue-fill" style="width:5%; background:linear-gradient(90deg,#8B5CF6,#7C3AED);">5%</div></div></div>
+  <div class="revenue-bar"><div class="revenue-label">تبلیغات</div><div class="revenue-track" dir="ltr"><div class="revenue-fill" style="width:5%; background:linear-gradient(90deg,#EF4444,#DC2626);">5%</div></div></div>
+
+  <h3>پیش‌بینی مالی / Financial Projection</h3>
+  <table>
+    <thead><tr><th>سال / Year</th><th>تعداد کاربران / Users</th><th>درآمد (میلیارد ریال)</th><th>هزینه‌ها</th><th>سود خالص</th></tr></thead>
+    <tbody>
+      <tr><td>سال ۱ / Year 1</td><td>۱۰,۰۰۰</td><td>۴۰</td><td>۳۵</td><td>۵</td></tr>
+      <tr><td>سال ۲ / Year 2</td><td>۵۰,۰۰۰</td><td>۸۰</td><td>۵۵</td><td>۲۵</td></tr>
+      <tr><td>سال ۳ / Year 3</td><td>۲۰۰,۰۰۰</td><td>۱۲۰</td><td>۷۰</td><td>۵۰</td></tr>
+    </tbody>
+  </table>
+
+  <h3>سطوح عضویت VIP</h3>
+  <table>
+    <thead><tr><th>سطح</th><th>قیمت ماهانه</th><th>کارمزد</th><th>مزایا</th></tr></thead>
+    <tbody>
+      <tr><td><strong>برنزی / Bronze</strong></td><td>۹۹,۰۰۰ ریال</td><td>۰.۳٪</td><td>آلارم ۵ قیمت</td></tr>
+      <tr><td><strong>نقره‌ای / Silver</strong></td><td>۱۹۹,۰۰۰ ریال</td><td>۰.۲۵٪</td><td>آلارم ۲۰ + مربی AI</td></tr>
+      <tr><td><strong>طلایی / Gold</strong></td><td>۲۹۹,۰۰۰ ریال</td><td>۰.۲٪</td><td>نامحدود آلارم + AI پیشرفته</td></tr>
+      <tr><td><strong>الماسی / Diamond</strong></td><td>۴۹۹,۰۰۰ ریال</td><td>۰.۱۵٪</td><td>تمام امکانات + پشتیبانی اختصاصی</td></tr>
+    </tbody>
+  </table>
+  <div class="page-footer"><span>زرین گلد &mdash; پروپوزال</span><span>صفحه ۱۲</span></div>
+</div>
+
+<!-- ==================== SECTION 11: ROADMAP ==================== -->
+<div class="page content-page" dir="rtl">
+  <div class="section-header">
+    <div class="section-number">۱۱</div>
+    <div class="section-title">نقشه راه توسعه</div>
+    <div class="section-title-en">Development Roadmap</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="roadmap">
+    <div class="roadmap-phase phase-1" style="min-height:220px;">
+      <h4>v2.0 &mdash; MVP (Q4 2024)</h4>
+      <ul>
+        <li>Core Gold Trading</li>
+        <li>Dual Wallet (Fiat + Gold)</li>
+        <li>OTP Authentication</li>
+        <li>ZarinPal Integration</li>
+        <li>Basic Admin Panel</li>
+        <li>User KYC Verification</li>
+      </ul>
+    </div>
+    <div class="roadmap-phase phase-2" style="min-height:220px;">
+      <h4>v2.5 &mdash; Complete (Q1 2025)</h4>
+      <ul>
+        <li>Insurance Module</li>
+        <li>Charge &amp; Bill Payment</li>
+        <li>Car Services</li>
+        <li>Merchant Gateway</li>
+        <li>Full Admin Dashboard</li>
+        <li>Blog + CMS System</li>
+        <li>Multi-language SDK</li>
+      </ul>
+    </div>
+    <div class="roadmap-phase phase-3" style="min-height:220px;">
+      <h4>v2.9 &mdash; Growth (Q2 2025)</h4>
+      <ul>
+        <li>AI Engine (LLM, VLM, ASR)</li>
+        <li>Gamification (XP, Quests)</li>
+        <li>Creator Club</li>
+        <li>Telegram Bot</li>
+        <li>SMS/Email Marketing</li>
+        <li>Mobile-First UI</li>
+        <li>Dark/Light Theme</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>برنامه v3.0 / Future Plans</h3>
+  <div class="feature-grid">
+    <div class="feature-card"><h4>Mobile App</h4><p>اپلیکیشن بومی React Native</p></div>
+    <div class="feature-card"><h4>PostgreSQL</h4><p>مهاجرت از SQLite</p></div>
+    <div class="feature-card"><h4>Redis Cache</h4><p>کش و Session سریع‌تر</p></div>
+    <div class="feature-card"><h4>Blockchain</h4><p>شفافیت ذخیره طلای فیزیکی</p></div>
+    <div class="feature-card"><h4>Kubernetes</h4><p>ارکستراسیون توزیع‌شده</p></div>
+    <div class="feature-card"><h4>Multi-region</h4><p>استقرار چند منطقه‌ای</p></div>
+  </div>
+  <div class="page-footer"><span>زرین گلد &mdash; پروپوزال</span><span>صفحه ۱۳</span></div>
+</div>
+
+<!-- ==================== SECTION 12: TECH STACK ==================== -->
+<div class="page content-page" dir="rtl">
+  <div class="section-header">
+    <div class="section-number">۱۲</div>
+    <div class="section-title">تکنولوژی‌ها</div>
+    <div class="section-title-en">Tech Stack</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <h3>فرانت‌اند / Frontend</h3>
+  <table>
+    <thead><tr><th>تکنولوژی</th><th>نسخه</th><th>نقش</th></tr></thead>
+    <tbody>
+      <tr><td>Next.js</td><td>16.1</td><td>Framework (App Router, SSR, API Routes)</td></tr>
+      <tr><td>React</td><td>19</td><td>UI Library</td></tr>
+      <tr><td>TypeScript</td><td>5</td><td>Language</td></tr>
+      <tr><td>Tailwind CSS</td><td>4</td><td>Styling</td></tr>
+      <tr><td>shadcn/ui</td><td>New York</td><td>Component Library (40+ components)</td></tr>
+      <tr><td>Framer Motion</td><td>12</td><td>Animations</td></tr>
+      <tr><td>Recharts</td><td>2.15</td><td>Charts &amp; Data Visualization</td></tr>
+      <tr><td>Zustand</td><td>5</td><td>Client State Management</td></tr>
+      <tr><td>TanStack Query</td><td>5.82</td><td>Server State Cache</td></tr>
+      <tr><td>Socket.IO Client</td><td>4.8</td><td>Real-time Communication</td></tr>
+    </tbody>
+  </table>
+
+  <h3>بک‌اند / Backend</h3>
+  <table>
+    <thead><tr><th>تکنولوژی</th><th>نسخه</th><th>نقش</th></tr></thead>
+    <tbody>
+      <tr><td>Bun</td><td>Latest</td><td>JavaScript Runtime</td></tr>
+      <tr><td>Prisma ORM</td><td>6.11</td><td>Type-safe Database Access (80+ models)</td></tr>
+      <tr><td>SQLite</td><td>&mdash;</td><td>Database Engine</td></tr>
+      <tr><td>NextAuth.js</td><td>4</td><td>Authentication (OTP-based)</td></tr>
+      <tr><td>Socket.IO</td><td>4.8</td><td>WebSocket Server (Chat + Prices)</td></tr>
+      <tr><td>z-ai-web-dev-sdk</td><td>0.0.17</td><td>AI Integration (LLM, VLM, TTS, ASR)</td></tr>
+      <tr><td>Zod</td><td>4</td><td>Schema Validation</td></tr>
+      <tr><td>next-themes</td><td>0.4.6</td><td>Dark/Light Theme Support</td></tr>
+    </tbody>
+  </table>
+
+  <h3>ابزارهای توسعه / Dev Tools</h3>
+  <table>
+    <thead><tr><th>ابزار</th><th>نقش</th></tr></thead>
+    <tbody>
+      <tr><td>ESLint</td><td>Code Quality &amp; Linting</td></tr>
+      <tr><td>Caddy</td><td>Reverse Proxy, SSL Termination, WebSocket</td></tr>
+      <tr><td>Sharp</td><td>Image Processing</td></tr>
+      <tr><td>react-hook-form</td><td>Form Management</td></tr>
+      <tr><td>tiptap</td><td>Rich Text Editor</td></tr>
+    </tbody>
+  </table>
+  <div class="page-footer"><span>زرین گلد &mdash; پروپوزال</span><span>صفحه ۱۴</span></div>
+</div>
+
+<!-- ==================== SECTION 13: PROJECT STRUCTURE ==================== -->
+<div class="page content-page" dir="rtl">
+  <div class="section-header">
+    <div class="section-number">۱۳</div>
+    <div class="section-title">ساختار پروژه</div>
+    <div class="section-title-en">Project Structure</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div dir="ltr" style="font-family: monospace; font-size: 11px; line-height: 1.8; background: var(--dark); color: #e0e0e0; padding: 20px 24px; border-radius: 10px; white-space: pre; overflow-x: auto;">zaringold/
+├── src/
+│   ├── app/
+│   │   ├── page.tsx              # Landing Page
+│   │   ├── layout.tsx            # Root Layout
+│   │   └── api/                  # 80+ API Endpoints
+│   │       ├── auth/             # Authentication
+│   │       ├── gold/             # Gold Trading
+│   │       ├── payment/          # Payments (ZarinPal)
+│   │       ├── gateway/          # Merchant Gateway
+│   │       ├── chat/             # AI Chat Support
+│   │       ├── gold-card/        # Gold Card
+│   │       ├── insurance/        # Insurance Services
+│   │       ├── gamification/     # XP, Quests, Achievements
+│   │       ├── sms/ / email/     # Marketing Campaigns
+│   │       └── telegram/         # Telegram Bot
+│   ├── components/               # 100+ React Components
+│   │   ├── ui/                   # 40+ shadcn/ui Components
+│   │   ├── layout/               # App Layout, Sidebar, Nav
+│   │   ├── landing/              # 20+ Landing Sections
+│   │   ├── ai/                   # 6 AI Tools
+│   │   ├── admin/                # 20+ Admin Pages
+│   │   └── ...                   # Gold, Wallet, Chat, etc.
+│   ├── hooks/                    # Custom React Hooks
+│   ├── lib/                      # Utilities (i18n, db, etc.)
+│   └── stores/                   # Zustand State Management
+├── mini-services/
+│   └── chat-service/             # Socket.IO Chat (:3005)
+├── prisma/schema.prisma           # 80+ Database Models
+├── public/
+│   ├── fonts/                    # IRANSansWeb (7 weights)
+│   ├── sdk/                      # Node.js, Python, PHP SDKs
+│   └── uploads/                  # User Uploads
+├── wordpress-plugin/              # WordPress Gateway Plugin
+└── docs/PROPOSAL.md              # Full Project Proposal</div>
+
+  <div style="text-align:center; margin-top:30px;">
+    <div style="display:inline-block; background:var(--dark); color:white; border-radius:10px; padding:20px 40px;">
+      <div style="font-size:14px; font-weight:600; color:var(--gold); margin-bottom:8px;">Zaringold v2.9.4</div>
+      <div style="font-size:12px; opacity:0.8;">100+ Components &bull; 80+ API Endpoints &bull; 80+ DB Models</div>
+      <div style="font-size:12px; opacity:0.8;">50+ Dependencies &bull; 7 AI Tools &bull; 15+ Admin Pages</div>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top:30px; padding-top:20px; border-top:1px solid var(--gray2);">
+    <p style="font-size:13px; color:var(--text-light);">تمامی حقوق مادی و معنوی متعلق به شرکت <strong>فارتاک کمپلکس</strong> است.</p>
+    <p style="font-size:11px; color:#aaa; direction:ltr; text-align:center;">All rights reserved. Proprietary &amp; Confidential. &copy; 2025 Fartak Complex.</p>
+    <p style="font-size:11px; color:#aaa; margin-top:8px;">
+      <a href="https://github.com/fartakcomplex/zaringold" style="color:var(--gold-dark); text-decoration:none;">github.com/fartakcomplex/zaringold</a>
+    </p>
+  </div>
+</div>
+
+</body>
+</html>
