@@ -151,3 +151,34 @@ Stage Summary:
   - MobileQuickActions for iOS-style quick action buttons
   - Always-visible tab labels on mobile
   - Proper touch-friendly sizing and spacing
+
+---
+Task ID: 7
+Agent: Main Agent
+Task: Replace emoji operator icons with real SIM card operator logos
+
+Work Log:
+- Created `/src/components/utility-services/operators/OperatorLogos.tsx` with SVG logo components:
+  - MCILogo: Yellow circle with "MCI" letter mark (همراه اول brand)
+  - IrancellLogo: Orange rounded rect with signal wave pattern (ایرانسل brand)
+  - RightelLogo: Purple gradient with "R" letter mark (رایتل brand)
+  - TaliyaLogo: Teal circle with "T" letter mark (تالیا brand)
+  - ShatelLogo: Blue rounded rect (شاتل موبایل brand, optional)
+- Updated `UtilityServicesView.tsx`:
+  - Imported real logo components instead of using emoji icons (📱📲📶☕)
+  - Updated OPERATORS constant to remove `icon` property
+  - Replaced emoji rendering in topup operator selection with SVG logos (44px size)
+  - Replaced emoji rendering in internet operator selection with SVG logos
+  - Updated operator auto-detection hint to show logo + name badge
+  - Updated summary card to show operator logo next to operator name
+  - Updated history list to show operator logo in each transaction item
+- Updated `AdminServices.tsx`:
+  - Imported operator logo components
+  - Replaced generic Lucide icons (Smartphone, Wifi, Phone) in API settings with real logos
+  - Updated operator column in orders table to show logo next to operator name
+
+Stage Summary:
+- All 4 Iranian SIM card operators (MCI, Irancell, Rightel, Taliya) now show their branded SVG logos
+- Logos appear in: operator selection grids, phone number detection hints, payment summary, transaction history, admin API settings, admin orders table
+- Professional app-like appearance with brand-accurate colors and design elements
+- No external image dependencies - all logos are inline SVG components

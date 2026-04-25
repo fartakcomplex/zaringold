@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { MCILogo, IrancellLogo, RightelLogo } from '@/components/utility-services/operators/OperatorLogos';
 import {
   Smartphone,
   Wifi,
@@ -320,13 +321,13 @@ function ProviderSettingsPanel({ serviceType }: { serviceType: 'utility' | 'car'
                 <div className="space-y-4">
                   {/* Operator API Sections */}
                   {[
-                    { prefix: 'mci', label: 'همراه اول', icon: Smartphone },
-                    { prefix: 'irancell', label: 'ایرانسل', icon: Wifi },
-                    { prefix: 'rightel', label: 'رایتل', icon: Phone },
+                    { prefix: 'mci', label: 'همراه اول', Logo: MCILogo },
+                    { prefix: 'irancell', label: 'ایرانسل', Logo: IrancellLogo },
+                    { prefix: 'rightel', label: 'رایتل', Logo: RightelLogo },
                   ].map((op) => (
                     <div key={op.prefix} className="rounded-lg border border-border/50 bg-muted/20 p-3 space-y-3">
                       <div className="flex items-center gap-2">
-                        <op.icon className="h-3.5 w-3.5 text-gold" />
+                        <op.Logo size={18} />
                         <span className="text-xs font-bold text-foreground">{op.label}</span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -748,7 +749,15 @@ function UtilityTab() {
                           {typeCfg.label}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-foreground">{OPERATOR_MAP[order.operator] || order.operator || '—'}</td>
+                      <td className="px-4 py-3 text-foreground">
+                        <div className="flex items-center gap-1.5">
+                          {order.operator && (() => {
+                            const OpLogo = ({ mci: MCILogo, irancell: IrancellLogo, rightel: RightelLogo } as Record<string, React.FC<{ size?: number; className?: string }>>)[order.operator];
+                            return OpLogo ? <OpLogo size={18} /> : null;
+                          })()}
+                          {OPERATOR_MAP[order.operator] || order.operator || '—'}
+                        </div>
+                      </td>
                       <td className="px-4 py-3 font-mono text-foreground">{order.phoneNumber || '—'}</td>
                       <td className="px-4 py-3 font-medium text-foreground">{formatPrice(order.totalPrice)} <span className="text-muted-foreground">ت</span></td>
                       <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
