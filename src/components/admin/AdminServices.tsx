@@ -224,7 +224,7 @@ function StatusBadge({ status }: { status: string }) {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 function ProviderSettingsPanel({ serviceType }: { serviceType: 'utility' | 'car' | 'insurance' }) {
-  const t = useTranslation();
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -590,7 +590,7 @@ function ProviderSettingsPanel({ serviceType }: { serviceType: 'utility' | 'car'
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 function UtilityTab() {
-  const t = useTranslation();
+  const { t } = useTranslation();
   const [stats, setStats] = useState<UtilityStats | null>(null);
   const [orders, setOrders] = useState<UtilityOrder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -792,7 +792,7 @@ function UtilityTab() {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 function CarTab() {
-  const t = useTranslation();
+  const { t } = useTranslation();
   const [stats, setStats] = useState<CarStats | null>(null);
   const [orders, setOrders] = useState<CarOrder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -979,7 +979,7 @@ function CarTab() {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 function InsuranceTab() {
-  const t = useTranslation();
+  const { t } = useTranslation();
   const [stats, setStats] = useState<InsStats | null>(null);
   const [orders, setOrders] = useState<InsOrder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1176,7 +1176,7 @@ const TABS = [
 ] as const;
 
 export default function AdminServices({ defaultTab }: { defaultTab?: string }) {
-  const t = useTranslation();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<string>(defaultTab || 'utility');
 
   return (
