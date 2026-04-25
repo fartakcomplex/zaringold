@@ -128,3 +128,26 @@ Work Log:
 Stage Summary:
 - v2.9.3 released with all recent changes (label rename, auto-login, mobile fix, English translations)
 - Cron job for webDevReview every 15 minutes attempted but failed due to auth infrastructure issue (non-blocking)
+
+---
+Task ID: 6
+Agent: Main Agent
+Task: Redesign mobile UI for Insurance, Charge/Bill Payment, and Car Services
+
+Work Log:
+- Added MobileQuickActions for insurance (شخص ثالث, آتش‌سوزی, بدنه, بیمه‌نامه‌ها)
+- Added MobileQuickActions for utility (شارژ, اینترنت, قبوض, تاریخچه)
+- Added MobileQuickActions for car-services (تعویض روغنی, بیمه خودرو, ثبت خودرو, سفارش‌ها)
+- Added missing icon imports (Shield, Flame, Car, Wrench, ShieldAlert) to MobileQuickActions.tsx
+- Redesigned InsuranceView.tsx: compact header, hero banner, quick access 4x2 category grid with colored icons, back button on sub-views
+- Redesigned UtilityServicesView.tsx: compact header, hero banner, tab labels always visible on mobile (removed `hidden sm:inline`)
+- Redesigned CarServicesView.tsx: compact header with inline add-car button, hero banner
+
+Stage Summary:
+- All 3 service pages now have app-like mobile UI with:
+  - Compact sticky headers with icon + title + quick action buttons
+  - Gradient hero banners for visual appeal
+  - Quick access grids (4 columns) for fast category/service navigation
+  - MobileQuickActions for iOS-style quick action buttons
+  - Always-visible tab labels on mobile
+  - Proper touch-friendly sizing and spacing

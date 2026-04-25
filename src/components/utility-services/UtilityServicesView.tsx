@@ -248,14 +248,36 @@ export default function UtilityServicesView() {
     <div className="min-h-screen" dir={dir}>
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
-            {t('utility.title')}
-          </h1>
-          <p className="text-sm text-zinc-400 mt-1">{t('utility.subtitle')}</p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/5">
+            <Smartphone className="h-4.5 w-4.5 text-amber-500" />
+          </div>
+          <div className="flex-1">
+            <h1 className="text-sm font-bold text-foreground leading-tight">
+              {t('utility.title')}
+            </h1>
+            <p className="text-[10px] text-muted-foreground">
+              {t('utility.subtitle')}
+            </p>
+          </div>
         </div>
 
-        {/* Tabs */}
+        {/* Hero Banner */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 p-5">
+          <div className="absolute top-0 left-0 w-28 h-28 bg-white/10 rounded-full -translate-x-8 -translate-y-8" />
+          <div className="absolute bottom-0 right-0 w-20 h-20 bg-white/5 rounded-full translate-x-6 translate-y-6" />
+          <div className="relative z-10 flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm">
+              <Zap className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-white font-bold text-base">شارژ آنی و بسته اینترنت</h2>
+              <p className="text-white/70 text-xs mt-0.5">پرداخت قبض با کمترین کارمزد</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Access Tabs - Mobile optimized with labels always visible */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-4 bg-zinc-800/50 border border-zinc-700/50 rounded-xl">
             <TabsTrigger
@@ -263,28 +285,28 @@ export default function UtilityServicesView() {
               className="rounded-lg data-[state=active]:bg-amber-600/20 data-[state=active]:text-amber-400 text-xs sm:text-sm"
             >
               <Smartphone className="w-4 h-4 ml-1" />
-              <span className="hidden sm:inline">{t('utility.topup')}</span>
+              <span className="inline">{t('utility.topup')}</span>
             </TabsTrigger>
             <TabsTrigger
               value="internet"
               className="rounded-lg data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400 text-xs sm:text-sm"
             >
               <Wifi className="w-4 h-4 ml-1" />
-              <span className="hidden sm:inline">{t('utility.internet')}</span>
+              <span className="inline">{t('utility.internet')}</span>
             </TabsTrigger>
             <TabsTrigger
               value="bills"
               className="rounded-lg data-[state=active]:bg-teal-600/20 data-[state=active]:text-teal-400 text-xs sm:text-sm"
             >
               <Receipt className="w-4 h-4 ml-1" />
-              <span className="hidden sm:inline">{t('utility.bills')}</span>
+              <span className="inline">{t('utility.bills')}</span>
             </TabsTrigger>
             <TabsTrigger
               value="history"
               className="rounded-lg data-[state=active]:bg-cyan-600/20 data-[state=active]:text-cyan-400 text-xs sm:text-sm"
             >
               <History className="w-4 h-4 ml-1" />
-              <span className="hidden sm:inline">{t('utility.history')}</span>
+              <span className="inline">{t('utility.history')}</span>
             </TabsTrigger>
           </TabsList>
 

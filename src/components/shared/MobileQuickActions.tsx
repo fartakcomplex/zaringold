@@ -12,6 +12,7 @@ import {
   MessageCircle, AlertTriangle, Percent, BookOpen, Search,
   Plus, History, ChevronUp, Phone, CheckCircle, Star,
   Heart, KeyRound, Code2, Trash2,
+  Shield, Flame, Car, Wrench, ShieldAlert,
 } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -313,6 +314,30 @@ const PAGE_ACTIONS: Record<string, QuickAction[]> = {
     { icon: KeyRound, label: 'API Key', color: '#FBBF24', actionType: 'event', actionValue: 'api-key' },
     { icon: Code2, label: 'نمونه کد', color: '#60A5FA', actionType: 'event', actionValue: 'samples' },
     { icon: MessageCircle, label: 'پشتیبانی', color: '#A78BFA', actionType: 'navigate', actionValue: 'support' },
+  ],
+
+  /* ── Insurance ── */
+  insurance: [
+    { icon: Shield, label: 'شخص ثالث', color: '#34D399', actionType: 'event', actionValue: 'cat-third-party' },
+    { icon: Flame, label: 'آتش‌سوزی', color: '#F87171', actionType: 'event', actionValue: 'cat-fire' },
+    { icon: Car, label: 'بدنه', color: '#60A5FA', actionType: 'event', actionValue: 'cat-body' },
+    { icon: History, label: 'بیمه‌نامه‌ها', color: '#FBBF24', actionType: 'event', actionValue: 'my-policies' },
+  ],
+
+  /* ── Utility Services ── */
+  utility: [
+    { icon: Smartphone, label: 'شارژ', color: '#FBBF24', actionType: 'event', actionValue: 'topup' },
+    { icon: Wifi, label: 'اینترنت', color: '#A78BFA', actionType: 'event', actionValue: 'internet' },
+    { icon: Receipt, label: 'قبوض', color: '#2DD4BF', actionType: 'event', actionValue: 'bills' },
+    { icon: History, label: 'تاریخچه', color: '#60A5FA', actionType: 'event', actionValue: 'history' },
+  ],
+
+  /* ── Car Services ── */
+  'car-services': [
+    { icon: Wrench, label: 'تعویض روغنی', color: '#FBBF24', actionType: 'event', actionValue: 'service-oil' },
+    { icon: ShieldAlert, label: 'بیمه خودرو', color: '#34D399', actionType: 'event', actionValue: 'service-insurance' },
+    { icon: Plus, label: 'ثبت خودرو', color: '#60A5FA', actionType: 'event', actionValue: 'add-car' },
+    { icon: ClipboardList, label: 'سفارش‌ها', color: '#A78BFA', actionType: 'event', actionValue: 'my-orders' },
   ],
 
   /* ── Settings ── */
