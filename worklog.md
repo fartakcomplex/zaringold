@@ -182,3 +182,31 @@ Stage Summary:
 - Logos appear in: operator selection grids, phone number detection hints, payment summary, transaction history, admin API settings, admin orders table
 - Professional app-like appearance with brand-accurate colors and design elements
 - No external image dependencies - all logos are inline SVG components
+
+---
+Task ID: 8
+Agent: Main Agent
+Task: Fix mobile black screen (70% of page covered) and scrolling issue
+
+Work Log:
+- Investigated mobile layout structure in `AppLayout.tsx`
+- Found root cause: Content wrapper div had `h-0 min-h-0` which set height to literally 0px
+  - Parent root div was `flex` (row direction), so `flex-1` on child only affected WIDTH, not HEIGHT
+  - Combined with `overflow-hidden` on parent, the 0px height content was clipped
+  - In dark mode, the dark background (oklch(0.08)) showed through as a "black screen"
+- Fixed root div: Added `flex-col` on mobile so `flex-1` on children controls HEIGHT
+  - Before: `isMobile ? 'h-dvh overflow-hidden'`
+  - After: `isMobile ? 'h-dvh flex-col overflow-hidden'`
+- Fixed content wrapper: Removed `h-0` so height is determined by flex stretch
+  - Before: `isMobile ? 'h-0 min-h-0'`
+  - After: `isMobile ? 'min-h-0'`
+- Fixed mobile scrolling: Added `user-select: auto` to scrollable `<main>` element
+  - Body has `user-select: none` globally which can interfere with touch scrolling on some mobile browsers
+  - Added `WebkitUserSelect: 'auto', userSelect: 'auto'` to main element's style prop
+  - Added `main` to CSS selector list for re-enabling user-select
+- Server compiled successfully and serves 200 responses
+
+Stage Summary:
+- Mobile black screen issue fixed (content area was 0px height due to CSS bug)
+- Mobile scrolling fixed (re-enabled user-select on scrollable content area)
+- Changed files: `src/components/layout/AppLayout.tsx`, `src/app/globals.css`

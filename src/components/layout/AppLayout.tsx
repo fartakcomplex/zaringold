@@ -130,7 +130,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   /* ── Authenticated layout ── */
   return (
-    <div className={cn('flex bg-background', isMobile ? 'h-dvh overflow-hidden' : 'min-h-screen')}>
+    <div className={cn('flex bg-background', isMobile ? 'h-dvh flex-col overflow-hidden' : 'min-h-screen')}>
       {/* ── Desktop Sidebar ── */}
       {!isMobile && (
         <aside className="sticky top-0 h-screen w-[280px] shrink-0 md:block">
@@ -152,7 +152,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       )}
 
       {/* ── Main Content Area ── */}
-      <div className={cn('flex flex-1 flex-col', isMobile ? 'h-0 min-h-0' : 'min-h-screen')}>
+      <div className={cn('flex flex-1 flex-col', isMobile ? 'min-h-0' : 'min-h-screen')}>
         <AppHeader onMenuToggle={() => setSidebarOpen(true)} />
 
         <main
@@ -161,7 +161,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             /* Mobile-native scroll behavior */
             isMobile && 'pb-24 -webkit-overflow-scrolling-touch overscroll-y-auto'
           )}
-          style={isMobile ? { touchAction: 'pan-y', WebkitOverflowScrolling: 'touch' } : undefined}
+          style={isMobile ? { touchAction: 'pan-y', WebkitOverflowScrolling: 'touch', WebkitUserSelect: 'auto', userSelect: 'auto' } : undefined}
         >
           <div key={currentPage} className="page-transition">
             <MobileQuickActions />
