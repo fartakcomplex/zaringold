@@ -77,3 +77,54 @@ Stage Summary:
 - Date formatting is locale-aware (fa-IR for Farsi, en-US for English)
 - Direction (RTL/LTR) handled correctly in ContactPage form fields
 - No changes to i18n.ts needed - all translations kept local to each component
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: Fix mobile landing preview button overlap with bottom nav
+
+Work Log:
+- Modified `src/components/landing/LandingPreviewToggle.tsx`
+- Changed mobile `bottom-4` to `bottom-20` to avoid overlap with fixed footer navigation
+
+Stage Summary:
+- Landing preview toggle button no longer overlaps with mobile bottom navigation bar
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Remove login requirement, auto-login as super_admin for testing
+
+Work Log:
+- Modified `src/stores/authStore.ts` to hardcode super_admin user state
+- Set `isAuthenticated: true` with super_admin role and default user data
+
+Stage Summary:
+- Application now auto-logs in as super_admin without requiring credentials
+
+---
+Task ID: 4
+Agent: Main Agent
+Task: Rename "util" service label to "فروش شارژ و پرداخت قبوض" in admin panel
+
+Work Log:
+- Verified AdminSidebar.tsx already has label "فروش شارژ و پرداخت قبوض" (line 103)
+- Verified i18n.ts has `admin.utilityOrders: 'فروش شارژ و پرداخت قبوض'` (both fa and en)
+- Fixed `nav.utility` i18n key from "خدمات_util" to proper Persian/English labels
+
+Stage Summary:
+- Admin panel utility services tab shows "فروش شارژ و پرداخت قبوض" in Farsi and "Charge Sales & Bill Payment" in English
+
+---
+Task ID: 5
+Agent: Main Agent
+Task: Push to GitHub and create release v2.9.3
+
+Work Log:
+- Pushed 2 new commits to `fartakcomplex/zaringold` main branch
+- Created GitHub release v2.9.3 with comprehensive changelog (Farsi + English)
+- Release URL: https://github.com/fartakcomplex/zaringold/releases/tag/v2.9.3
+
+Stage Summary:
+- v2.9.3 released with all recent changes (label rename, auto-login, mobile fix, English translations)
+- Cron job for webDevReview every 15 minutes attempted but failed due to auth infrastructure issue (non-blocking)
