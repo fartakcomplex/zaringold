@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=64.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "zarrin-gold-sdk"
+version = "1.0.0"
+description = "Official Python SDK for Zarrin Gold payment gateway"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+authors = [
+    {name = "Zarrin Gold Team", email = "dev@zarringold.com"},
+]
+keywords = [
+    "zarrin-gold",
+    "zarringold",
+    "payment-gateway",
+    "gold-payment",
+    "python-sdk",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Office/Business :: Financial :: Payment",
+]
+
+dependencies = [
+    "requests>=2.25.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "mypy>=1.0.0",
+    "ruff>=0.1.0",
+]
+
+[project.urls]
+Documentation = "https://zarringold.com/docs"
+Source = "https://github.com/zarringold/python-sdk"
+Bug Tracker = "https://github.com/zarringold/python-sdk/issues"
+
+[tool.setuptools]
+packages = ["zarringold"]
+
+[tool.setuptools.package-data]
+zarringold = ["py.typed"]
+
+[tool.ruff]
+target-version = "py38"
+line-length = 100
+
+[tool.mypy]
+python_version = "3.8"
+strict = true
