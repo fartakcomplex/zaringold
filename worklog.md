@@ -54,3 +54,26 @@ ZarinGold (زرین گلد) is a comprehensive gold trading and investment platf
 - Need to seed initial data (prices, site settings, landing sections)
 - Some external integrations (SMS, email) need API key configuration
 - Telegram bot needs configuration
+
+---
+Task ID: 1
+Agent: Main Agent
+Task: Add English translations to landing pages (Terms, Privacy, Contact, Blog, BlogPostDetail)
+
+Work Log:
+- Analyzed existing i18n system (`src/lib/i18n.ts` with `useTranslation` hook)
+- Identified 5 landing page components with hardcoded Farsi text
+- Updated TermsPage.tsx: Added bilingual sections (7 articles, 38 content items, all UI strings)
+- Updated PrivacyPage.tsx: Added bilingual sections (6 sections, 6 quick badges, all UI strings)
+- Updated ContactPage.tsx: Added bilingual contact info, departments, social links, form labels
+- Updated BlogPage.tsx: Added bilingual mock data (8 posts, categories), UI strings, date formatting
+- Updated BlogPostDetailPage.tsx: Added bilingual UI strings (back button, share, meta labels)
+- Verified all files compile with no new lint errors
+- Dev server running and serving pages correctly (200)
+
+Stage Summary:
+- All 5 landing pages now support both Farsi (fa) and English (en) via `useTranslation` hook
+- Translations use local locale-conditional objects (not i18n.ts keys) for long-form content
+- Date formatting is locale-aware (fa-IR for Farsi, en-US for English)
+- Direction (RTL/LTR) handled correctly in ContactPage form fields
+- No changes to i18n.ts needed - all translations kept local to each component

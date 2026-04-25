@@ -21,6 +21,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from '@/lib/framer-compat';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  Types                                                              */
@@ -54,7 +55,7 @@ interface Category {
 /*  Fallback Mock Data (used when API is unavailable)                       */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
-const MOCK_FEATURED = {
+const MOCK_FEATURED_FA = {
   title: 'پیش‌بینی قیمت طلا در تابستان ۱۴۰۴: آیا صعود ادامه دارد؟',
   excerpt: 'تحلیل جامع بازار طلا در نیمه اول سال ۱۴۰۴. بررسی عوامل داخلی و بین‌المللی مؤثر بر قیمت طلا و پیش‌بینی روندهای آینده با استفاده از داده‌های تاریخی و مدل‌های هوش مصنوعی زرین گلد.',
   category: 'تحلیل بازار',
@@ -64,7 +65,17 @@ const MOCK_FEATURED = {
   slug: 'gold-price-forecast-summer-1404',
 };
 
-const MOCK_POSTS: BlogPost[] = [
+const MOCK_FEATURED_EN = {
+  title: 'Gold Price Forecast for Summer 2025: Will the Rally Continue?',
+  excerpt: 'Comprehensive analysis of the gold market in the first half of 2025. Examining domestic and international factors affecting gold prices and forecasting future trends using historical data and Zarrin Gold AI models.',
+  category: 'Market Analysis',
+  date: 'June 2025',
+  readTime: '8 min read',
+  image: '📊',
+  slug: 'gold-price-forecast-summer-1404',
+};
+
+const MOCK_POSTS_FA: BlogPost[] = [
   { id: '1', title: 'راهنمای کامل خرید آنلاین طلا در زرین گلد', slug: 'guide-to-buying-gold', excerpt: 'از ثبت‌نام تا اولین خرید — تمام مراحل را قدم به قدم توضیح داده‌ایم.', featuredImage: null, category: { name: 'آموزش', slug: 'education', color: '#3b82f6' }, readTime: 5, isFeatured: false, publishedAt: '2025-06-01' },
   { id: '2', title: 'مقایسه سرمایه‌گذاری طلا با ارز دیجیتال و بورس', slug: 'gold-vs-crypto-vs-stock', excerpt: 'کدام بازار در بلندمدت بازدهی بهتری دارد؟ تحلیل ریسک و بازده هر دارایی.', featuredImage: null, category: { name: 'تحلیل بازار', slug: 'market-analysis', color: '#D4AF37' }, readTime: 6, isFeatured: false, publishedAt: '2025-05-15' },
   { id: '3', title: 'پس‌انداز طلایی: چگونه با ۰.۰۱۵ گرم طلا روزانه طلا جمع کنیم؟', slug: 'daily-gold-savings', excerpt: 'استراتژی پس‌انداز خودکار زرین گلد و تأثیر آن در بلندمدت با محاسبه سود مرکب.', featuredImage: null, category: { name: 'پس‌انداز', slug: 'savings', color: '#22c55e' }, readTime: 4, isFeatured: false, publishedAt: '2025-05-10' },
@@ -75,7 +86,18 @@ const MOCK_POSTS: BlogPost[] = [
   { id: '8', title: 'نکات مهم مالیاتی در خرید و فروش طلای دیجیتال', slug: 'gold-tax-tips', excerpt: 'آیا معاملات طلای دیجیتال مشمول مالیات است؟ بررسی قوانین مالیاتی فعلی.', featuredImage: null, category: { name: 'قوانین', slug: 'regulations', color: '#64748b' }, readTime: 4, isFeatured: false, publishedAt: '2025-02-20' },
 ];
 
-const MOCK_CATEGORIES: Category[] = [
+const MOCK_POSTS_EN: BlogPost[] = [
+  { id: '1', title: 'Complete Guide to Buying Gold Online on Zarrin Gold', slug: 'guide-to-buying-gold', excerpt: 'From sign-up to your first purchase — we explain every step, step by step.', featuredImage: null, category: { name: 'Education', slug: 'education', color: '#3b82f6' }, readTime: 5, isFeatured: false, publishedAt: '2025-06-01' },
+  { id: '2', title: 'Gold vs. Crypto vs. Stock Investment Comparison', slug: 'gold-vs-crypto-vs-stock', excerpt: 'Which market offers better long-term returns? Risk and return analysis of each asset class.', featuredImage: null, category: { name: 'Market Analysis', slug: 'market-analysis', color: '#D4AF37' }, readTime: 6, isFeatured: false, publishedAt: '2025-05-15' },
+  { id: '3', title: 'Gold Savings: How to Accumulate Gold with 0.015g Daily?', slug: 'daily-gold-savings', excerpt: 'Zarrin Gold automatic savings strategy and its long-term impact with compound interest calculations.', featuredImage: null, category: { name: 'Savings', slug: 'savings', color: '#22c55e' }, readTime: 4, isFeatured: false, publishedAt: '2025-05-10' },
+  { id: '4', title: 'Gold Wallet Security: How to Keep Your Digital Gold Safe?', slug: 'gold-wallet-security', excerpt: 'Introduction to Zarrin Gold security layers and important tips for protecting your account.', featuredImage: null, category: { name: 'Security', slug: 'security', color: '#ef4444' }, readTime: 5, isFeatured: false, publishedAt: '2025-04-20' },
+  { id: '5', title: 'Impact of US Interest Rates on Gold Prices in Iran', slug: 'us-interest-rate-gold', excerpt: 'Analysis of how Federal Reserve decisions affect the domestic gold market and investor reactions.', featuredImage: null, category: { name: 'Market Analysis', slug: 'market-analysis', color: '#D4AF37' }, readTime: 7, isFeatured: false, publishedAt: '2025-04-10' },
+  { id: '6', title: 'Introducing Zarrin Gold Card: Pay with Your Own Gold', slug: 'gold-card-intro', excerpt: 'Features, benefits, and how to use the gold card for everyday purchases.', featuredImage: null, category: { name: 'Product', slug: 'product', color: '#a855f7' }, readTime: 3, isFeatured: false, publishedAt: '2025-03-15' },
+  { id: '7', title: 'Gold Loans: Terms, Interest Rates, and Application Process', slug: 'gold-loan-guide', excerpt: 'Complete guide to getting a loan backed by digital gold and comparison with bank loans.', featuredImage: null, category: { name: 'Services', slug: 'services', color: '#f59e0b' }, readTime: 5, isFeatured: false, publishedAt: '2025-03-01' },
+  { id: '8', title: 'Important Tax Considerations in Digital Gold Trading', slug: 'gold-tax-tips', excerpt: 'Are digital gold transactions taxable? A review of current tax regulations.', featuredImage: null, category: { name: 'Regulations', slug: 'regulations', color: '#64748b' }, readTime: 4, isFeatured: false, publishedAt: '2025-02-20' },
+];
+
+const MOCK_CATEGORIES_FA: Category[] = [
   { name: 'همه', slug: '', color: '#D4AF37', postCount: 24 },
   { name: 'تحلیل بازار', slug: 'market-analysis', color: '#D4AF37', postCount: 8 },
   { name: 'آموزش', slug: 'education', color: '#3b82f6', postCount: 6 },
@@ -83,6 +105,16 @@ const MOCK_CATEGORIES: Category[] = [
   { name: 'امنیت', slug: 'security', color: '#ef4444', postCount: 3 },
   { name: 'محصول', slug: 'product', color: '#a855f7', postCount: 2 },
   { name: 'خدمات', slug: 'services', color: '#f59e0b', postCount: 1 },
+];
+
+const MOCK_CATEGORIES_EN: Category[] = [
+  { name: 'All', slug: '', color: '#D4AF37', postCount: 24 },
+  { name: 'Market Analysis', slug: 'market-analysis', color: '#D4AF37', postCount: 8 },
+  { name: 'Education', slug: 'education', color: '#3b82f6', postCount: 6 },
+  { name: 'Savings', slug: 'savings', color: '#22c55e', postCount: 4 },
+  { name: 'Security', slug: 'security', color: '#ef4444', postCount: 3 },
+  { name: 'Product', slug: 'product', color: '#a855f7', postCount: 2 },
+  { name: 'Services', slug: 'services', color: '#f59e0b', postCount: 1 },
 ];
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
@@ -100,10 +132,10 @@ const CATEGORY_ICONS: Record<string, React.ElementType> = {
 /*  Helpers                                                            */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
-function formatPersianDate(dateStr: string): string {
+function formatPersianDate(dateStr: string, locale: string): string {
   try {
     const date = new Date(dateStr);
-    return new Intl.DateTimeFormat('fa-IR', {
+    return new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'fa-IR', {
       year: 'numeric',
       month: 'long',
     }).format(date);
@@ -191,14 +223,18 @@ function PostsGridSkeleton() {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function BlogPage({ onBack, onViewPost }: SubPageProps) {
+  const { locale } = useTranslation();
   const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [categories, setCategories] = useState<Category[]>(MOCK_CATEGORIES);
+  const [categories, setCategories] = useState<Category[]>(locale === 'en' ? MOCK_CATEGORIES_EN : MOCK_CATEGORIES_FA);
   const [featuredPost, setFeaturedPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [apiAvailable, setApiAvailable] = useState(true);
+
+  const MOCK_FEATURED = locale === 'en' ? MOCK_FEATURED_EN : MOCK_FEATURED_FA;
+  const MOCK_POSTS = locale === 'en' ? MOCK_POSTS_EN : MOCK_POSTS_FA;
 
   /* Fetch posts */
   const fetchPosts = useCallback(async (category?: string, search?: string) => {
@@ -235,7 +271,7 @@ export default function BlogPage({ onBack, onViewPost }: SubPageProps) {
       setLoading(false);
       setIsSearching(false);
     }
-  }, []);
+  }, [locale, MOCK_POSTS]);
 
   /* Fetch categories */
   const fetchCategories = useCallback(async () => {
@@ -244,17 +280,18 @@ export default function BlogPage({ onBack, onViewPost }: SubPageProps) {
       if (!res.ok) throw new Error('API error');
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
-        setCategories([{ name: 'همه', slug: '', color: '#D4AF37', postCount: data.reduce((s: number, c: Category) => s + (c.postCount || 0), 0) }, ...data]);
+        setCategories([{ name: locale === 'en' ? 'All' : 'همه', slug: '', color: '#D4AF37', postCount: data.reduce((s: number, c: Category) => s + (c.postCount || 0), 0) }, ...data]);
       }
     } catch {
       // Use mock categories
     }
-  }, []);
+  }, [locale]);
 
   useEffect(() => {
+    setCategories(locale === 'en' ? MOCK_CATEGORIES_EN : MOCK_CATEGORIES_FA);
     fetchPosts();
     fetchCategories();
-  }, [fetchPosts, fetchCategories]);
+  }, [fetchPosts, fetchCategories, locale]);
 
   /* Handle category filter */
   const handleCategoryFilter = (slug: string) => {
@@ -280,6 +317,23 @@ export default function BlogPage({ onBack, onViewPost }: SubPageProps) {
   /* Posts to display (non-featured) */
   const displayPosts = posts.filter((p) => p.slug !== featuredPost?.slug);
 
+  /* Localized UI strings */
+  const ui = {
+    backToHome: locale === 'en' ? 'Back to Home' : 'بازگشت به صفحه اصلی',
+    specializedArticles: locale === 'en' ? 'Specialized Articles' : 'مقالات تخصصی',
+    blogTitle: locale === 'en' ? 'Zarrin Gold' : 'زرین گلد',
+    subtitle: locale === 'en'
+      ? 'Latest news, analysis, and education on the gold market. Make better investment decisions with our specialized articles.'
+      : 'آخرین اخبار، تحلیل‌ها و آموزش‌های بازار طلا. با مقالات تخصصی ما، تصمیمات سرمایه‌گذاری بهتری بگیرید.',
+    searchPlaceholder: locale === 'en' ? 'Search articles...' : 'جستجو در مقالات...',
+    featuredArticle: locale === 'en' ? 'Featured Article' : 'مقاله ویژه',
+    minRead: locale === 'en' ? 'min read' : 'دقیقه مطالعه',
+    min: locale === 'en' ? 'min' : 'دقیقه',
+    readMore: locale === 'en' ? 'Read More' : 'ادامه مطلب',
+    noResults: locale === 'en' ? 'No results found for your search.' : 'نتیجه‌ای برای جستجوی شما یافت نشد.',
+    noArticles: locale === 'en' ? 'No articles published yet.' : 'هنوز مقاله‌ای منتشر نشده است.',
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* ── Enhanced Header ── */}
@@ -298,7 +352,7 @@ export default function BlogPage({ onBack, onViewPost }: SubPageProps) {
             className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-gold group"
           >
             <ArrowLeft className="size-4 transition-transform group-hover:translate-x-1" />
-            بازگشت به صفحه اصلی
+            {ui.backToHome}
           </motion.button>
 
           <motion.div
@@ -314,11 +368,19 @@ export default function BlogPage({ onBack, onViewPost }: SubPageProps) {
                 <div className="flex items-center gap-2 mb-1">
                   <span className="flex items-center gap-1.5 rounded-full bg-gold/10 px-3 py-1 text-xs font-medium text-gold">
                     <FileText className="size-3" />
-                    مقالات تخصصی
+                    {ui.specializedArticles}
                   </span>
                 </div>
                 <h1 className="text-3xl font-black md:text-5xl gold-text-shadow">
-                  وبلاگ <span className="gold-gradient-text">زرین گلد</span>
+                  {locale === 'en' ? (
+                    <>
+                      <span className="gold-gradient-text">{ui.blogTitle}</span> Blog
+                    </>
+                  ) : (
+                    <>
+                      وبلاگ <span className="gold-gradient-text">{ui.blogTitle}</span>
+                    </>
+                  )}
                 </h1>
               </div>
             </div>
@@ -330,8 +392,7 @@ export default function BlogPage({ onBack, onViewPost }: SubPageProps) {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="max-w-2xl text-base leading-relaxed text-muted-foreground"
           >
-            آخرین اخبار، تحلیل‌ها و آموزش‌های بازار طلا. با مقالات تخصصی ما، تصمیمات
-            سرمایه‌گذاری بهتری بگیرید.
+            {ui.subtitle}
           </motion.p>
         </div>
       </div>
@@ -349,7 +410,7 @@ export default function BlogPage({ onBack, onViewPost }: SubPageProps) {
             type="text"
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            placeholder="جستجو در مقالات..."
+            placeholder={ui.searchPlaceholder}
             className="input-gold-focus w-full rounded-2xl border border-border/50 bg-white/60 backdrop-blur-xl py-3.5 pr-11 pl-4 text-sm outline-none transition-all placeholder:text-muted-foreground/60 dark:bg-gold/[0.02]"
           />
           {isSearching && (
@@ -386,7 +447,7 @@ export default function BlogPage({ onBack, onViewPost }: SubPageProps) {
               <div className="flex items-center gap-2 mb-4">
                 <span className="flex items-center gap-1.5 rounded-full bg-gold/15 px-3 py-1 text-xs font-medium text-gold">
                   <Sparkles className="size-3" />
-                  مقاله ویژه
+                  {ui.featuredArticle}
                 </span>
               </div>
               <div className="flex items-start gap-4 md:gap-6">
@@ -412,16 +473,16 @@ export default function BlogPage({ onBack, onViewPost }: SubPageProps) {
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Clock className="size-3" />
-                      {apiAvailable ? formatPersianDate(featuredPost.publishedAt) : MOCK_FEATURED.date}
+                      {apiAvailable ? formatPersianDate(featuredPost.publishedAt, locale) : MOCK_FEATURED.date}
                     </span>
                     {featuredPost.readTime > 0 && (
                       <span className="flex items-center gap-1">
                         <BookOpen className="size-3" />
-                        {featuredPost.readTime} دقیقه مطالعه
+                        {featuredPost.readTime} {ui.minRead}
                       </span>
                     )}
                     <span className="flex items-center gap-1 text-gold font-medium">
-                      ادامه مطلب
+                      {ui.readMore}
                       <ArrowLeft className="size-3" />
                     </span>
                   </div>
@@ -498,7 +559,7 @@ export default function BlogPage({ onBack, onViewPost }: SubPageProps) {
                 <BookOpen className="size-8 text-muted-foreground/30" />
               </div>
               <p className="text-base text-muted-foreground">
-                {searchQuery ? 'نتیجه‌ای برای جستجوی شما یافت نشد.' : 'هنوز مقاله‌ای منتشر نشده است.'}
+                {searchQuery ? ui.noResults : ui.noArticles}
               </p>
             </motion.div>
           ) : (
@@ -558,12 +619,12 @@ export default function BlogPage({ onBack, onViewPost }: SubPageProps) {
                     <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="size-3" />
-                        {apiAvailable ? formatPersianDate(post.publishedAt) : post.publishedAt}
+                        {apiAvailable ? formatPersianDate(post.publishedAt, locale) : post.publishedAt}
                       </span>
                       {post.readTime > 0 && (
                         <span className="flex items-center gap-1">
                           <BookOpen className="size-3" />
-                          {post.readTime} دقیقه
+                          {post.readTime} {ui.min}
                         </span>
                       )}
                     </div>

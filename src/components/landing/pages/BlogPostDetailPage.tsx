@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { useAppStore } from '@/lib/store';
+import { useTranslation } from '@/lib/i18n';
 import RenderHTML from '@/components/shared/RenderHTML';
 
 /* ------------------------------------------------------------------ */
@@ -63,10 +64,10 @@ interface RelatedPost {
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
-function formatDate(dateStr: string): string {
+function formatDate(dateStr: string, locale: string): string {
   try {
     const date = new Date(dateStr);
-    return new Intl.DateTimeFormat('fa-IR', {
+    return new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'fa-IR', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -120,6 +121,37 @@ interface BlogPostDetailProps {
 export default function BlogPostDetailPage({ onBack }: BlogPostDetailProps) {
   const blogPostSlug = useAppStore((s) => s.blogPostSlug);
   const setBlogPostSlug = useAppStore((s) => s.setBlogPostSlug);
+  const { locale } = useTranslation();
+
+  const ui = locale === 'en' ? {
+    backToBlog: 'Back to Blog',
+    articleNotFound: 'Article not found',
+    errorLoadingArticle: 'Error loading article',
+    minRead: 'min read',
+    views: 'views',
+    share: 'Share:',
+    telegram: 'Telegram',
+    twitter: 'Twitter/X',
+    whatsapp: 'WhatsApp',
+    copyLink: 'Copy Link',
+    prevArticle: 'Previous Article',
+    nextArticle: 'Next Article',
+    relatedArticles: 'Related Articles',
+  } : {
+    backToBlog: 'بازگشت به وبلاگ',
+    articleNotFound: 'مقاله یافت نشد',
+    errorLoadingArticle: 'خطا در دریافت مقاله',
+    minRead: 'دقیقه مطالعه',
+    views: 'بازدید',
+    share: 'اشتراک‌گذاری:',
+    telegram: 'تلگرام',
+    twitter: 'توییتر',
+    whatsapp: 'واتساپ',
+    copyLink: 'کپی لینک',
+    prevArticle: 'مقاله قبلی',
+    nextArticle: 'مقاله بعدی',
+    relatedArticles: 'مقالات مرتبط',
+  };
 
   const [post, setPost] = useState<PostDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -130,11 +162,11 @@ export default function BlogPostDetailPage({ onBack }: BlogPostDetailProps) {
     setError(null);
     try {
       const res = await fetch(`/api/blog/posts/${slug}`);
-      if (!res.ok) throw new Error('مقاله یافت نشد');
+      if (!res.ok) throw new Error(ui.articleNotFound);
       const data = await res.json();
       setPost(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در دریافت مقاله');
+      setError(err instanceof Error ? err.message : ui.errorLoadingArticle);
     } finally {
       setLoading(false);
     }
@@ -194,7 +226,7 @@ export default function BlogPostDetailPage({ onBack }: BlogPostDetailProps) {
               className="flex items-center gap-2 rounded-lg border border-gold/30 bg-gold/5 px-4 py-2 text-sm font-medium text-gold transition-colors duration-200 hover:bg-gold/10"
             >
               <ArrowRight className="h-4 w-4" />
-              بازگشت به وبلاگ
+              {ui.backToBlog}
             </button>
           </div>
         </header>
@@ -213,20 +245,20 @@ export default function BlogPostDetailPage({ onBack }: BlogPostDetailProps) {
               className="flex items-center gap-2 rounded-lg border border-gold/30 bg-gold/5 px-4 py-2 text-sm font-medium text-gold transition-colors duration-200 hover:bg-gold/10"
             >
               <ArrowRight className="h-4 w-4" />
-              بازگشت به وبلاگ
+              {ui.backToBlog}
             </button>
           </div>
         </header>
         <div className="mx-auto max-w-4xl px-4 py-20 text-center">
           <BookOpen className="mx-auto mb-4 h-16 w-16 text-muted-foreground/30" />
           <h2 className="mb-2 text-xl font-bold text-muted-foreground">
-            {error || 'مقاله یافت نشد'}
+            {error || ui.articleNotFound}
           </h2>
           <button
             onClick={handleBack}
             className="mt-4 rounded-lg border border-gold/30 bg-gold/5 px-6 py-2.5 text-sm font-medium text-gold hover:bg-gold/10 transition-colors"
           >
-            بازگشت به وبلاگ
+            {ui.backToBlog}
           </button>
         </div>
       </div>
@@ -243,7 +275,7 @@ export default function BlogPostDetailPage({ onBack }: BlogPostDetailProps) {
             className="flex items-center gap-2 rounded-lg border border-gold/30 bg-gold/5 px-4 py-2 text-sm font-medium text-gold transition-colors duration-200 hover:bg-gold/10"
           >
             <ArrowRight className="h-4 w-4" />
-            بازگشت به وبلاگ
+            {ui.backToBlog}
           </button>
           <h1 className="truncate text-sm font-medium text-muted-foreground line-clamp-1 sm:text-base">
             {post.title}
@@ -282,17 +314,17 @@ export default function BlogPostDetailPage({ onBack }: BlogPostDetailProps) {
             )}
             <span className="flex items-center gap-1.5">
               <Calendar className="h-4 w-4" />
-              {formatDate(post.publishedAt)}
+              {formatDate(post.publishedAt, locale)}
             </span>
             {post.readTime > 0 && (
               <span className="flex items-center gap-1.5">
                 <Clock className="h-4 w-4" />
-                {post.readTime} دقیقه مطالعه
+                {post.readTime} {ui.minRead}
               </span>
             )}
             <span className="flex items-center gap-1.5">
               <Eye className="h-4 w-4" />
-              {post.viewCount} بازدید
+              {post.viewCount} {ui.views}
             </span>
           </div>
         </div>
@@ -337,23 +369,23 @@ export default function BlogPostDetailPage({ onBack }: BlogPostDetailProps) {
           <Separator className="mb-6" />
           <div className="flex flex-wrap items-center gap-3">
             <Share2 className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">اشتراک‌گذاری:</span>
+            <span className="text-sm text-muted-foreground">{ui.share}</span>
             {['telegram', 'twitter', 'whatsapp'].map((platform) => (
               <button
                 key={platform}
                 onClick={() => handleShare(platform)}
                 className="rounded-lg border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-gold/30 hover:bg-gold/5 hover:text-gold"
               >
-                {platform === 'telegram' && 'تلگرام'}
-                {platform === 'twitter' && 'توییتر'}
-                {platform === 'whatsapp' && 'واتساپ'}
+                {platform === 'telegram' && ui.telegram}
+                {platform === 'twitter' && ui.twitter}
+                {platform === 'whatsapp' && ui.whatsapp}
               </button>
             ))}
             <button
               onClick={() => handleShare('copy')}
               className="rounded-lg border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-gold/30 hover:bg-gold/5 hover:text-gold"
             >
-              کپی لینک
+              {ui.copyLink}
             </button>
           </div>
           <Separator className="mt-6" />
@@ -369,7 +401,7 @@ export default function BlogPostDetailPage({ onBack }: BlogPostDetailProps) {
               >
                 <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-gold" />
                 <div>
-                  <p className="mb-1 text-xs text-muted-foreground">مقاله قبلی</p>
+                  <p className="mb-1 text-xs text-muted-foreground">{ui.prevArticle}</p>
                   <p className="text-sm font-medium leading-tight line-clamp-2 group-hover:text-gold transition-colors">
                     {post.prevTitle}
                   </p>
@@ -384,7 +416,7 @@ export default function BlogPostDetailPage({ onBack }: BlogPostDetailProps) {
                 }`}
               >
                 <div className="flex-1">
-                  <p className="mb-1 text-xs text-muted-foreground">مقاله بعدی</p>
+                  <p className="mb-1 text-xs text-muted-foreground">{ui.nextArticle}</p>
                   <p className="text-sm font-medium leading-tight line-clamp-2 group-hover:text-gold transition-colors">
                     {post.nextTitle}
                   </p>
@@ -399,7 +431,7 @@ export default function BlogPostDetailPage({ onBack }: BlogPostDetailProps) {
         {post.relatedPosts.length > 0 && (
           <section>
             <h2 className="mb-6 text-xl font-bold">
-              <span className="gold-gradient-text">مقالات مرتبط</span>
+              <span className="gold-gradient-text">{ui.relatedArticles}</span>
             </h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {post.relatedPosts.map((related, idx) => (
@@ -449,12 +481,12 @@ export default function BlogPostDetailPage({ onBack }: BlogPostDetailProps) {
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
-                        {formatDate(related.publishedAt)}
+                        {formatDate(related.publishedAt, locale)}
                       </span>
                       {related.readTime > 0 && (
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
-                          {related.readTime} دقیقه
+                          {related.readTime} {locale === 'en' ? 'min' : 'دقیقه'}
                         </span>
                       )}
                     </div>
