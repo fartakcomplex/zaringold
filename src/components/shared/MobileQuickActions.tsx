@@ -395,7 +395,7 @@ export default function MobileQuickActions() {
                 strokeWidth={1.8}
               />
             </div>
-            <span className="text-[10px] font-medium leading-none whitespace-nowrap text-[#D4AF37]/90">
+            <span className="text-[10px] font-medium leading-none truncate max-w-full text-[#D4AF37]/90">
               {action.label}
             </span>
           </button>

@@ -303,7 +303,7 @@ export default function InsuranceView() {
                         >
                           <CatIcon className="h-5 w-5" style={{ color: cat.color }} />
                         </div>
-                        <span className="text-[10px] font-medium text-foreground leading-tight text-center">
+                        <span className="text-[10px] font-medium text-foreground leading-tight truncate">
                           {cat.name}
                         </span>
                       </button>
