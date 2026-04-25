@@ -258,7 +258,7 @@ function LandingPreviewToggle({ showLanding, onToggle }: { showLanding: boolean;
     <button
       onClick={onToggle}
       title={showLanding ? t('toggle.backToDashboard') : t('toggle.viewLanding')}
-      className="fixed bottom-4 right-4 z-[60] flex items-center gap-2 rounded-full bg-[#1A1A1A] border border-white/[0.08] px-4 py-2.5 text-xs font-medium text-white shadow-[0_2px_16px_rgba(0,0,0,0.5)] transition-all duration-200 hover:bg-[#252525] active:scale-95 md:bottom-6 md:right-6"
+      className="fixed bottom-20 right-4 z-[60] flex items-center gap-2 rounded-full bg-[#1A1A1A] border border-white/[0.08] px-4 py-2.5 text-xs font-medium text-white shadow-[0_2px_16px_rgba(0,0,0,0.5)] transition-all duration-200 hover:bg-[#252525] active:scale-95 md:bottom-6 md:right-6"
     >
       {showLanding ? (
         <>
