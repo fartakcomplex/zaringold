@@ -12,7 +12,7 @@ import {
   MessageCircle, AlertTriangle, Percent, BookOpen, Search,
   Plus, History, ChevronUp, Phone, CheckCircle, Star,
   Heart, KeyRound, Code2, Trash2,
-  Shield, Flame, Car, Wrench, ShieldAlert,
+  Smartphone, Wifi, Car, Wrench, ShieldAlert, ClipboardList,
 } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
