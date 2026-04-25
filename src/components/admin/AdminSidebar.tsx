@@ -100,7 +100,7 @@ const adminNavSections: { title: string; items: AdminNavItem[] }[] = [
   {
     title: 'سرویس‌ها',
     items: [
-      { label: 'خدمات کاربردی', page: 'admin-services', icon: Smartphone, badge: 'Utility' },
+      { label: 'فروش شارژ و پرداخت قبوض', page: 'admin-services', icon: Smartphone, badge: 'Charge & Bills' },
       { label: 'خدمات خودرو', page: 'admin-services-car', icon: Car, badge: 'Car' },
       { label: 'بیمه', page: 'admin-services-insurance', icon: Umbrella, badge: 'Insurance' },
     ],
