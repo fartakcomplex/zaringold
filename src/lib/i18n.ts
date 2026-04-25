@@ -1833,7 +1833,7 @@ const translations: Record<Locale, TranslationMap> = {
     'carServices.carBrands.other': 'سایر',
 
     /* ── Utility Services ── */
-    'nav.utility': 'خدمات_util',
+    'nav.utility': 'فروش شارژ و پرداخت قبوض',
     'utility.title': 'خرید شارژ و بسته اینترنت',
     'utility.subtitle': 'شارژ تلفن همراه، بسته اینترنت و پرداخت قبوض',
     'utility.topup': 'خرید شارژ',
