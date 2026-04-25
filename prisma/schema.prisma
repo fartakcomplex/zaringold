@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -1072,8 +1072,8 @@ model CreatorSubmission {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  creator  CreatorProfile?   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade, map: "CreatorSubmission_user_fkey")
+  creator  CreatorProfile?   @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "CreatorSubmission_creator_fkey")
   campaign CreatorCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
   rewards  CreatorReward[]
 }
@@ -1089,8 +1089,8 @@ model CreatorReward {
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
 
-  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  creator    CreatorProfile? @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade, map: "CreatorReward_user_fkey")
+  creator    CreatorProfile? @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "CreatorReward_creator_fkey")
   submission CreatorSubmission? @relation(fields: [submissionId], references: [id], onDelete: SetNull)
 }
 

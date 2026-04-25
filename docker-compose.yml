@@ -17,7 +17,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=file:/app/data/custom.db
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-zaringold}:${POSTGRES_PASSWORD:-zaringold_pg_dev}@postgres:5432/${POSTGRES_DB:-zaringold}?schema=public&connection_limit=20
       - REDIS_URL=redis://redis:6379
       - CHAT_SERVICE_URL=http://chat-service:3005
       - SOCKET_URL=http://chat-service:3005
@@ -115,7 +115,7 @@ services:
     environment:
       - NODE_ENV=production
       - REDIS_URL=redis://redis:6379
-      - DATABASE_URL=file:/app/data/custom.db
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-zaringold}:${POSTGRES_PASSWORD:-zaringold_pg_dev}@postgres:5432/${POSTGRES_DB:-zaringold}?schema=public&connection_limit=5
       - TGJU_API_URL=https://api.tgju.org/v1
       - PRICE_UPDATE_INTERVAL=30000
     volumes:
@@ -157,7 +157,7 @@ services:
     environment:
       - NODE_ENV=production
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
-      - DATABASE_URL=file:/app/data/custom.db
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-zaringold}:${POSTGRES_PASSWORD:-zaringold_pg_dev}@postgres:5432/${POSTGRES_DB:-zaringold}?schema=public&connection_limit=5
       - REDIS_URL=redis://redis:6379
       - CHAT_SERVICE_URL=http://chat-service:3005
     volumes:

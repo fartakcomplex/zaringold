@@ -38,7 +38,7 @@ export const db =
       : ['error'],
     datasources: {
       db: {
-        url: process.env.DATABASE_URL ?? 'file:/home/z/my-project/db/custom.db',
+        url: process.env.DATABASE_URL ?? 'postgresql://zaringold:zaringold_dev_2024@localhost:5432/zaringold',
       },
     },
   })
@@ -77,7 +77,7 @@ export async function checkDbHealth(): Promise<DbHealthInfo> {
   const start = Date.now();
   try {
     await Promise.race([
-      db.$queryRaw`SELECT 1 as ok`,
+      db.$queryRaw`SELECT 1`,
       new Promise<never>((_, reject) =>
         setTimeout(() => reject(new Error('Health check timeout')), DB_CONFIG.connectionTimeoutMs)
       ),
@@ -157,9 +157,11 @@ function defaultShouldRetry(error: Error): boolean {
     msg.includes('timeout') ||
     msg.includes('busy') ||
     msg.includes('locked') ||
-    msg.includes('sqlite_BUSY') ||
     msg.includes('econnrefused') ||
-    msg.includes('econnreset')
+    msg.includes('econnreset') ||
+    msg.includes('terminating') ||
+    msg.includes('unexpected_eof') ||
+    msg.includes('too_many_connections')
   );
 }
 
@@ -185,7 +187,7 @@ export async function withTimeout<T>(
 export function getDbConfig() {
   return {
     ...DB_CONFIG,
-    url: process.env.DATABASE_URL ? '***configured***' : 'file:/home/z/my-project/db/custom.db',
+    url: process.env.DATABASE_URL ? '***configured***' : 'postgresql://localhost:5432/zaringold',
     health: dbHealthStatus,
   };
 }

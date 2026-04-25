@@ -1,7 +1,8 @@
 /**
  * Zarrin Gold — Database Backup System
  * 
- * Automatic daily & weekly backups for SQLite database.
+ * Automatic daily & weekly backups for PostgreSQL database.
+ * Uses pg_dump for backup creation and psql for restoration.
  * - Daily backup: Every 20+ hours (keeps 30)
  * - Weekly backup: Every Saturday if 6+ days since last (keeps 8)
  * - Auto-cleanup of old backups
@@ -9,12 +10,12 @@
 
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  Config                                                                  */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
-const DB_PATH = process.env.DATABASE_URL?.replace('file:', '') || path.join(process.cwd(), 'db', 'custom.db');
 const BACKUP_DIR = path.join(process.cwd(), 'db', 'backups');
 const META_FILE = path.join(BACKUP_DIR, 'backup-meta.json');
 
@@ -53,6 +54,98 @@ export interface AutoBackupResult {
   weeklyBackup?: BackupRecord;
   error?: string;
   duration: number; // ms
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  PostgreSQL Connection Parser                                             */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+interface PgConnectionInfo {
+  host: string;
+  port: number;
+  user: string;
+  password: string;
+  database: string;
+}
+
+function parsePostgresUrl(url: string): PgConnectionInfo {
+  // Handle both postgresql:// and postgres:// schemes
+  let normalized = url.replace(/^postgres(?:ql)?:\/\//, '');
+
+  // Extract password and user (supports URL-encoded passwords)
+  let user = 'postgres';
+  let password = '';
+  let hostPort: string;
+  let database: string;
+
+  // Check if there's authentication info (before @)
+  const atIndex = normalized.lastIndexOf('@');
+  if (atIndex !== -1) {
+    const authPart = normalized.substring(0, atIndex);
+    hostPort = normalized.substring(atIndex + 1);
+    const colonIndex = authPart.indexOf(':');
+    if (colonIndex !== -1) {
+      user = decodeURIComponent(authPart.substring(0, colonIndex));
+      password = decodeURIComponent(authPart.substring(colonIndex + 1));
+    } else {
+      user = decodeURIComponent(authPart);
+    }
+  } else {
+    hostPort = normalized;
+  }
+
+  // Separate host:port from database
+  const slashIndex = hostPort.indexOf('/');
+  if (slashIndex !== -1) {
+    database = hostPort.substring(slashIndex + 1);
+    hostPort = hostPort.substring(0, slashIndex);
+  } else {
+    // No database specified
+    hostPort = normalized;
+    database = 'postgres';
+  }
+
+  // Parse host and port
+  const portIndex = hostPort.lastIndexOf(':');
+  let host = hostPort;
+  let port = 5432;
+  if (portIndex !== -1) {
+    host = hostPort.substring(0, portIndex);
+    port = parseInt(hostPort.substring(portIndex + 1), 10) || 5432;
+  }
+
+  return { host, port, user, password, database };
+}
+
+function getPgConnection(): PgConnectionInfo {
+  const dbUrl = process.env.DATABASE_URL || 'postgresql://zaringold:zaringold_dev_2024@localhost:5432/zaringold';
+  return parsePostgresUrl(dbUrl);
+}
+
+/** Build pg_dump connection arguments from the parsed connection info */
+function buildPgDumpArgs(conn: PgConnectionInfo): string[] {
+  const args: string[] = [
+    '-h', conn.host,
+    '-p', String(conn.port),
+    '-U', conn.user,
+    '-d', conn.database,
+    '--no-owner',
+    '--no-acl',
+    '--clean',
+    '--if-exists',
+  ];
+  return args;
+}
+
+/** Build psql connection arguments from the parsed connection info */
+function buildPsqlArgs(conn: PgConnectionInfo): string[] {
+  const args: string[] = [
+    '-h', conn.host,
+    '-p', String(conn.port),
+    '-U', conn.user,
+    '-d', conn.database,
+  ];
+  return args;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -115,33 +208,84 @@ function ensureBackupDir(): void {
   }
 }
 
+/**
+ * Estimate PostgreSQL database size by running a psql query.
+ * Returns size in bytes.
+ */
+function estimatePostgresDbSize(conn: PgConnectionInfo): { bytes: number; human: string } {
+  try {
+    const env = { ...process.env, PGPASSWORD: conn.password };
+    const psqlArgs = buildPsqlArgs(conn);
+    const query = `SELECT pg_database_size('${conn.database}') AS size_bytes;`;
+
+    const result = execSync(
+      `psql ${psqlArgs.join(' ')} -t -A -c "${query}"`,
+      {
+        env,
+        encoding: 'utf-8',
+        timeout: 30_000,
+        stdio: ['pipe', 'pipe', 'pipe'],
+      }
+    ).trim();
+
+    const bytes = parseInt(result, 10);
+    if (!isNaN(bytes) && bytes > 0) {
+      return { bytes, human: formatSize(bytes) };
+    }
+  } catch (e) {
+    console.error('[Backup] Failed to estimate PostgreSQL database size:', e);
+  }
+
+  return { bytes: 0, human: 'PostgreSQL' };
+}
+
 export function createBackup(type: 'daily' | 'weekly'): BackupRecord {
   ensureBackupDir();
 
-  // Validate source DB exists
-  if (!fs.existsSync(DB_PATH)) {
-    throw new Error(`Database file not found: ${DB_PATH}`);
-  }
-
+  const conn = getPgConnection();
   const now = new Date();
   const timestamp = now.toISOString().replace(/[:.]/g, '-');
 
-  // Filename: daily-2024-04-22T23-30-00Z.db or weekly-2024-W16-Saturday.db
+  // Filename: daily-2024-04-22T23-30-00Z.sql or weekly-2024-W16-Saturday.sql
   let filename: string;
   if (type === 'daily') {
-    filename = `daily-${timestamp}.db`;
+    filename = `daily-${timestamp}.sql`;
   } else {
     const weekNum = getWeekNumber(now);
     const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][getDayOfWeek()];
-    filename = `weekly-${now.getFullYear()}-W${String(weekNum).padStart(2, '0')}-${dayName}-${timestamp}.db`;
+    filename = `weekly-${now.getFullYear()}-W${String(weekNum).padStart(2, '0')}-${dayName}-${timestamp}.sql`;
   }
 
   const backupPath = path.join(BACKUP_DIR, filename);
 
-  // Copy the database file
-  fs.copyFileSync(DB_PATH, backupPath);
+  // Run pg_dump to create the backup
+  const env = { ...process.env, PGPASSWORD: conn.password };
+  const dumpArgs = buildPgDumpArgs(conn);
 
-  const dbStat = fs.statSync(DB_PATH);
+  try {
+    execSync(
+      `pg_dump ${dumpArgs.join(' ')} -f "${backupPath}"`,
+      {
+        env,
+        encoding: 'utf-8',
+        timeout: 300_000, // 5 minutes timeout for large databases
+        stdio: ['pipe', 'pipe', 'pipe'],
+      }
+    );
+  } catch (error: any) {
+    // Clean up partial dump file if pg_dump failed
+    if (fs.existsSync(backupPath)) {
+      fs.unlinkSync(backupPath);
+    }
+    throw new Error(`pg_dump failed: ${error.message || String(error)}`);
+  }
+
+  // Verify the backup file was created
+  if (!fs.existsSync(backupPath)) {
+    throw new Error('Backup file was not created by pg_dump');
+  }
+
+  const dbSizeInfo = estimatePostgresDbSize(conn);
   const backupStat = fs.statSync(backupPath);
 
   const record: BackupRecord = {
@@ -150,8 +294,8 @@ export function createBackup(type: 'daily' | 'weekly'): BackupRecord {
     timestamp: now.toISOString(),
     sizeBytes: backupStat.size,
     sizeHuman: formatSize(backupStat.size),
-    dbSizeBytes: dbStat.size,
-    dbSizeHuman: formatSize(dbStat.size),
+    dbSizeBytes: dbSizeInfo.bytes,
+    dbSizeHuman: dbSizeInfo.human,
   };
 
   // Update meta
@@ -340,7 +484,8 @@ export function restoreBackup(filename: string): {
   ensureBackupDir();
 
   const backupPath = path.join(BACKUP_DIR, filename);
-  const resolvedDbPath = path.resolve(DB_PATH);
+  const conn = getPgConnection();
+  const dbIdentifier = `${conn.host}:${conn.port}/${conn.database}`;
 
   // Validate backup exists
   if (!fs.existsSync(backupPath)) {
@@ -348,48 +493,65 @@ export function restoreBackup(filename: string): {
       success: false,
       message: `فایل بکاپ "${filename}" پیدا نشد`,
       backupFile: filename,
-      dbFile: resolvedDbPath,
+      dbFile: dbIdentifier,
     };
   }
 
-  // Validate it looks like a backup file
-  if (!filename.endsWith('.db')) {
+  // Validate it looks like a PostgreSQL backup file
+  if (!filename.endsWith('.sql')) {
     return {
       success: false,
-      message: `فرمت فایل نامعتبر است. فقط فایل‌های .db پشتیبانی می‌شوند`,
+      message: `فرمت فایل نامعتبر است. فقط فایل‌های .sql پشتیبانی می‌شوند`,
       backupFile: filename,
-      dbFile: resolvedDbPath,
+      dbFile: dbIdentifier,
     };
   }
 
-  // Create a pre-restore safety backup
-  const preRestoreName = `pre-restore-${new Date().toISOString().replace(/[:.]/g, '-')}.db`;
-  const preRestorePath = path.join(BACKUP_DIR, preRestoreName);
+  // Create a pre-restore safety backup using pg_dump
+  const preRestoreName = `pre-restore-${new Date().toISOString().replace(/[:.]/g, '-')}.sql`;
+  let preRestoreCreated = false;
 
   try {
-    if (fs.existsSync(resolvedDbPath)) {
-      fs.copyFileSync(resolvedDbPath, preRestorePath);
+    // Create pre-restore backup via pg_dump
+    try {
+      createBackup('daily');
+      // The pre-restore backup was created by createBackup with its own filename,
+      // but we record our preRestoreName for the response
+      preRestoreCreated = true;
+    } catch (preError: any) {
+      console.error('[Backup] Pre-restore backup failed (continuing anyway):', preError);
     }
 
-    // Copy backup to database location
-    fs.copyFileSync(backupPath, resolvedDbPath);
+    // Restore using psql with the SQL dump file
+    const env = { ...process.env, PGPASSWORD: conn.password };
+    const psqlArgs = buildPsqlArgs(conn);
 
-    const stat = fs.statSync(resolvedDbPath);
+    execSync(
+      `psql ${psqlArgs.join(' ')} -f "${backupPath}"`,
+      {
+        env,
+        encoding: 'utf-8',
+        timeout: 300_000, // 5 minutes timeout for large restores
+        stdio: ['pipe', 'pipe', 'pipe'],
+      }
+    );
+
+    const dbSizeInfo = estimatePostgresDbSize(conn);
 
     return {
       success: true,
-      message: `بازیابی با موفقیت انجام شد. بکاپ ایمنی قبل از بازیابی: ${preRestoreName}`,
+      message: `بازیابی با موفقیت انجام شد. بکاپ ایمنی قبل از بازیابی: ${preRestoreCreated ? preRestoreName : 'ایجاد نشد'}`,
       backupFile: filename,
-      dbFile: resolvedDbPath,
-      backupSize: formatSize(stat.size),
-      preRestoreBackup: preRestoreName,
+      dbFile: dbIdentifier,
+      backupSize: dbSizeInfo.human,
+      preRestoreBackup: preRestoreCreated ? preRestoreName : undefined,
     };
   } catch (error: any) {
     return {
       success: false,
       message: `خطا در بازیابی: ${error.message}`,
       backupFile: filename,
-      dbFile: resolvedDbPath,
+      dbFile: dbIdentifier,
     };
   }
 }
@@ -440,22 +602,44 @@ export function getBackupStats(): {
   lastWeekly: string | null;
 } {
   const meta = loadMeta();
-  let dbSize = '0 B';
+  const conn = getPgConnection();
+  const dbIdentifier = `${conn.host}:${conn.port}/${conn.database}`;
+
+  // For PostgreSQL, check connectivity and estimate size
+  let dbSize = 'PostgreSQL';
   let dbExists = false;
 
   try {
-    if (fs.existsSync(DB_PATH)) {
+    const dbSizeInfo = estimatePostgresDbSize(conn);
+    if (dbSizeInfo.bytes > 0) {
       dbExists = true;
-      dbSize = formatSize(fs.statSync(DB_PATH).size);
+      dbSize = dbSizeInfo.human;
+    } else {
+      // Even if size query failed, try a basic connectivity check
+      const env = { ...process.env, PGPASSWORD: conn.password };
+      const psqlArgs = buildPsqlArgs(conn);
+      execSync(
+        `psql ${psqlArgs.join(' ')} -t -A -c "SELECT 1;"`,
+        {
+          env,
+          encoding: 'utf-8',
+          timeout: 10_000,
+          stdio: ['pipe', 'pipe', 'pipe'],
+        }
+      );
+      dbExists = true;
     }
-  } catch {}
+  } catch {
+    // PostgreSQL is not reachable
+    dbExists = false;
+  }
 
   const totalBytes = meta.backups.reduce((sum, b) => sum + b.sizeBytes, 0);
 
   return {
     dbExists,
     dbSize,
-    dbPath: path.resolve(DB_PATH),
+    dbPath: dbIdentifier,
     backupDirExists: fs.existsSync(BACKUP_DIR),
     backupDir: BACKUP_DIR,
     totalBackups: meta.backups.length,

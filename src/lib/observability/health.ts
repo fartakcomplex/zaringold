@@ -226,14 +226,14 @@ healthSystem.register({
   check: async () => {
     try {
       const start = Date.now();
-      await db.$queryRaw`SELECT 1 as ok`;
+      await db.$queryRaw`SELECT 1`;
       const elapsed = Date.now() - start;
       return {
         name: 'database',
         status: elapsed < 100 ? 'healthy' : elapsed < 500 ? 'degraded' : 'unhealthy',
         responseTimeMs: elapsed,
-        message: `SQLite response in ${elapsed}ms`,
-        details: { type: 'sqlite', responseTimeMs: elapsed },
+        message: `PostgreSQL response in ${elapsed}ms`,
+        details: { type: 'postgresql', responseTimeMs: elapsed },
         severity: 'critical' as CheckSeverity,
         lastChecked: new Date().toISOString(),
         timestamp: new Date().toISOString(),

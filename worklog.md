@@ -367,3 +367,38 @@ Stage Summary:
 - Health system distinguishes liveness (process alive) from readiness (all deps OK)
 - Distributed tracing supports W3C and B3 propagation standards
 - All components are lightweight with zero external dependencies
+
+---
+Task ID: PG-Migration
+Agent: Main Agent
+Task: مهاجرت کامل دیتابیس از SQLite به PostgreSQL
+
+Work Log:
+- بررسی جامع تمام وابستگی‌های SQLite در پروژه (10 فایل شناسایی شد)
+- نصب PostgreSQL 16.9 از سورس (build from source) در ~/.local/pgsql
+- راه‌اندازی PostgreSQL با تنظیمات بهینه (200 connections, 256MB shared buffers)
+- ایجاد دیتابیس zaringold با user=zaringold
+- تغییر prisma/schema.prisma از provider=sqlite به provider=postgresql
+- رفع خطای FK constraint name duplication (CreatorSubmission و CreatorReward) با اضافه کردن map
+- به‌روزرسانی .env DATABASE_URL به PostgreSQL
+- بازنویسی src/lib/db.ts: حذف sqlite_BUSY، اضافه کردن خطاهای PostgreSQL retry
+- بازنویسی src/lib/observability/health.ts: تغییر پیام‌ها به PostgreSQL
+- بازنویسی src/lib/backup.ts کامل برای pg_dump/psql
+- بازنویسی src/lib/easy-installer.ts: اطلاعات‌شماری و pg_dump
+- به‌روزرسانی docker-compose.yml: 3 سرویس به PostgreSQL متصل شدند
+- به‌روزرسانی UI کامپوننت‌ها: AdminEasyInstaller و AdminBackups (SQLite → PostgreSQL)
+- اجرای prisma db push: 97 جدول ساخته شد
+- مهاجرت 8 ردیف داده CarServiceCategory از SQLite به PostgreSQL
+
+Stage Summary:
+- PostgreSQL 16.9 نصب و راه‌اندازی شد (port 5432)
+- 97 جدول در PostgreSQL ایجاد شد
+- 8 ردیف داده با موفقیت مهاجرت شد
+- همه فایل‌های کد از SQLite به PostgreSQL تبدیل شدند
+- سیستم بکاپ از file-copy به pg_dump تغییر کرد
+- Docker Compose تمام سرویس‌ها را به PostgreSQL وصل کرد
+
+### Current Database:
+- PostgreSQL 16.9 at `postgresql://zaringold@localhost:5432/zaringold`
+- 97 tables covering all platform features
+- 8 migrated data rows (CarServiceCategory)

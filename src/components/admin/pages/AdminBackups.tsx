@@ -265,7 +265,7 @@ export default function AdminBackups() {
           مدیریت بکاپ دیتابیس
         </h1>
         <p className="text-xs text-muted-foreground mt-1">
-          بکاپ‌گیری خودکار روزانه و هفتگی از دیتابیس SQLite
+          بکاپ‌گیری خودکار روزانه و هفتگی از دیتابیس PostgreSQL
         </p>
       </div>
 
