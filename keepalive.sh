@@ -1,60 +1,29 @@
 #!/bin/bash
-# Keep-alive wrapper for Next.js dev server + Backup Scheduler
-# Restarts the server automatically if it crashes
-
-LOG_DIR="/home/z/my-project"
-LOG_FILE="$LOG_DIR/dev.log"
-PID_FILE="$LOG_DIR/.dev-server.pid"
-SCHEDULER_PID_FILE="$LOG_DIR/.backup-scheduler.pid"
-SCHEDULER_LOG="$LOG_DIR/db/backups/scheduler.log"
-
-cd "$LOG_DIR"
-
-# Kill any existing server and scheduler
-if [ -f "$PID_FILE" ]; then
-  OLD_PID=$(cat "$PID_FILE")
-  kill -9 "$OLD_PID" 2>/dev/null
-fi
-if [ -f "$SCHEDULER_PID_FILE" ]; then
-  OLD_SCHED_PID=$(cat "$SCHEDULER_PID_FILE")
-  kill -9 "$OLD_SCHED_PID" 2>/dev/null
-fi
-pkill -f "next-server" 2>/dev/null
-pkill -f "next dev" 2>/dev/null
-pkill -f "backup-scheduler" 2>/dev/null
-sleep 1
-
-echo "[$(date)] Starting Next.js dev server with keep-alive..." > "$LOG_FILE"
+# Keep-alive script for Next.js dev server
+cd /home/z/my-project
 
 while true; do
-  echo "[$(date)] === Server starting ===" >> "$LOG_FILE"
-  
-  # Run Next.js dev server
-  npx next dev -p 3000 >> "$LOG_FILE" 2>&1
-  
-  EXIT_CODE=$?
-  echo "[$(date)] Server exited with code $EXIT_CODE" >> "$LOG_FILE"
-  
-  # Wait a bit before restarting
-  sleep 3
-done &
-
-echo $! > "$PID_FILE"
-disown
-echo "Keep-alive wrapper started. PID: $(cat $PID_FILE)"
-
-# ── Start Backup Scheduler ──
-mkdir -p "$LOG_DIR/db/backups"
-echo "[$(date)] Starting backup scheduler..." >> "$SCHEDULER_LOG"
-
-while true; do
-  echo "[$(date)] === Backup scheduler starting ===" >> "$SCHEDULER_LOG"
-  bun run scripts/backup-scheduler.ts >> "$SCHEDULER_LOG" 2>&1
-  EXIT_CODE=$?
-  echo "[$(date)] Backup scheduler exited with code $EXIT_CODE" >> "$SCHEDULER_LOG"
-  sleep 10
-done &
-
-echo $! > "$SCHEDULER_PID_FILE"
-disown
-echo "Backup scheduler started. PID: $(cat $SCHEDULER_PID_FILE)"
+    # Check if port 3000 is responding
+    RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/ 2>/dev/null)
+    
+    if [ "$RESPONSE" != "200" ]; then
+        echo "[$(date)] Server down (HTTP $RESPONSE). Restarting..." >> /home/z/my-project/keepalive.log
+        
+        # Kill any remaining processes
+        kill -9 $(pgrep -f "next") 2>/dev/null
+        kill -9 $(pgrep -f "bun.*dev") 2>/dev/null
+        sleep 2
+        
+        # Clean build cache to save memory
+        rm -rf /home/z/my-project/.next/cache 2>/dev/null
+        
+        # Restart
+        nohup bun run dev > /home/z/my-project/dev.log 2>&1 &
+        echo "[$(date)] Started new process PID: $!" >> /home/z/my-project/keepalive.log
+        
+        # Wait for it to come up
+        sleep 15
+    fi
+    
+    sleep 10
+done
