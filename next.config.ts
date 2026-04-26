@@ -3,13 +3,14 @@ import type { NextConfig } from "next";
 const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // output: "standalone", // disabled for dev mode
   typescript: {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
   allowedDevOrigins: [
     "preview-chat-05200337-6681-4db4-9e64-b8ae99325756.space.z.ai",
+    "preview-chat-c50e2161-ee91-4e09-91dc-9d27aad7e8b0.space.z.ai",
     "*.space.z.ai",
   ],
 
