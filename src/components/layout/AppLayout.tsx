@@ -143,7 +143,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <SheetContent
             side="right"
-            className="w-[280px] !p-0 bg-transparent border-none"
+            className="w-[85vw] max-w-[320px] !p-0 bg-transparent border-none"
           >
             <SheetTitle className="sr-only">منوی ناوبری</SheetTitle>
             <AppSidebar onNavigate={() => setSidebarOpen(false)} />

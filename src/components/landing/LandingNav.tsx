@@ -360,7 +360,7 @@ export default function LandingNav({ onLogin }: LandingNavProps) {
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
               dir={dir}
               className={cn(
-                'fixed top-0 start-0 bottom-0 z-50 w-[300px] overflow-y-auto lg:hidden',
+                'fixed top-0 start-0 bottom-0 z-50 w-[85vw] max-w-[360px] overflow-y-auto lg:hidden',
                 'border-s border-gold/10',
               )}
               style={{

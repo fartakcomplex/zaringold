@@ -101,8 +101,18 @@ export default function AppHeader({ onMenuToggle }: AppHeaderProps) {
 
       {/* ─── Mobile Header (matching reference design) ─── */}
       <div className="flex h-12 items-center justify-between px-4 md:hidden">
-        {/* Right side: Bell + Globe */}
+        {/* Right side: Menu + Bell */}
         <div className="flex items-center gap-1">
+          {/* Hamburger menu button */}
+          {onMenuToggle && (
+            <button
+              onClick={onMenuToggle}
+              className="flex size-10 items-center justify-center rounded-full transition-colors hover:bg-muted/50"
+              aria-label="منو"
+            >
+              <Menu className="size-5 text-foreground" />
+            </button>
+          )}
           <Popover open={notifOpen} onOpenChange={setNotifOpen}>
             <PopoverTrigger asChild>
               <button className="relative flex size-10 items-center justify-center rounded-full transition-colors hover:bg-muted/50">
@@ -165,7 +175,6 @@ export default function AppHeader({ onMenuToggle }: AppHeaderProps) {
               </div>
             </PopoverContent>
           </Popover>
-          <LanguageSwitcher />
         </div>
 
         {/* Center: Z Logo */}

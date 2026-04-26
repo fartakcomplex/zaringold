@@ -328,6 +328,11 @@ html, body {
   /* Prevent text selection on UI elements */
   -webkit-user-select: none;
   user-select: none;
+  /* Ensure vertical scrolling works on mobile */
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Re-enable text selection for content areas */
