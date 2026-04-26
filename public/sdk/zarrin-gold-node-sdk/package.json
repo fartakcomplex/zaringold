@@ -1,0 +1,42 @@
+{
+  "name": "zarrin-gold-sdk",
+  "version": "1.0.0",
+  "description": "توسعه‌دهنده رسمی درگاه پرداخت زرین گلد | Official Node.js SDK for Zarrin Gold Payment Gateway",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "zarrin-gold",
+    "زرین-گلد",
+    "payment-gateway",
+    "gold-payment",
+    "cryptocurrency",
+    "iran",
+    "sdk",
+    "nodejs"
+  ],
+  "author": "Zarrin Gold <dev@zarringold.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zarringold/zarrin-gold-node-sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/zarringold/zarrin-gold-node-sdk/issues"
+  },
+  "homepage": "https://zarringold.com",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}

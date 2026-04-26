@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>زرین گلد — نصب‌کننده</title>
+<style>
+  /* ═══════════════════════════════════════════════════════════════
+     FONTS & RESET
+     ═══════════════════════════════════════════════════════════════ */
+  @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold:        #D4AF37;
+    --gold-light:  #F0D060;
+    --gold-dark:   #A68A2A;
+    --gold-glow:   rgba(212,175,55,0.35);
+    --amber:       #E8A317;
+    --bg-primary:  #0D0D0D;
+    --bg-card:     rgba(25,25,25,0.85);
+    --bg-card-solid:#1A1A1A;
+    --bg-input:    rgba(35,35,35,0.9);
+    --text-primary:#F5F0E8;
+    --text-secondary:#A89F91;
+    --text-muted:  #6E675C;
+    --border-color:rgba(212,175,55,0.15);
+    --border-focus:rgba(212,175,55,0.6);
+    --success:     #4ADE80;
+    --error:       #F87171;
+    --warning:     #FBBF24;
+    --radius:      12px;
+    --radius-sm:   8px;
+    --radius-lg:   20px;
+    --shadow:      0 8px 32px rgba(0,0,0,0.5);
+    --shadow-gold: 0 0 40px rgba(212,175,55,0.12);
+    --transition:  0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  html { font-size: 15px; }
+  body {
+    font-family: 'Vazirmatn', 'Iran Sans', 'Segoe UI', Tahoma, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    direction: rtl;
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     ANIMATED BACKGROUND
+     ═══════════════════════════════════════════════════════════════ */
+  .bg-canvas {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    background: radial-gradient(ellipse at 20% 50%, rgba(212,175,55,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(232,163,23,0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 90%, rgba(212,175,55,0.03) 0%, transparent 40%),
+                var(--bg-primary);
+  }
+  .particle {
+    position: absolute; border-radius: 50%; pointer-events: none;
+    background: var(--gold); opacity: 0;
+    animation: floatParticle linear infinite;
+  }
+  @keyframes floatParticle {
+    0%   { opacity: 0; transform: translateY(100vh) scale(0); }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.3; }
+    100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     LAYOUT
+     ═══════════════════════════════════════════════════════════════ */
+  .app-wrapper {
+    position: relative; z-index: 1; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 24px 16px 40px;
+  }
+
+  /* ─── Top Progress Bar ─────────────────────────────────────── */
+  .top-progress {
+    width: 100%; max-width: 680px; margin-bottom: 32px;
+  }
+  .progress-steps {
+    display: flex; align-items: center; justify-content: center; gap: 0;
+    position: relative;
+  }
+  .progress-step {
+    display: flex; flex-direction: column; align-items: center;
+    position: relative; z-index: 1; flex: 1;
+  }
+  .progress-step__circle {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--bg-card-solid);
+    border: 2px solid var(--border-color);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700;
+    transition: var(--transition);
+    position: relative;
+  }
+  .progress-step.active .progress-step__circle {
+    border-color: var(--gold);
+    background: rgba(212,175,55,0.12);
+    color: var(--gold);
+    box-shadow: 0 0 20px var(--gold-glow);
+  }
+  .progress-step.completed .progress-step__circle {
+    border-color: var(--success);
+    background: rgba(74,222,128,0.12);
+    color: var(--success);
+  }
+  .progress-step__label {
+    font-size: 0.68rem; color: var(--text-muted);
+    margin-top: 6px; text-align: center; white-space: nowrap;
+    transition: var(--transition);
+  }
+  .progress-step.active .progress-step__label { color: var(--gold); }
+  .progress-step.completed .progress-step__label { color: var(--text-secondary); }
+
+  .progress-line {
+    position: absolute; top: 20px; right: 10%; left: 10%;
+    height: 2px; background: var(--border-color); z-index: 0;
+  }
+  .progress-line__fill {
+    height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    transition: width 0.6s ease; border-radius: 2px;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     CARD / PANEL
+     ═══════════════════════════════════════════════════════════════ */
+  .wizard-card {
+    width: 100%; max-width: 680px;
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow), var(--shadow-gold);
+    overflow: hidden;
+    transition: var(--transition);
+  }
+  .wizard-card__header {
+    padding: 28px 32px 20px;
+    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(135deg, rgba(212,175,55,0.06), transparent);
+  }
+  .wizard-card__header h2 {
+    font-size: 1.4rem; font-weight: 800; color: var(--text-primary);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .wizard-card__header h2 .icon {
+    font-size: 1.5rem;
+  }
+  .wizard-card__header p {
+    color: var(--text-secondary); font-size: 0.88rem; margin-top: 6px;
+  }
+  .wizard-card__body {
+    padding: 28px 32px 32px;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     STEP PANELS
+     ═══════════════════════════════════════════════════════════════ */
+  .step-panel {
+    display: none; animation: fadeSlideIn 0.45s ease forwards;
+  }
+  .step-panel.active { display: block; }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     BUTTONS
+     ═══════════════════════════════════════════════════════════════ */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 28px; border-radius: var(--radius);
+    font-family: inherit; font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; border: none; transition: var(--transition);
+    text-decoration: none; line-height: 1.4;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+    color: #1A1200;
+    box-shadow: 0 4px 20px rgba(212,175,55,0.3);
+  }
+  .btn-gold:hover:not(:disabled) {
+    box-shadow: 0 6px 28px rgba(212,175,55,0.5);
+    transform: translateY(-1px);
+  }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+  }
+  .btn-outline:hover:not(:disabled) {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(212,175,55,0.06);
+  }
+  .btn-danger {
+    background: linear-gradient(135deg, #991B1B, #DC2626);
+    color: #FFF;
+  }
+  .btn-danger:hover:not(:disabled) {
+    box-shadow: 0 4px 20px rgba(220,38,38,0.4);
+  }
+  .btn-sm { padding: 8px 18px; font-size: 0.82rem; }
+
+  .btn-row {
+    display: flex; gap: 12px; margin-top: 24px;
+    justify-content: space-between; flex-wrap: wrap;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     FORM INPUTS
+     ═══════════════════════════════════════════════════════════════ */
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-group label {
+    display: block; font-size: 0.85rem; font-weight: 600;
+    color: var(--text-secondary); margin-bottom: 7px;
+  }
+  .form-group label .req { color: var(--gold); margin-right: 3px; }
+  .form-input {
+    width: 100%; padding: 11px 14px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary); font-family: inherit;
+    font-size: 0.92rem; direction: ltr; text-align: right;
+    transition: var(--transition); outline: none;
+  }
+  .form-input::placeholder { color: var(--text-muted); }
+  .form-input:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.12);
+  }
+  .form-input.error {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(248,113,113,0.12);
+  }
+  .form-input.success {
+    border-color: var(--success);
+    box-shadow: 0 0 0 3px rgba(74,222,128,0.12);
+  }
+  .form-hint {
+    font-size: 0.76rem; color: var(--text-muted); margin-top: 5px;
+  }
+  .form-error {
+    font-size: 0.78rem; color: var(--error); margin-top: 5px;
+    display: none;
+  }
+  .form-group.has-error .form-error { display: block; }
+  .form-group.has-error .form-input { border-color: var(--error); }
+
+  select.form-input {
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23D4AF37' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 14px center;
+    padding-left: 36px;
+    direction: rtl;
+  }
+  select.form-input option { background: var(--bg-card-solid); }
+
+  .form-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     REQUIREMENTS LIST
+     ═══════════════════════════════════════════════════════════════ */
+  .req-list { list-style: none; }
+  .req-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.02);
+    border: 1px solid transparent;
+    margin-bottom: 10px;
+    transition: var(--transition);
+  }
+  .req-item.pass { border-color: rgba(74,222,128,0.2); }
+  .req-item.fail { border-color: rgba(248,113,113,0.2); }
+  .req-item.warn { border-color: rgba(251,191,36,0.2); }
+  .req-item.checking {
+    border-color: var(--border-color);
+    animation: pulse-border 1.5s ease infinite;
+  }
+  @keyframes pulse-border {
+    0%, 100% { border-color: var(--border-color); }
+    50% { border-color: var(--gold); }
+  }
+  .req-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+    background: rgba(255,255,255,0.05);
+  }
+  .req-item.pass .req-icon { color: var(--success); background: rgba(74,222,128,0.1); }
+  .req-item.fail .req-icon { color: var(--error); background: rgba(248,113,113,0.1); }
+  .req-item.warn .req-icon { color: var(--warning); background: rgba(251,191,36,0.1); }
+  .req-text {
+    flex: 1; font-size: 0.9rem;
+  }
+  .req-text span { display: block; font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+  .req-spinner {
+    width: 20px; height: 20px; border: 2px solid var(--border-color);
+    border-top-color: var(--gold); border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     PROGRESS INSTALLATION
+     ═══════════════════════════════════════════════════════════════ */
+  .install-progress-bar {
+    width: 100%; height: 8px; border-radius: 4px;
+    background: rgba(255,255,255,0.06); overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .install-progress-bar__fill {
+    height: 100%; width: 0%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
+    transition: width 0.5s ease;
+    box-shadow: 0 0 12px var(--gold-glow);
+  }
+
+  .install-steps { list-style: none; margin-bottom: 24px; }
+  .install-step {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    transition: var(--transition);
+  }
+  .install-step:last-child { border-bottom: none; }
+  .install-step__icon {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    background: rgba(255,255,255,0.04);
+    color: var(--text-muted);
+    transition: var(--transition);
+  }
+  .install-step.active .install-step__icon {
+    background: rgba(212,175,55,0.15);
+    color: var(--gold);
+    animation: pulse-gold 1.5s ease infinite;
+  }
+  @keyframes pulse-gold {
+    0%, 100% { box-shadow: 0 0 0 0 var(--gold-glow); }
+    50% { box-shadow: 0 0 0 6px transparent; }
+  }
+  .install-step.completed .install-step__icon {
+    background: rgba(74,222,128,0.15);
+    color: var(--success);
+  }
+  .install-step.error .install-step__icon {
+    background: rgba(248,113,113,0.15);
+    color: var(--error);
+  }
+  .install-step__name {
+    font-size: 0.88rem; font-weight: 500; padding-top: 3px;
+    transition: var(--transition);
+  }
+  .install-step.active .install-step__name { color: var(--gold); }
+  .install-step.completed .install-step__name { color: var(--success); }
+  .install-step.error .install-step__name { color: var(--error); }
+  .install-step.pending .install-step__name { color: var(--text-muted); }
+
+  .log-area {
+    background: rgba(0,0,0,0.4); border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+    max-height: 200px; overflow-y: auto;
+    font-family: 'Courier New', monospace; font-size: 0.78rem;
+    color: var(--text-secondary); direction: ltr; text-align: left;
+    line-height: 1.6; white-space: pre-wrap; word-break: break-all;
+  }
+  .log-area::-webkit-scrollbar { width: 6px; }
+  .log-area::-webkit-scrollbar-track { background: transparent; }
+  .log-area::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+
+  /* ═══════════════════════════════════════════════════════════════
+     WELCOME PAGE
+     ═══════════════════════════════════════════════════════════════ */
+  .welcome-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 16px; border-radius: 999px;
+    background: rgba(212,175,55,0.1);
+    border: 1px solid rgba(212,175,55,0.2);
+    color: var(--gold); font-size: 0.8rem; font-weight: 600;
+    margin-bottom: 20px;
+  }
+  .welcome-title {
+    font-size: 2.4rem; font-weight: 900;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--amber));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 12px; line-height: 1.4;
+  }
+  .welcome-subtitle {
+    font-size: 1rem; color: var(--text-secondary);
+    max-width: 440px; margin-bottom: 28px; line-height: 1.8;
+  }
+  .welcome-reqs {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);
+    border-radius: var(--radius); padding: 20px; margin-bottom: 28px;
+  }
+  .welcome-reqs h4 {
+    font-size: 0.85rem; color: var(--gold); margin-bottom: 14px; font-weight: 700;
+  }
+  .welcome-reqs ul {
+    list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+  .welcome-reqs li {
+    font-size: 0.82rem; color: var(--text-secondary);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .welcome-reqs li::before {
+    content: '◆'; color: var(--gold); font-size: 0.55rem;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     COMPLETE PAGE
+     ═══════════════════════════════════════════════════════════════ */
+  .complete-icon {
+    width: 80px; height: 80px; margin: 0 auto 20px;
+    border-radius: 50%;
+    background: rgba(74,222,128,0.1);
+    border: 2px solid rgba(74,222,128,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.4rem;
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .complete-title {
+    text-align: center; font-size: 1.6rem; font-weight: 800;
+    color: var(--success); margin-bottom: 8px;
+  }
+  .complete-subtitle {
+    text-align: center; font-size: 0.92rem;
+    color: var(--text-secondary); margin-bottom: 28px;
+  }
+  .credential-card {
+    background: rgba(0,0,0,0.35); border: 1px solid var(--border-color);
+    border-radius: var(--radius); padding: 20px; margin-bottom: 20px;
+  }
+  .credential-card h4 {
+    font-size: 0.85rem; color: var(--gold); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .credential-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .credential-row:last-child { border-bottom: none; }
+  .credential-label { font-size: 0.82rem; color: var(--text-muted); }
+  .credential-value {
+    font-size: 0.88rem; color: var(--text-primary);
+    direction: ltr; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .copy-btn {
+    background: none; border: none; color: var(--text-muted);
+    cursor: pointer; font-size: 0.9rem; padding: 4px;
+    transition: var(--transition);
+  }
+  .copy-btn:hover { color: var(--gold); }
+
+  .complete-links {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-bottom: 24px;
+  }
+  .complete-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 16px; border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary); text-decoration: none;
+    font-size: 0.85rem; font-weight: 600;
+    transition: var(--transition);
+  }
+  .complete-link:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(212,175,55,0.06);
+  }
+
+  .security-warning {
+    background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.2);
+    border-radius: var(--radius); padding: 16px;
+    margin-bottom: 20px;
+  }
+  .security-warning p {
+    font-size: 0.82rem; color: var(--warning); line-height: 1.7;
+  }
+  .security-warning strong { color: var(--gold-light); }
+
+  /* ═══════════════════════════════════════════════════════════════
+     DB TEST RESULT
+     ═══════════════════════════════════════════════════════════════ */
+  .db-test-result {
+    padding: 12px 16px; border-radius: var(--radius-sm);
+    margin-top: 10px; font-size: 0.85rem;
+    display: none; align-items: center; gap: 8px;
+  }
+  .db-test-result.show { display: flex; }
+  .db-test-result.success {
+    background: rgba(74,222,128,0.08);
+    border: 1px solid rgba(74,222,128,0.2);
+    color: var(--success);
+  }
+  .db-test-result.error {
+    background: rgba(248,113,113,0.08);
+    border: 1px solid rgba(248,113,113,0.2);
+    color: var(--error);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     SPINNER
+     ═══════════════════════════════════════════════════════════════ */
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border-color);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .spinner-lg {
+    width: 40px; height: 40px;
+    border-width: 3px;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     CONFIRM DIALOG
+     ═══════════════════════════════════════════════════════════════ */
+  .confirm-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .confirm-overlay.show { display: flex; }
+  .confirm-box {
+    background: var(--bg-card-solid); border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg); padding: 28px;
+    max-width: 420px; width: 100%;
+    box-shadow: var(--shadow);
+    animation: fadeSlideIn 0.3s ease;
+  }
+  .confirm-box h3 {
+    font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;
+    color: var(--text-primary);
+  }
+  .confirm-box p {
+    font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 20px;
+    line-height: 1.7;
+  }
+  .confirm-actions {
+    display: flex; gap: 10px; justify-content: flex-start;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     TOAST
+     ═══════════════════════════════════════════════════════════════ */
+  .toast-container {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 200; display: flex; flex-direction: column; gap: 8px;
+    pointer-events: none;
+  }
+  .toast {
+    padding: 12px 20px; border-radius: var(--radius);
+    font-size: 0.85rem; font-weight: 500;
+    animation: toastIn 0.3s ease, toastOut 0.3s ease 3s forwards;
+    pointer-events: auto; white-space: nowrap;
+  }
+  .toast.error {
+    background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.3);
+    color: var(--error);
+  }
+  .toast.success {
+    background: rgba(74,222,128,0.15); border: 1px solid rgba(74,222,128,0.3);
+    color: var(--success);
+  }
+  .toast.info {
+    background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.3);
+    color: var(--gold);
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes toastOut {
+    from { opacity: 1; }
+    to { opacity: 0; transform: translateY(-12px); }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════════════════ */
+  .footer {
+    margin-top: auto; padding-top: 32px;
+    text-align: center; font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  .footer a { color: var(--gold); text-decoration: none; }
+
+  /* ═══════════════════════════════════════════════════════════════
+     RESPONSIVE
+     ═══════════════════════════════════════════════════════════════ */
+  @media (max-width: 640px) {
+    .app-wrapper { padding: 16px 10px 32px; }
+    .wizard-card__header { padding: 20px 18px 16px; }
+    .wizard-card__body { padding: 20px 18px 24px; }
+    .welcome-title { font-size: 1.7rem; }
+    .welcome-reqs ul { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .complete-links { grid-template-columns: 1fr; }
+    .progress-step__label { font-size: 0.58rem; }
+    .progress-step__circle { width: 32px; height: 32px; font-size: 0.7rem; }
+    .btn-row { flex-direction: column-reverse; }
+    .btn-row .btn { width: 100%; }
+  }
+
+  /* Hidden db fields */
+  .db-extra-fields { display: none; }
+  .db-extra-fields.show { display: block; }
+
+  /* Celebration confetti */
+  .confetti-piece {
+    position: fixed; z-index: 50; pointer-events: none;
+    width: 10px; height: 10px;
+    animation: confetti-fall linear forwards;
+  }
+  @keyframes confetti-fall {
+    0%   { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+    100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.3); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Background Particles -->
+<div class="bg-canvas" id="bgCanvas"></div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Confirm Dialog -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <h3 id="confirmTitle">تأیید</h3>
+    <p id="confirmMessage">آیا مطمئن هستید؟</p>
+    <div class="confirm-actions">
+      <button class="btn btn-danger btn-sm" id="confirmYes">بله، حذف شود</button>
+      <button class="btn btn-outline btn-sm" id="confirmNo">انصراف</button>
+    </div>
+  </div>
+</div>
+
+<div class="app-wrapper">
+
+  <!-- ─── Top Progress ──────────────────────────────────────────── -->
+  <div class="top-progress" id="topProgress">
+    <div class="progress-steps" id="progressSteps">
+      <div class="progress-line"><div class="progress-line__fill" id="progressLineFill"></div></div>
+      <div class="progress-step active" data-step="1">
+        <div class="progress-step__circle">۱</div>
+        <div class="progress-step__label">خوش‌آمدید</div>
+      </div>
+      <div class="progress-step" data-step="2">
+        <div class="progress-step__circle">۲</div>
+        <div class="progress-step__label">پیش‌نیازها</div>
+      </div>
+      <div class="progress-step" data-step="3">
+        <div class="progress-step__circle">۳</div>
+        <div class="progress-step__label">دیتابیس</div>
+      </div>
+      <div class="progress-step" data-step="4">
+        <div class="progress-step__circle">۴</div>
+        <div class="progress-step__label">تنظیمات</div>
+      </div>
+      <div class="progress-step" data-step="5">
+        <div class="progress-step__circle">۵</div>
+        <div class="progress-step__label">نصب</div>
+      </div>
+      <div class="progress-step" data-step="6">
+        <div class="progress-step__circle">۶</div>
+        <div class="progress-step__label">تکمیل</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Wizard Card ───────────────────────────────────────────── -->
+  <div class="wizard-card">
+
+    <!-- ═══ STEP 1: Welcome ═══════════════════════════════════════ -->
+    <div class="step-panel active" id="step1">
+      <div class="wizard-card__header" style="text-align:center; border-bottom:none; padding-bottom:0;">
+        <div class="welcome-badge">
+          <span>🏆</span>
+          <span>نسخه ۱.۰.۰</span>
+        </div>
+        <h1 class="welcome-title">زرین گلد</h1>
+        <p class="welcome-subtitle" style="margin-left:auto;margin-right:auto;">
+          به نصب‌کننده زرین گلد خوش آمدید. این راهنما شما را برای راه‌اندازی
+          پلتفرم معاملات طلای دیجیتال همراهی می‌کند.
+        </p>
+      </div>
+      <div class="wizard-card__body">
+        <div class="welcome-reqs">
+          <h4>📋 پیش‌نیازهای سیستم</h4>
+          <ul>
+            <li>Node.js نسخه ۱۸ یا بالاتر</li>
+            <li>npm یا bun package manager</li>
+            <li>حداقل ۲ گیگابایت فضای دیسک آزاد</li>
+            <li>دسترسی نوشتن در پوشه پروژه</li>
+            <li>پشتیبانی از SQLite</li>
+            <li>سیستم‌عامل لینوکس، مک یا ویندوز</li>
+          </ul>
+        </div>
+        <div class="btn-row" style="justify-content:center;">
+          <button class="btn btn-gold" onclick="goToStep(2)">
+            شروع نصب ←
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 2: Requirements Check ═════════════════════════════ -->
+    <div class="step-panel" id="step2">
+      <div class="wizard-card__header">
+        <h2><span class="icon">🔍</span> بررسی پیش‌نیازها</h2>
+        <p>در حال بررسی سیستم شما... لطفاً صبر کنید.</p>
+      </div>
+      <div class="wizard-card__body">
+        <ul class="req-list" id="reqList">
+          <li class="req-item checking" id="req-node">
+            <div class="req-icon"><div class="req-spinner"></div></div>
+            <div class="req-text">Node.js نسخه ۱۸+<span id="req-node-val">در حال بررسی...</span></div>
+          </li>
+          <li class="req-item checking" id="req-npm">
+            <div class="req-icon"><div class="req-spinner"></div></div>
+            <div class="req-text">مدیر بسته (npm / bun)<span id="req-npm-val">در حال بررسی...</span></div>
+          </li>
+          <li class="req-item checking" id="req-disk">
+            <div class="req-icon"><div class="req-spinner"></div></div>
+            <div class="req-text">فضای دیسک (حداقل ۲GB)<span id="req-disk-val">در حال بررسی...</span></div>
+          </li>
+          <li class="req-item checking" id="req-write">
+            <div class="req-icon"><div class="req-spinner"></div></div>
+            <div class="req-text">دسترسی نوشتن<span id="req-write-val">در حال بررسی...</span></div>
+          </li>
+          <li class="req-item checking" id="req-sqlite">
+            <div class="req-icon"><div class="req-spinner"></div></div>
+            <div class="req-text">پشتیبانی SQLite<span id="req-sqlite-val">در حال بررسی...</span></div>
+          </li>
+        </ul>
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="goToStep(1)">← قبلی</button>
+          <button class="btn btn-gold" id="btnStep2Next" disabled onclick="goToStep(3)">
+            ادامه ←
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 3: Database Configuration ═════════════════════════ -->
+    <div class="step-panel" id="step3">
+      <div class="wizard-card__header">
+        <h2><span class="icon">🗄️</span> پیکربندی دیتابیس</h2>
+        <p>نوع دیتابیس و تنظیمات اتصال را مشخص کنید.</p>
+      </div>
+      <div class="wizard-card__body">
+        <div class="form-group">
+          <label>نوع دیتابیس</label>
+          <select class="form-input" id="dbType" onchange="onDbTypeChange()">
+            <option value="sqlite" selected>SQLite (ساده و بدون نیاز به سرور)</option>
+            <option value="mysql">MySQL</option>
+            <option value="postgresql">PostgreSQL</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="dbSqliteGroup">
+          <label>مسیر فایل دیتابیس</label>
+          <input type="text" class="form-input" id="dbDatabase" value="file:./dev.db" dir="ltr" style="text-align:left;">
+          <div class="form-hint">مسیر نسبی نسبت به پوشه پروژه</div>
+        </div>
+
+        <div class="db-extra-fields" id="dbExtraFields">
+          <div class="form-row">
+            <div class="form-group">
+              <label>هاست <span class="req">*</span></label>
+              <input type="text" class="form-input" id="dbHost" value="localhost" dir="ltr" style="text-align:left;">
+            </div>
+            <div class="form-group">
+              <label>پورت</label>
+              <input type="text" class="form-input" id="dbPort" value="3306" dir="ltr" style="text-align:left;">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>نام دیتابیس <span class="req">*</span></label>
+            <input type="text" class="form-input" id="dbName" value="zarin_gold" dir="ltr" style="text-align:left;">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>نام کاربری <span class="req">*</span></label>
+              <input type="text" class="form-input" id="dbUsername" value="root" dir="ltr" style="text-align:left;">
+            </div>
+            <div class="form-group">
+              <label>رمز عبور</label>
+              <input type="password" class="form-input" id="dbPassword" dir="ltr" style="text-align:left;">
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-outline btn-sm" id="btnTestDb" onclick="testDbConnection()" style="margin-bottom:8px;">
+          🔌 تست اتصال
+        </button>
+        <div class="db-test-result" id="dbTestResult"></div>
+
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="goToStep(2)">← قبلی</button>
+          <button class="btn btn-gold" onclick="goToStep(4)">ادامه ←</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 4: Site Configuration ═════════════════════════════ -->
+    <div class="step-panel" id="step4">
+      <div class="wizard-card__header">
+        <h2><span class="icon">⚙️</span> پیکربندی سایت</h2>
+        <p>تنظیمات اصلی سایت و اطلاعات مدیر را وارد کنید.</p>
+      </div>
+      <div class="wizard-card__body">
+        <div class="form-group">
+          <label>نام سایت</label>
+          <input type="text" class="form-input" id="siteName" value="زرین گلد">
+        </div>
+        <div class="form-group">
+          <label>آدرس سایت (URL)</label>
+          <input type="text" class="form-input" id="siteUrl" dir="ltr" style="text-align:left;" placeholder="https://example.com">
+          <div class="form-hint">آدرس کامل سایت با https://</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>نام و نام خانوادگی مدیر <span class="req">*</span></label>
+            <input type="text" class="form-input" id="adminName" value="">
+            <div class="form-error">نام مدیر الزامی است</div>
+          </div>
+          <div class="form-group">
+            <label>شماره تلفن مدیر <span class="req">*</span></label>
+            <input type="text" class="form-input" id="adminPhone" value="09120000001" dir="ltr" style="text-align:left;">
+            <div class="form-error">شماره تلفن معتبر وارد کنید</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>رمز عبور مدیر <span class="req">*</span></label>
+          <input type="password" class="form-input" id="adminPassword" value="" placeholder="حداقل ۶ کاراکتر">
+          <div class="form-error">رمز عبور باید حداقل ۶ کاراکتر باشد</div>
+        </div>
+        <div class="form-group">
+          <label>تکرار رمز عبور <span class="req">*</span></label>
+          <input type="password" class="form-input" id="adminPasswordConfirm" placeholder="رمز عبور را دوباره وارد کنید">
+          <div class="form-error">رمز عبور مطابقت ندارد</div>
+        </div>
+        <div class="form-group">
+          <label>کد پذیرنده زرین‌پال <span style="color:var(--text-muted);font-weight:400;">(اختیاری)</span></label>
+          <input type="text" class="form-input" id="zarinpalMerchant" dir="ltr" style="text-align:left;" placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX">
+          <div class="form-hint">در صورت عدم وارد کردن، درگاه پرداخت فعال نخواهد بود</div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="goToStep(3)">← قبلی</button>
+          <button class="btn btn-gold" onclick="validateAndInstall()">شروع نصب ←</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 5: Installation Progress ══════════════════════════ -->
+    <div class="step-panel" id="step5">
+      <div class="wizard-card__header">
+        <h2><span class="icon">🚀</span> نصب و راه‌اندازی</h2>
+        <p id="installStatusText">در حال آماده‌سازی...</p>
+      </div>
+      <div class="wizard-card__body">
+        <div class="install-progress-bar">
+          <div class="install-progress-bar__fill" id="installProgressFill"></div>
+        </div>
+
+        <ul class="install-steps" id="installStepsList">
+          <li class="install-step pending" data-i="1">
+            <div class="install-step__icon">۱</div>
+            <div class="install-step__name">پاکسازی و آماده‌سازی</div>
+          </li>
+          <li class="install-step pending" data-i="2">
+            <div class="install-step__icon">۲</div>
+            <div class="install-step__name">نصب وابستگی‌ها</div>
+          </li>
+          <li class="install-step pending" data-i="3">
+            <div class="install-step__icon">۳</div>
+            <div class="install-step__name">راه‌اندازی دیتابیس</div>
+          </li>
+          <li class="install-step pending" data-i="4">
+            <div class="install-step__icon">۴</div>
+            <div class="install-step__name">ایمپورت داده‌ها</div>
+          </li>
+          <li class="install-step pending" data-i="5">
+            <div class="install-step__icon">۵</div>
+            <div class="install-step__name">پیکربندی محیط</div>
+          </li>
+          <li class="install-step pending" data-i="6">
+            <div class="install-step__icon">۶</div>
+            <div class="install-step__name">بیلد اپلیکیشن</div>
+          </li>
+          <li class="install-step pending" data-i="7">
+            <div class="install-step__icon">۷</div>
+            <div class="install-step__name">تست نهایی</div>
+          </li>
+        </ul>
+
+        <div class="log-area" id="logArea">منتظر شروع نصب...</div>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 6: Complete ═══════════════════════════════════════ -->
+    <div class="step-panel" id="step6">
+      <div class="wizard-card__header" style="text-align:center; border-bottom:none;">
+        <div class="complete-icon">✅</div>
+        <div class="complete-title">نصب با موفقیت تکمیل شد!</div>
+        <p class="complete-subtitle">پلتفرم زرین گلد آماده استفاده است.</p>
+      </div>
+      <div class="wizard-card__body">
+        <div class="credential-card">
+          <h4>🔑 اطلاعات ورود مدیر</h4>
+          <div class="credential-row">
+            <span class="credential-label">نام</span>
+            <span class="credential-value" id="credName">—</span>
+          </div>
+          <div class="credential-row">
+            <span class="credential-label">شماره تلفن</span>
+            <span class="credential-value" id="credPhone">—</span>
+          </div>
+          <div class="credential-row">
+            <span class="credential-label">رمز عبور</span>
+            <span class="credential-value">
+              <span id="credPassword">••••••</span>
+              <button class="copy-btn" onclick="copyToClipboard(document.getElementById('credPassword').textContent, this)" title="کپی">📋</button>
+            </span>
+          </div>
+        </div>
+
+        <div class="complete-links">
+          <a class="complete-link" id="linkAdmin" href="#" target="_blank">
+            🖥️ پنل مدیریت
+          </a>
+          <a class="complete-link" id="linkSite" href="#" target="_blank">
+            🌐 مشاهده سایت
+          </a>
+        </div>
+
+        <div class="security-warning">
+          <p>
+            <strong>⚠️ هشدار امنیتی:</strong> برای حفظ امنیت سرور، حتماً فایل‌های نصب‌کننده را حذف کنید.
+            این فایل‌ها شامل اطلاعات حساس سیستم هستند و نباید روی سرور باقی بمانند.
+          </p>
+        </div>
+
+        <div class="btn-row" style="justify-content:center;">
+          <button class="btn btn-danger" onclick="showCleanupConfirm()">
+            🗑️ حذف فایل‌های نصب‌کننده
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>زرین گلد &copy; ۱۴۰۴ — پلتفرم معاملات طلای دیجیتال</p>
+  </div>
+</div>
+
+<script>
+  /* ═══════════════════════════════════════════════════════════════
+     STATE
+     ═══════════════════════════════════════════════════════════════ */
+  let currentStep = 1;
+  let streamId = null;
+  let pollInterval = null;
+  let systemInfo = null;
+  let installConfig = {};
+
+  /* ═══════════════════════════════════════════════════════════════
+     PARTICLES
+     ═══════════════════════════════════════════════════════════════ */
+  (function initParticles() {
+    const canvas = document.getElementById('bgCanvas');
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      const size = Math.random() * 4 + 2;
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+      p.style.animationDelay = (Math.random() * 10) + 's';
+      p.style.opacity = 0;
+      canvas.appendChild(p);
+    }
+  })();
+
+  /* ═══════════════════════════════════════════════════════════════
+     NAVIGATION
+     ═══════════════════════════════════════════════════════════════ */
+  function goToStep(step) {
+    // Hide all panels
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    // Show target
+    const panel = document.getElementById('step' + step);
+    if (panel) panel.classList.add('active');
+
+    // Update progress steps
+    document.querySelectorAll('.progress-step').forEach((el) => {
+      const s = parseInt(el.dataset.step);
+      el.classList.remove('active', 'completed');
+      if (s < step) el.classList.add('completed');
+      if (s === step) el.classList.add('active');
+    });
+
+    // Update progress line
+    const pct = ((step - 1) / 5) * 100;
+    document.getElementById('progressLineFill').style.width = pct + '%';
+
+    currentStep = step;
+
+    // Step-specific actions
+    if (step === 2) checkRequirements();
+    if (step === 4) {
+      // Auto-detect site URL
+      const urlInput = document.getElementById('siteUrl');
+      if (!urlInput.value) {
+        urlInput.value = window.location.origin;
+      }
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     TOAST
+     ═══════════════════════════════════════════════════════════════ */
+  function showToast(msg, type) {
+    type = type || 'info';
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast ' + type;
+    toast.textContent = msg;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3500);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     CONFIRM DIALOG
+     ═══════════════════════════════════════════════════════════════ */
+  function showConfirm(title, message) {
+    return new Promise((resolve) => {
+      document.getElementById('confirmTitle').textContent = title;
+      document.getElementById('confirmMessage').textContent = message;
+      document.getElementById('confirmOverlay').classList.add('show');
+      document.getElementById('confirmYes').onclick = () => {
+        document.getElementById('confirmOverlay').classList.remove('show');
+        resolve(true);
+      };
+      document.getElementById('confirmNo').onclick = () => {
+        document.getElementById('confirmOverlay').classList.remove('show');
+        resolve(false);
+      };
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     STEP 2: Requirements Check
+     ═══════════════════════════════════════════════════════════════ */
+  async function checkRequirements() {
+    document.getElementById('btnStep2Next').disabled = true;
+    setAllReqChecking();
+
+    try {
+      const res = await fetch('/api/status');
+      systemInfo = await res.json();
+
+      // Node.js
+      setReqResult('req-node',
+        systemInfo.nodeVersion,
+        parseInt(systemInfo.nodeVersion.replace('v', '').split('.')[0]) >= 18,
+        parseInt(systemInfo.nodeVersion.replace('v', '').split('.')[0]) < 18 ? 'نسخه Node.js باید حداقل ۱۸ باشد' : null
+      );
+
+      // npm/bun
+      setReqResult('req-npm',
+        (systemInfo.hasBun ? 'Bun ✓' : systemInfo.hasNpm ? 'npm ✓' : 'یافت نشد'),
+        systemInfo.hasNpm || systemInfo.hasBun,
+        !systemInfo.hasNpm && !systemInfo.hasBun ? 'npm یا bun نصب نیست' : null
+      );
+
+      // Disk
+      const diskGB = systemInfo.diskFreeBytes / (1024 * 1024 * 1024);
+      setReqResult('req-disk',
+        systemInfo.diskFree + ' آزاد',
+        diskGB >= 2,
+        diskGB < 2 ? 'فضای دیسک کافی نیست' : null
+      );
+
+      // Write
+      setReqResult('req-write',
+        systemInfo.canWrite ? 'مجوز نوشتن دارد' : 'بدون مجوز نوشتن',
+        systemInfo.canWrite,
+        !systemInfo.canWrite ? 'دسترسی نوشتن وجود ندارد' : null
+      );
+
+      // SQLite
+      setReqResult('req-sqlite',
+        'پشتیبانی می‌شود',
+        true,
+        null
+      );
+
+      document.getElementById('btnStep2Next').disabled = !systemInfo.allRequirementsMet;
+
+      if (!systemInfo.allRequirementsMet) {
+        showToast('برخی پیش‌نیازها برآورده نیستند. لطفاً مشکلات را رفع کنید.', 'error');
+      } else {
+        showToast('تمام پیش‌نیازها برآورده است!', 'success');
+      }
+
+    } catch (err) {
+      showToast('خطا در بررسی سیستم: ' + err.message, 'error');
+    }
+  }
+
+  function setAllReqChecking() {
+    ['req-node', 'req-npm', 'req-disk', 'req-write', 'req-sqlite'].forEach(id => {
+      const el = document.getElementById(id);
+      el.className = 'req-item checking';
+      el.querySelector('.req-icon').innerHTML = '<div class="req-spinner"></div>';
+      el.querySelector('.req-text span').textContent = 'در حال بررسی...';
+    });
+  }
+
+  function setReqResult(id, value, pass, warn) {
+    const el = document.getElementById(id);
+    el.classList.remove('checking');
+    el.classList.add(pass ? 'pass' : (warn ? 'warn' : 'fail'));
+    el.querySelector('.req-icon').innerHTML = pass ? '✓' : (warn ? '⚠' : '✗');
+    el.querySelector('.req-text span').textContent = value + (warn ? ' — ' + warn : '');
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     STEP 3: Database Config
+     ═══════════════════════════════════════════════════════════════ */
+  function onDbTypeChange() {
+    const type = document.getElementById('dbType').value;
+    const extra = document.getElementById('dbExtraFields');
+    const sqlite = document.getElementById('dbSqliteGroup');
+
+    if (type === 'sqlite') {
+      extra.classList.remove('show');
+      sqlite.style.display = '';
+    } else {
+      extra.classList.add('show');
+      sqlite.style.display = 'none';
+      document.getElementById('dbPort').value = type === 'mysql' ? '3306' : '5432';
+    }
+  }
+
+  async function testDbConnection() {
+    const btn = document.getElementById('btnTestDb');
+    const result = document.getElementById('dbTestResult');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> در حال تست...';
+    result.classList.remove('show', 'success', 'error');
+
+    try {
+      const type = document.getElementById('dbType').value;
+      const body = {
+        type,
+        database: type === 'sqlite' ? document.getElementById('dbDatabase').value : document.getElementById('dbName').value,
+        host: document.getElementById('dbHost').value,
+        port: document.getElementById('dbPort').value,
+        username: document.getElementById('dbUsername').value,
+        password: document.getElementById('dbPassword').value
+      };
+
+      const res = await fetch('/api/test-db', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+
+      result.classList.add('show', data.success ? 'success' : 'error');
+      result.innerHTML = (data.success ? '✅ ' : '❌ ') + data.message;
+    } catch (err) {
+      result.classList.add('show', 'error');
+      result.textContent = '❌ خطا در ارتباط با سرور';
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = '🔌 تست اتصال';
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     STEP 4: Validate & Start Install
+     ═══════════════════════════════════════════════════════════════ */
+  function validateAndInstall() {
+    // Clear previous errors
+    document.querySelectorAll('.form-group').forEach(g => g.classList.remove('has-error'));
+
+    let valid = true;
+
+    const adminName = document.getElementById('adminName').value.trim();
+    const adminPhone = document.getElementById('adminPhone').value.trim();
+    const adminPassword = document.getElementById('adminPassword').value;
+    const adminPasswordConfirm = document.getElementById('adminPasswordConfirm').value;
+
+    if (!adminName) {
+      document.getElementById('adminName').closest('.form-group').classList.add('has-error');
+      valid = false;
+    }
+    if (!adminPhone || adminPhone.length < 10) {
+      document.getElementById('adminPhone').closest('.form-group').classList.add('has-error');
+      valid = false;
+    }
+    if (adminPassword.length < 6) {
+      document.getElementById('adminPassword').closest('.form-group').classList.add('has-error');
+      valid = false;
+    }
+    if (adminPassword !== adminPasswordConfirm) {
+      document.getElementById('adminPasswordConfirm').closest('.form-group').classList.add('has-error');
+      valid = false;
+    }
+
+    if (!valid) {
+      showToast('لطفاً فیلدهای الزامی را به‌درستی پر کنید.', 'error');
+      return;
+    }
+
+    // Build config
+    installConfig = {
+      siteName: document.getElementById('siteName').value.trim() || 'زرین گلد',
+      siteUrl: document.getElementById('siteUrl').value.trim() || window.location.origin,
+      adminName,
+      adminPhone,
+      adminPassword,
+      zarinpalMerchant: document.getElementById('zarinpalMerchant').value.trim(),
+      dbType: document.getElementById('dbType').value,
+      dbDatabase: document.getElementById('dbDatabase').value,
+      dbHost: document.getElementById('dbHost').value,
+      dbPort: document.getElementById('dbPort').value,
+      dbName: document.getElementById('dbName').value,
+      dbUsername: document.getElementById('dbUsername').value,
+      dbPassword: document.getElementById('dbPassword').value
+    };
+
+    startInstallation();
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     STEP 5: Installation
+     ═══════════════════════════════════════════════════════════════ */
+  async function startInstallation() {
+    goToStep(5);
+    const logArea = document.getElementById('logArea');
+    logArea.textContent = '⏳ ارسال درخواست نصب...\n';
+
+    try {
+      const res = await fetch('/api/install', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(installConfig)
+      });
+      const data = await res.json();
+
+      if (!data.streamId) {
+        logArea.textContent = '❌ خطا: شناسه نصب دریافت نشد';
+        return;
+      }
+
+      streamId = data.streamId;
+      logArea.textContent += '✅ شناسه نصب: ' + streamId + '\n';
+      logArea.textContent += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+
+      // Try SSE first, fallback to polling
+      trySSE();
+    } catch (err) {
+      logArea.textContent += '\n❌ خطا: ' + err.message;
+    }
+  }
+
+  function trySSE() {
+    const logArea = document.getElementById('logArea');
+    try {
+      const evtSource = new EventSource('/api/install/progress?streamId=' + streamId);
+
+      evtSource.onmessage = function(e) {
+        if (e.data === '[DONE]') {
+          evtSource.close();
+          return;
+        }
+        try {
+          const data = JSON.parse(e.data);
+          updateInstallUI(data, logArea);
+        } catch {}
+      };
+
+      evtSource.onerror = function() {
+        evtSource.close();
+        // Fallback to polling
+        startPolling();
+      };
+    } catch {
+      startPolling();
+    }
+  }
+
+  function startPolling() {
+    const logArea = document.getElementById('logArea');
+    pollInterval = setInterval(async () => {
+      try {
+        const res = await fetch('/api/install/progress?streamId=' + streamId);
+        const data = await res.json();
+        updateInstallUI(data, logArea);
+
+        if (data.status === 'completed' || data.status === 'error') {
+          clearInterval(pollInterval);
+          pollInterval = null;
+        }
+      } catch {}
+    }, 2000);
+  }
+
+  function updateInstallUI(data, logArea) {
+    // Update progress bar
+    document.getElementById('installProgressFill').style.width = data.percent + '%';
+
+    // Update status text
+    const statusText = document.getElementById('installStatusText');
+    if (data.status === 'completed') {
+      statusText.textContent = '✅ نصب با موفقیت تکمیل شد!';
+    } else if (data.status === 'error') {
+      statusText.textContent = '❌ خطا در نصب: ' + (data.error || '');
+    } else {
+      statusText.textContent = data.stepName || 'در حال نصب...';
+    }
+
+    // Update step list
+    const steps = document.querySelectorAll('#installStepsList .install-step');
+    steps.forEach((el) => {
+      const i = parseInt(el.dataset.i);
+      el.classList.remove('active', 'completed', 'error', 'pending');
+      if (i < data.currentStep) {
+        el.classList.add('completed');
+        el.querySelector('.install-step__icon').textContent = '✓';
+      } else if (i === data.currentStep) {
+        if (data.status === 'error' && i === data.totalSteps) {
+          el.classList.add('error');
+          el.querySelector('.install-step__icon').textContent = '✗';
+        } else {
+          el.classList.add('active');
+        }
+      } else {
+        el.classList.add('pending');
+      }
+    });
+
+    // Update logs
+    if (data.logs && data.logs.length > 0) {
+      logArea.textContent = data.logs.join('\n');
+      logArea.scrollTop = logArea.scrollHeight;
+    }
+
+    // Move to complete step
+    if (data.status === 'completed') {
+      setTimeout(() => {
+        if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+        finishInstallation(data);
+      }, 1200);
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     STEP 6: Complete
+     ═══════════════════════════════════════════════════════════════ */
+  function finishInstallation(data) {
+    // Set credentials
+    document.getElementById('credName').textContent = installConfig.adminName;
+    document.getElementById('credPhone').textContent = installConfig.adminPhone;
+    document.getElementById('credPassword').textContent = installConfig.adminPassword;
+
+    // Set links
+    const siteUrl = installConfig.siteUrl.replace(/\/$/, '');
+    document.getElementById('linkSite').href = siteUrl;
+    document.getElementById('linkAdmin').href = siteUrl + '/admin';
+
+    goToStep(6);
+    launchConfetti();
+  }
+
+  function launchConfetti() {
+    const colors = ['#D4AF37', '#F0D060', '#E8A317', '#4ADE80', '#FBBF24', '#FFFFFF'];
+    for (let i = 0; i < 50; i++) {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti-piece');
+      confetti.style.left = Math.random() * 100 + 'vw';
+      confetti.style.top = '-10px';
+      confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.width = (Math.random() * 8 + 4) + 'px';
+      confetti.style.height = (Math.random() * 8 + 4) + 'px';
+      confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+      confetti.style.animationDelay = (Math.random() * 1) + 's';
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 4000);
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     CLEANUP
+     ═══════════════════════════════════════════════════════════════ */
+  async function showCleanupConfirm() {
+    const ok = await showConfirm(
+      'حذف فایل‌های نصب‌کننده',
+      'آیا مطمئن هستید که می‌خواهید فایل‌های نصب‌کننده را حذف کنید؟ این عمل قابل بازگشت نیست.'
+    );
+    if (!ok) return;
+
+    try {
+      const res = await fetch('/api/cleanup', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        showToast('فایل‌ها حذف شدند. صفحه به‌زودی بسته می‌شود.', 'success');
+        setTimeout(() => {
+          document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0D0D0D;color:#D4AF37;font-family:sans-serif;flex-direction:column;gap:12px;"><p style="font-size:1.3rem;font-weight:700;">✅ فایل‌های نصب‌کننده حذف شدند</p><p style="color:#888;font-size:0.9rem;">این صفحه بسته خواهد شد...</p></div>';
+          setTimeout(() => window.close(), 3000);
+        }, 2000);
+      }
+    } catch {
+      showToast('خطا در حذف فایل‌ها', 'error');
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     UTILITY
+     ═══════════════════════════════════════════════════════════════ */
+  function copyToClipboard(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.textContent;
+      btn.textContent = '✓';
+      setTimeout(() => btn.textContent = original, 1500);
+    }).catch(() => {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      btn.textContent = '✓';
+      setTimeout(() => btn.textContent = '📋', 1500);
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     INIT
+     ═══════════════════════════════════════════════════════════════ */
+  document.addEventListener('DOMContentLoaded', () => {
+    goToStep(1);
+  });
+</script>
+
+</body>
+</html>

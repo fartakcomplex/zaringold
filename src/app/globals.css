@@ -1,13 +1,40 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* ── CRITICAL FIX: Override Tailwind preflight's overflow on html ── */
+@utility overflow-fix {
+  overflow: visible !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  height: 100% !important;
+}
+@layer base {
+  html {
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    height: 100% !important;
+  }
+}
+html {
+  overflow: visible !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  height: 100% !important;
+}
+body {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-vazir), 'IRANSans', 'Iran Sans', sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -41,82 +68,6357 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-gold: #D4AF37;
+  --color-gold-light: #F0D060;
+  --color-gold-dark: #B8960C;
 }
 
+/*
+ * ═══════════════════════════════════════════════════════
+ *  زرین گلد (Zarrin Gold) — Persian Gold Trading Platform
+ *  Light Theme
+ * ═══════════════════════════════════════════════════════
+ */
 :root {
   --radius: 0.625rem;
+
+  /* Core surfaces */
   --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --foreground: oklch(0.12 0.005 60);
+
+  /* Cards & popovers — slightly darker warm white for readability */
+  --card: oklch(0.96 0.008 85);
+  --card-foreground: oklch(0.12 0.005 60);
+  --popover: oklch(0.96 0.008 85);
+  --popover-foreground: oklch(0.12 0.005 60);
+
+  /* Primary — gold */
+  --primary: oklch(0.75 0.15 85);
+  --primary-foreground: oklch(0.12 0.005 60);
+
+  /* Secondary — warm off-white */
+  --secondary: oklch(0.94 0.012 85);
+  --secondary-foreground: oklch(0.2 0.01 85);
+
+  /* Muted — subtle gray (darker for readability) */
+  --muted: oklch(0.92 0.008 85);
+  --muted-foreground: oklch(0.40 0.01 85);
+
+  /* Accent — light gold tint */
+  --accent: oklch(0.92 0.035 85);
+  --accent-foreground: oklch(0.2 0.01 85);
+
+  /* Destructive — red */
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Borders & inputs (stronger for visibility) */
+  --border: oklch(0.82 0.012 85);
+  --input: oklch(0.82 0.012 85);
+  --ring: oklch(0.75 0.15 85);
+
+  /* Chart palette — gold shades & complementary tones */
+  --chart-1: oklch(0.75 0.15 85);       /* primary gold */
+  --chart-2: oklch(0.55 0.12 85);       /* deep gold */
+  --chart-3: oklch(0.82 0.1 85);        /* light gold */
+  --chart-4: oklch(0.45 0.08 145);      /* teal complement */
+  --chart-5: oklch(0.6 0.14 30);        /* amber accent */
+
+  /* Sidebar */
+  --sidebar: oklch(0.955 0.008 85);
+  --sidebar-foreground: oklch(0.12 0.005 60);
+  --sidebar-primary: oklch(0.75 0.15 85);
+  --sidebar-primary-foreground: oklch(0.12 0.005 60);
+  --sidebar-accent: oklch(0.92 0.035 85);
+  --sidebar-accent-foreground: oklch(0.2 0.01 85);
+  --sidebar-border: oklch(0.87 0.01 85);
+  --sidebar-ring: oklch(0.75 0.15 85);
 }
 
+/*
+ * ═══════════════════════════════════════════════════════
+ *  Dark Theme — deep midnight blue-black with gold
+ * ═══════════════════════════════════════════════════════
+ */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  /* Core surfaces — very dark with subtle blue undertone */
+  --background: oklch(0.08 0.005 280);
+  --foreground: oklch(0.93 0.008 85);
+
+  /* Cards & popovers — slightly lighter dark */
+  --card: oklch(0.12 0.005 280);
+  --card-foreground: oklch(0.93 0.008 85);
+  --popover: oklch(0.12 0.005 280);
+  --popover-foreground: oklch(0.93 0.008 85);
+
+  /* Primary — gold (same saturation for consistency) */
+  --primary: oklch(0.75 0.15 85);
+  --primary-foreground: oklch(0.1 0.005 280);
+
+  /* Secondary — dark warm surface */
+  --secondary: oklch(0.18 0.008 280);
+  --secondary-foreground: oklch(0.88 0.008 85);
+
+  /* Muted — dark gray */
+  --muted: oklch(0.18 0.005 280);
+  --muted-foreground: oklch(0.62 0.015 85);
+
+  /* Accent — subtle gold tint on dark */
+  --accent: oklch(0.18 0.025 85);
+  --accent-foreground: oklch(0.88 0.008 85);
+
+  /* Destructive — brighter red for dark bg */
   --destructive: oklch(0.704 0.191 22.216);
+
+  /* Borders & inputs — low opacity whites */
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.75 0.15 85);
+
+  /* Chart palette — gold shades & complementary tones (dark) */
+  --chart-1: oklch(0.75 0.15 85);       /* primary gold */
+  --chart-2: oklch(0.6 0.13 85);        /* medium gold */
+  --chart-3: oklch(0.85 0.1 85);        /* bright gold */
+  --chart-4: oklch(0.55 0.1 195);       /* cyan complement */
+  --chart-5: oklch(0.65 0.14 25);       /* warm amber */
+
+  /* Sidebar */
+  --sidebar: oklch(0.1 0.006 280);
+  --sidebar-foreground: oklch(0.93 0.008 85);
+  --sidebar-primary: oklch(0.75 0.15 85);
+  --sidebar-primary-foreground: oklch(0.1 0.005 280);
+  --sidebar-accent: oklch(0.18 0.025 85);
+  --sidebar-accent-foreground: oklch(0.88 0.008 85);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-ring: oklch(0.75 0.15 85);
 }
 
+/*
+ * ═══════════════════════════════════════════════════════
+ *  Base Layer
+ * ═══════════════════════════════════════════════════════
+ */
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
+  /* ── Fix scroll: remove Tailwind default overflow from html, let body handle scroll ── */
+  html {
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    height: 100%;
+  }
+
   body {
     @apply bg-background text-foreground;
+    /* direction and font-family are set dynamically by LocaleProvider */
+    font-family: var(--font-vazir), 'IRANSans', 'Iran Sans', 'Vazir', system-ui, sans-serif;
+    font-feature-settings: "ss01", "ss02";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    line-height: 1.7;
+
+    /* Smooth theme transitions */
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease;
+
+    /* Body is the scroll container */
+    min-height: 100%;
+    min-height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-overflow-scrolling: touch;
   }
+
+  /* ═══════ Custom Scrollbar (Webkit) ═══════ */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: oklch(0.7 0.08 85 / 40%);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.7 0.12 85 / 70%);
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background: oklch(0.75 0.15 85 / 30%);
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.75 0.15 85 / 60%);
+  }
+
+  /* Firefox scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(0.7 0.08 85 / 40%) transparent;
+  }
+
+  .dark * {
+    scrollbar-color: oklch(0.75 0.15 85 / 30%) transparent;
+  }
+}
+
+/*
+ * ═══════════════════════════════════════════════════════
+ *  Custom Utility Classes
+ * ═══════════════════════════════════════════════════════
+ */
+
+/* Gold gradient text */
+.gold-gradient-text {
+  background: linear-gradient(
+    135deg,
+    #D4AF37 0%,
+    #F0D060 40%,
+    #D4AF37 60%,
+    #B8960C 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Gold shimmer loading animation */
+.gold-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    oklch(0.90 0.02 85) 25%,
+    oklch(0.94 0.04 85) 50%,
+    oklch(0.90 0.02 85) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+.dark .gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    oklch(0.15 0.01 85) 25%,
+    oklch(0.2 0.03 85) 50%,
+    oklch(0.15 0.01 85) 75%
+  );
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Animated golden gradient for the Golden Art Card */
+@keyframes golden-gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 50% 0%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  75% {
+    background-position: 50% 100%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.golden-card-animated {
+  background-size: 300% 300%;
+  animation: golden-gradient-flow 6s ease infinite;
+}
+
+/* Glass card with backdrop blur */
+.glass-card {
+  background: oklch(0.95 0.012 85 / 88%);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid oklch(0.75 0.15 85 / 15%);
+}
+
+/*
+ * ═══════════════════════════════════════════════════════
+ *  Mobile Native App Feel Utilities
+ * ═══════════════════════════════════════════════════════
+ */
+
+/* Prevent overscroll bounce on iOS (safari) */
+html {
+  overscroll-behavior: none !important;
+  height: 100% !important;
+  overflow: visible !important;
+  overflow-y: visible !important;
+  overflow-x: visible !important;
+}
+
+body {
+  overscroll-behavior: none !important;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 100%;
+  min-height: 100dvh;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Re-enable text selection for content areas */
+select, input, textarea, [contenteditable="true"], .selectable {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+/* Smooth momentum scrolling for mobile */
+.mobile-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
+}
+
+/* Native-feel touch feedback — subtle scale + brightness */
+.touch-feedback {
+  transition: transform 0.15s ease, filter 0.15s ease;
+  cursor: pointer;
+}
+.touch-feedback:active {
+  transform: scale(0.96);
+  filter: brightness(0.92);
+}
+
+/* Haptic-style tap animation (visual only) */
+.haptic-tap:active {
+  animation: haptic-tap 0.15s ease;
+}
+
+@keyframes haptic-tap {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+/* Ripple effect for touch targets */
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+}
+.ripple-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), rgba(212,175,55,0.15) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.ripple-container:active::after {
+  opacity: 1;
+  transition: opacity 0s;
+}
+
+/* Pull-to-refresh indicator */
+@keyframes pull-spinner {
+  to { transform: rotate(360deg); }
+}
+.pull-indicator {
+  animation: pull-spinner 0.8s linear infinite;
+}
+
+/* Safe area padding utilities */
+.safe-bottom {
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+.safe-top {
+  padding-top: max(16px, env(safe-area-inset-top));
+}
+
+/* iOS-style status bar spacing */
+.ios-status-bar-spacer {
+  height: env(safe-area-inset-top, 0px);
+}
+
+/* Disable text size adjust on orientation change */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Smooth scroll with momentum */
+@supports (-webkit-touch-callout: none) {
+  .mobile-scroll {
+    /* iOS specific: inertial scrolling */
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Card press effect (native iOS feel) */
+.card-press {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-press:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* Slide-up sheet entrance */
+@keyframes sheet-slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.sheet-enter {
+  animation: sheet-slide-up 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.dark .glass-card {
+  background: oklch(0.12 0.005 280 / 60%);
+  border-color: oklch(1 0 0 / 8%);
+}
+
+/* Gold border glow on focus */
+.gold-glow {
+  box-shadow: 0 0 0 2px oklch(0.75 0.15 85 / 20%),
+    0 0 20px oklch(0.75 0.15 85 / 10%);
+}
+
+/* Page transition — smooth native-app slide-up */
+.page-transition {
+  animation: page-enter 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Subtle gold pulse for live indicators */
+.gold-pulse {
+  animation: gold-pulse 2s ease-in-out infinite;
+}
+
+@keyframes gold-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.75 0.15 85 / 40%);
+  }
+  50% {
+    box-shadow: 0 0 0 8px oklch(0.75 0.15 85 / 0%);
+  }
+}
+
+/* Number tabular figures for price displays */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * ═══════════════════════════════════════════════════════
+ *  Task 7 — Landing Page Visual Enhancements
+ * ═══════════════════════════════════════════════════════
+ */
+
+/* ── Gold sparkle twinkle animation ── */
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
+}
+
+/* ── Floating bobbing animation ── */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-12px) rotate(2deg);
+  }
+  75% {
+    transform: translateY(4px) rotate(-1deg);
+  }
+}
+
+/* ── Slow float for background elements ── */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* ── Gold pulse glow effect ── */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px oklch(0.75 0.15 85 / 20%),
+                0 0 10px oklch(0.75 0.15 85 / 10%);
+  }
+  50% {
+    box-shadow: 0 0 15px oklch(0.75 0.15 85 / 40%),
+                0 0 30px oklch(0.75 0.15 85 / 20%),
+                0 0 45px oklch(0.75 0.15 85 / 10%);
+  }
+}
+
+/* ── Spin slow for coins ── */
+@keyframes spin-slow {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(360deg); }
+}
+
+/* ── Twinkle star cross ── */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* ── Slide-in from bottom with fade ── */
+@keyframes slide-up-fade {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Grid pattern overlay ── */
+.grid-pattern {
+  background-image:
+    linear-gradient(oklch(0.75 0.15 85 / 5%) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.75 0.15 85 / 5%) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.dark .grid-pattern {
+  background-image:
+    linear-gradient(oklch(0.75 0.15 85 / 3%) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.75 0.15 85 / 3%) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ── Gold sparkle particle utility ── */
+.gold-sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #F0D060;
+  animation: sparkle 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.gold-sparkle::before,
+.gold-sparkle::after {
+  content: '';
+  position: absolute;
+  background: #F0D060;
+  border-radius: 50%;
+}
+
+.gold-sparkle::before {
+  width: 100%;
+  height: 200%;
+  top: -50%;
+  left: 0;
+}
+
+.gold-sparkle::after {
+  width: 200%;
+  height: 100%;
+  top: 0;
+  left: -50%;
+}
+
+/* ── Float animation utility ── */
+.float-animation {
+  animation: float 4s ease-in-out infinite;
+}
+
+.float-animation-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+/* ── Pulse glow utility for gold elements ── */
+.pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* ── Enhanced glass-morphism ── */
+.glass-card-enhanced {
+  background: oklch(0.945 0.012 85 / 90%);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid oklch(0.75 0.15 85 / 18%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 6%),
+    inset 0 1px 0 oklch(1 0 0 / 25%);
+}
+
+.dark .glass-card-enhanced {
+  background: oklch(0.12 0.005 280 / 50%);
+  border-color: oklch(1 0 0 / 6%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 30%),
+    inset 0 1px 0 oklch(1 0 0 / 5%);
+}
+
+/* ── Feature card gold glow on hover ── */
+.feature-card-glow {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-card-glow:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 0 20px oklch(0.75 0.15 85 / 15%),
+    0 0 40px oklch(0.75 0.15 85 / 5%),
+    0 20px 40px oklch(0 0 0 / 10%);
+}
+
+.dark .feature-card-glow:hover {
+  box-shadow:
+    0 0 20px oklch(0.75 0.15 85 / 20%),
+    0 0 40px oklch(0.75 0.15 85 / 8%),
+    0 20px 40px oklch(0 0 0 / 30%);
+}
+
+/* ── Icon bounce on hover ── */
+.icon-hover-bounce {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.group:hover .icon-hover-bounce {
+  transform: scale(1.15) rotate(-5deg);
+}
+
+/* ── Step number pop animation ── */
+.step-number-pop {
+  animation: slide-up-fade 0.6s ease-out both;
+}
+
+/* ── Gold coin float ── */
+.gold-coin {
+  animation: float 5s ease-in-out infinite;
+  filter: drop-shadow(0 10px 20px oklch(0.75 0.15 85 / 30%));
+}
+
+.gold-coin-inner {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* ── CTA button pulse ring ── */
+.cta-pulse-ring {
+  position: relative;
+}
+
+.cta-pulse-ring::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #F0D060, #D4AF37, #B8960C);
+  opacity: 0;
+  z-index: -1;
+  animation: cta-ring-pulse 2.5s ease-out infinite;
+}
+
+@keyframes cta-ring-pulse {
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+}
+
+/* ── Timeline connector line glow ── */
+.timeline-line-glow {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    oklch(0.75 0.15 85 / 30%) 20%,
+    oklch(0.75 0.15 85 / 50%) 50%,
+    oklch(0.75 0.15 85 / 30%) 80%,
+    transparent 100%
+  );
+}
+
+/* ── Stats counter glow ── */
+.stat-glow {
+  transition: all 0.3s ease;
+}
+
+.stat-glow:hover {
+  box-shadow: 0 0 20px oklch(0.75 0.15 85 / 15%);
+  border-color: oklch(0.75 0.15 85 / 30%);
+}
+
+/* ── Live ticker gold border glow ── */
+.ticker-gold-glow {
+  animation: ticker-glow 3s ease-in-out infinite;
+}
+
+@keyframes ticker-glow {
+  0%, 100% {
+    box-shadow: 0 0 6px oklch(0.75 0.15 85 / 15%),
+                0 0 12px oklch(0.75 0.15 85 / 5%);
+    border-color: oklch(0.75 0.15 85 / 20%);
+  }
+  50% {
+    box-shadow: 0 0 12px oklch(0.75 0.15 85 / 30%),
+                0 0 24px oklch(0.75 0.15 85 / 10%),
+                0 0 40px oklch(0.75 0.15 85 / 5%);
+    border-color: oklch(0.75 0.15 85 / 35%);
+  }
+}
+
+/*
+ * ═══════════════════════════════════════════════════════
+ *  Task 9 — Additional Animations & Polish
+ * ═══════════════════════════════════════════════════════
+ */
+
+/* ── Smooth card hover lift ── */
+.card-hover-lift {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px oklch(0 0 0 / 8%),
+              0 0 0 1px oklch(0.75 0.15 85 / 10%);
+}
+
+.dark .card-hover-lift:hover {
+  box-shadow: 0 8px 25px oklch(0 0 0 / 30%),
+              0 0 0 1px oklch(0.75 0.15 85 / 15%);
+}
+
+/* ── Gold text shadow for headings ── */
+.gold-text-shadow {
+  text-shadow: 0 0 20px oklch(0.75 0.15 85 / 20%);
+}
+
+/* ── Shimmer border animation ── */
+.shimmer-border {
+  position: relative;
+}
+
+.shimmer-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    oklch(0.75 0.15 85 / 0%),
+    oklch(0.75 0.15 85 / 50%),
+    oklch(0.85 0.1 85 / 30%),
+    oklch(0.75 0.15 85 / 0%)
+  );
+  background-size: 300% 300%;
+  animation: shimmer-border-anim 4s ease-in-out infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+@keyframes shimmer-border-anim {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ── Fade in up stagger children ── */
+.stagger-children > * {
+  animation: slide-up-fade 0.5s ease-out both;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+
+/* ── Animated gradient background ── */
+.gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ── Success / Error flash for toasts ── */
+@keyframes flash-green {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: oklch(0.7 0.15 145 / 10%); }
+}
+
+@keyframes flash-red {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: oklch(0.6 0.2 25 / 10%); }
+}
+
+/* ── Subtle breathing animation for icons ── */
+.icon-breathe {
+  animation: icon-breathe 3s ease-in-out infinite;
+}
+
+@keyframes icon-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+/* ── Progress bar with gold gradient ── */
+.progress-gold {
+  background: linear-gradient(90deg, #B8960C, #D4AF37, #F0D060);
+  background-size: 200% 100%;
+  animation: progress-shimmer 2s ease-in-out infinite;
+}
+
+@keyframes progress-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/*
+ * ═══════════════════════════════════════════════════════
+ *  Task 3-a — Enhanced Micro-interactions & Animations
+ * ═══════════════════════════════════════════════════════
+ */
+
+/* ═══════════════════════════════════════════════════════
+ *  New Animation Keyframes
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── Gold light sweep left-to-right for buttons ── */
+@keyframes gold-shine-sweep {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    left: 200%;
+    opacity: 0;
+  }
+}
+
+/* ── Conic gradient rotation for spinning borders ── */
+@keyframes border-spin {
+  0% {
+    --border-angle: 0deg;
+  }
+  100% {
+    --border-angle: 360deg;
+  }
+}
+
+/* ── Shimmer effect for text content ── */
+@keyframes text-shimmer {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+
+/* ── Bouncy scale-in entrance ── */
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── Fade + scale for modals / dialogs ── */
+@keyframes fade-scale {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ── Material-design-style ripple effect ── */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* ── Pulsing border glow for active / focused elements ── */
+@keyframes glow-pulse-border {
+  0%, 100% {
+    box-shadow: 0 0 4px oklch(0.75 0.15 85 / 20%),
+                0 0 8px oklch(0.75 0.15 85 / 8%),
+                inset 0 0 4px oklch(0.75 0.15 85 / 5%);
+  }
+  50% {
+    box-shadow: 0 0 10px oklch(0.75 0.15 85 / 35%),
+                0 0 20px oklch(0.75 0.15 85 / 15%),
+                0 0 35px oklch(0.75 0.15 85 / 8%),
+                inset 0 0 8px oklch(0.75 0.15 85 / 10%);
+  }
+}
+
+.dark .glow-pulse-border {
+  animation-name: glow-pulse-border-dark;
+}
+
+@keyframes glow-pulse-border-dark {
+  0%, 100% {
+    box-shadow: 0 0 4px oklch(0.75 0.15 85 / 25%),
+                0 0 8px oklch(0.75 0.15 85 / 10%),
+                inset 0 0 4px oklch(0.75 0.15 85 / 8%);
+  }
+  50% {
+    box-shadow: 0 0 10px oklch(0.75 0.15 85 / 45%),
+                0 0 20px oklch(0.75 0.15 85 / 20%),
+                0 0 35px oklch(0.75 0.15 85 / 12%),
+                inset 0 0 8px oklch(0.75 0.15 85 / 15%);
+  }
+}
+
+/*
+ * ═══════════════════════════════════════════════════════
+ *  BottomNav Enhancements & Mini Price Ticker
+ * ═══════════════════════════════════════════════════════
+ */
+
+/* ── RTL Marquee scroll animation (right to left visually) ── */
+@keyframes ticker-marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.ticker-marquee {
+  animation: ticker-marquee 20s linear infinite;
+}
+
+.ticker-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ── Haptic-like tap feedback (quick scale bounce) ── */
+@keyframes haptic-tap {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(0.88);
+  }
+  60% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.haptic-tap {
+  animation: haptic-tap 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Gold glow for active bottom nav item ── */
+@keyframes nav-gold-glow {
+  0%, 100% {
+    box-shadow: 0 0 4px oklch(0.75 0.15 85 / 25%),
+                0 0 12px oklch(0.75 0.15 85 / 10%);
+  }
+  50% {
+    box-shadow: 0 0 8px oklch(0.75 0.15 85 / 40%),
+                0 0 20px oklch(0.75 0.15 85 / 18%),
+                0 0 32px oklch(0.75 0.15 85 / 8%);
+  }
+}
+
+.nav-active-glow {
+  animation: nav-gold-glow 2.5s ease-in-out infinite;
+  border-radius: 12px;
+}
+
+/* ── Notification red badge pulse ── */
+@keyframes badge-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 0.8;
+  }
+}
+
+.badge-pulse {
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
+/* ── Mini price ticker gradient background ── */
+.ticker-gradient {
+  background: linear-gradient(
+    90deg,
+    oklch(0.35 0.1 85 / 85%) 0%,
+    oklch(0.45 0.12 85 / 80%) 50%,
+    oklch(0.35 0.1 85 / 85%) 100%
+  );
+}
+
+.dark .ticker-gradient {
+  background: linear-gradient(
+    90deg,
+    oklch(0.18 0.08 85 / 90%) 0%,
+    oklch(0.22 0.1 85 / 85%) 50%,
+    oklch(0.18 0.08 85 / 90%) 100%
+  );
+}
+
+/* ── Drawer gold-themed slide-up panel ── */
+.drawer-gold-panel {
+  background: oklch(0.955 0.025 85 / 98%);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border-top: 2px solid oklch(0.75 0.15 85 / 30%);
+  box-shadow:
+    0 -8px 32px oklch(0.75 0.15 85 / 8%),
+    0 -2px 8px oklch(0 0 0 / 5%);
+}
+
+.dark .drawer-gold-panel {
+  background: oklch(0.12 0.008 280 / 98%);
+  border-top-color: oklch(0.75 0.15 85 / 25%);
+  box-shadow:
+    0 -8px 32px oklch(0.75 0.15 85 / 12%),
+    0 -2px 8px oklch(0 0 0 / 30%);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  Hover Micro-interactions
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── btn-gold-shine: Gold shine sweep on buttons ── */
+.btn-gold-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gold-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    oklch(0.95 0.08 85 / 60%) 40%,
+    oklch(0.97 0.1 85 / 80%) 50%,
+    oklch(0.95 0.08 85 / 60%) 60%,
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dark .btn-gold-shine::after {
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    oklch(0.8 0.15 85 / 30%) 40%,
+    oklch(0.85 0.18 85 / 50%) 50%,
+    oklch(0.8 0.15 85 / 30%) 60%,
+    transparent 80%
+  );
+}
+
+.btn-gold-shine:hover::after {
+  animation: gold-shine-sweep 0.8s ease-in-out;
+}
+
+/* Ensure button content stays above the shine sweep */
+.btn-gold-shine > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* ── card-spotlight: Cursor-following spotlight glow ── */
+.card-spotlight {
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+
+.card-spotlight::before {
+  content: '';
+  position: absolute;
+  top: var(--spotlight-y, 50%);
+  left: var(--spotlight-x, 50%);
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(
+    circle,
+    oklch(0.85 0.1 85 / 12%) 0%,
+    oklch(0.85 0.1 85 / 4%) 40%,
+    transparent 70%
+  );
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.dark .card-spotlight::before {
+  background: radial-gradient(
+    circle,
+    oklch(0.75 0.15 85 / 15%) 0%,
+    oklch(0.75 0.15 85 / 6%) 40%,
+    transparent 70%
+  );
+}
+
+.card-spotlight:hover::before {
+  opacity: 1;
+}
+
+.card-spotlight:hover {
+  border-color: oklch(0.75 0.15 85 / 25%);
+}
+
+.dark .card-spotlight:hover {
+  border-color: oklch(0.75 0.15 85 / 30%);
+}
+
+/* ── text-shimmer: Shimmer effect for text ── */
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    oklch(0.5 0.02 85) 0%,
+    oklch(0.65 0.06 85) 20%,
+    oklch(0.85 0.1 85) 40%,
+    oklch(0.65 0.06 85) 60%,
+    oklch(0.5 0.02 85) 80%,
+    oklch(0.5 0.02 85) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: text-shimmer 2.5s linear infinite;
+}
+
+.dark .text-shimmer {
+  background: linear-gradient(
+    90deg,
+    oklch(0.35 0.01 85) 0%,
+    oklch(0.5 0.05 85) 20%,
+    oklch(0.75 0.15 85) 40%,
+    oklch(0.5 0.05 85) 60%,
+    oklch(0.35 0.01 85) 80%,
+    oklch(0.35 0.01 85) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: text-shimmer 2.5s linear infinite;
+}
+
+/* ── border-spin: Spinning conic gradient border ── */
+.border-spin {
+  position: relative;
+  isolation: isolate;
+}
+
+.border-spin::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--border-angle, 0deg),
+    oklch(0.75 0.15 85 / 80%),
+    oklch(0.85 0.1 85 / 30%),
+    transparent 30%,
+    transparent 70%,
+    oklch(0.85 0.1 85 / 30%),
+    oklch(0.75 0.15 85 / 80%)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: border-spin 3s linear infinite;
+  z-index: -1;
+}
+
+/* Fallback for browsers without @property support */
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  Enhanced Utility Classes
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── glass-gold: Glass-morphism with gold tint ── */
+.glass-gold {
+  background: oklch(0.94 0.03 85 / 60%);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid oklch(0.75 0.15 85 / 18%);
+  box-shadow:
+    0 4px 16px oklch(0 0 0 / 5%),
+    inset 0 1px 0 oklch(0.97 0.06 85 / 25%);
+}
+
+.dark .glass-gold {
+  background: oklch(0.14 0.02 85 / 55%);
+  border-color: oklch(0.75 0.15 85 / 10%);
+  box-shadow:
+    0 4px 16px oklch(0 0 0 / 25%),
+    inset 0 1px 0 oklch(0.75 0.15 85 / 8%);
+}
+
+/* ── noise-bg: Subtle noise texture background ── */
+.noise-bg {
+  position: relative;
+}
+
+.noise-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+.dark .noise-bg::after {
+  opacity: 0.3;
+}
+
+/* ── dot-pattern: Dot grid pattern ── */
+.dot-pattern {
+  background-image: radial-gradient(
+    circle,
+    oklch(0.75 0.15 85 / 18%) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+}
+
+.dark .dot-pattern {
+  background-image: radial-gradient(
+    circle,
+    oklch(0.75 0.15 85 / 10%) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+}
+
+/* ── radial-gold-fade: Radial gradient gold to transparent ── */
+.radial-gold-fade {
+  background: radial-gradient(
+    ellipse at center,
+    oklch(0.75 0.15 85 / 10%) 0%,
+    oklch(0.75 0.15 85 / 4%) 30%,
+    transparent 70%
+  );
+}
+
+.dark .radial-gold-fade {
+  background: radial-gradient(
+    ellipse at center,
+    oklch(0.75 0.15 85 / 12%) 0%,
+    oklch(0.75 0.15 85 / 5%) 30%,
+    transparent 70%
+  );
+}
+
+/* ── hover-lift-sm / hover-lift-md / hover-lift-lg: Different lift amounts ── */
+.hover-lift-sm {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift-sm:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px oklch(0 0 0 / 6%),
+              0 0 0 1px oklch(0.75 0.15 85 / 8%);
+}
+
+.dark .hover-lift-sm:hover {
+  box-shadow: 0 2px 8px oklch(0 0 0 / 25%),
+              0 0 0 1px oklch(0.75 0.15 85 / 12%);
+}
+
+.hover-lift-md {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift-md:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px oklch(0 0 0 / 8%),
+              0 0 0 1px oklch(0.75 0.15 85 / 10%);
+}
+
+.dark .hover-lift-md:hover {
+  box-shadow: 0 6px 20px oklch(0 0 0 / 30%),
+              0 0 0 1px oklch(0.75 0.15 85 / 15%);
+}
+
+.hover-lift-lg {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift-lg:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px oklch(0 0 0 / 10%),
+              0 0 0 1px oklch(0.75 0.15 85 / 12%),
+              0 0 20px oklch(0.75 0.15 85 / 6%);
+}
+
+.dark .hover-lift-lg:hover {
+  box-shadow: 0 12px 32px oklch(0 0 0 / 35%),
+              0 0 0 1px oklch(0.75 0.15 85 / 18%),
+              0 0 20px oklch(0.75 0.15 85 / 10%);
+}
+
+/* ── skeleton-gold: Gold-tinted skeleton loading ── */
+.skeleton-gold {
+  background: linear-gradient(
+    90deg,
+    oklch(0.93 0.02 85 / 60%) 0%,
+    oklch(0.95 0.04 85 / 80%) 40%,
+    oklch(0.93 0.02 85 / 60%) 80%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+  border-radius: var(--radius);
+}
+
+.dark .skeleton-gold {
+  background: linear-gradient(
+    90deg,
+    oklch(0.18 0.015 85 / 60%) 0%,
+    oklch(0.22 0.035 85 / 80%) 40%,
+    oklch(0.18 0.015 85 / 60%) 80%
+  );
+  background-size: 200% 100%;
+}
+
+/* ── scroll-fade-top / scroll-fade-bottom: Gradient fade for scrollable containers ── */
+.scroll-fade-top {
+  position: relative;
+}
+
+.scroll-fade-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(
+    to bottom,
+    oklch(1 0 0 / 90%) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dark .scroll-fade-top::before {
+  background: linear-gradient(
+    to bottom,
+    oklch(0.08 0.005 280 / 90%) 0%,
+    transparent 100%
+  );
+}
+
+.scroll-fade-bottom {
+  position: relative;
+}
+
+.scroll-fade-bottom::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(
+    to top,
+    oklch(1 0 0 / 90%) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dark .scroll-fade-bottom::after {
+  background: linear-gradient(
+    to top,
+    oklch(0.08 0.005 280 / 90%) 0%,
+    transparent 100%
+  );
+}
+
+/* ── glow-pulse-border utility class ── */
+.glow-pulse-border {
+  animation: glow-pulse-border 2.5s ease-in-out infinite;
+  border-color: oklch(0.75 0.15 85 / 25%);
+}
+
+/* ── bounce-in entrance utility ── */
+.bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* ── fade-scale entrance utility (for modals / dialogs) ── */
+.fade-scale-in {
+  animation: fade-scale 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.fade-in {
+  animation: fade-in 0.3s ease-out both;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  Landing Page Enhancements
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── hero-gradient: Enhanced hero background gradient ── */
+.hero-gradient {
+  background:
+    radial-gradient(ellipse at 30% 20%, oklch(0.75 0.15 85 / 8%) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, oklch(0.85 0.1 85 / 6%) 0%, transparent 50%),
+    linear-gradient(180deg, oklch(0.98 0.005 85) 0%, oklch(1 0 0) 100%);
+}
+
+.dark .hero-gradient {
+  background:
+    radial-gradient(ellipse at 30% 20%, oklch(0.75 0.15 85 / 12%) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, oklch(0.85 0.1 85 / 6%) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, oklch(0.15 0.01 280 / 100%) 0%, transparent 70%),
+    linear-gradient(180deg, oklch(0.08 0.005 280) 0%, oklch(0.1 0.005 280) 100%);
+}
+
+/* ── cta-gradient: Gradient for call-to-action sections ── */
+.cta-gradient {
+  background:
+    linear-gradient(135deg, oklch(0.75 0.15 85 / 6%) 0%, transparent 50%),
+    linear-gradient(225deg, oklch(0.85 0.1 85 / 4%) 0%, transparent 50%),
+    linear-gradient(180deg, oklch(0.97 0.01 85) 0%, oklch(0.995 0.003 85) 100%);
+  border-top: 1px solid oklch(0.75 0.15 85 / 12%);
+  border-bottom: 1px solid oklch(0.75 0.15 85 / 12%);
+}
+
+.dark .cta-gradient {
+  background:
+    linear-gradient(135deg, oklch(0.75 0.15 85 / 10%) 0%, transparent 50%),
+    linear-gradient(225deg, oklch(0.85 0.1 85 / 6%) 0%, transparent 50%),
+    linear-gradient(180deg, oklch(0.1 0.005 280) 0%, oklch(0.08 0.005 280) 100%);
+  border-top-color: oklch(0.75 0.15 85 / 10%);
+  border-bottom-color: oklch(0.75 0.15 85 / 10%);
+}
+
+/* ── section-divider: Decorative section divider with gold line ── */
+.section-divider {
+  position: relative;
+  height: 1px;
+  max-width: 480px;
+  margin: 0 auto;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.75 0.15 85 / 30%) 20%,
+    oklch(0.75 0.15 85 / 50%) 50%,
+    oklch(0.75 0.15 85 / 30%) 80%,
+    transparent 100%
+  );
+}
+
+.section-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: oklch(0.75 0.15 85);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px oklch(0.75 0.15 85 / 40%);
+}
+
+.dark .section-divider {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.75 0.15 85 / 20%) 20%,
+    oklch(0.75 0.15 85 / 40%) 50%,
+    oklch(0.75 0.15 85 / 20%) 80%,
+    transparent 100%
+  );
+}
+
+.dark .section-divider::before {
+  background: oklch(0.85 0.1 85);
+  box-shadow: 0 0 10px oklch(0.75 0.15 85 / 50%);
+}
+
+/*
+ * ═══════════════════════════════════════════════════════
+ *  Task 3-a (Round 2) — Premium CSS Polish & Micro-Interactions
+ * ═══════════════════════════════════════════════════════
+ */
+
+/* ═══════════════════════════════════════════════════════
+ *  1. Gold Card Variants
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── card-gold-border: Subtle gold border with gradient glow on hover ── */
+.card-gold-border {
+  border: 1px solid oklch(0.75 0.15 85 / 15%);
+  transition: border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+.card-gold-border:hover {
+  border-color: oklch(0.75 0.15 85 / 35%);
+  box-shadow: 0 0 16px oklch(0.75 0.15 85 / 12%),
+              0 0 32px oklch(0.75 0.15 85 / 5%);
+}
+
+.dark .card-gold-border {
+  border-color: oklch(0.75 0.15 85 / 12%);
+}
+
+.dark .card-gold-border:hover {
+  border-color: oklch(0.75 0.15 85 / 30%);
+  box-shadow: 0 0 16px oklch(0.75 0.15 85 / 18%),
+              0 0 32px oklch(0.75 0.15 85 / 8%);
+}
+
+/* ── card-glass-premium: Enhanced glassmorphism with gold tint ── */
+.card-glass-premium {
+  background: oklch(0.97 0.025 85 / 90%);
+  backdrop-filter: blur(28px) saturate(210%);
+  -webkit-backdrop-filter: blur(28px) saturate(210%);
+  border: 1px solid oklch(0.75 0.15 85 / 15%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 6%),
+    0 0 0 1px oklch(0.75 0.15 85 / 8%),
+    inset 0 1px 0 oklch(0.97 0.06 85 / 30%);
+  transition: box-shadow 0.3s ease,
+              border-color 0.3s ease;
+}
+
+.card-glass-premium:hover {
+  box-shadow:
+    0 12px 40px oklch(0 0 0 / 8%),
+    0 0 20px oklch(0.75 0.15 85 / 12%),
+    0 0 0 1px oklch(0.75 0.15 85 / 15%),
+    inset 0 1px 0 oklch(0.97 0.06 85 / 40%);
+  border-color: oklch(0.75 0.15 85 / 25%);
+}
+
+.dark .card-glass-premium {
+  background: oklch(0.13 0.015 85 / 65%);
+  border-color: oklch(0.75 0.15 85 / 8%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 30%),
+    0 0 0 1px oklch(0.75 0.15 85 / 5%),
+    inset 0 1px 0 oklch(0.75 0.15 85 / 6%);
+}
+
+.dark .card-glass-premium:hover {
+  box-shadow:
+    0 12px 40px oklch(0 0 0 / 40%),
+    0 0 24px oklch(0.75 0.15 85 / 15%),
+    0 0 0 1px oklch(0.75 0.15 85 / 15%),
+    inset 0 1px 0 oklch(0.75 0.15 85 / 10%);
+  border-color: oklch(0.75 0.15 85 / 18%);
+}
+
+/* ── card-success-glow: Green glow variant for positive/success states ── */
+.card-success-glow {
+  border: 1px solid oklch(0.65 0.17 145 / 15%);
+  transition: border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+.card-success-glow:hover {
+  border-color: oklch(0.65 0.17 145 / 30%);
+  box-shadow: 0 0 16px oklch(0.65 0.17 145 / 12%),
+              0 0 32px oklch(0.65 0.17 145 / 5%);
+}
+
+.dark .card-success-glow {
+  border-color: oklch(0.65 0.17 145 / 12%);
+}
+
+.dark .card-success-glow:hover {
+  border-color: oklch(0.65 0.17 145 / 25%);
+  box-shadow: 0 0 16px oklch(0.65 0.17 145 / 18%),
+              0 0 32px oklch(0.65 0.17 145 / 8%);
+}
+
+/* ── card-warning-glow: Amber glow variant for warning states ── */
+.card-warning-glow {
+  border: 1px solid oklch(0.75 0.16 75 / 15%);
+  transition: border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+.card-warning-glow:hover {
+  border-color: oklch(0.75 0.16 75 / 30%);
+  box-shadow: 0 0 16px oklch(0.75 0.16 75 / 12%),
+              0 0 32px oklch(0.75 0.16 75 / 5%);
+}
+
+.dark .card-warning-glow {
+  border-color: oklch(0.75 0.16 75 / 12%);
+}
+
+.dark .card-warning-glow:hover {
+  border-color: oklch(0.75 0.16 75 / 25%);
+  box-shadow: 0 0 16px oklch(0.75 0.16 75 / 18%),
+              0 0 32px oklch(0.75 0.16 75 / 8%);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  2. Button Enhancement Classes
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── btn-gold-gradient: Gold gradient background button ── */
+.btn-gold-gradient {
+  background: linear-gradient(135deg, #B8960C 0%, #D4AF37 40%, #F0D060 70%, #D4AF37 100%);
+  background-size: 200% 200%;
+  color: oklch(0.12 0.005 60);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px oklch(0.75 0.15 85 / 25%),
+              0 0 0 1px oklch(0.75 0.15 85 / 10%);
+}
+
+.btn-gold-gradient:hover {
+  background-position: 100% 50%;
+  box-shadow: 0 4px 16px oklch(0.75 0.15 85 / 35%),
+              0 0 24px oklch(0.75 0.15 85 / 15%),
+              0 0 0 1px oklch(0.75 0.15 85 / 20%);
+  transform: translateY(-1px);
+}
+
+.btn-gold-gradient:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px oklch(0.75 0.15 85 / 20%),
+              0 0 0 1px oklch(0.75 0.15 85 / 10%);
+}
+
+/* ── btn-gold-outline: Gold outline button with fill on hover ── */
+.btn-gold-outline {
+  background: transparent;
+  color: oklch(0.55 0.12 85);
+  font-weight: 500;
+  border: 1px solid oklch(0.75 0.15 85 / 30%);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gold-outline::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #D4AF37 0%, #F0D060 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.btn-gold-outline:hover {
+  color: oklch(0.12 0.005 60);
+  border-color: oklch(0.75 0.15 85 / 50%);
+  box-shadow: 0 0 12px oklch(0.75 0.15 85 / 15%);
+}
+
+.btn-gold-outline:hover::before {
+  opacity: 1;
+}
+
+.btn-gold-outline span,
+.btn-gold-outline > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dark .btn-gold-outline {
+  color: oklch(0.85 0.1 85);
+  border-color: oklch(0.75 0.15 85 / 25%);
+}
+
+.dark .btn-gold-outline:hover {
+  color: oklch(0.1 0.005 280);
+  border-color: oklch(0.75 0.15 85 / 45%);
+  box-shadow: 0 0 16px oklch(0.75 0.15 85 / 20%);
+}
+
+/* ── btn-success: Green success button with subtle glow ── */
+.btn-success {
+  background: oklch(0.55 0.17 145);
+  color: oklch(1 0 0);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px oklch(0.55 0.17 145 / 20%);
+}
+
+.btn-success:hover {
+  background: oklch(0.52 0.19 145);
+  box-shadow: 0 4px 16px oklch(0.55 0.17 145 / 30%),
+              0 0 16px oklch(0.55 0.17 145 / 10%);
+  transform: translateY(-1px);
+}
+
+.btn-success:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px oklch(0.55 0.17 145 / 15%);
+}
+
+.dark .btn-success {
+  background: oklch(0.52 0.19 145);
+  box-shadow: 0 2px 8px oklch(0.55 0.17 145 / 25%);
+}
+
+.dark .btn-success:hover {
+  background: oklch(0.58 0.18 145);
+  box-shadow: 0 4px 16px oklch(0.55 0.17 145 / 35%),
+              0 0 20px oklch(0.55 0.17 145 / 15%);
+}
+
+/* ── btn-danger-outline: Red outline danger button ── */
+.btn-danger-outline {
+  background: transparent;
+  color: oklch(0.55 0.2 25);
+  font-weight: 500;
+  border: 1px solid oklch(0.55 0.2 25 / 30%);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-danger-outline::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: oklch(0.55 0.2 25);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.btn-danger-outline:hover {
+  color: oklch(1 0 0);
+  border-color: oklch(0.55 0.2 25 / 50%);
+  box-shadow: 0 0 12px oklch(0.55 0.2 25 / 15%);
+}
+
+.btn-danger-outline:hover::before {
+  opacity: 1;
+}
+
+.btn-danger-outline span,
+.btn-danger-outline > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dark .btn-danger-outline {
+  color: oklch(0.704 0.191 22.216);
+  border-color: oklch(0.704 0.191 22.216 / 25%);
+}
+
+.dark .btn-danger-outline:hover {
+  color: oklch(1 0 0);
+  border-color: oklch(0.704 0.191 22.216 / 45%);
+  box-shadow: 0 0 16px oklch(0.704 0.191 22.216 / 20%);
+}
+
+.dark .btn-danger-outline:hover::before {
+  background: oklch(0.704 0.191 22.216);
+}
+
+/* ── btn-ghost-gold: Ghost button with gold hover ── */
+.btn-ghost-gold {
+  background: transparent;
+  color: inherit;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.btn-ghost-gold:hover {
+  background: oklch(0.75 0.15 85 / 8%);
+  color: oklch(0.55 0.12 85);
+}
+
+.btn-ghost-gold:active {
+  background: oklch(0.75 0.15 85 / 14%);
+}
+
+.dark .btn-ghost-gold:hover {
+  background: oklch(0.75 0.15 85 / 10%);
+  color: oklch(0.85 0.1 85);
+}
+
+.dark .btn-ghost-gold:active {
+  background: oklch(0.75 0.15 85 / 18%);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  3. Text Effects
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── text-gold-gradient: Gradient gold text (lighter → darker gold) ── */
+.text-gold-gradient {
+  background: linear-gradient(
+    135deg,
+    #F0D060 0%,
+    #D4AF37 45%,
+    #B8960C 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ── text-success-gradient: Green gradient text for profit ── */
+.text-success-gradient {
+  background: linear-gradient(
+    135deg,
+    #34d399 0%,
+    #22c55e 45%,
+    #16a34a 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.dark .text-success-gradient {
+  background: linear-gradient(
+    135deg,
+    #6ee7b7 0%,
+    #4ade80 45%,
+    #22c55e 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ── text-danger-gradient: Red gradient text for loss ── */
+.text-danger-gradient {
+  background: linear-gradient(
+    135deg,
+    #f87171 0%,
+    #ef4444 45%,
+    #dc2626 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.dark .text-danger-gradient {
+  background: linear-gradient(
+    135deg,
+    #fca5a5 0%,
+    #f87171 45%,
+    #ef4444 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ── text-muted-gold: Muted gold color for secondary text ── */
+.text-muted-gold {
+  color: oklch(0.6 0.06 85);
+}
+
+.dark .text-muted-gold {
+  color: oklch(0.65 0.08 85 / 80%);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  4. Input / Form Enhancements
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── input-gold-focus: Gold focus ring for inputs ── */
+.input-gold-focus {
+  transition: border-color 0.2s ease,
+              box-shadow 0.2s ease;
+  outline: none;
+}
+
+.input-gold-focus:focus {
+  border-color: oklch(0.75 0.15 85 / 50%);
+  box-shadow: 0 0 0 3px oklch(0.75 0.15 85 / 12%),
+              0 0 12px oklch(0.75 0.15 85 / 8%);
+}
+
+.dark .input-gold-focus:focus {
+  border-color: oklch(0.75 0.15 85 / 45%);
+  box-shadow: 0 0 0 3px oklch(0.75 0.15 85 / 15%),
+              0 0 16px oklch(0.75 0.15 85 / 10%);
+}
+
+/* ── input-gold-border: Gold border on input ── */
+.input-gold-border {
+  border: 1px solid oklch(0.75 0.15 85 / 25%);
+  transition: border-color 0.2s ease,
+              box-shadow 0.2s ease;
+  outline: none;
+}
+
+.input-gold-border:focus {
+  border-color: oklch(0.75 0.15 85 / 50%);
+  box-shadow: 0 0 0 3px oklch(0.75 0.15 85 / 10%),
+              0 0 12px oklch(0.75 0.15 85 / 6%);
+}
+
+.dark .input-gold-border {
+  border-color: oklch(0.75 0.15 85 / 20%);
+}
+
+.dark .input-gold-border:focus {
+  border-color: oklch(0.75 0.15 85 / 45%);
+  box-shadow: 0 0 0 3px oklch(0.75 0.15 85 / 12%),
+              0 0 16px oklch(0.75 0.15 85 / 8%);
+}
+
+/* ── select-gold: Custom gold-themed select dropdown ── */
+.select-gold {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--background);
+  border: 1px solid oklch(0.75 0.15 85 / 20%);
+  color: var(--foreground);
+  padding: 0.5rem 2.25rem 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.2s ease,
+              box-shadow 0.2s ease;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23D4AF37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 0.5rem center;
+  outline: none;
+}
+
+.select-gold:focus {
+  border-color: oklch(0.75 0.15 85 / 45%);
+  box-shadow: 0 0 0 3px oklch(0.75 0.15 85 / 10%),
+              0 0 12px oklch(0.75 0.15 85 / 6%);
+}
+
+.dark .select-gold {
+  border-color: oklch(0.75 0.15 85 / 18%);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23D4AF37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+.dark .select-gold:focus {
+  border-color: oklch(0.75 0.15 85 / 40%);
+  box-shadow: 0 0 0 3px oklch(0.75 0.15 85 / 12%),
+              0 0 16px oklch(0.75 0.15 85 / 8%);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  5. Table / List Enhancements
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── table-row-hover-gold: Table row with gold highlight on hover ── */
+.table-row-hover-gold {
+  transition: background-color 0.2s ease;
+}
+
+.table-row-hover-gold:hover {
+  background-color: oklch(0.75 0.15 85 / 6%);
+}
+
+.dark .table-row-hover-gold:hover {
+  background-color: oklch(0.75 0.15 85 / 8%);
+}
+
+/* ── table-row-stripe: Alternating row backgrounds ── */
+.table-row-stripe:nth-child(even) {
+  background-color: oklch(0.96 0.005 85 / 50%);
+}
+
+.dark .table-row-stripe:nth-child(even) {
+  background-color: oklch(1 0 0 / 3%);
+}
+
+.table-row-stripe:nth-child(even).table-row-hover-gold:hover,
+.table-row-stripe:nth-child(odd).table-row-hover-gold:hover {
+  background-color: oklch(0.75 0.15 85 / 6%);
+}
+
+.dark .table-row-stripe:nth-child(even).table-row-hover-gold:hover,
+.dark .table-row-stripe:nth-child(odd).table-row-hover-gold:hover {
+  background-color: oklch(0.75 0.15 85 / 8%);
+}
+
+/* ── list-item-enter: Slide-in animation for list items ── */
+@keyframes list-item-enter {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.list-item-enter {
+  animation: list-item-enter 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  6. Loading / Animation States
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── loading-dots: 3 bouncing dots animation ── */
+@keyframes loading-dot-bounce {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.loading-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.loading-dots::before,
+.loading-dots::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: oklch(0.75 0.15 85);
+  animation: loading-dot-bounce 1.4s ease-in-out infinite;
+}
+
+.loading-dots::before {
+  animation-delay: -0.32s;
+}
+
+.loading-dots::after {
+  animation-delay: 0.32s;
+}
+
+.loading-dots span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: oklch(0.75 0.15 85);
+  animation: loading-dot-bounce 1.4s ease-in-out infinite;
+}
+
+/* ── loading-bar: Horizontal loading bar with gold gradient ── */
+@keyframes loading-bar-progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+.loading-bar {
+  position: relative;
+  overflow: hidden;
+  height: 3px;
+  background: oklch(0.75 0.15 85 / 10%);
+  border-radius: 9999px;
+}
+
+.loading-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 25%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.75 0.15 85 / 30%) 25%,
+    #D4AF37 50%,
+    oklch(0.75 0.15 85 / 30%) 75%,
+    transparent 100%
+  );
+  border-radius: 9999px;
+  animation: loading-bar-progress 1.8s ease-in-out infinite;
+}
+
+.dark .loading-bar {
+  background: oklch(0.75 0.15 85 / 8%);
+}
+
+.dark .loading-bar::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.75 0.15 85 / 25%) 25%,
+    #D4AF37 50%,
+    oklch(0.75 0.15 85 / 25%) 75%,
+    transparent 100%
+  );
+}
+
+/* ── skeleton-shimmer: Skeleton placeholder with shimmer effect ── */
+@keyframes skeleton-shimmer-anim {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    oklch(0.92 0.01 85 / 50%) 0%,
+    oklch(0.94 0.025 85 / 70%) 30%,
+    oklch(0.96 0.04 85 / 85%) 50%,
+    oklch(0.94 0.025 85 / 70%) 70%,
+    oklch(0.92 0.01 85 / 50%) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer-anim 2.2s ease-in-out infinite;
+  border-radius: var(--radius);
+}
+
+.dark .skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    oklch(0.16 0.005 85 / 50%) 0%,
+    oklch(0.2 0.015 85 / 70%) 30%,
+    oklch(0.24 0.03 85 / 85%) 50%,
+    oklch(0.2 0.015 85 / 70%) 70%,
+    oklch(0.16 0.005 85 / 50%) 100%
+  );
+  background-size: 200% 100%;
+}
+
+/* ── pulse-ring: Expanding ring pulse animation ── */
+@keyframes pulse-ring-expand {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 oklch(0.75 0.15 85 / 40%);
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+    box-shadow: 0 0 0 12px oklch(0.75 0.15 85 / 0%);
+  }
+}
+
+.pulse-ring {
+  position: relative;
+}
+
+.pulse-ring::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  border: 2px solid oklch(0.75 0.15 85 / 30%);
+  animation: pulse-ring-expand 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+.dark .pulse-ring::before {
+  border-color: oklch(0.75 0.15 85 / 25%);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  7. Badge / Tag Enhancements
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── badge-gold: Gold badge with gradient background ── */
+.badge-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.5;
+  background: linear-gradient(135deg, oklch(0.85 0.1 85 / 70%) 0%, oklch(0.75 0.15 85 / 50%) 100%);
+  color: oklch(0.3 0.04 85);
+  border: 1px solid oklch(0.75 0.15 85 / 20%);
+}
+
+.dark .badge-gold {
+  background: linear-gradient(135deg, oklch(0.3 0.06 85 / 50%) 0%, oklch(0.25 0.05 85 / 40%) 100%);
+  color: oklch(0.85 0.1 85);
+  border-color: oklch(0.75 0.15 85 / 15%);
+}
+
+/* ── badge-success-green: Green success badge ── */
+.badge-success-green {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.5;
+  background: oklch(0.92 0.06 145 / 60%);
+  color: oklch(0.35 0.1 145);
+  border: 1px solid oklch(0.55 0.17 145 / 20%);
+}
+
+.dark .badge-success-green {
+  background: oklch(0.25 0.08 145 / 40%);
+  color: oklch(0.75 0.15 145);
+  border-color: oklch(0.55 0.17 145 / 18%);
+}
+
+/* ── badge-danger-red: Red danger badge ── */
+.badge-danger-red {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.5;
+  background: oklch(0.92 0.04 25 / 60%);
+  color: oklch(0.45 0.15 25);
+  border: 1px solid oklch(0.55 0.2 25 / 20%);
+}
+
+.dark .badge-danger-red {
+  background: oklch(0.3 0.1 25 / 40%);
+  color: oklch(0.75 0.15 22);
+  border-color: oklch(0.704 0.191 22.216 / 18%);
+}
+
+/* ── badge-warning-amber: Amber warning badge ── */
+.badge-warning-amber {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.5;
+  background: oklch(0.93 0.06 75 / 60%);
+  color: oklch(0.42 0.12 75);
+  border: 1px solid oklch(0.75 0.16 75 / 20%);
+}
+
+.dark .badge-warning-amber {
+  background: oklch(0.28 0.08 75 / 40%);
+  color: oklch(0.82 0.14 75);
+  border-color: oklch(0.75 0.16 75 / 18%);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  8. Tab Enhancement
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── tab-active-gold: Active tab with gold underline and text color ── */
+.tab-active-gold {
+  color: oklch(0.5 0.1 85);
+  font-weight: 600;
+  position: relative;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.tab-active-gold::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, oklch(0.75 0.15 85) 0%, oklch(0.85 0.1 85) 50%, oklch(0.75 0.15 85) 100%);
+  border-radius: 9999px;
+  box-shadow: 0 0 8px oklch(0.75 0.15 85 / 30%);
+}
+
+.dark .tab-active-gold {
+  color: oklch(0.85 0.1 85);
+}
+
+.dark .tab-active-gold::after {
+  box-shadow: 0 0 10px oklch(0.75 0.15 85 / 40%);
+}
+
+/* ── tab-hover-glow: Tab with gold glow on hover ── */
+.tab-hover-glow {
+  color: oklch(0.52 0.01 85);
+  position: relative;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.tab-hover-glow::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  right: 50%;
+  height: 2px;
+  background: oklch(0.75 0.15 85);
+  border-radius: 9999px;
+  transition: left 0.25s ease,
+              right 0.25s ease,
+              box-shadow 0.25s ease;
+}
+
+.tab-hover-glow:hover {
+  color: oklch(0.5 0.1 85);
+}
+
+.tab-hover-glow:hover::after {
+  left: 0;
+  right: 0;
+  box-shadow: 0 0 6px oklch(0.75 0.15 85 / 20%);
+}
+
+.dark .tab-hover-glow {
+  color: oklch(0.62 0.015 85);
+}
+
+.dark .tab-hover-glow:hover {
+  color: oklch(0.85 0.1 85);
+}
+
+.dark .tab-hover-glow:hover::after {
+  box-shadow: 0 0 8px oklch(0.75 0.15 85 / 30%);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  9. Chart Container Enhancement
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── chart-container: Styled container for charts ── */
+.chart-container {
+  position: relative;
+  padding: 1.25rem;
+  border: 1px solid oklch(0.75 0.15 85 / 10%);
+  border-radius: var(--radius-lg);
+  background: oklch(0.995 0.003 85);
+  box-shadow: 0 1px 3px oklch(0 0 0 / 3%),
+              inset 0 1px 0 oklch(1 0 0 / 60%);
+  overflow: hidden;
+}
+
+.dark .chart-container {
+  background: oklch(0.1 0.005 280 / 80%);
+  border-color: oklch(0.75 0.15 85 / 8%);
+  box-shadow: 0 1px 3px oklch(0 0 0 / 20%),
+              inset 0 1px 0 oklch(1 0 0 / 4%);
+}
+
+/* ── chart-tooltip: Custom tooltip style for charts ── */
+.chart-tooltip {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  background: oklch(0.98 0.005 85 / 95%);
+  border: 1px solid oklch(0.75 0.15 85 / 15%);
+  box-shadow: 0 4px 12px oklch(0 0 0 / 8%),
+              0 0 0 1px oklch(0.75 0.15 85 / 5%);
+  pointer-events: none;
+  color: var(--foreground);
+}
+
+.dark .chart-tooltip {
+  background: oklch(0.14 0.005 280 / 95%);
+  border-color: oklch(0.75 0.15 85 / 12%);
+  box-shadow: 0 4px 12px oklch(0 0 0 / 35%),
+              0 0 0 1px oklch(0.75 0.15 85 / 8%);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  10. Scroll Behavior
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── scroll-smooth-gold: Smooth scrolling with gold scrollbar styling ── */
+.scroll-smooth-gold {
+  scroll-behavior: smooth;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.scroll-smooth-gold::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scroll-smooth-gold::-webkit-scrollbar-track {
+  background: oklch(0.75 0.15 85 / 4%);
+  border-radius: 9999px;
+}
+
+.scroll-smooth-gold::-webkit-scrollbar-thumb {
+  background: oklch(0.75 0.15 85 / 25%);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+.scroll-smooth-gold::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.75 0.15 85 / 45%);
+}
+
+.dark .scroll-smooth-gold::-webkit-scrollbar-track {
+  background: oklch(0.75 0.15 85 / 3%);
+}
+
+.dark .scroll-smooth-gold::-webkit-scrollbar-thumb {
+  background: oklch(0.75 0.15 85 / 20%);
+}
+
+.dark .scroll-smooth-gold::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.75 0.15 85 / 40%);
+}
+
+/* Firefox scrollbar for scroll-smooth-gold */
+.scroll-smooth-gold {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.75 0.15 85 / 25%) oklch(0.75 0.15 85 / 4%);
+}
+
+.dark .scroll-smooth-gold {
+  scrollbar-color: oklch(0.75 0.15 85 / 20%) oklch(0.75 0.15 85 / 3%);
+}
+
+/*
+ * ═══════════════════════════════════════════════════════
+ *  Task 14-a (Round 3) — Advanced CSS Utility Classes & Animations
+ * ═══════════════════════════════════════════════════════
+ */
+
+/* ═══════════════════════════════════════════════════════
+ *  1. Glass / Morphism Enhancements
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── glass-gold-strong: Stronger gold-tinted glass with higher opacity and blur ── */
+.glass-gold-strong {
+  background: oklch(0.95 0.04 85 / 75%);
+  backdrop-filter: blur(32px) saturate(220%);
+  -webkit-backdrop-filter: blur(32px) saturate(220%);
+  border: 1px solid oklch(0.75 0.15 85 / 18%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 8%),
+    0 0 0 1px oklch(0.75 0.15 85 / 8%),
+    inset 0 1px 0 oklch(0.97 0.08 85 / 40%);
+}
+
+.dark .glass-gold-strong {
+  background: oklch(0.16 0.035 85 / 70%);
+  border-color: oklch(0.75 0.15 85 / 15%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 35%),
+    0 0 0 1px oklch(0.75 0.15 85 / 10%),
+    inset 0 1px 0 oklch(0.75 0.15 85 / 12%);
+}
+
+/* ── glass-dark: Dark mode glass with subtle gold border ── */
+.glass-dark {
+  background: oklch(0.15 0.008 280 / 65%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid oklch(0.75 0.15 85 / 12%);
+  box-shadow:
+    0 4px 24px oklch(0 0 0 / 20%),
+    inset 0 1px 0 oklch(1 0 0 / 4%);
+}
+
+.glass-dark:hover {
+  border-color: oklch(0.75 0.15 85 / 22%);
+  box-shadow:
+    0 6px 28px oklch(0 0 0 / 28%),
+    0 0 12px oklch(0.75 0.15 85 / 6%),
+    inset 0 1px 0 oklch(1 0 0 / 6%);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ── glass-card-3d: 3D perspective glass card with subtle tilt shadow ── */
+.glass-card-3d {
+  perspective: 800px;
+  background: oklch(1 0 0 / 55%);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border: 1px solid oklch(1 0 0 / 18%);
+  box-shadow:
+    0 10px 40px oklch(0 0 0 / 6%),
+    0 2px 8px oklch(0 0 0 / 3%),
+    inset 0 1px 0 oklch(1 0 0 / 25%);
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-3d:hover {
+  transform: rotateX(2deg) rotateY(-2deg) translateY(-4px);
+  box-shadow:
+    0 20px 60px oklch(0 0 0 / 10%),
+    0 4px 16px oklch(0 0 0 / 5%),
+    inset 0 1px 0 oklch(1 0 0 / 30%);
+}
+
+.dark .glass-card-3d {
+  background: oklch(0.13 0.006 280 / 55%);
+  border-color: oklch(1 0 0 / 7%);
+  box-shadow:
+    0 10px 40px oklch(0 0 0 / 30%),
+    0 2px 8px oklch(0 0 0 / 18%),
+    inset 0 1px 0 oklch(1 0 0 / 5%);
+}
+
+.dark .glass-card-3d:hover {
+  box-shadow:
+    0 20px 60px oklch(0 0 0 / 40%),
+    0 4px 16px oklch(0 0 0 / 25%),
+    0 0 20px oklch(0.75 0.15 85 / 5%),
+    inset 0 1px 0 oklch(1 0 0 / 8%);
+}
+
+/* ── glass-watermark: Watermark overlay for premium sections ── */
+.glass-watermark {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-watermark::after {
+  content: 'زرین گلد';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-25deg);
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  color: oklch(0.75 0.15 85 / 4%);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.dark .glass-watermark::after {
+  color: oklch(0.75 0.15 85 / 3%);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  2. Advanced Button Effects
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── btn-gold-3d: 3D gold button with box-shadow depth and active press effect ── */
+.btn-gold-3d {
+  background: linear-gradient(180deg, #F0D060 0%, #D4AF37 50%, #B8960C 100%);
+  color: oklch(0.12 0.005 60);
+  font-weight: 600;
+  border: none;
+  box-shadow:
+    0 4px 0 #9A7B0A,
+    0 6px 12px oklch(0 0 0 / 15%),
+    inset 0 1px 0 oklch(1 0 0 / 30%);
+  transition: all 0.15s ease;
+  transform: translateY(0);
+}
+
+.btn-gold-3d:hover {
+  background: linear-gradient(180deg, #F5D870 0%, #E0BF42 50%, #C9A312 100%);
+  box-shadow:
+    0 5px 0 #9A7B0A,
+    0 8px 16px oklch(0 0 0 / 20%),
+    inset 0 1px 0 oklch(1 0 0 / 40%);
+  transform: translateY(-1px);
+}
+
+.btn-gold-3d:active {
+  box-shadow:
+    0 1px 0 #9A7B0A,
+    0 2px 4px oklch(0 0 0 / 12%),
+    inset 0 1px 0 oklch(0 0 0 / 10%);
+  transform: translateY(3px);
+}
+
+.dark .btn-gold-3d {
+  background: linear-gradient(180deg, #D4AF37 0%, #C9A312 50%, #9A7B0A 100%);
+  color: oklch(0.1 0.005 280);
+  box-shadow:
+    0 4px 0 #7A6208,
+    0 6px 12px oklch(0 0 0 / 35%),
+    inset 0 1px 0 oklch(1 0 0 / 15%);
+}
+
+.dark .btn-gold-3d:hover {
+  background: linear-gradient(180deg, #E0BF42 0%, #D4AF37 50%, #B8960C 100%);
+  box-shadow:
+    0 5px 0 #7A6208,
+    0 8px 16px oklch(0 0 0 / 40%),
+    inset 0 1px 0 oklch(1 0 0 / 20%);
+}
+
+.dark .btn-gold-3d:active {
+  box-shadow:
+    0 1px 0 #7A6208,
+    0 2px 4px oklch(0 0 0 / 30%),
+    inset 0 1px 0 oklch(0 0 0 / 15%);
+  transform: translateY(3px);
+}
+
+/* ── btn-gold-glow: Glowing gold button with animated outer glow ── */
+.btn-gold-glow {
+  position: relative;
+  background: linear-gradient(135deg, #D4AF37, #F0D060);
+  color: oklch(0.12 0.005 60);
+  font-weight: 600;
+  border: none;
+  overflow: visible;
+  z-index: 1;
+  transition: transform 0.2s ease;
+}
+
+.btn-gold-glow::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #D4AF37, #F0D060, #B8960C);
+  z-index: -2;
+  filter: blur(10px);
+  opacity: 0.6;
+  animation: glow-pulse 2.5s ease-in-out infinite;
+}
+
+.btn-gold-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #D4AF37, #F0D060);
+  z-index: -1;
+}
+
+.btn-gold-glow:hover {
+  transform: scale(1.03);
+}
+
+.btn-gold-glow:hover::before {
+  opacity: 0.85;
+  filter: blur(16px);
+}
+
+.dark .btn-gold-glow {
+  color: oklch(0.1 0.005 280);
+}
+
+.dark .btn-gold-glow::before {
+  filter: blur(12px);
+  opacity: 0.5;
+}
+
+.dark .btn-gold-glow:hover::before {
+  opacity: 0.75;
+  filter: blur(18px);
+}
+
+/* ── btn-outline-animated: Border that fills on hover with gradient transition ── */
+.btn-outline-animated {
+  position: relative;
+  background: transparent;
+  color: oklch(0.75 0.15 85);
+  font-weight: 600;
+  border: 2px solid oklch(0.75 0.15 85);
+  overflow: hidden;
+  z-index: 1;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-outline-animated::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #D4AF37, #F0D060, #B8960C);
+  transform: scaleX(0);
+  transform-origin: right;
+  z-index: -1;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-outline-animated:hover::before {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.btn-outline-animated:hover {
+  color: oklch(0.12 0.005 60);
+  border-color: transparent;
+}
+
+.dark .btn-outline-animated {
+  color: oklch(0.85 0.1 85);
+  border-color: oklch(0.75 0.15 85 / 40%);
+}
+
+.dark .btn-outline-animated:hover {
+  color: oklch(0.1 0.005 280);
+}
+
+/* ── btn-magnetic: Subtle scale effect on hover (CSS only) ── */
+.btn-magnetic {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.btn-magnetic:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px oklch(0 0 0 / 12%),
+              0 0 0 1px oklch(0.75 0.15 85 / 15%);
+}
+
+.btn-magnetic:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px oklch(0 0 0 / 8%);
+}
+
+.dark .btn-magnetic:hover {
+  box-shadow: 0 8px 24px oklch(0 0 0 / 35%),
+              0 0 0 1px oklch(0.75 0.15 85 / 20%);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  3. Text & Typography Effects
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── text-gold-emboss: Embossed gold text effect using text-shadow ── */
+.text-gold-emboss {
+  color: oklch(0.75 0.15 85);
+  text-shadow:
+    0 1px 0 oklch(0.85 0.12 85 / 80%),
+    0 -1px 0 oklch(0.55 0.12 85 / 60%),
+    0 2px 4px oklch(0 0 0 / 10%);
+}
+
+.dark .text-gold-emboss {
+  color: oklch(0.82 0.12 85);
+  text-shadow:
+    0 1px 0 oklch(0.65 0.1 85 / 40%),
+    0 -1px 0 oklch(0.45 0.15 85 / 30%),
+    0 2px 8px oklch(0 0 0 / 25%);
+}
+
+/* ── text-gold-outline: Gold outlined text (transparent fill, gold stroke) ── */
+.text-gold-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px oklch(0.75 0.15 85);
+  text-shadow: 0 0 8px oklch(0.75 0.15 85 / 20%);
+}
+
+.dark .text-gold-outline {
+  -webkit-text-stroke-color: oklch(0.85 0.1 85);
+  text-shadow: 0 0 12px oklch(0.75 0.15 85 / 30%);
+}
+
+/* ── text-gradient-animate: Animated gradient text that shifts colors ── */
+.text-gradient-animate {
+  background: linear-gradient(
+    270deg,
+    #D4AF37,
+    #F0D060,
+    #B8960C,
+    #F0D060,
+    #D4AF37
+  );
+  background-size: 400% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: gradient-text-flow 4s linear infinite;
+}
+
+.dark .text-gradient-animate {
+  background: linear-gradient(
+    270deg,
+    #D4AF37,
+    #F0D060,
+    #B8960C,
+    #E8C84A,
+    #D4AF37
+  );
+  background-size: 400% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: gradient-text-flow 4s linear infinite;
+}
+
+/* ── text-typing-cursor: Blinking cursor for typing-like text display ── */
+.text-typing-cursor::after {
+  content: '│';
+  animation: cursor-blink 1s step-end infinite;
+  color: oklch(0.75 0.15 85);
+  font-weight: 300;
+  margin-right: 2px;
+}
+
+.dark .text-typing-cursor::after {
+  color: oklch(0.85 0.1 85);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  4. Card Effects
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── card-holographic: Subtle rainbow/holographic shimmer overlay ── */
+.card-holographic {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-holographic::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    oklch(0.85 0.1 85 / 0%) 0%,
+    oklch(0.85 0.1 85 / 8%) 20%,
+    oklch(0.7 0.08 200 / 6%) 40%,
+    oklch(0.85 0.1 85 / 0%) 50%,
+    oklch(0.75 0.12 320 / 5%) 70%,
+    oklch(0.85 0.1 85 / 8%) 85%,
+    oklch(0.85 0.1 85 / 0%) 100%
+  );
+  background-size: 300% 300%;
+  animation: holographic-shimmer 6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.dark .card-holographic::before {
+  background: linear-gradient(
+    135deg,
+    oklch(0.75 0.15 85 / 0%) 0%,
+    oklch(0.75 0.15 85 / 12%) 20%,
+    oklch(0.6 0.1 200 / 8%) 40%,
+    oklch(0.75 0.15 85 / 0%) 50%,
+    oklch(0.65 0.12 320 / 7%) 70%,
+    oklch(0.75 0.15 85 / 12%) 85%,
+    oklch(0.75 0.15 85 / 0%) 100%
+  );
+  background-size: 300% 300%;
+}
+
+/* ── card-gold-pattern: Gold pattern background (repeating diagonal lines) ── */
+.card-gold-pattern {
+  position: relative;
+  background-color: oklch(0.985 0.01 85);
+}
+
+.card-gold-pattern::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 8px,
+    oklch(0.75 0.15 85 / 4%) 8px,
+    oklch(0.75 0.15 85 / 4%) 9px
+  );
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+.dark .card-gold-pattern {
+  background-color: oklch(0.13 0.006 280);
+}
+
+.dark .card-gold-pattern::before {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 8px,
+    oklch(0.75 0.15 85 / 3%) 8px,
+    oklch(0.75 0.15 85 / 3%) 9px
+  );
+}
+
+/* ── card-float: Floating card with hover lift + shadow expansion ── */
+.card-float {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px oklch(0 0 0 / 6%);
+}
+
+.card-float:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    0 16px 48px oklch(0 0 0 / 12%),
+    0 4px 16px oklch(0 0 0 / 6%),
+    0 0 24px oklch(0.75 0.15 85 / 8%);
+}
+
+.dark .card-float {
+  box-shadow: 0 4px 12px oklch(0 0 0 / 25%);
+}
+
+.dark .card-float:hover {
+  box-shadow:
+    0 16px 48px oklch(0 0 0 / 40%),
+    0 4px 16px oklch(0 0 0 / 25%),
+    0 0 32px oklch(0.75 0.15 85 / 12%);
+}
+
+/* ── card-pulse-border: Pulsing gold border animation ── */
+.card-pulse-border {
+  border: 2px solid oklch(0.75 0.15 85 / 20%);
+  animation: border-pulse-gold 2.5s ease-in-out infinite;
+}
+
+.dark .card-pulse-border {
+  border-color: oklch(0.75 0.15 85 / 15%);
+  animation: border-pulse-gold-dark 2.5s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  5. Data Visualization
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── data-bar-animated: Animated progress/data bar with gold fill ── */
+.data-bar-animated {
+  position: relative;
+  height: 10px;
+  background: oklch(0.93 0.01 85);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.dark .data-bar-animated {
+  background: oklch(0.2 0.005 280);
+}
+
+.data-bar-animated::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #B8960C, #D4AF37, #F0D060);
+  background-size: 200% 100%;
+  animation: data-bar-fill 1.5s ease-out forwards, progress-shimmer 2s ease-in-out infinite;
+  transform-origin: right;
+  width: var(--bar-fill, 60%);
+}
+
+/* ── data-grid-cell: Table cell with hover highlight ── */
+.data-grid-cell {
+  transition: background-color 0.2s ease,
+              box-shadow 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.data-grid-cell:hover {
+  background-color: oklch(0.97 0.02 85 / 80%);
+  border-color: oklch(0.75 0.15 85 / 10%);
+  box-shadow: inset 0 0 0 1px oklch(0.75 0.15 85 / 5%);
+}
+
+.dark .data-grid-cell:hover {
+  background-color: oklch(0.18 0.02 85 / 60%);
+  border-color: oklch(0.75 0.15 85 / 12%);
+  box-shadow: inset 0 0 0 1px oklch(0.75 0.15 85 / 8%);
+}
+
+/* ── data-sparkline: Container for inline sparkline charts ── */
+.data-sparkline {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 32px;
+  padding: 4px 0;
+}
+
+.data-sparkline .spark-bar {
+  width: 3px;
+  border-radius: 9999px;
+  background: linear-gradient(to top, #B8960C, #D4AF37);
+  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s ease;
+  min-height: 2px;
+}
+
+.data-sparkline .spark-bar:hover {
+  opacity: 0.8;
+  background: linear-gradient(to top, #D4AF37, #F0D060);
+}
+
+.dark .data-sparkline .spark-bar {
+  background: linear-gradient(to top, #9A7B0A, #D4AF37);
+}
+
+.dark .data-sparkline .spark-bar:hover {
+  background: linear-gradient(to top, #D4AF37, #F0D060);
+}
+
+/* ── data-tooltip-gold: Gold-styled tooltip for charts ── */
+.data-tooltip-gold {
+  position: relative;
+  background: oklch(0.98 0.025 85 / 95%);
+  border: 1px solid oklch(0.75 0.15 85 / 25%);
+  border-radius: var(--radius-sm, 0.375rem);
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  color: oklch(0.2 0.01 85);
+  box-shadow:
+    0 4px 12px oklch(0 0 0 / 10%),
+    0 0 0 1px oklch(0.75 0.15 85 / 8%);
+  pointer-events: none;
+  z-index: 50;
+  white-space: nowrap;
+}
+
+.dark .data-tooltip-gold {
+  background: oklch(0.16 0.02 85 / 95%);
+  border-color: oklch(0.75 0.15 85 / 20%);
+  color: oklch(0.9 0.01 85);
+  box-shadow:
+    0 4px 12px oklch(0 0 0 / 35%),
+    0 0 0 1px oklch(0.75 0.15 85 / 12%);
+}
+
+.data-tooltip-gold::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #D4AF37, #F0D060);
+  border-radius: var(--radius-sm, 0.375rem) var(--radius-sm, 0.375rem) 0 0;
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  6. Scroll & Reveal Effects
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── reveal-up: Element reveals from bottom with fade ── */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal-up.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── reveal-scale: Element reveals with scale + fade ── */
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal-scale.revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── reveal-blur: Element reveals with blur-to-clear transition ── */
+.reveal-blur {
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(12px);
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+              filter 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal-blur.revealed {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+/* ── scroll-progress-bar: Scroll progress indicator at top of container ── */
+.scroll-progress-bar {
+  position: relative;
+}
+
+.scroll-progress-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #B8960C, #D4AF37, #F0D060);
+  border-radius: 0 0 4px 4px;
+  transform: scaleX(var(--scroll-progress, 0));
+  transform-origin: right;
+  transition: transform 0.1s linear;
+  z-index: 10;
+}
+
+.dark .scroll-progress-bar::before {
+  background: linear-gradient(90deg, #9A7B0A, #D4AF37, #F0D060);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  7. New Keyframe Animations
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── holographic-shimmer: For .card-holographic ── */
+@keyframes holographic-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ── glow-pulse: For .btn-gold-glow ── */
+@keyframes glow-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    filter: blur(10px);
+  }
+  50% {
+    opacity: 0.8;
+    filter: blur(16px);
+  }
+}
+
+/* ── gradient-text-flow: For .text-gradient-animate ── */
+@keyframes gradient-text-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 400% 50%;
+  }
+}
+
+/* ── reveal-up keyframe (alternative for JS-triggered animations) ── */
+@keyframes reveal-up-anim {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── reveal-scale keyframe ── */
+@keyframes reveal-scale-anim {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── reveal-blur keyframe ── */
+@keyframes reveal-blur-anim {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+/* ── border-dance: Animated dashed border ── */
+@keyframes border-dance {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 20;
+  }
+}
+
+/* ── border-pulse-gold: For .card-pulse-border ── */
+@keyframes border-pulse-gold {
+  0%, 100% {
+    border-color: oklch(0.75 0.15 85 / 20%);
+    box-shadow: 0 0 0 0 oklch(0.75 0.15 85 / 0%);
+  }
+  50% {
+    border-color: oklch(0.75 0.15 85 / 45%);
+    box-shadow: 0 0 12px oklch(0.75 0.15 85 / 12%);
+  }
+}
+
+@keyframes border-pulse-gold-dark {
+  0%, 100% {
+    border-color: oklch(0.75 0.15 85 / 15%);
+    box-shadow: 0 0 0 0 oklch(0.75 0.15 85 / 0%);
+  }
+  50% {
+    border-color: oklch(0.75 0.15 85 / 35%);
+    box-shadow: 0 0 16px oklch(0.75 0.15 85 / 15%);
+  }
+}
+
+/* ── data-bar-fill: For .data-bar-animated ── */
+@keyframes data-bar-fill {
+  from {
+    width: 0;
+  }
+  to {
+    width: var(--bar-fill, 60%);
+  }
+}
+
+/* ── cursor-blink: For .text-typing-cursor ── */
+@keyframes cursor-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  8. Utility Enhancements
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── gold-divider-vertical: Vertical gold divider line ── */
+.gold-divider-vertical {
+  position: relative;
+  width: 1px;
+  align-self: stretch;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    oklch(0.75 0.15 85 / 25%) 15%,
+    oklch(0.75 0.15 85 / 45%) 50%,
+    oklch(0.75 0.15 85 / 25%) 85%,
+    transparent 100%
+  );
+}
+
+.dark .gold-divider-vertical {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    oklch(0.75 0.15 85 / 18%) 15%,
+    oklch(0.75 0.15 85 / 35%) 50%,
+    oklch(0.75 0.15 85 / 18%) 85%,
+    transparent 100%
+  );
+}
+
+/* ── gold-divider-animated: Animated gold divider with traveling light ── */
+.gold-divider-animated {
+  position: relative;
+  height: 1px;
+  max-width: 480px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.75 0.15 85 / 20%) 20%,
+    oklch(0.75 0.15 85 / 40%) 80%,
+    transparent 100%
+  );
+  overflow: hidden;
+}
+
+.dark .gold-divider-animated {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.75 0.15 85 / 15%) 20%,
+    oklch(0.75 0.15 85 / 30%) 80%,
+    transparent 100%
+  );
+}
+
+.gold-divider-animated::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  width: 60px;
+  height: 5px;
+  background: radial-gradient(
+    ellipse,
+    oklch(0.85 0.12 85 / 80%) 0%,
+    oklch(0.75 0.15 85 / 40%) 40%,
+    transparent 70%
+  );
+  animation: divider-light-travel 3s ease-in-out infinite;
+  border-radius: 50%;
+}
+
+@keyframes divider-light-travel {
+  0% {
+    left: -60px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% + 60px);
+    opacity: 0;
+  }
+}
+
+/* ── text-balance-gold: text-wrap: balance with optimized line height for Persian ── */
+.text-balance-gold {
+  text-wrap: balance;
+  line-height: 1.85;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "ss01", "ss02";
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  9. CSS Enhancement Round 4 — New Utility Classes
+ * ═══════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────
+ * 9.1  New @property Declarations
+ * ───────────────────────────────────────────────────── */
+
+@property --gold-spotlight-x {
+  syntax: '<percentage>';
+  initial-value: 50%;
+  inherits: false;
+}
+
+@property --gold-spotlight-y {
+  syntax: '<percentage>';
+  initial-value: 50%;
+  inherits: false;
+}
+
+@property --border-rotation {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --stagger-index {
+  syntax: '<integer>';
+  initial-value: 0;
+  inherits: true;
+}
+
+/* ─────────────────────────────────────────────────────
+ * 9.2  Page-Level Layout Utilities
+ * ───────────────────────────────────────────────────── */
+
+/* ── page-container-gold: Max-width container with gold accent top border ── */
+.page-container-gold {
+  max-width: 1280px;
+  margin-inline: auto;
+  border-top: 3px solid oklch(0.75 0.15 85 / 60%);
+  background: linear-gradient(
+    180deg,
+    oklch(0.97 0.02 85 / 15%) 0%,
+    oklch(0.98 0.005 85 / 5%) 30%,
+    transparent 100%
+  );
+  padding-inline: 1rem;
+  padding-block-start: 2rem;
+}
+
+.dark .page-container-gold {
+  border-top-color: oklch(0.75 0.15 85 / 40%);
+  background: linear-gradient(
+    180deg,
+    oklch(0.25 0.03 85 / 20%) 0%,
+    oklch(0.2 0.015 85 / 8%) 30%,
+    transparent 100%
+  );
+}
+
+/* ── section-spacing: Consistent vertical section spacing ── */
+.section-spacing {
+  padding-block: 2rem;
+}
+
+@media (min-width: 768px) {
+  .section-spacing {
+    padding-block: 3rem;
+  }
+}
+
+/* ── content-grid: Responsive 1/2/3 column grid ── */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .content-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .content-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.75rem;
+  }
+}
+
+/* ── page-transition-route: Fade + slight slide-up route transition ── */
+.page-transition-route {
+  animation: route-fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes route-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+ * 9.3  Interactive Card States
+ * ───────────────────────────────────────────────────── */
+
+/* ── card-press: Active press-down tactile feedback ── */
+.card-press {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 8px oklch(0 0 0 / 8%), 0 1px 2px oklch(0 0 0 / 4%);
+}
+
+.card-press:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px oklch(0 0 0 / 10%), 0 2px 4px oklch(0 0 0 / 6%);
+}
+
+.card-press:active {
+  transform: scale(0.98) translateY(0);
+  box-shadow: 0 1px 4px oklch(0 0 0 / 6%);
+}
+
+.dark .card-press {
+  box-shadow: 0 2px 8px oklch(0 0 0 / 20%), 0 1px 2px oklch(0 0 0 / 12%);
+}
+
+.dark .card-press:hover {
+  box-shadow: 0 4px 16px oklch(0 0 0 / 25%), 0 2px 4px oklch(0 0 0 / 15%);
+}
+
+.dark .card-press:active {
+  box-shadow: 0 1px 4px oklch(0 0 0 / 15%);
+}
+
+/* ── card-spotlight-gold: Gold spotlight that follows mouse cursor (CSS-only) ── */
+.card-spotlight-gold {
+  position: relative;
+  overflow: hidden;
+  --gold-spotlight-x: 50%;
+  --gold-spotlight-y: 50%;
+  background:
+    radial-gradient(
+      400px circle at var(--gold-spotlight-x) var(--gold-spotlight-y),
+      oklch(0.85 0.1 85 / 18%) 0%,
+      oklch(0.85 0.1 85 / 5%) 40%,
+      transparent 70%
+    ),
+    oklch(0.99 0.005 85 / 100%);
+  transition: border-color 0.3s ease;
+  border: 1px solid oklch(0.75 0.15 85 / 10%);
+}
+
+.dark .card-spotlight-gold {
+  background:
+    radial-gradient(
+      400px circle at var(--gold-spotlight-x) var(--gold-spotlight-y),
+      oklch(0.75 0.15 85 / 20%) 0%,
+      oklch(0.75 0.15 85 / 6%) 40%,
+      transparent 70%
+    ),
+    oklch(0.2 0.01 85 / 100%);
+  border-color: oklch(0.75 0.15 85 / 8%);
+}
+
+.card-spotlight-gold:hover {
+  border-color: oklch(0.75 0.15 85 / 30%);
+}
+
+.dark .card-spotlight-gold:hover {
+  border-color: oklch(0.75 0.15 85 / 35%);
+}
+
+/* ── card-glass-inset: Inset shadow glass card with inner glow ── */
+.card-glass-inset {
+  position: relative;
+  background: oklch(0.98 0.01 85 / 80%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid oklch(0.75 0.15 85 / 15%);
+  box-shadow:
+    inset 0 1px 1px oklch(0.75 0.15 85 / 12%),
+    inset 0 0 20px oklch(0.75 0.15 85 / 4%),
+    0 1px 3px oklch(0 0 0 / 4%);
+  transition: box-shadow 0.3s ease;
+}
+
+.card-glass-inset:hover {
+  box-shadow:
+    inset 0 1px 1px oklch(0.75 0.15 85 / 18%),
+    inset 0 0 30px oklch(0.75 0.15 85 / 8%),
+    0 2px 8px oklch(0 0 0 / 6%);
+}
+
+.dark .card-glass-inset {
+  background: oklch(0.22 0.01 85 / 70%);
+  border-color: oklch(0.75 0.15 85 / 10%);
+  box-shadow:
+    inset 0 1px 1px oklch(0.75 0.15 85 / 8%),
+    inset 0 0 20px oklch(0.75 0.15 85 / 3%),
+    0 1px 3px oklch(0 0 0 / 12%);
+}
+
+.dark .card-glass-inset:hover {
+  box-shadow:
+    inset 0 1px 1px oklch(0.75 0.15 85 / 14%),
+    inset 0 0 30px oklch(0.75 0.15 85 / 6%),
+    0 2px 8px oklch(0 0 0 / 18%);
+}
+
+/* ── card-border-animated: Rotating conic gradient border ── */
+.card-border-animated {
+  --border-rotation: 0deg;
+  position: relative;
+  border-radius: 0.75rem;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--border-rotation),
+    oklch(0.75 0.15 85 / 60%) 0%,
+    oklch(0.85 0.1 85 / 15%) 25%,
+    oklch(0.75 0.15 85 / 60%) 50%,
+    oklch(0.85 0.1 85 / 15%) 75%,
+    oklch(0.75 0.15 85 / 60%) 100%
+  );
+  animation: border-rotate 4s linear infinite;
+}
+
+.dark .card-border-animated {
+  background: conic-gradient(
+    from var(--border-rotation),
+    oklch(0.75 0.15 85 / 45%) 0%,
+    oklch(0.65 0.12 85 / 8%) 25%,
+    oklch(0.75 0.15 85 / 45%) 50%,
+    oklch(0.65 0.12 85 / 8%) 75%,
+    oklch(0.75 0.15 85 / 45%) 100%
+  );
+}
+
+.card-border-animated > * {
+  position: relative;
+  z-index: 1;
+  background: oklch(0.99 0.005 85 / 100%);
+  border-radius: calc(0.75rem - 1px);
+}
+
+.dark .card-border-animated > * {
+  background: oklch(0.18 0.01 85 / 100%);
+}
+
+@keyframes border-rotate {
+  to {
+    --border-rotation: 360deg;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+ * 9.4  Typography Enhancements
+ * ───────────────────────────────────────────────────── */
+
+/* ── text-shadow-gold: Gold drop shadow for headings ── */
+.text-shadow-gold {
+  text-shadow:
+    0 1px 2px oklch(0.75 0.15 85 / 25%),
+    0 0 8px oklch(0.75 0.15 85 / 10%);
+}
+
+.dark .text-shadow-gold {
+  text-shadow:
+    0 1px 3px oklch(0.75 0.15 85 / 30%),
+    0 0 12px oklch(0.75 0.15 85 / 15%);
+}
+
+/* ── text-shadow-white: White text shadow for dark backgrounds ── */
+.text-shadow-white {
+  text-shadow:
+    0 1px 2px oklch(1 0 0 / 30%),
+    0 0 6px oklch(1 0 0 / 10%);
+}
+
+/* ── text-letter-spacing-wide: Wider letter-spacing for headings ── */
+.text-letter-spacing-wide {
+  letter-spacing: 0.05em;
+}
+
+/* ─────────────────────────────────────────────────────
+ * 9.5  Form Control Enhancements
+ * ───────────────────────────────────────────────────── */
+
+/* ── input-floating-label: Floating label input ── */
+.input-floating-label {
+  position: relative;
+}
+
+.input-floating-label input {
+  width: 100%;
+  padding: 1.25rem 1rem 0.5rem 1rem;
+  border: 1px solid oklch(0.75 0.15 85 / 20%);
+  border-radius: 0.5rem;
+  background: oklch(0.99 0.005 85 / 100%);
+  font-size: 1rem;
+  color: oklch(0.2 0.01 85);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+
+.dark .input-floating-label input {
+  border-color: oklch(0.75 0.15 85 / 15%);
+  background: oklch(0.18 0.01 85 / 100%);
+  color: oklch(0.9 0.01 85);
+}
+
+.input-floating-label input:focus {
+  border-color: oklch(0.75 0.15 85 / 60%);
+  box-shadow: 0 0 0 3px oklch(0.75 0.15 85 / 12%);
+}
+
+.dark .input-floating-label input:focus {
+  border-color: oklch(0.75 0.15 85 / 50%);
+  box-shadow: 0 0 0 3px oklch(0.75 0.15 85 / 8%);
+}
+
+.input-floating-label label {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  font-size: 0.95rem;
+  color: oklch(0.55 0.02 85);
+  pointer-events: none;
+  transition: all 0.2s ease;
+  transform-origin: right center;
+}
+
+[dir="rtl"] .input-floating-label label {
+  right: auto;
+  left: 1rem;
+  transform-origin: left center;
+}
+
+.input-floating-label input:focus ~ label,
+.input-floating-label input:not(:placeholder-shown) ~ label {
+  top: 0.5rem;
+  transform: translateY(0) scale(0.75);
+  color: oklch(0.65 0.14 85);
+}
+
+/* ── input-gold-filled: Filled input with gold background tint ── */
+.input-gold-filled {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  border: 1px solid oklch(0.75 0.15 85 / 25%);
+  border-radius: 0.5rem;
+  background: oklch(0.96 0.025 85 / 40%);
+  font-size: 0.9375rem;
+  color: oklch(0.2 0.01 85);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  outline: none;
+}
+
+.input-gold-filled::placeholder {
+  color: oklch(0.6 0.03 85 / 60%);
+}
+
+.input-gold-filled:focus {
+  border-color: oklch(0.75 0.15 85 / 55%);
+  box-shadow: 0 0 0 3px oklch(0.75 0.15 85 / 10%);
+  background: oklch(0.96 0.025 85 / 55%);
+}
+
+.dark .input-gold-filled {
+  border-color: oklch(0.75 0.15 85 / 18%);
+  background: oklch(0.25 0.03 85 / 25%);
+  color: oklch(0.9 0.01 85);
+}
+
+.dark .input-gold-filled::placeholder {
+  color: oklch(0.55 0.02 85 / 50%);
+}
+
+.dark .input-gold-filled:focus {
+  border-color: oklch(0.75 0.15 85 / 45%);
+  box-shadow: 0 0 0 3px oklch(0.75 0.15 85 / 8%);
+  background: oklch(0.25 0.03 85 / 35%);
+}
+
+/* ── toggle-gold: Gold-themed toggle switch ── */
+.toggle-gold {
+  position: relative;
+  width: 2.75rem;
+  height: 1.5rem;
+  appearance: none;
+  -webkit-appearance: none;
+  background: oklch(0.85 0.02 85 / 60%);
+  border: 1px solid oklch(0.75 0.15 85 / 20%);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease;
+  outline: none;
+}
+
+.toggle-gold::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 1.125rem;
+  height: 1.125rem;
+  background: oklch(0.98 0.005 85);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px oklch(0 0 0 / 12%);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s ease;
+}
+
+.toggle-gold:checked {
+  background: oklch(0.75 0.15 85 / 70%);
+  border-color: oklch(0.75 0.15 85 / 50%);
+}
+
+.toggle-gold:checked::before {
+  transform: translateX(-1.25rem);
+  background: oklch(0.99 0.01 85);
+  box-shadow: 0 1px 4px oklch(0.75 0.15 85 / 30%);
+}
+
+.toggle-gold:focus-visible {
+  box-shadow: 0 0 0 3px oklch(0.75 0.15 85 / 20%);
+}
+
+.dark .toggle-gold {
+  background: oklch(0.35 0.02 85 / 50%);
+  border-color: oklch(0.75 0.15 85 / 12%);
+}
+
+.dark .toggle-gold::before {
+  background: oklch(0.65 0.03 85);
+}
+
+.dark .toggle-gold:checked {
+  background: oklch(0.65 0.14 85 / 60%);
+  border-color: oklch(0.75 0.15 85 / 35%);
+}
+
+.dark .toggle-gold:checked::before {
+  background: oklch(0.95 0.02 85);
+}
+
+/* ── checkbox-gold: Gold-themed checkbox with check animation ── */
+.checkbox-gold {
+  position: relative;
+  width: 1.25rem;
+  height: 1.25rem;
+  appearance: none;
+  -webkit-appearance: none;
+  background: oklch(0.99 0.005 85);
+  border: 2px solid oklch(0.75 0.15 85 / 30%);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.checkbox-gold::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.35rem;
+  height: 0.65rem;
+  border: solid oklch(0.99 0.005 85);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -60%) scale(0) rotate(0deg);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 0;
+}
+
+.checkbox-gold:checked {
+  background: oklch(0.75 0.15 85);
+  border-color: oklch(0.75 0.15 85);
+  box-shadow: 0 0 0 3px oklch(0.75 0.15 85 / 12%);
+}
+
+.checkbox-gold:checked::after {
+  transform: translate(-50%, -60%) scale(1) rotate(45deg);
+  opacity: 1;
+}
+
+.checkbox-gold:focus-visible {
+  box-shadow: 0 0 0 3px oklch(0.75 0.15 85 / 20%);
+}
+
+.dark .checkbox-gold {
+  background: oklch(0.2 0.01 85);
+  border-color: oklch(0.75 0.15 85 / 25%);
+}
+
+.dark .checkbox-gold:checked {
+  background: oklch(0.65 0.14 85);
+  border-color: oklch(0.65 0.14 85);
+  box-shadow: 0 0 0 3px oklch(0.65 0.14 85 / 10%);
+}
+
+.dark .checkbox-gold:checked::after {
+  border-color: oklch(0.95 0.02 85);
+}
+
+/* ─────────────────────────────────────────────────────
+ * 9.6  List & Grid Enhancements
+ * ───────────────────────────────────────────────────── */
+
+/* ── list-divider-gold: Gold-tinted list divider (right border in LTR / left border auto in RTL) ── */
+.list-divider-gold {
+  position: relative;
+  padding-block: 0.75rem;
+  padding-inline-start: 1rem;
+}
+
+.list-divider-gold::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 3px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    oklch(0.75 0.15 85 / 30%) 20%,
+    oklch(0.75 0.15 85 / 50%) 50%,
+    oklch(0.75 0.15 85 / 30%) 80%,
+    transparent 100%
+  );
+  border-radius: 2px;
+}
+
+[dir="rtl"] .list-divider-gold::before {
+  right: auto;
+  left: 0;
+}
+
+.dark .list-divider-gold::before {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    oklch(0.75 0.15 85 / 20%) 20%,
+    oklch(0.75 0.15 85 / 35%) 50%,
+    oklch(0.75 0.15 85 / 20%) 80%,
+    transparent 100%
+  );
+}
+
+/* ── grid-card-hover: Grid item card with hover border glow ── */
+.grid-card-hover {
+  position: relative;
+  border: 1px solid oklch(0.75 0.15 85 / 10%);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.grid-card-hover:hover {
+  border-color: oklch(0.75 0.15 85 / 35%);
+  box-shadow:
+    0 0 0 1px oklch(0.75 0.15 85 / 10%),
+    0 4px 16px oklch(0.75 0.15 85 / 8%),
+    0 1px 4px oklch(0 0 0 / 4%);
+  transform: translateY(-2px);
+}
+
+.dark .grid-card-hover {
+  border-color: oklch(0.75 0.15 85 / 8%);
+}
+
+.dark .grid-card-hover:hover {
+  border-color: oklch(0.75 0.15 85 / 30%);
+  box-shadow:
+    0 0 0 1px oklch(0.75 0.15 85 / 8%),
+    0 4px 20px oklch(0.75 0.15 85 / 10%),
+    0 1px 4px oklch(0 0 0 / 12%);
+}
+
+/* ── list-stagger: Staggered animation for list children ── */
+.list-stagger > * {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: stagger-child 0.35s ease-out forwards;
+}
+
+.list-stagger > *:nth-child(1)  { animation-delay: 0ms; }
+.list-stagger > *:nth-child(2)  { animation-delay: 50ms; }
+.list-stagger > *:nth-child(3)  { animation-delay: 100ms; }
+.list-stagger > *:nth-child(4)  { animation-delay: 150ms; }
+.list-stagger > *:nth-child(5)  { animation-delay: 200ms; }
+.list-stagger > *:nth-child(6)  { animation-delay: 250ms; }
+.list-stagger > *:nth-child(7)  { animation-delay: 300ms; }
+.list-stagger > *:nth-child(8)  { animation-delay: 350ms; }
+.list-stagger > *:nth-child(9)  { animation-delay: 400ms; }
+.list-stagger > *:nth-child(10) { animation-delay: 450ms; }
+
+@keyframes stagger-child {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── accordion-gold: Gold-themed accordion with animated arrow ── */
+.accordion-gold {
+  border: 1px solid oklch(0.75 0.15 85 / 15%);
+  border-radius: 0.625rem;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.accordion-gold[data-open="true"],
+.accordion-gold[aria-expanded="true"] {
+  border-color: oklch(0.75 0.15 85 / 35%);
+  box-shadow: 0 2px 12px oklch(0.75 0.15 85 / 8%);
+}
+
+.dark .accordion-gold {
+  border-color: oklch(0.75 0.15 85 / 10%);
+}
+
+.dark .accordion-gold[data-open="true"],
+.dark .accordion-gold[aria-expanded="true"] {
+  border-color: oklch(0.75 0.15 85 / 25%);
+  box-shadow: 0 2px 12px oklch(0.75 0.15 85 / 6%);
+}
+
+.accordion-gold-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: oklch(0.99 0.005 85 / 60%);
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  color: oklch(0.2 0.01 85);
+  transition: background 0.2s ease;
+  outline: none;
+}
+
+.dark .accordion-gold-trigger {
+  background: oklch(0.2 0.01 85 / 60%);
+  color: oklch(0.9 0.01 85);
+}
+
+.accordion-gold-trigger:hover {
+  background: oklch(0.96 0.02 85 / 50%);
+}
+
+.dark .accordion-gold-trigger:hover {
+  background: oklch(0.25 0.02 85 / 50%);
+}
+
+.accordion-gold-arrow {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: oklch(0.75 0.15 85);
+  flex-shrink: 0;
+}
+
+.accordion-gold[data-open="true"] .accordion-gold-arrow,
+.accordion-gold[aria-expanded="true"] .accordion-gold-arrow {
+  transform: rotate(180deg);
+}
+
+[dir="rtl"] .accordion-gold-arrow {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .accordion-gold[data-open="true"] .accordion-gold-arrow,
+[dir="rtl"] .accordion-gold[aria-expanded="true"] .accordion-gold-arrow {
+  transform: scaleX(-1) rotate(180deg);
+}
+
+.accordion-gold-content {
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+  max-height: 0;
+  opacity: 0;
+}
+
+.accordion-gold[data-open="true"] .accordion-gold-content,
+.accordion-gold[aria-expanded="true"] .accordion-gold-content {
+  max-height: 500px;
+  opacity: 1;
+}
+
+.accordion-gold-content-inner {
+  padding: 0 1.25rem 1rem 1.25rem;
+}
+
+/* ─────────────────────────────────────────────────────
+ * 9.7  Loading & Transition States
+ * ───────────────────────────────────────────────────── */
+
+/* ── skeleton-pulse-gold: Skeleton loader with gold pulse ── */
+.skeleton-pulse-gold {
+  position: relative;
+  overflow: hidden;
+  background: oklch(0.92 0.015 85 / 50%);
+  border-radius: 0.375rem;
+}
+
+.skeleton-pulse-gold::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.85 0.08 85 / 25%) 40%,
+    oklch(0.88 0.1 85 / 35%) 50%,
+    oklch(0.85 0.08 85 / 25%) 60%,
+    transparent 100%
+  );
+  background-size: 300% 100%;
+  animation: shimmer-gold 1.8s ease-in-out infinite;
+}
+
+.dark .skeleton-pulse-gold {
+  background: oklch(0.3 0.015 85 / 40%);
+}
+
+.dark .skeleton-pulse-gold::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.75 0.12 85 / 15%) 40%,
+    oklch(0.78 0.14 85 / 22%) 50%,
+    oklch(0.75 0.12 85 / 15%) 60%,
+    transparent 100%
+  );
+  background-size: 300% 100%;
+}
+
+@keyframes shimmer-gold {
+  0% {
+    background-position: 300% 0;
+  }
+  100% {
+    background-position: -300% 0;
+  }
+}
+
+/* ── transition-page: Page-level transition wrapper ── */
+.transition-page {
+  position: relative;
+  will-change: transform, opacity;
+}
+
+.transition-page.entering {
+  animation: fade-enter-page 0.3s ease-out both;
+}
+
+.transition-page.exiting {
+  animation: fade-exit-page 0.2s ease-in both;
+}
+
+@keyframes fade-enter-page {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+[dir="rtl"] .transition-page.entering {
+  animation-name: fade-enter-page-rtl;
+}
+
+@keyframes fade-enter-page-rtl {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-exit-page {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+
+[dir="rtl"] .transition-page.exiting {
+  animation-name: fade-exit-page-rtl;
+}
+
+@keyframes fade-exit-page-rtl {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+}
+
+/* ── fade-enter / fade-enter-active: Fade transition pair ── */
+.fade-enter {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+/* ─────────────────────────────────────────────────────
+ * 9.8  New Keyframe Animations
+ * ───────────────────────────────────────────────────── */
+
+/* ── float-subtle: Gentle floating translateY ±3px ── */
+@keyframes float-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* ── scale-in: Scale entrance 0.9 → 1 ── */
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── slide-in-right: Slide from right (for LTR exit in RTL context) ── */
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ── slide-in-left: Slide from left (for LTR enter in RTL context) ── */
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+ * 9.9  Responsive & Mobile Utilities
+ * ───────────────────────────────────────────────────── */
+
+/* ── safe-bottom: Safe area padding for iOS bottom bar ── */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ── scrollbar-gold: Custom gold-themed thin scrollbar ── */
+.scrollbar-gold {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.75 0.15 85 / 40%) oklch(0.75 0.15 85 / 6%);
+}
+
+.scrollbar-gold::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-gold::-webkit-scrollbar-track {
+  background: oklch(0.75 0.15 85 / 6%);
+  border-radius: 3px;
+}
+
+.scrollbar-gold::-webkit-scrollbar-thumb {
+  background: oklch(0.75 0.15 85 / 40%);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.scrollbar-gold::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.75 0.15 85 / 55%);
+}
+
+.dark .scrollbar-gold {
+  scrollbar-color: oklch(0.75 0.15 85 / 25%) oklch(0.75 0.15 85 / 4%);
+}
+
+.dark .scrollbar-gold::-webkit-scrollbar-track {
+  background: oklch(0.75 0.15 85 / 4%);
+}
+
+.dark .scrollbar-gold::-webkit-scrollbar-thumb {
+  background: oklch(0.75 0.15 85 / 25%);
+}
+
+.dark .scrollbar-gold::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.75 0.15 85 / 40%);
+}
+
+/* ── float-subtle-apply: Utility class to apply float-subtle animation ── */
+.float-subtle-apply {
+  animation: float-subtle 3s ease-in-out infinite;
+}
+
+/* ── scale-in-apply: Utility class to apply scale-in animation ── */
+.scale-in-apply {
+  animation: scale-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── slide-in-right-apply / slide-in-left-apply: RTL-aware slide utility ── */
+.slide-in-right-apply {
+  animation: slide-in-right 0.35s ease-out both;
+}
+
+.slide-in-left-apply {
+  animation: slide-in-left 0.35s ease-out both;
+}
+
+/* ── End of CSS Enhancement Round 4 ── */
+
+/*
+ * ═══════════════════════════════════════════════════════
+ *  CSS Enhancement Round 5 — زرین گلد (Zarrin Gold)
+ *  Notification, Card Texture, Layout, Interaction,
+ *  Chart, Premium, Navigation, Transitions
+ * ═══════════════════════════════════════════════════════
+ */
+
+/* ═══════════════════════════════════════════════════════
+ *  Round 5 — Keyframes
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── Slide in from right for RTL notifications ── */
+@keyframes notification-slide-in-rtl {
+  0% {
+    opacity: 0;
+    transform: translateX(80px) rotate(-2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+/* ── Scale pulse for badge indicators ── */
+@keyframes badge-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.18);
+  }
+}
+
+/* ── Opacity pulse for dot indicators ── */
+@keyframes dot-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* ── Background-position shift for mesh gradient ── */
+@keyframes mesh-gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ── 3D Y-axis coin rotation with perspective ── */
+@keyframes coin-spin-3d {
+  0% {
+    transform: perspective(800px) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(800px) rotateY(360deg);
+  }
+}
+
+/* ── Quick press scale down to 0.97 and back ── */
+@keyframes press-scale {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.97);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ── Gold shine sweep across ribbon ── */
+@keyframes ribbon-shine {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* ── Subtle emboss shadow pulse for seal ── */
+@keyframes seal-emboss {
+  0%, 100% {
+    box-shadow:
+      0 2px 8px oklch(0 0 0 / 20%),
+      inset 0 1px 0 oklch(0.85 0.1 85 / 40%),
+      inset 0 -1px 0 oklch(0.5 0.08 85 / 30%);
+  }
+  50% {
+    box-shadow:
+      0 4px 16px oklch(0 0 0 / 30%),
+      inset 0 2px 0 oklch(0.85 0.1 85 / 60%),
+      inset 0 -2px 0 oklch(0.5 0.08 85 / 40%);
+  }
+}
+
+/* ── Horizontal slide for nav indicator (RTL: right to left) ── */
+@keyframes nav-indicator-slide {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(-100% - 8px));
+    opacity: 1;
+  }
+}
+
+/* ── Width expand from center for tab underline ── */
+@keyframes tab-underline {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+/* ── Combined fade + translateY + scale for view enter ── */
+@keyframes view-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  1. Notification & Toast Enhancements (4 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── toast-gold: Gold-themed toast notification ── */
+.toast-gold {
+  position: relative;
+  background: oklch(0.99 0.015 85);
+  border: 1px solid oklch(0.75 0.15 85 / 20%);
+  border-right: 3px solid oklch(0.75 0.15 85);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 4px 16px oklch(0 0 0 / 6%),
+    0 0 0 1px oklch(0.75 0.15 85 / 5%);
+  padding: 12px 16px;
+}
+
+.dark .toast-gold {
+  background: oklch(0.14 0.015 280);
+  border-color: oklch(0.75 0.15 85 / 15%);
+  border-right-color: oklch(0.75 0.15 85);
+  box-shadow:
+    0 4px 16px oklch(0 0 0 / 30%),
+    0 0 0 1px oklch(0.75 0.15 85 / 8%);
+}
+
+/* ── notification-slide-in: Slide-in animation from right (RTL) ── */
+.notification-slide-in {
+  animation: notification-slide-in-rtl 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── badge-pulse-gold: Pulsing gold badge with scale ── */
+.badge-pulse-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: oklch(0.75 0.15 85);
+  color: oklch(0.12 0.005 60);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 9999px;
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
+.dark .badge-pulse-gold {
+  background: oklch(0.75 0.15 85);
+  color: oklch(0.1 0.005 280);
+}
+
+/* ── badge-dot: Small pulsing dot for unread status ── */
+.badge-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
+}
+
+.badge-dot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: oklch(0.75 0.15 85);
+  border-radius: 50%;
+  animation: dot-pulse 1.5s ease-in-out infinite;
+}
+
+.badge-dot::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  background: oklch(0.75 0.15 85 / 30%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: dot-pulse 1.5s ease-in-out infinite reverse;
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  2. Card Texture & Material Effects (5 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── card-mesh-gradient: Animated mesh gradient background ── */
+.card-mesh-gradient {
+  background:
+    radial-gradient(ellipse at 20% 50%, oklch(0.75 0.15 85 / 12%) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, oklch(0.85 0.1 85 / 10%) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 80%, oklch(0.65 0.1 85 / 8%) 0%, transparent 50%),
+    radial-gradient(ellipse at 10% 90%, oklch(0.8 0.12 85 / 6%) 0%, transparent 50%);
+  background-size: 200% 200%;
+  animation: mesh-gradient-shift 8s ease infinite;
+}
+
+.dark .card-mesh-gradient {
+  background:
+    radial-gradient(ellipse at 20% 50%, oklch(0.75 0.15 85 / 18%) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, oklch(0.85 0.1 85 / 14%) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 80%, oklch(0.65 0.1 85 / 10%) 0%, transparent 50%),
+    radial-gradient(ellipse at 10% 90%, oklch(0.8 0.12 85 / 8%) 0%, transparent 50%);
+  background-size: 200% 200%;
+  animation: mesh-gradient-shift 8s ease infinite;
+}
+
+/* ── card-noise-texture: Subtle noise texture overlay ── */
+.card-noise-texture {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-noise-texture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+  opacity: 0.6;
+}
+
+.dark .card-noise-texture::after {
+  opacity: 0.35;
+}
+
+/* ── card-inner-glow: Inner gold glow using box-shadow inset ── */
+.card-inner-glow {
+  box-shadow:
+    inset 0 1px 0 oklch(0.75 0.15 85 / 10%),
+    inset 0 -1px 0 oklch(0.75 0.15 85 / 5%),
+    inset 1px 0 0 oklch(0.75 0.15 85 / 5%),
+    inset -1px 0 0 oklch(0.75 0.15 85 / 5%);
+}
+
+.dark .card-inner-glow {
+  box-shadow:
+    inset 0 1px 0 oklch(0.75 0.15 85 / 15%),
+    inset 0 -1px 0 oklch(0.75 0.15 85 / 8%),
+    inset 1px 0 0 oklch(0.75 0.15 85 / 8%),
+    inset -1px 0 0 oklch(0.75 0.15 85 / 8%);
+}
+
+/* ── card-gradient-border: Animated gradient border using background-clip ── */
+.card-gradient-border {
+  position: relative;
+  background: oklch(0.98 0.01 85);
+  border-radius: var(--radius-md);
+  padding: 1px;
+}
+
+.dark .card-gradient-border {
+  background: oklch(0.1 0.005 280);
+}
+
+.card-gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(
+    135deg,
+    oklch(0.75 0.15 85 / 60%),
+    oklch(0.85 0.1 85 / 20%),
+    oklch(0.65 0.12 85 / 40%),
+    oklch(0.75 0.15 85 / 60%)
+  );
+  background-size: 300% 300%;
+  animation: mesh-gradient-shift 6s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ── card-glass-matte: Matte glass effect (no saturation boost) ── */
+.card-glass-matte {
+  background: oklch(1 0 0 / 50%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid oklch(1 0 0 / 18%);
+  box-shadow:
+    0 4px 12px oklch(0 0 0 / 4%),
+    inset 0 1px 0 oklch(1 0 0 / 15%);
+}
+
+.dark .card-glass-matte {
+  background: oklch(0.12 0.005 280 / 55%);
+  border-color: oklch(1 0 0 / 6%);
+  box-shadow:
+    0 4px 12px oklch(0 0 0 / 25%),
+    inset 0 1px 0 oklch(1 0 0 / 4%);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  3. Responsive Layout Helpers (4 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── responsive-stack: Flex column on mobile, row on desktop (RTL-aware) ── */
+.responsive-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .responsive-stack {
+    flex-direction: row;
+  }
+}
+
+/* ── responsive-grid-auto: Auto-fit grid with min 280px columns ── */
+.responsive-grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+/* ── responsive-clamp: Uses clamp() for fluid typography ── */
+.responsive-clamp {
+  font-size: clamp(0.875rem, 2vw + 0.5rem, 1.5rem);
+  line-height: 1.5;
+}
+
+/* ── container-safe: Container with safe area insets for mobile ── */
+.container-safe {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: max(1rem, env(safe-area-inset-right, 1rem));
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  4. Interactive State Feedback (5 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── press-effect: Scale down on active/pressed state ── */
+.press-effect {
+  transition: transform 0.15s ease;
+  cursor: pointer;
+}
+
+.press-effect:active {
+  transform: scale(0.97);
+}
+
+/* ── focus-ring-gold: Gold focus ring on focus-visible ── */
+.focus-ring-gold:focus-visible {
+  outline: 2px solid oklch(0.75 0.15 85);
+  outline-offset: 2px;
+}
+
+/* ── selected-gold: Selected/active state with gold bg + border ── */
+.selected-gold {
+  background: oklch(0.75 0.15 85 / 10%);
+  border: 1px solid oklch(0.75 0.15 85 / 30%);
+  color: oklch(0.55 0.12 85);
+}
+
+.dark .selected-gold {
+  background: oklch(0.75 0.15 85 / 12%);
+  border-color: oklch(0.75 0.15 85 / 25%);
+  color: oklch(0.85 0.1 85);
+}
+
+/* ── disabled-gold: Disabled state with reduced opacity ── */
+.disabled-gold {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(0.3);
+}
+
+/* ── loading-shimmer-card: Shimmer loading state for card placeholders ── */
+.loading-shimmer-card {
+  position: relative;
+  overflow: hidden;
+  background: oklch(0.95 0.01 85);
+  border-radius: var(--radius-md);
+}
+
+.dark .loading-shimmer-card {
+  background: oklch(0.16 0.005 280);
+}
+
+.loading-shimmer-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.95 0.06 85 / 40%) 30%,
+    oklch(0.97 0.08 85 / 60%) 50%,
+    oklch(0.95 0.06 85 / 40%) 70%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.dark .loading-shimmer-card::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.25 0.03 85 / 25%) 30%,
+    oklch(0.3 0.05 85 / 40%) 50%,
+    oklch(0.25 0.03 85 / 25%) 70%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  5. Chart & Data Visualization Enhancements (4 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── chart-gold-line: Gold-colored line/border for chart containers ── */
+.chart-gold-line {
+  border: 1px solid oklch(0.75 0.15 85 / 20%);
+  border-bottom: 2px solid oklch(0.75 0.15 85);
+  background: oklch(0.995 0.005 85);
+}
+
+.dark .chart-gold-line {
+  border-color: oklch(0.75 0.15 85 / 12%);
+  border-bottom-color: oklch(0.75 0.15 85);
+  background: oklch(0.1 0.005 280);
+}
+
+/* ── chart-gradient-area: Gold gradient area fill for charts ── */
+.chart-gradient-area {
+  background: linear-gradient(
+    180deg,
+    oklch(0.75 0.15 85 / 25%) 0%,
+    oklch(0.75 0.15 85 / 8%) 50%,
+    oklch(0.75 0.15 85 / 0%) 100%
+  );
+}
+
+.dark .chart-gradient-area {
+  background: linear-gradient(
+    180deg,
+    oklch(0.75 0.15 85 / 30%) 0%,
+    oklch(0.75 0.15 85 / 10%) 50%,
+    oklch(0.75 0.15 85 / 0%) 100%
+  );
+}
+
+/* ── data-value-highlight: Highlighted data value with gold bg pulse ── */
+.data-value-highlight {
+  display: inline-block;
+  padding: 2px 10px;
+  background: oklch(0.75 0.15 85 / 10%);
+  border: 1px solid oklch(0.75 0.15 85 / 20%);
+  border-radius: var(--radius-sm);
+  font-variant-numeric: tabular-nums;
+  animation: badge-pulse 2.5s ease-in-out infinite;
+}
+
+.dark .data-value-highlight {
+  background: oklch(0.75 0.15 85 / 14%);
+  border-color: oklch(0.75 0.15 85 / 18%);
+}
+
+/* ── chart-tooltip-gold: Gold-themed chart tooltip with arrow ── */
+.chart-tooltip-gold {
+  position: relative;
+  background: oklch(0.99 0.015 85);
+  border: 1px solid oklch(0.75 0.15 85 / 20%);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  box-shadow: 0 4px 12px oklch(0 0 0 / 8%);
+  font-variant-numeric: tabular-nums;
+}
+
+.dark .chart-tooltip-gold {
+  background: oklch(0.14 0.01 280);
+  border-color: oklch(0.75 0.15 85 / 18%);
+  box-shadow: 0 4px 12px oklch(0 0 0 / 30%);
+}
+
+.chart-tooltip-gold::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  right: 16px;
+  width: 10px;
+  height: 10px;
+  background: inherit;
+  border: inherit;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  6. Gold Coin & Premium Elements (3 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── gold-coin-spin-3d: 3D coin spin with perspective ── */
+.gold-coin-spin-3d {
+  perspective: 800px;
+  transform-style: preserve-3d;
+}
+
+.gold-coin-spin-3d > * {
+  animation: coin-spin-3d 4s linear infinite;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* ── gold-ribbon: Gold ribbon/banner corner decoration ── */
+.gold-ribbon {
+  position: relative;
+  display: inline-block;
+  padding: 6px 20px;
+  background: linear-gradient(
+    135deg,
+    oklch(0.75 0.15 85) 0%,
+    oklch(0.65 0.12 85) 100%
+  );
+  color: oklch(0.12 0.005 60);
+  font-weight: 700;
+  font-size: 0.75rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  box-shadow:
+    0 2px 8px oklch(0 0 0 / 15%),
+    inset 0 1px 0 oklch(0.85 0.1 85 / 40%);
+}
+
+.dark .gold-ribbon {
+  background: linear-gradient(
+    135deg,
+    oklch(0.75 0.15 85) 0%,
+    oklch(0.6 0.12 85) 100%
+  );
+  color: oklch(0.1 0.005 280);
+  box-shadow:
+    0 2px 8px oklch(0 0 0 / 35%),
+    inset 0 1px 0 oklch(0.85 0.1 85 / 30%);
+}
+
+/* Ribbon shine sweep */
+.gold-ribbon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 20%,
+    oklch(1 0 0 / 25%) 50%,
+    transparent 80%
+  );
+  background-size: 200% 100%;
+  animation: ribbon-shine 3s ease-in-out infinite;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ── gold-seal: Circular gold seal/stamp with emboss effect ── */
+.gold-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 35% 35%,
+      oklch(0.85 0.12 85) 0%,
+      oklch(0.7 0.14 85) 40%,
+      oklch(0.55 0.12 85) 100%
+    );
+  border: 3px solid oklch(0.75 0.15 85);
+  box-shadow:
+    0 2px 8px oklch(0 0 0 / 20%),
+    inset 0 1px 0 oklch(0.85 0.1 85 / 40%),
+    inset 0 -1px 0 oklch(0.5 0.08 85 / 30%);
+  animation: seal-emboss 3s ease-in-out infinite;
+  color: oklch(0.2 0.02 60);
+  font-weight: 800;
+  font-size: 0.75rem;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.dark .gold-seal {
+  background:
+    radial-gradient(
+      circle at 35% 35%,
+      oklch(0.8 0.15 85) 0%,
+      oklch(0.65 0.14 85) 40%,
+      oklch(0.45 0.1 85) 100%
+    );
+  box-shadow:
+    0 2px 12px oklch(0 0 0 / 40%),
+    inset 0 1px 0 oklch(0.85 0.1 85 / 30%),
+    inset 0 -1px 0 oklch(0.5 0.08 85 / 25%);
+  color: oklch(0.95 0.005 85);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  7. Navigation & Menu (4 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── nav-item-active: Active nav item with gold indicator (RTL right side) ── */
+.nav-item-active {
+  position: relative;
+  color: oklch(0.65 0.12 85);
+  font-weight: 600;
+}
+
+.dark .nav-item-active {
+  color: oklch(0.85 0.1 85);
+}
+
+.nav-item-active::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -8px;
+  width: 3px;
+  height: 60%;
+  background: oklch(0.75 0.15 85);
+  border-radius: 9999px;
+  transform: translateY(-50%);
+  animation: nav-indicator-slide 0.3s ease-out both;
+}
+
+/* ── nav-dropdown-gold: Gold-themed dropdown menu ── */
+.nav-dropdown-gold {
+  background: oklch(0.995 0.005 85);
+  border: 1px solid oklch(0.75 0.15 85 / 15%);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 8px 24px oklch(0 0 0 / 8%),
+    0 0 0 1px oklch(0.75 0.15 85 / 5%);
+  padding: 4px;
+}
+
+.dark .nav-dropdown-gold {
+  background: oklch(0.13 0.005 280);
+  border-color: oklch(0.75 0.15 85 / 12%);
+  box-shadow:
+    0 8px 24px oklch(0 0 0 / 35%),
+    0 0 0 1px oklch(0.75 0.15 85 / 8%);
+}
+
+/* ── breadcrumb-gold: Gold breadcrumb separator with hover ── */
+.breadcrumb-gold {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.breadcrumb-gold li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: oklch(0.52 0.01 85);
+  font-size: 0.875rem;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-gold li:last-child {
+  color: oklch(0.65 0.12 85);
+  font-weight: 600;
+}
+
+.dark .breadcrumb-gold li {
+  color: oklch(0.62 0.015 85);
+}
+
+.dark .breadcrumb-gold li:last-child {
+  color: oklch(0.85 0.1 85);
+}
+
+.breadcrumb-gold li a:hover {
+  color: oklch(0.75 0.15 85);
+}
+
+.breadcrumb-gold li + li::before {
+  content: '/';
+  color: oklch(0.75 0.15 85 / 40%);
+  font-weight: 400;
+}
+
+/* ── tab-indicator: Animated underline indicator for tabs ── */
+.tab-indicator {
+  position: relative;
+  padding-bottom: 8px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.tab-indicator::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 2px;
+  background: oklch(0.75 0.15 85);
+  border-radius: 9999px;
+  animation: tab-underline 0.3s ease-out both;
+}
+
+.dark .tab-indicator::after {
+  background: oklch(0.85 0.1 85);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  8. Page Transition & Route Animation (2 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── view-enter-animation: View transition fade + slide + scale ── */
+.view-enter-animation {
+  animation: view-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── layout-shift-stable: Prevent layout shift during content loading ── */
+.layout-shift-stable {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* ── End of CSS Enhancement Round 5 ── */
+
+/*
+ * ═══════════════════════════════════════════════════════
+ *  Task 4-R19 — CSS Enhancement Round 6
+ *  22 new utility classes, 10 new keyframes
+ * ═══════════════════════════════════════════════════════
+ */
+
+/* ═══════════════════════════════════════════════════════
+ *  1. Page Transition Animations (4 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── page-slide-in: Slide from right with fade (RTL-friendly) ── */
+.page-slide-in {
+  animation: page-slide-in-anim 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes page-slide-in-anim {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+[dir="rtl"] .page-slide-in {
+  animation-name: page-slide-in-rtl;
+}
+
+@keyframes page-slide-in-rtl {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ── page-slide-out: Slide to left with fade ── */
+.page-slide-out {
+  animation: page-slide-out-anim 0.3s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+@keyframes page-slide-out-anim {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+}
+
+[dir="rtl"] .page-slide-out {
+  animation-name: page-slide-out-rtl;
+}
+
+@keyframes page-slide-out-rtl {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+}
+
+/* ── page-fade-in: Simple fade in ── */
+.page-fade-in {
+  animation: page-fade-in-anim 0.35s ease-out both;
+}
+
+@keyframes page-fade-in-anim {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ── view-transition: Smooth view switch with scale effect ── */
+.view-transition {
+  animation: view-transition-anim 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes view-transition-anim {
+  0% {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  2. Gold Gradient Overlays (3 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── overlay-gold-gradient: Gold-to-transparent gradient overlay for hero sections ── */
+.overlay-gold-gradient {
+  position: relative;
+}
+
+.overlay-gold-gradient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    oklch(0.75 0.15 85 / 12%) 0%,
+    oklch(0.75 0.15 85 / 4%) 40%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dark .overlay-gold-gradient::before {
+  background: linear-gradient(
+    180deg,
+    oklch(0.75 0.15 85 / 18%) 0%,
+    oklch(0.75 0.15 85 / 6%) 40%,
+    transparent 100%
+  );
+}
+
+/* ── overlay-dark-gradient: Dark-to-transparent for bottom of sections ── */
+.overlay-dark-gradient {
+  position: relative;
+}
+
+.overlay-dark-gradient::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(
+    to top,
+    oklch(0.15 0.01 60 / 90%) 0%,
+    oklch(0.15 0.01 60 / 40%) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dark .overlay-dark-gradient::after {
+  background: linear-gradient(
+    to top,
+    oklch(0.08 0.005 280 / 95%) 0%,
+    oklch(0.08 0.005 280 / 50%) 50%,
+    transparent 100%
+  );
+}
+
+/* ── overlay-shimmer: Animated shimmer overlay effect ── */
+.overlay-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.overlay-shimmer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    oklch(0.95 0.08 85 / 25%) 45%,
+    oklch(0.97 0.1 85 / 40%) 50%,
+    oklch(0.95 0.08 85 / 25%) 55%,
+    transparent 70%
+  );
+  background-size: 250% 100%;
+  animation: overlay-shimmer-anim 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.dark .overlay-shimmer::before {
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    oklch(0.75 0.15 85 / 10%) 45%,
+    oklch(0.85 0.18 85 / 20%) 50%,
+    oklch(0.75 0.15 85 / 10%) 55%,
+    transparent 70%
+  );
+  background-size: 250% 100%;
+}
+
+@keyframes overlay-shimmer-anim {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  3. Enhanced Card Interactions (4 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── card-tilt: 3D tilt effect on hover using CSS transforms ── */
+.card-tilt {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+  perspective: 800px;
+}
+
+.card-tilt:hover {
+  transform: perspective(800px) rotateX(var(--tilt-x, -2deg)) rotateY(var(--tilt-y, 2deg)) scale(1.02);
+  box-shadow:
+    0 16px 40px oklch(0 0 0 / 10%),
+    0 0 0 1px oklch(0.75 0.15 85 / 15%),
+    0 0 30px oklch(0.75 0.15 85 / 8%);
+}
+
+.dark .card-tilt:hover {
+  box-shadow:
+    0 16px 40px oklch(0 0 0 / 40%),
+    0 0 0 1px oklch(0.75 0.15 85 / 20%),
+    0 0 30px oklch(0.75 0.15 85 / 12%);
+}
+
+/* ── card-expand: Smooth expand on hover with max-height transition ── */
+.card-expand {
+  max-height: 80px;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.3s ease;
+}
+
+.card-expand:hover {
+  max-height: 400px;
+  box-shadow: 0 8px 24px oklch(0 0 0 / 8%);
+}
+
+.dark .card-expand:hover {
+  box-shadow: 0 8px 24px oklch(0 0 0 / 30%);
+}
+
+/* ── card-stack: Stacked card effect for grouped items ── */
+.card-stack {
+  position: relative;
+}
+
+.card-stack::before,
+.card-stack::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  border: inherit;
+  z-index: -1;
+  transition: transform 0.3s ease;
+}
+
+.card-stack::before {
+  transform: translateY(6px) scale(0.97);
+  opacity: 0.6;
+}
+
+.card-stack::after {
+  transform: translateY(12px) scale(0.94);
+  opacity: 0.3;
+}
+
+.card-stack:hover::before {
+  transform: translateY(8px) translateX(4px) scale(0.97);
+  opacity: 0.5;
+}
+
+.card-stack:hover::after {
+  transform: translateY(16px) translateX(8px) scale(0.94);
+  opacity: 0.25;
+}
+
+[dir="rtl"] .card-stack:hover::before {
+  transform: translateY(8px) translateX(-4px) scale(0.97);
+}
+
+[dir="rtl"] .card-stack:hover::after {
+  transform: translateY(16px) translateX(-8px) scale(0.94);
+}
+
+/* ── card-flip: Flip card animation for before/after content ── */
+.card-flip {
+  perspective: 1000px;
+}
+
+.card-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+
+.card-flip:hover .card-flip-inner,
+.card-flip.flipped .card-flip-inner {
+  transform: rotateY(180deg);
+}
+
+[dir="rtl"] .card-flip:hover .card-flip-inner,
+[dir="rtl"] .card-flip.flipped .card-flip-inner {
+  transform: rotateY(-180deg);
+}
+
+.card-flip-front,
+.card-flip-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: inherit;
+}
+
+.card-flip-back {
+  transform: rotateY(180deg);
+}
+
+[dir="rtl"] .card-flip-back {
+  transform: rotateY(-180deg);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  4. Text Enhancements (3 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── text-blink-gold: Gold blinking text animation ── */
+.text-blink-gold {
+  animation: text-blink-gold-anim 1.5s ease-in-out infinite;
+  color: oklch(0.55 0.12 85);
+}
+
+.dark .text-blink-gold {
+  color: oklch(0.75 0.15 85);
+}
+
+@keyframes text-blink-gold-anim {
+  0%, 100% {
+    opacity: 1;
+    color: oklch(0.55 0.12 85);
+  }
+  50% {
+    opacity: 0.3;
+    color: oklch(0.75 0.15 85);
+  }
+}
+
+.dark .text-blink-gold {
+  animation-name: text-blink-gold-dark;
+}
+
+@keyframes text-blink-gold-dark {
+  0%, 100% {
+    opacity: 1;
+    color: oklch(0.75 0.15 85);
+  }
+  50% {
+    opacity: 0.4;
+    color: oklch(0.85 0.1 85);
+  }
+}
+
+/* ── text-count-up: Number count-up animation trigger ── */
+.text-count-up {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.3s ease;
+}
+
+.text-count-up.counting {
+  animation: text-count-up-anim 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes text-count-up-anim {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.9);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── text-gradient-border: Text with gradient border effect ── */
+.text-gradient-border {
+  position: relative;
+  display: inline-block;
+  padding: 4px 12px;
+  background: linear-gradient(
+    135deg,
+    oklch(0.75 0.15 85),
+    oklch(0.85 0.1 85),
+    oklch(0.65 0.12 85)
+  );
+  background-size: 200% 200%;
+  border-radius: var(--radius);
+  animation: gradient-border-shift 4s ease infinite;
+}
+
+.text-gradient-border > * {
+  position: relative;
+  z-index: 1;
+  background: var(--background);
+  padding: 2px 8px;
+  border-radius: calc(var(--radius) - 2px);
+}
+
+@keyframes gradient-border-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  5. Interactive Indicators (3 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── indicator-live-dot: Pulsing live indicator dot (red/green variants) ── */
+.indicator-live-dot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.indicator-live-dot::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: oklch(0.65 0.2 145);
+  animation: indicator-pulse 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.indicator-live-dot::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: oklch(0.65 0.2 145);
+  animation: indicator-ring-expand 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* Red variant */
+.indicator-live-dot.indicator-red::before {
+  background: oklch(0.6 0.22 25);
+}
+
+.indicator-live-dot.indicator-red::after {
+  background: oklch(0.6 0.22 25);
+}
+
+/* Gold variant */
+.indicator-live-dot.indicator-gold::before {
+  background: #D4AF37;
+}
+
+.indicator-live-dot.indicator-gold::after {
+  background: #D4AF37;
+}
+
+.dark .indicator-live-dot::before {
+  background: oklch(0.7 0.22 145);
+}
+
+.dark .indicator-live-dot::after {
+  background: oklch(0.7 0.22 145);
+}
+
+.dark .indicator-live-dot.indicator-red::before {
+  background: oklch(0.7 0.2 25);
+}
+
+.dark .indicator-live-dot.indicator-red::after {
+  background: oklch(0.7 0.2 25);
+}
+
+@keyframes indicator-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes indicator-ring-expand {
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.5);
+  }
+}
+
+/* ── indicator-progress-ring: Circular progress ring using conic-gradient ── */
+.indicator-progress-ring {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: conic-gradient(
+    oklch(0.75 0.15 85) calc(var(--progress, 0) * 3.6deg),
+    oklch(0.92 0.02 85) calc(var(--progress, 0) * 3.6deg)
+  );
+}
+
+.dark .indicator-progress-ring {
+  background: conic-gradient(
+    oklch(0.75 0.15 85) calc(var(--progress, 0) * 3.6deg),
+    oklch(0.2 0.01 280) calc(var(--progress, 0) * 3.6deg)
+  );
+}
+
+.indicator-progress-ring::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--background);
+}
+
+.indicator-progress-ring > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── indicator-stepper: Horizontal step indicator with connecting lines ── */
+.indicator-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+}
+
+.indicator-stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  position: relative;
+}
+
+.indicator-stepper-step::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  inset-inline-start: calc(50% + 14px);
+  inset-inline-end: calc(-50% + 14px);
+  height: 2px;
+  background: oklch(0.9 0.01 85);
+  z-index: 0;
+}
+
+.dark .indicator-stepper-step::before {
+  background: oklch(0.2 0.005 280);
+}
+
+.indicator-stepper-step.completed::before {
+  background: oklch(0.75 0.15 85);
+}
+
+.indicator-stepper-step:last-child::before {
+  display: none;
+}
+
+.indicator-stepper-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  border: 2px solid oklch(0.9 0.01 85);
+  background: oklch(0.995 0.003 85);
+  color: oklch(0.52 0.01 85);
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.dark .indicator-stepper-dot {
+  border-color: oklch(0.2 0.005 280);
+  background: oklch(0.12 0.005 280);
+  color: oklch(0.62 0.015 85);
+}
+
+.indicator-stepper-step.active .indicator-stepper-dot {
+  border-color: #D4AF37;
+  background: #D4AF37;
+  color: oklch(0.1 0.005 280);
+  box-shadow: 0 0 0 4px oklch(0.75 0.15 85 / 20%);
+}
+
+.indicator-stepper-step.completed .indicator-stepper-dot {
+  border-color: oklch(0.75 0.15 85);
+  background: oklch(0.75 0.15 85);
+  color: oklch(1 0 0);
+}
+
+.indicator-stepper-label {
+  font-size: 12px;
+  color: oklch(0.52 0.01 85);
+  white-space: nowrap;
+}
+
+.dark .indicator-stepper-label {
+  color: oklch(0.62 0.015 85);
+}
+
+.indicator-stepper-step.active .indicator-stepper-label {
+  color: #D4AF37;
+  font-weight: 600;
+}
+
+.indicator-stepper-step.completed .indicator-stepper-label {
+  color: oklch(0.75 0.15 85);
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  6. Premium Scroll Effects (3 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── scroll-snap-x: Horizontal scroll snap container ── */
+.scroll-snap-x {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-inline-start: 16px;
+  scroll-padding-inline-end: 16px;
+}
+
+.scroll-snap-x > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* ── scroll-snap-y: Vertical scroll snap container ── */
+.scroll-snap-y {
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-block-start: 16px;
+  scroll-padding-block-end: 16px;
+}
+
+.scroll-snap-y > * {
+  scroll-snap-align: start;
+}
+
+/* ── scroll-hide-scrollbar: Hide scrollbar while keeping scroll functionality ── */
+.scroll-hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scroll-hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  7. Glass Morphism Premium (2 classes)
+ * ═══════════════════════════════════════════════════════ */
+
+/* ── glass-gold-chrome: Chrome-like gold glass effect with strong reflections ── */
+.glass-gold-chrome {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    oklch(0.97 0.04 85 / 70%) 0%,
+    oklch(0.95 0.06 85 / 50%) 30%,
+    oklch(0.98 0.02 85 / 80%) 50%,
+    oklch(0.95 0.05 85 / 60%) 70%,
+    oklch(0.97 0.03 85 / 70%) 100%
+  );
+  backdrop-filter: blur(24px) saturate(220%) brightness(1.05);
+  -webkit-backdrop-filter: blur(24px) saturate(220%) brightness(1.05);
+  border: 1px solid oklch(0.75 0.15 85 / 25%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 6%),
+    inset 0 1px 0 oklch(1 0 0 / 40%),
+    inset 0 -1px 0 oklch(0 0 0 / 4%);
+}
+
+.glass-gold-chrome::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    oklch(0.75 0.15 85 / 15%) 0%,
+    transparent 40%,
+    transparent 60%,
+    oklch(0.85 0.1 85 / 10%) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glass-gold-chrome > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dark .glass-gold-chrome {
+  background: linear-gradient(
+    135deg,
+    oklch(0.16 0.025 85 / 70%) 0%,
+    oklch(0.14 0.035 85 / 50%) 30%,
+    oklch(0.18 0.015 85 / 80%) 50%,
+    oklch(0.15 0.03 85 / 60%) 70%,
+    oklch(0.16 0.02 85 / 70%) 100%
+  );
+  border-color: oklch(0.75 0.15 85 / 18%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 35%),
+    inset 0 1px 0 oklch(1 0 0 / 8%),
+    inset 0 -1px 0 oklch(0 0 0 / 15%);
+}
+
+.dark .glass-gold-chrome::before {
+  background: linear-gradient(
+    135deg,
+    oklch(0.75 0.15 85 / 20%) 0%,
+    transparent 40%,
+    transparent 60%,
+    oklch(0.85 0.1 85 / 12%) 100%
+  );
+}
+
+/* ── glass-frosted: Heavy frosted glass with blur and noise ── */
+.glass-frosted {
+  position: relative;
+  background: oklch(1 0 0 / 45%);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid oklch(1 0 0 / 18%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 5%),
+    inset 0 1px 0 oklch(1 0 0 / 25%);
+}
+
+.glass-frosted::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='0.03'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+.glass-frosted > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dark .glass-frosted {
+  background: oklch(0.12 0.005 280 / 55%);
+  border-color: oklch(1 0 0 / 8%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 30%),
+    inset 0 1px 0 oklch(1 0 0 / 6%);
+}
+
+.dark .glass-frosted::after {
+  opacity: 0.35;
+}
+
+/* ── End of CSS Enhancement Round 6 ── */
+
+/*
+ * ═══════════════════════════════════════════════════════
+ *  Task 2-b — Admin Layout Enhancements
+ * ═══════════════════════════════════════════════════════
+ */
+
+/* ── Admin page transition: subtle fade-in (200ms) ── */
+.admin-page-transition {
+  animation: admin-page-enter 200ms ease-out both;
+}
+
+@keyframes admin-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/*  Task 2-c — Premium Landing Page Animations                        */
+/* ═══════════════════════════════════════════════════════════════ */
+
+/* Shimmer loading effect for cards */
+@keyframes shimmer-gold {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.shimmer-gold {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.08) 25%,
+    rgba(212, 175, 55, 0.15) 50%,
+    rgba(212, 175, 55, 0.08) 75%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-gold 3s ease-in-out infinite;
+}
+
+/* Floating animation for decorative elements */
+@keyframes float-slow-premium {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(1deg); }
+  66% { transform: translateY(-5px) rotate(-1deg); }
+}
+.float-slow {
+  animation: float-slow-premium 6s ease-in-out infinite;
+}
+
+/* Glow pulse for accent elements */
+@keyframes glow-pulse-premium {
+  0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.1); }
+  50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.25), 0 0 60px rgba(212, 175, 55, 0.1); }
+}
+.glow-pulse {
+  animation: glow-pulse-premium 3s ease-in-out infinite;
+}
+
+/* Gold border gradient animation */
+@keyframes border-gold-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.border-gold-animated {
+  border-image: linear-gradient(135deg, #D4AF37, #F0D060, #B8960C, #D4AF37) 1;
+  animation: border-gold-flow 4s ease infinite;
+  background-size: 300% 300%;
+}
+
+/* Section reveal animation */
+@keyframes section-reveal {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.section-reveal {
+  animation: section-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Premium glass card */
+.premium-glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 175, 55, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Gold radial gradient bg */
+.bg-gold-radial {
+  background: radial-gradient(ellipse at center top, rgba(212, 175, 55, 0.06) 0%, transparent 60%);
+}
+
+/* Text gradient with animation */
+@keyframes text-gold-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.gold-text-animated {
+  background: linear-gradient(135deg, #B8960C, #D4AF37, #F0D060, #D4AF37, #B8960C);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: text-gold-shift 6s ease infinite;
+}
+
+/* CTA gradient background for sections */
+.cta-gradient {
+  background: linear-gradient(
+    135deg,
+    oklch(0.12 0.01 85) 0%,
+    oklch(0.08 0.005 280) 50%,
+    oklch(0.12 0.01 85) 100%
+  );
+}
+
+.dark .cta-gradient {
+  background: linear-gradient(
+    135deg,
+    oklch(0.1 0.02 85) 0%,
+    oklch(0.06 0.008 280) 50%,
+    oklch(0.1 0.02 85) 100%
+  );
+}
+
+/* Gold accent line on card bottom hover */
+.gold-bottom-accent {
+  position: relative;
+  overflow: hidden;
+}
+.gold-bottom-accent::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #B8960C, #D4AF37, #F0D060, #D4AF37, #B8960C);
+  background-size: 200% 100%;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gold-bottom-accent:hover::after {
+  transform: scaleX(1);
+}
+
+/* Card gold border on hover */
+.card-gold-border {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.card-gold-border:hover {
+  border-color: oklch(0.75 0.15 85 / 25%);
+  box-shadow: 0 0 20px oklch(0.75 0.15 85 / 10%);
+}
+
+/* Gold badge pill */
+.badge-gold {
+  background: linear-gradient(135deg, oklch(0.75 0.15 85 / 12%), oklch(0.75 0.15 85 / 6%));
+  border: 1px solid oklch(0.75 0.15 85 / 20%);
+  color: #D4AF37;
+}
+
+/* Pulse ring for CTA */
+.pulse-ring {
+  position: relative;
+}
+.pulse-ring::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  animation: pulse-ring-anim 2s ease-out infinite;
+}
+
+@keyframes pulse-ring-anim {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.15);
+  }
+}
+
+/* Gold separator line */
+.gold-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, oklch(0.75 0.15 85 / 50%) 50%, transparent 100%);
+}
+
+/* Tab active gold indicator */
+.tab-active-gold {
+  position: relative;
+}
+.tab-active-gold::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #D4AF37, #F0D060);
+  border-radius: 1px;
+}
+
+/* Gold icon circle for feature cards */
+.gold-icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, oklch(0.75 0.15 85 / 15%), oklch(0.75 0.15 85 / 5%));
+  border: 1px solid oklch(0.75 0.15 85 / 10%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.group:hover .gold-icon-circle {
+  background: linear-gradient(135deg, oklch(0.75 0.15 85 / 25%), oklch(0.75 0.15 85 / 10%));
+  border-color: oklch(0.75 0.15 85 / 20%);
+  transform: scale(1.1);
+  box-shadow: 0 0 20px oklch(0.75 0.15 85 / 20%);
+}
+
+/* Input gold focus ring */
+.input-gold-focus:focus {
+  box-shadow: 0 0 0 2px oklch(0.75 0.15 85 / 20%), 0 0 15px oklch(0.75 0.15 85 / 10%);
+  border-color: oklch(0.75 0.15 85 / 40%);
+}
+
+/* Stat counter gold gradient text */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #D4AF37 0%, #F0D060 50%, #D4AF37 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Glass card with strong gold tint */
+.glass-gold-strong {
+  background: oklch(0.95 0.04 85 / 50%);
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
+  border: 1px solid oklch(0.75 0.15 85 / 15%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 6%),
+    inset 0 1px 0 oklch(0.97 0.06 85 / 40%);
+}
+
+.dark .glass-gold-strong {
+  background: oklch(0.12 0.03 85 / 50%);
+  border-color: oklch(0.75 0.15 85 / 12%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 30%),
+    inset 0 1px 0 oklch(0.75 0.15 85 / 10%);
+}
+
+/* Card premium glass variant */
+.card-glass-premium {
+  background: oklch(1 0 0 / 40%);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid oklch(1 0 0 / 10%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 4%),
+    inset 0 1px 0 oklch(1 0 0 / 15%);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-glass-premium:hover {
+  border-color: oklch(0.75 0.15 85 / 15%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 8%),
+    0 0 20px oklch(0.75 0.15 85 / 8%),
+    inset 0 1px 0 oklch(1 0 0 / 15%);
+  transform: translateY(-4px);
+}
+
+.dark .card-glass-premium {
+  background: oklch(0.1 0.01 280 / 40%);
+  border-color: oklch(1 0 0 / 6%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 25%),
+    inset 0 1px 0 oklch(1 0 0 / 4%);
+}
+
+.dark .card-glass-premium:hover {
+  border-color: oklch(0.75 0.15 85 / 12%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 35%),
+    0 0 20px oklch(0.75 0.15 85 / 10%),
+    inset 0 1px 0 oklch(1 0 0 / 6%);
 }

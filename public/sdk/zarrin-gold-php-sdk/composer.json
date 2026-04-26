@@ -1,0 +1,57 @@
+{
+    "name": "zarrin-gold/sdk",
+    "description": "A comprehensive PHP SDK for the Zarrin Gold (زرین گلد) gold-backed payment gateway.",
+    "description-fa": "کیت توسعه نرم‌افزار PHP برای درگاه پرداخت زرین گلد",
+    "version": "1.0.0",
+    "type": "library",
+    "keywords": [
+        "zarrin-gold",
+        "payment-gateway",
+        "gold-payment",
+        "zarringold",
+        "زرین-گلد",
+        "درگاه-پرداخت",
+        "پرداخت-طلایی",
+        "php-sdk",
+        "iran-payment"
+    ],
+    "homepage": "https://zarringold.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Zarrin Gold",
+            "email": "support@zarringold.com",
+            "homepage": "https://zarringold.com"
+        }
+    ],
+    "support": {
+        "email": "support@zarringold.com",
+        "docs": "https://zarringold.com/docs",
+        "issues": "https://github.com/zarrin-gold/php-sdk/issues",
+        "source": "https://github.com/zarrin-gold/php-sdk"
+    },
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5 || ^10.0"
+    },
+    "autoload": {
+        "classmap": [
+            "ZarrinGold.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ZarrinGold\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
