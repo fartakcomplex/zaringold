@@ -1,6 +1,6 @@
 {
-  "name": "nextjs_tailwind_shadcn_ts",
-  "version": "0.2.0",
+  "name": "zaringold",
+  "version": "4.0.0",
   "private": true,
   "scripts": {
     "dev": "NEXT_DISABLE_TURBOPACK=1 next dev -p 3000 2>&1 | tee dev.log",
