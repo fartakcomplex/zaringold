@@ -157,9 +157,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
         <main
           className={cn(
-            'flex-1 overflow-x-hidden overflow-y-auto px-4 py-4 md:px-8 md:py-6 xl:px-12',
-            /* Mobile-native scroll behavior */
-            isMobile && 'pb-24 -webkit-overflow-scrolling-touch overscroll-y-contain'
+            'flex-1 px-4 py-4 md:px-8 md:py-6 xl:px-12',
+            /* Mobile bottom padding for bottom nav */
+            isMobile && 'pb-24'
           )}
         >
           <div key={currentPage} className="page-transition">

@@ -124,3 +124,28 @@ Stage Summary:
 - Mobile hamburger menu button now visible in authenticated panel
 - Landing pages can now scroll properly on mobile devices
 - Server running on port 3000, changes pushed to GitHub
+
+---
+Task ID: 4
+Agent: Main Agent
+Task: Fix React Hydration Error and Server Stability
+
+Work Log:
+- Diagnosed "1 Issue" error badge from Next.js DevTools overlay
+- Identified root cause: React hydration mismatch from Zustand persist middleware with localStorage
+- Server-side render uses `initialState` but client rehydrates from localStorage with different values
+- Fixed `src/lib/store.ts`:
+  - Added `_hasHydrated` flag to AppState
+  - Added `typeof window === 'undefined'` guard in `getItem` to prevent SSR localStorage access
+  - Set `_hasHydrated = true` in `onRehydrateStorage` callback
+- Fixed `src/app/page.tsx`:
+  - Added hydration guard: shows loading spinner until `mounted && _hasHydrated`
+  - Prevents rendering conditional content before store hydration completes
+- Created `keepalive-server.js` daemon to auto-restart Next.js dev server
+- Verified: dashboard loads correctly, no hydration error badge, all API routes functional
+
+Stage Summary:
+- React hydration error fixed by adding hydration guard in Home component
+- Server stability improved with keepalive daemon (auto-restart on crash)
+- Dashboard renders cleanly without Next.js error overlay
+- All endpoints return 200: /, /api/gold/prices, /api/blog/posts

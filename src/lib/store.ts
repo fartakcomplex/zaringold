@@ -48,7 +48,7 @@ export interface Transaction {
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  Page Event — used by MobileQuickActions to communicate with page components  */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════════════════════ */
 
 export interface PageEvent {
   /** Unique key per invocation (used as useEffect dependency) */
@@ -86,6 +86,9 @@ interface AppState {
 
   // Page Event — for MobileQuickActions → page component communication
   pageEvent: PageEvent | null;
+
+  // Hydration
+  _hasHydrated: boolean;
 
   // Actions
   setUser: (user: User | null) => void;
@@ -134,6 +137,7 @@ const initialState = {
   toasts: [],
   blogPostSlug: null as string | null,
   pageEvent: null as PageEvent | null,
+  _hasHydrated: false,
 };
 
 export const useAppStore = create<AppState>()(
@@ -184,6 +188,7 @@ export const useAppStore = create<AppState>()(
       storage: {
         getItem: (name) => {
           try {
+            if (typeof window === 'undefined') return null;
             const raw = localStorage.getItem(name);
             if (!raw) return null;
             return JSON.parse(raw);
@@ -200,10 +205,11 @@ export const useAppStore = create<AppState>()(
           try { localStorage.removeItem(name); } catch { /* ignore */ }
         },
       },
-      onRehydrateStorage: () => (state, error) => {
-        if (error) {
-          console.warn('[ZarrinGold] Failed to rehydrate store, resetting:', error);
-          state?.reset?.();
+      onRehydrateStorage: () => (state) => {
+        // Mark hydration as complete — this is what prevents the mismatch
+        if (state) {
+          state._hasHydrated = true;
+          useAppStore.setState({ _hasHydrated: true });
         }
       },
     }

@@ -389,12 +389,27 @@ function AuthenticatedPage() {
 /* ------------------------------------------------------------------ */
 
 export default function Home() {
-  const { isAuthenticated, currentPage, setPage, user } = useAppStore();
+  const { isAuthenticated, currentPage, setPage, user, _hasHydrated } = useAppStore();
   const [loginOpen, setLoginOpen] = useState(false);
   const [registerOpen, setRegisterOpen] = useState(false);
   const [registeringUser, setRegisteringUser] = useState<any>(null);
   const [showLanding, setShowLanding] = useState(false);
   const [landingSubPage, setLandingSubPage] = useState<LandingSubPage>(null);
+
+  /* ── Wait for Zustand hydration to avoid hydration mismatch ── */
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  const ready = mounted && _hasHydrated;
+  if (!ready) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <div className="size-10 animate-spin rounded-full border-2 border-gold/30 border-t-gold" />
+          <p className="text-sm text-muted-foreground">در حال بارگذاری...</p>
+        </div>
+      </main>
+    );
+  }
 
   /* ── Landing page toggle (authenticated users can preview landing) ── */
   if (isAuthenticated && showLanding) {

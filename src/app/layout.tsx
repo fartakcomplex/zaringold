@@ -5,6 +5,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "next-themes";
 import LocaleProvider from "@/components/shared/LocaleProvider";
+import ScrollFix from "@/components/shared/ScrollFix";
 
 const iranSans = localFont({
   variable: "--font-vazir",
@@ -77,8 +78,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fa" dir="rtl" suppressHydrationWarning>
+    <html lang="fa" dir="rtl" suppressHydrationWarning className="overflow-fix">
+
       <body className={`${iranSans.variable} ${inter.variable} antialiased bg-background text-foreground`}>
+        <ScrollFix />
         <LocaleProvider>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
             {children}
