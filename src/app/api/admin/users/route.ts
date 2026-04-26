@@ -4,6 +4,82 @@ import { hashPassword } from '@/lib/password'
 import { randomBytes } from 'crypto'
 
 /* ------------------------------------------------------------------ */
+/*  GET /api/admin/users — List all users (admin-only)              */
+/* ------------------------------------------------------------------ */
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const search = searchParams.get('search') || ''
+    const role = searchParams.get('role') || ''
+    const status = searchParams.get('status') || ''
+
+    const skip = (page - 1) * limit
+
+    const where: any = {}
+    if (search) {
+      where.OR = [
+        { phone: { contains: search } },
+        { fullName: { contains: search } },
+        { email: { contains: search } },
+      ]
+    }
+    if (role) {
+      where.role = role
+    }
+    if (status === 'frozen') {
+      where.isFrozen = true
+    } else if (status === 'inactive') {
+      where.isActive = false
+    } else if (status === 'unverified') {
+      where.isVerified = false
+    }
+
+    const [users, total] = await Promise.all([
+      db.user.findMany({
+        where,
+        select: {
+          id: true,
+          phone: true,
+          email: true,
+          fullName: true,
+          isVerified: true,
+          isActive: true,
+          isFrozen: true,
+          role: true,
+          avatar: true,
+          userLevel: true,
+          lastLoginAt: true,
+          createdAt: true,
+          wallet: { select: { balance: true, frozenBalance: true } },
+          goldWallet: { select: { goldGrams: true, frozenGold: true } },
+          _count: { select: { transactions: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      db.user.count({ where }),
+    ])
+
+    return NextResponse.json({
+      success: true,
+      users,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    })
+  } catch (error) {
+    console.error('Admin get users error:', error)
+    return NextResponse.json(
+      { success: false, message: 'خطا در دریافت لیست کاربران' },
+      { status: 500 }
+    )
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /*  POST /api/admin/users — Create new user (admin-only)           */
 /* ------------------------------------------------------------------ */
 export async function POST(request: NextRequest) {
