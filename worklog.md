@@ -1,31 +1,20 @@
 ---
 Task ID: 1
-Agent: Main
-Task: Set up and run ZarinGold v4.0.1 project from GitHub
+Agent: Main Agent
+Task: Create a simple proposal from ZarinGold project and prepare for GitHub README upload
 
 Work Log:
-- Downloaded ZarinGold v4.0.1 from https://github.com/fartakcomplex/zaringold/releases/tag/v4.0.1
-- Copied all project files to /home/z/my-project
-- Installed dependencies with `bun install` (68 packages installed)
-- Ran `bun run db:push` to set up the SQLite database
-- Built the production version with `bun run build`
-- Started the dev server with `bun run dev`
-- Verified the page loads successfully through Caddy gateway (port 81)
-- Page title: "زرین گلد | خرید و فروش طلای نوین"
+- Fetched GitHub repo information via API (fartakcomplex/zaringold)
+- Retrieved release notes for v4.0.1 and v4.0.0
+- Analyzed project structure: 90+ DB models, 50+ API modules, 40+ component directories
+- Fetched Prisma schema to understand data model (User, GoldWallet, Transaction, Merchant, GoldCard, etc.)
+- Generated project banner image using AI image generation
+- Created comprehensive bilingual (FA/EN) proposal README.md
+- Created upload script for GitHub API
+- No GitHub write access available - user needs to upload manually
 
 Stage Summary:
-- ZarinGold v4.0.1 is fully set up and running
-- The project is a comprehensive Persian gold trading platform with:
-  - Landing page with hero, features, calculator, security sections
-  - Dashboard, wallet, trading, and transaction views
-  - Admin panel with extensive management features
-  - RTL support with Persian (fa) and English (en) languages
-  - Gold theme with premium glass-morphism design
-  - i18n with 150+ translation keys
-  - Zustand state management with localStorage persistence
-  - Prisma ORM with SQLite database
-  - 618 TypeScript/TSX source files
-  - 100+ API routes
-- Known issue: Next.js dev server dies after serving requests (likely SIGPIPE from Caddy proxy)
-  - Workaround: Server restarts and serves pages on fresh requests
-  - Production build also available as alternative
+- Created /home/z/my-project/zaringold-proposal-readme.md (bilingual proposal)
+- Created /home/z/my-project/zaringold-banner.png (project banner)
+- Created /home/z/my-project/upload-readme-github.sh (upload helper script)
+- User needs GitHub Personal Access Token to upload via the script
