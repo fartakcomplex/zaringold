@@ -68,10 +68,8 @@ export async function POST(request: NextRequest) {
     })
 
     // ── تولید کد ۴ رقمی ──
-    const code = String(Math.floor(1000 + Math.random() * 9000))
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[transfer-otp] DEV OTP for user ${userId}: ${code}`)
-    }
+    const isDev = process.env.NODE_ENV === 'development'
+    const code = isDev ? '1234' : String(Math.floor(1000 + Math.random() * 9000))
 
     // ── ذخیره OTP ──
     await db.oTPCode.create({
@@ -86,7 +84,7 @@ export async function POST(request: NextRequest) {
     })
 
     // ── ارسال SMS (در production) ──
-    if (process.env.NODE_ENV !== 'development') {
+    if (!isDev) {
       try {
         const smsConfig = await db.smsConfig.findFirst()
         if (smsConfig?.apiKey) {
@@ -113,6 +111,7 @@ export async function POST(request: NextRequest) {
       message: `کد تأیید ۴ رقمی به شماره ${maskedPhone} ارسال شد`,
       maskedPhone,
       expiresIn: 120, // seconds
+      ...(isDev && { devCode: code }),
     })
   } catch (error) {
     console.error('Transfer OTP send error:', error)

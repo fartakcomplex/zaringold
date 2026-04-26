@@ -310,39 +310,20 @@ export default function CarServicesView() {
     <div className="min-h-screen" dir={dir}>
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/20 to-teal-500/5">
-            <Car className="h-4.5 w-4.5 text-purple-500" />
-          </div>
-          <div className="flex-1">
-            <h1 className="text-sm font-bold text-foreground leading-tight">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">
               {t('carServices.title')}
             </h1>
-            <p className="text-[10px] text-muted-foreground">{t('carServices.qualityGuarantee')}</p>
+            <p className="text-sm text-zinc-400 mt-1">{t('carServices.qualityGuarantee')}</p>
           </div>
           <Button
             onClick={openAddCarDialog}
-            size="sm"
-            className="h-8 bg-gradient-to-r from-purple-600 to-teal-600 hover:from-purple-700 hover:to-teal-700 text-white text-xs gap-1 rounded-lg"
+            className="bg-gradient-to-r from-purple-600 to-teal-600 hover:from-purple-700 hover:to-teal-700 text-white"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-4 h-4 ml-2" />
             {t('carServices.addCar')}
           </Button>
-        </div>
-
-        {/* Hero Banner */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-600 via-indigo-600 to-teal-500 p-5">
-          <div className="absolute top-0 left-0 w-28 h-28 bg-white/10 rounded-full -translate-x-8 -translate-y-8" />
-          <div className="absolute bottom-0 right-0 w-20 h-20 bg-white/5 rounded-full translate-x-6 translate-y-6" />
-          <div className="relative z-10 flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm">
-              <Shield className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-white font-bold text-base">خدمات حرفه‌ای خودرو</h2>
-              <p className="text-white/70 text-xs mt-0.5">تضمین کیفیت با بهترین تعمیرگاه‌ها</p>
-            </div>
-          </div>
         </div>
 
         {/* Tabs */}

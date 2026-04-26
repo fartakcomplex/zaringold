@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import {
-import { requireAdmin } from '@/lib/security/auth-guard';
   createExportPackage,
   listPackages,
   getSystemInfo,
@@ -12,13 +11,8 @@ import { requireAdmin } from '@/lib/security/auth-guard';
 /*  GET — List packages + system info                                   */
 /* ------------------------------------------------------------------ */
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const [packages, systemInfo] = await Promise.all([
       listPackages(),
       getSystemInfo(),
@@ -41,13 +35,8 @@ export async function GET(request: NextRequest) {
 /*  POST — Create new export package                                    */
 /* ------------------------------------------------------------------ */
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const body = await request.json();
     const options: ExportOptions = {
       type: body.type || 'full',
@@ -79,13 +68,8 @@ export async function POST(request: NextRequest) {
 /*  DELETE — Cleanup old packages                                      */
 /* ------------------------------------------------------------------ */
 
-export async function DELETE(request: NextRequest) {
+export async function DELETE(request: Request) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action');
 

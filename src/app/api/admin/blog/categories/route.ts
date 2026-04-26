@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 /* ------------------------------------------------------------------ */
 /*  Slug Helper                                                        */
@@ -35,11 +34,6 @@ async function checkAuth(request: NextRequest) {
 /* ------------------------------------------------------------------ */
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const user = await checkAuth(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -76,11 +70,6 @@ export async function GET(request: NextRequest) {
 /* ------------------------------------------------------------------ */
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const user = await checkAuth(request)
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

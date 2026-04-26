@@ -1,13 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { deleteBackup, getBackupPath } from '@/lib/backup';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
-export async function GET(_request: NextRequest, { params }: { params: Promise<{ filename: string }> }, ) {
-    const auth = await requireAdmin(_request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ filename: string }> },
+) {
   const { filename } = await params;
   if (!filename || filename.includes('..') || filename.includes('/')) {
     return NextResponse.json({ success: false, message: 'Invalid filename' }, { status: 400 });
@@ -28,13 +25,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 }
 
 export async function DELETE(
-  _request: NextRequest
+  _request: Request,
+  { params }: { params: Promise<{ filename: string }> },
 ) {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
   const { filename } = await params;
   if (!filename || filename.includes('..') || filename.includes('/')) {
     return NextResponse.json({ success: false, message: 'Invalid filename' }, { status: 400 });

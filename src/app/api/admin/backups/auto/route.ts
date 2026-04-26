@@ -1,5 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/security/auth-guard';
+import { NextResponse } from 'next/server';
 
 /**
  * POST /api/admin/backups/auto
@@ -7,13 +6,8 @@ import { requireAdmin } from '@/lib/security/auth-guard';
  * Creates daily backup (if >20h since last) and weekly backup (on Saturday if >6d since last)
  */
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { autoBackup } = await import('@/lib/backup');
     const result = autoBackup();
 

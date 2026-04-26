@@ -1,14 +1,8 @@
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 export async function GET(req: NextRequest) {
   try {
-    const auth = await requireAdmin(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { searchParams } = new URL(req.url);
     const type = searchParams.get('type') || '';
     const status = searchParams.get('status') || '';

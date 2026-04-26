@@ -1,14 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAdmin } from '@/lib/security/auth-guard';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const latestPrice = await db.goldPrice.findFirst({
       orderBy: { createdAt: 'desc' },
     })
@@ -28,11 +22,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { buyPrice, sellPrice, marketPrice, ouncePrice } = await request.json()
 
     if (!buyPrice || !sellPrice || !marketPrice) {

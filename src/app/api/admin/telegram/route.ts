@@ -1,14 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const [totalUsers, totalAlerts, activeAlerts, totalInvoices, totalCustomers, activeSubs] = await Promise.all([
       db.telegramUser.count(),
       db.telegramAlert.count(),
@@ -43,12 +37,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { action, message, userId, chatId } = body;
 
-    switch (actionexport async function POST(!message || !message.trim(): NextRequest) {
-    const auth = await requireAdmin(!message || !message.trim());
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
+    switch (action) {
+      case 'broadcast': {
+        if (!message || !message.trim()) {
           return NextResponse.json(
             { success: false, error: 'متن پیام الزامی است' },
             { status: 400 }

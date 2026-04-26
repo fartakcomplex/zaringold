@@ -1,15 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 // GET /api/admin/roles/[id] — Get single role with permissions
-export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const auth = await requireAdmin(_req);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { id } = await params;
     const role = await db.role.findUnique({
       where: { id },
@@ -39,14 +36,10 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
 // PUT /api/admin/roles/[id] — Update role
 export async function PUT(
-  req: NextRequest
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAdmin(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { id } = await params;
     const body = await req.json();
     const { name, label, description, color, priority } = body;
@@ -88,14 +81,10 @@ export async function PUT(
 
 // DELETE /api/admin/roles/[id] — Delete role
 export async function DELETE(
-  _req: NextRequest
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAdmin(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { id } = await params;
     const existing = await db.role.findUnique({ where: { id } });
 

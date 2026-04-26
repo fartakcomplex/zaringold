@@ -24,7 +24,6 @@ import {
   AlertCircle,
   Search,
 } from 'lucide-react';
-import { MCILogo, IrancellLogo, RightelLogo, TaliyaLogo } from './operators/OperatorLogos';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -35,21 +34,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 /*  Constants                                                          */
 /* ═══════════════════════════════════════════════════════════════ */
 
-import React from 'react';
-
-/* Operator logo component map */
-const OPERATOR_LOGOS: Record<string, React.FC<{ size?: number; className?: string }>> = {
-  mci: MCILogo,
-  irancell: IrancellLogo,
-  rightel: RightelLogo,
-  taliya: TaliyaLogo,
-};
-
 const OPERATORS = [
-  { id: 'mci', name: 'همراه اول', nameEn: 'MCI', color: '#FFD600', bgColor: '#FFD60015' },
-  { id: 'irancell', name: 'ایرانسل', nameEn: 'Irancell', color: '#FF6600', bgColor: '#FF660015' },
-  { id: 'rightel', name: 'رایتل', nameEn: 'Rightel', color: '#9C27B0', bgColor: '#9C27B015' },
-  { id: 'taliya', name: 'تالیا', nameEn: 'Taliya', color: '#00897B', bgColor: '#00897B15' },
+  { id: 'mci', name: 'همراه اول', nameEn: 'MCI', color: '#FFD700', bgColor: '#FFD70015', icon: '📱' },
+  { id: 'irancell', name: 'ایرانسل', nameEn: 'Irancell', color: '#FF6B00', bgColor: '#FF6B0015', icon: '📲' },
+  { id: 'rightel', name: 'رایتل', nameEn: 'Rightel', color: '#A855F7', bgColor: '#A855F715', icon: '📶' },
+  { id: 'taliya', name: 'تالیا', nameEn: 'Taliya', color: '#06B6D4', bgColor: '#06B6D415', icon: '☕' },
 ];
 
 const TOPUP_AMOUNTS = [10000, 20000, 50000, 100000, 200000];
@@ -259,36 +248,14 @@ export default function UtilityServicesView() {
     <div className="min-h-screen" dir={dir}>
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/5">
-            <Smartphone className="h-4.5 w-4.5 text-amber-500" />
-          </div>
-          <div className="flex-1">
-            <h1 className="text-sm font-bold text-foreground leading-tight">
-              {t('utility.title')}
-            </h1>
-            <p className="text-[10px] text-muted-foreground">
-              {t('utility.subtitle')}
-            </p>
-          </div>
+        <div>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
+            {t('utility.title')}
+          </h1>
+          <p className="text-sm text-zinc-400 mt-1">{t('utility.subtitle')}</p>
         </div>
 
-        {/* Hero Banner */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 p-5">
-          <div className="absolute top-0 left-0 w-28 h-28 bg-white/10 rounded-full -translate-x-8 -translate-y-8" />
-          <div className="absolute bottom-0 right-0 w-20 h-20 bg-white/5 rounded-full translate-x-6 translate-y-6" />
-          <div className="relative z-10 flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm">
-              <Zap className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-white font-bold text-base">شارژ آنی و بسته اینترنت</h2>
-              <p className="text-white/70 text-xs mt-0.5">پرداخت قبض با کمترین کارمزد</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Access Tabs - Mobile optimized with labels always visible */}
+        {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-4 bg-zinc-800/50 border border-zinc-700/50 rounded-xl">
             <TabsTrigger
@@ -296,28 +263,28 @@ export default function UtilityServicesView() {
               className="rounded-lg data-[state=active]:bg-amber-600/20 data-[state=active]:text-amber-400 text-xs sm:text-sm"
             >
               <Smartphone className="w-4 h-4 ml-1" />
-              <span className="inline">{t('utility.topup')}</span>
+              <span className="hidden sm:inline">{t('utility.topup')}</span>
             </TabsTrigger>
             <TabsTrigger
               value="internet"
               className="rounded-lg data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400 text-xs sm:text-sm"
             >
               <Wifi className="w-4 h-4 ml-1" />
-              <span className="inline">{t('utility.internet')}</span>
+              <span className="hidden sm:inline">{t('utility.internet')}</span>
             </TabsTrigger>
             <TabsTrigger
               value="bills"
               className="rounded-lg data-[state=active]:bg-teal-600/20 data-[state=active]:text-teal-400 text-xs sm:text-sm"
             >
               <Receipt className="w-4 h-4 ml-1" />
-              <span className="inline">{t('utility.bills')}</span>
+              <span className="hidden sm:inline">{t('utility.bills')}</span>
             </TabsTrigger>
             <TabsTrigger
               value="history"
               className="rounded-lg data-[state=active]:bg-cyan-600/20 data-[state=active]:text-cyan-400 text-xs sm:text-sm"
             >
               <History className="w-4 h-4 ml-1" />
-              <span className="inline">{t('utility.history')}</span>
+              <span className="hidden sm:inline">{t('utility.history')}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -328,34 +295,26 @@ export default function UtilityServicesView() {
               <CardContent className="p-4">
                 <p className="text-zinc-400 text-xs mb-3">{t('utility.selectOperator')}</p>
                 <div className="grid grid-cols-4 gap-2">
-                  {OPERATORS.map((op) => {
-                    const LogoComp = OPERATOR_LOGOS[op.id];
-                    return (
-                      <button
-                        key={op.id}
-                        onClick={() => setTopupOperator(op.id)}
-                        className={cn(
-                          'rounded-xl p-2 text-center border transition-all',
-                          topupOperator === op.id
-                            ? 'border-amber-500/50 bg-amber-500/10 scale-[1.02]'
-                            : 'border-zinc-700/50 bg-zinc-800/50 hover:border-zinc-600'
-                        )}
-                      >
-                        <div className={cn(
-                          'flex justify-center mb-1.5 transition-all',
-                          topupOperator === op.id && 'drop-shadow-lg'
-                        )}>
-                          {LogoComp && <LogoComp size={44} />}
-                        </div>
-                        <span className={cn(
-                          'text-[11px] font-medium block',
-                          topupOperator === op.id ? 'text-amber-400' : 'text-zinc-400'
-                        )}>
-                          {op.name}
-                        </span>
-                      </button>
-                    );
-                  })}
+                  {OPERATORS.map((op) => (
+                    <button
+                      key={op.id}
+                      onClick={() => setTopupOperator(op.id)}
+                      className={cn(
+                        'rounded-xl p-3 text-center border transition-all',
+                        topupOperator === op.id
+                          ? 'border-amber-500/50 bg-amber-500/10'
+                          : 'border-zinc-700/50 bg-zinc-800/50 hover:border-zinc-600'
+                      )}
+                    >
+                      <span className="text-2xl block mb-1">{op.icon}</span>
+                      <span className={cn(
+                        'text-xs font-medium',
+                        topupOperator === op.id ? 'text-amber-400' : 'text-zinc-400'
+                      )}>
+                        {op.name}
+                      </span>
+                    </button>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -376,27 +335,15 @@ export default function UtilityServicesView() {
                 {topupPhone.length >= 4 && (
                   <div className="flex items-center justify-center gap-2 text-xs">
                     <span className="text-zinc-500">اپراتور شناسایی شده:</span>
-                    {(() => {
-                      let detectedOp: string | null = null;
-                      if (topupPhone.startsWith('0910') || topupPhone.startsWith('0911') || topupPhone.startsWith('0912') || topupPhone.startsWith('0913') || topupPhone.startsWith('0914') || topupPhone.startsWith('0915') || topupPhone.startsWith('0916') || topupPhone.startsWith('0917') || topupPhone.startsWith('0918') || topupPhone.startsWith('0919')) {
-                        detectedOp = 'mci';
-                      } else if (topupPhone.startsWith('0930') || topupPhone.startsWith('0933') || topupPhone.startsWith('0935') || topupPhone.startsWith('0936') || topupPhone.startsWith('0937') || topupPhone.startsWith('0938') || topupPhone.startsWith('0939')) {
-                        detectedOp = 'irancell';
-                      } else if (topupPhone.startsWith('0920') || topupPhone.startsWith('0921') || topupPhone.startsWith('0922')) {
-                        detectedOp = 'rightel';
-                      }
-                      if (detectedOp) {
-                        const DetectedLogo = OPERATOR_LOGOS[detectedOp];
-                        const detectedOperator = OPERATORS.find(o => o.id === detectedOp);
-                        return (
-                          <Badge className="bg-zinc-800/80 border-zinc-600/50 px-2 py-1 gap-1.5">
-                            {DetectedLogo && <DetectedLogo size={20} />}
-                            <span className="text-zinc-200 text-xs font-medium">{detectedOperator?.name}</span>
-                          </Badge>
-                        );
-                      }
-                      return <span className="text-zinc-500">—</span>;
-                    })()}
+                    {topupPhone.startsWith('0910') || topupPhone.startsWith('0911') || topupPhone.startsWith('0912') || topupPhone.startsWith('0913') || topupPhone.startsWith('0914') || topupPhone.startsWith('0915') || topupPhone.startsWith('0916') || topupPhone.startsWith('0917') || topupPhone.startsWith('0918') || topupPhone.startsWith('0919') ? (
+                      <Badge className="bg-yellow-500/10 text-yellow-400 border-yellow-500/20">همراه اول</Badge>
+                    ) : topupPhone.startsWith('0930') || topupPhone.startsWith('0933') || topupPhone.startsWith('0935') || topupPhone.startsWith('0936') || topupPhone.startsWith('0937') || topupPhone.startsWith('0938') || topupPhone.startsWith('0939') ? (
+                      <Badge className="bg-orange-500/10 text-orange-400 border-orange-500/20">ایرانسل</Badge>
+                    ) : topupPhone.startsWith('0920') || topupPhone.startsWith('0921') || topupPhone.startsWith('0922') ? (
+                      <Badge className="bg-purple-500/10 text-purple-400 border-purple-500/20">رایتل</Badge>
+                    ) : (
+                      <span className="text-zinc-500">—</span>
+                    )}
                   </div>
                 )}
               </CardContent>
@@ -446,15 +393,9 @@ export default function UtilityServicesView() {
             {/* Summary & Submit */}
             <Card className="border-amber-500/20 bg-gradient-to-l from-amber-500/5 to-orange-500/5">
               <CardContent className="p-4 space-y-2">
-                <div className="flex justify-between items-center text-sm">
+                <div className="flex justify-between text-sm">
                   <span className="text-zinc-400">{t('utility.operator')}</span>
-                  <div className="flex items-center gap-2">
-                    {selectedOp && (() => {
-                      const OpLogo = OPERATOR_LOGOS[selectedOp.id];
-                      return OpLogo ? <OpLogo size={22} /> : null;
-                    })()}
-                    <span className="text-white font-medium">{selectedOp?.name}</span>
-                  </div>
+                  <span className="text-white">{selectedOp?.name}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-zinc-400">{t('utility.amount')}</span>
@@ -488,34 +429,26 @@ export default function UtilityServicesView() {
               <CardContent className="p-4">
                 <p className="text-zinc-400 text-xs mb-3">{t('utility.selectOperator')}</p>
                 <div className="grid grid-cols-4 gap-2">
-                  {OPERATORS.map((op) => {
-                    const LogoComp = OPERATOR_LOGOS[op.id];
-                    return (
-                      <button
-                        key={op.id}
-                        onClick={() => { setNetOperator(op.id); setSelectedPackage(null); }}
-                        className={cn(
-                          'rounded-xl p-2 text-center border transition-all',
-                          netOperator === op.id
-                            ? 'border-violet-500/50 bg-violet-500/10 scale-[1.02]'
-                            : 'border-zinc-700/50 bg-zinc-800/50 hover:border-zinc-600'
-                        )}
-                      >
-                        <div className={cn(
-                          'flex justify-center mb-1.5 transition-all',
-                          netOperator === op.id && 'drop-shadow-lg'
-                        )}>
-                          {LogoComp && <LogoComp size={44} />}
-                        </div>
-                        <span className={cn(
-                          'text-[11px] font-medium block',
-                          netOperator === op.id ? 'text-violet-400' : 'text-zinc-400'
-                        )}>
-                          {op.name}
-                        </span>
-                      </button>
-                    );
-                  })}
+                  {OPERATORS.map((op) => (
+                    <button
+                      key={op.id}
+                      onClick={() => { setNetOperator(op.id); setSelectedPackage(null); }}
+                      className={cn(
+                        'rounded-xl p-3 text-center border transition-all',
+                        netOperator === op.id
+                          ? 'border-violet-500/50 bg-violet-500/10'
+                          : 'border-zinc-700/50 bg-zinc-800/50 hover:border-zinc-600'
+                      )}
+                    >
+                      <span className="text-2xl block mb-1">{op.icon}</span>
+                      <span className={cn(
+                        'text-xs font-medium',
+                        netOperator === op.id ? 'text-violet-400' : 'text-zinc-400'
+                      )}>
+                        {op.name}
+                      </span>
+                    </button>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -808,15 +741,8 @@ export default function UtilityServicesView() {
                     <Card key={item.id} className="border-zinc-700/50 bg-zinc-800/30">
                       <CardContent className="p-3 flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden', `bg-${typeColor}-500/10`)}>
-                            {(item.operator && OPERATOR_LOGOS[item.operator as string]) ? (
-                              (() => {
-                                const OpLogo = OPERATOR_LOGOS[item.operator as string];
-                                return <OpLogo size={28} />;
-                              })()
-                            ) : (
-                              <TypeIcon className={cn('w-5 h-5', `text-${typeColor}-400`)} />
-                            )}
+                          <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center', `bg-${typeColor}-500/10`)}>
+                            <TypeIcon className={cn('w-5 h-5', `text-${typeColor}-400`)} />
                           </div>
                           <div>
                             <p className="text-white text-sm font-medium">

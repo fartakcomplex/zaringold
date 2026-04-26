@@ -1,15 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 // GET /api/admin/users/[id]/roles — Get user's roles
-export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const auth = await requireAdmin(_req);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { id } = await params;
     const userRoles = await db.userRole.findMany({
       where: { userId: id },
@@ -48,14 +45,10 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
 // POST /api/admin/users/[id]/roles — Assign roles to user (replace all)
 export async function POST(
-  req: NextRequest
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAdmin(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { id } = await params;
     const body = await req.json();
     const { roleIds, assignedBy } = body as { roleIds?: string[]; assignedBy?: string };

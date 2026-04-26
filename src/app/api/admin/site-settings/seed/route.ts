@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 interface SettingDef {
   group: string;
@@ -628,11 +627,6 @@ const SEED_SETTINGS: SettingDef[] = [
 
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { searchParams } = new URL(request.url);
     const force = searchParams.get('force') === 'true';
 

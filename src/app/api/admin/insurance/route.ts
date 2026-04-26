@@ -1,6 +1,5 @@
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  GET /api/admin/insurance — list all orders + stats                         */
@@ -8,11 +7,6 @@ import { requireAdmin } from '@/lib/security/auth-guard';
 
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status') || '';
     const search = searchParams.get('search') || '';
@@ -158,11 +152,6 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const body = await request.json();
     const { orderId, status, adminNote, reviewedBy } = body;
 
@@ -228,11 +217,6 @@ export async function PATCH(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { searchParams } = new URL(request.url);
     const orderId = searchParams.get('id');
 

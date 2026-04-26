@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createBackup } from '@/lib/backup';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 /**
  * POST /api/admin/backups/manual
@@ -8,13 +7,8 @@ import { requireAdmin } from '@/lib/security/auth-guard';
  * Create a manual backup on demand.
  * Body: { type?: 'daily' | 'weekly' }  (default: 'daily')
  */
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const body = await request.json().catch(() => ({}));
     const type: 'daily' | 'weekly' = body.type === 'weekly' ? 'weekly' : 'daily';
 

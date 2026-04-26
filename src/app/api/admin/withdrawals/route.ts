@@ -1,14 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAdmin } from '@/lib/security/auth-guard';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const pendingWithdrawals = await db.transaction.findMany({
       where: {
         type: 'withdraw',
@@ -45,11 +39,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { transactionId, status, note } = await request.json()
 
     if (!transactionId || !status || !['completed', 'rejected'].includes(status)) {

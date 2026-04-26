@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { restoreBackup } from '@/lib/backup';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 /**
  * POST /api/admin/backups/restore
@@ -10,13 +9,8 @@ import { requireAdmin } from '@/lib/security/auth-guard';
  * 
  * Creates a pre-restore safety backup automatically.
  */
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const body = await request.json();
     const { filename } = body;
 

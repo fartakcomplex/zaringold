@@ -331,7 +331,7 @@ html, body {
 }
 
 /* Re-enable text selection for content areas */
-select, input, textarea, [contenteditable="true"], .selectable, main {
+select, input, textarea, [contenteditable="true"], .selectable {
   -webkit-user-select: auto;
   user-select: auto;
 }

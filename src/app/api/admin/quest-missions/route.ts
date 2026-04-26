@@ -1,15 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 // ── GET: All missions (admin view) ──
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { searchParams } = new URL(request.url)
     const type = searchParams.get('type')
     const category = searchParams.get('category')
@@ -114,12 +108,25 @@ export async function POST(request: NextRequest) {
     const {
       title,
       titleFa,
-      descriptexport async function POST(!title || !description || !type || !category: NextRequest) {
-    const auth = await requireAdmin(!title || !description || !type || !category);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
+      description,
+      descriptionFa,
+      type,
+      category,
+      rewardXp,
+      rewardGoldMg,
+      rulesJson,
+      targetUrl,
+      targetPage,
+      requiredCount,
+      isActive,
+      sortOrder,
+      isPremium,
+      maxCompletionsPerUser,
+      startDate,
+      endDate,
+    } = body
 
+    if (!title || !description || !type || !category) {
       return NextResponse.json(
         { success: false, message: 'title, description, type, and category are required' },
         { status: 400 }
@@ -194,16 +201,10 @@ export async function POST(request: NextRequest) {
 // ── PUT: Update mission (admin) ──
 export async function PUT(request: NextRequest) {
   try {
-    const body = await reexport async function PUT()
-    const { id: NextRequest, ...updateData } = body
+    const body = await request.json()
+    const { id, ...updateData } = body
 
     if (!id) {
-    const auth = await requireAdmin()
-    const { id);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
       return NextResponse.json(
         { success: false, message: 'Mission id is required' },
         { status: 400 }

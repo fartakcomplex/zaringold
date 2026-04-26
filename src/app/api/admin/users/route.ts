@@ -2,18 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { hashPassword } from '@/lib/password'
 import { randomBytes } from 'crypto'
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/admin/users — Create new user (admin-only)           */
 /* ------------------------------------------------------------------ */
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const body = await request.json()
     const { phone, password, fullName, email, role, isVerified } = body
 

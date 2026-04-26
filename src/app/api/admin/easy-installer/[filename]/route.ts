@@ -1,8 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { getPackagePath, deletePackage } from '@/lib/easy-installer';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 const PROJECT_ROOT = process.cwd();
 
@@ -10,13 +9,11 @@ const PROJECT_ROOT = process.cwd();
 /*  GET — Download package file                                        */
 /* ------------------------------------------------------------------ */
 
-export async function GET(_request: NextRequest, { params }: { params: Promise<{ filename: string }> }) {
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ filename: string }> }
+) {
   try {
-    const auth = await requireAdmin(_request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { filename } = await params;
 
     // Security: prevent path traversal
@@ -65,12 +62,10 @@ export async function DELETE(
   { params }: { params: Promise<{ filename: string }> }
 ) {
   try {
-    const { filename } = await export async function DELETE(filename.includes('..') || filename.includes('/') || filename.includes('\\'): NextRequest) {
-    const auth = await requireAdmin(filename.includes('..') || filename.includes('/') || filename.includes('\\'));
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
+    const { filename } = await params;
 
+    // Security: prevent path traversal
+    if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
       return NextResponse.json(
         { success: false, error: 'نام فایل نامعتبر' },
         { status: 400 }

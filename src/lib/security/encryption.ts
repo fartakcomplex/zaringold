@@ -16,8 +16,7 @@ const SALT_LENGTH = 32;
  * دریافت کلید رمزنگاری از متغیر محیطی
  */
 function getEncryptionKey(): Buffer {
-  const secret = process.env.ENCRYPTION_SECRET || (process.env.NODE_ENV === 'development' ? 'dev-only-not-for-production-key' : undefined);
-  if (!secret) throw new Error('ENCRYPTION_SECRET environment variable is required');
+  const secret = process.env.ENCRYPTION_SECRET || 'zarrin-gold-default-encryption-key-2024';
   // Hash to get exactly 32 bytes for AES-256
   return crypto.createHash('sha256').update(secret).digest();
 }

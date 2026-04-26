@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAuth } from '@/lib/security/auth-guard'
 
 // GET: list social feed posts
 export async function GET(request: NextRequest) {
@@ -63,17 +62,11 @@ export async function GET(request: NextRequest) {
 // POST: create a new social post
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth(request)
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 })
-    }
+    const { userId, content, postType, isAnonymous } = await request.json()
 
-    const { content, postType, isAnonymous } = await request.json()
-    const userId = auth.user.id
-
-    if (!content) {
+    if (!userId || !content) {
       return NextResponse.json(
-        { success: false, message: 'محتوای پست الزامی است' },
+        { success: false, message: 'شناسه کاربر و محتوای پست الزامی است' },
         { status: 400 }
       )
     }

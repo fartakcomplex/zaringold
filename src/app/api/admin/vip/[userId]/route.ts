@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 /* ------------------------------------------------------------------ */
 /*  PUT /api/admin/vip/[userId] — Extend/cancel subscription           */
@@ -10,11 +9,6 @@ export async function PUT(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { userId } = await params
     const body = await request.json()
     const { action, days, plan } = body

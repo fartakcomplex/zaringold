@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAuth } from '@/lib/security/auth-guard'
 import crypto from 'crypto'
 
 // POST: send gold gift (uses GiftTransfer model with occasion + giftCardStyle)
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth(request)
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 })
-    }
+    const { senderId, receiverPhone, goldMg, message, occasion, giftCardStyle } = await request.json()
 
-    const { receiverPhone, goldMg, message, occasion, giftCardStyle } = await request.json()
-    const senderId = auth.user.id
+    if (!senderId) {
+      return NextResponse.json(
+        { success: false, message: 'شناسه فرستنده الزامی است' },
+        { status: 400 }
+      )
+    }
 
     if (!receiverPhone) {
       return NextResponse.json(

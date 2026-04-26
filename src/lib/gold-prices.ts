@@ -43,15 +43,9 @@ export interface PriceSourceResult {
 // ─── AlanChand API ───────────────────────────────────────────────────
 
 const ALANCHAND_API_URL = 'https://api.alanchand.com'
-const ALANCHAND_TOKEN = process.env.ALANCHAND_TOKEN;
-if (!ALANCHAND_TOKEN) {
-  console.warn('[gold-prices] ALANCHAND_TOKEN is not configured');
-}
+const ALANCHAND_TOKEN = process.env.ALANCHAND_TOKEN || '3ArC35qWk4oTDbZe48LM'
 
 async function fetchFromAlanChand(): Promise<PriceSourceResult> {
-  if (!ALANCHAND_TOKEN) {
-    return { success: false, source: 'alanchand', error: 'ALANCHAND_TOKEN not configured' }
-  }
   try {
     const res = await fetch(
       `${ALANCHAND_API_URL}?type=golds`,

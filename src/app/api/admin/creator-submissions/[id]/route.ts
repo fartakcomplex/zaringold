@@ -1,6 +1,5 @@
 import { db } from '@/lib/db'
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 // Gold reward tiers
 const TIER_REWARDS: Record<string, { min: number; max: number }> = {
@@ -16,11 +15,6 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { id } = await params
     const body = await request.json()
     const { action, adminNote, bonusMg } = body

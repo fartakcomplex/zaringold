@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 /* ── Default sections ── */
 const DEFAULT_SECTIONS = [
@@ -19,13 +18,8 @@ const DEFAULT_SECTIONS = [
 ];
 
 /* ── GET: Fetch all landing sections ── */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     let sections = await db.landingSection.findMany({ orderBy: { sortOrder: 'asc' } });
 
     // Seed defaults if empty
@@ -48,12 +42,14 @@ export async function PUT(req: Request) {
     const { sections } = body as {
       sections: Array<{
         id?: string;
-      export async function PUT(!Array.isArray(sections): NextRequest) {
-    const auth = await requireAdmin(!Array.isArray(sections));
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
+        sectionId?: string;
+        isVisible?: boolean;
+        sortOrder?: number;
+        settings?: string;
+      }>;
+    };
 
+    if (!Array.isArray(sections)) {
       return NextResponse.json({ success: false, error: 'sections array required' }, { status: 400 });
     }
 

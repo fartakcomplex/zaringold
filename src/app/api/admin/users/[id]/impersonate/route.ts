@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import crypto from 'crypto'
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/admin/users/[id]/impersonate                            */
@@ -14,11 +13,6 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAdmin(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { id: targetUserId } = await params
 
     // Get admin session from Authorization header

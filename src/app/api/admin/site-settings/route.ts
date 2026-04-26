@@ -1,14 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { searchParams } = new URL(request.url);
     const group = searchParams.get('group');
 
@@ -51,12 +45,18 @@ export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
     const { settings: incoming } = body as {
-      setexport async function PUT(!Array.isArray(incoming) || incoming.length === 0: NextRequest) {
-    const auth = await requireAdmin(!Array.isArray(incoming) || incoming.length === 0);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
+      settings: Array<{
+        group: string;
+        key: string;
+        value: string;
+        type?: string;
+        label?: string;
+        description?: string;
+        sortOrder?: number;
+      }>;
+    };
 
+    if (!Array.isArray(incoming) || incoming.length === 0) {
       return NextResponse.json({ error: 'آرایه تنظیمات خالی است' }, { status: 400 });
     }
 

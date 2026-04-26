@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 /* ------------------------------------------------------------------ */
 /*  Default feature flags & settings                                   */
@@ -49,13 +48,8 @@ const DEFAULT_FEATURE_FLAGS: Record<string, { value: string; description: string
 /* ------------------------------------------------------------------ */
 /*  GET /api/admin/features — Return all feature flags & settings      */
 /* ------------------------------------------------------------------ */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     // Get all existing settings from DB
     const dbSettings = await db.loanSetting.findMany({
       where: {
@@ -132,11 +126,6 @@ export async function GET(request: NextRequest) {
 /* ------------------------------------------------------------------ */
 export async function PUT(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const body = await request.json()
     const { settings } = body
 

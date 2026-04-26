@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { deleteBackup } from '@/lib/backup';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 /**
  * DELETE /api/admin/backups/delete
@@ -8,13 +7,8 @@ import { requireAdmin } from '@/lib/security/auth-guard';
  * Delete a specific backup file.
  * Body: { filename: string }
  */
-export async function DELETE(request: NextRequest) {
+export async function DELETE(request: Request) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const body = await request.json();
     const { filename } = body;
 

@@ -3,7 +3,6 @@ import { db } from '@/lib/db';
 import { unlink } from 'fs/promises';
 import path from 'path';
 import { existsSync } from 'fs';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 /* ═══════════════════════════════════════════════════════════════════════════
  *  GET /api/admin/media — List all media (paginated)
@@ -11,11 +10,6 @@ import { requireAdmin } from '@/lib/security/auth-guard';
 
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const authHeader = request.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
@@ -71,14 +65,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const authHeader = request.headexport async function DELETE('Authorization');
-    if (!authHeader?.startsWith('Bearer '): NextRequest) {
-    const auth = await requireAdmin('Authorization');
-    if (!authHeader?.startsWith('Bearer '));
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
     }
 

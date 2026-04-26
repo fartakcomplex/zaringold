@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAuth } from '@/lib/security/auth-guard'
 
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAuth(request)
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 })
-    }
+    const userId = request.nextUrl.searchParams.get('userId')
 
-    const userId = auth.user.id
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: 'شناسه کاربر الزامی است' },
+        { status: 400 }
+      )
+    }
 
     let kyc = await db.kYCRequest.findUnique({
       where: { userId },
@@ -33,19 +34,21 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth(request)
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 })
-    }
-
     const {
+      userId,
       idCardImage,
       idCardBackImage,
       selfieImage,
       bankCardImage,
       verificationVideo,
     } = await request.json()
-    const userId = auth.user.id
+
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: 'شناسه کاربر الزامی است' },
+        { status: 400 }
+      )
+    }
 
     // Upsert KYC request — reset review status on new submission
     const kyc = await db.kYCRequest.upsert({

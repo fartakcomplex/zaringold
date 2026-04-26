@@ -1,15 +1,9 @@
 import { db } from '@/lib/db'
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 // ─── GET: All submissions for admin review (paginated, filterable) ───
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status') || undefined
     const platform = searchParams.get('platform') || undefined

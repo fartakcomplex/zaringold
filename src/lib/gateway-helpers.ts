@@ -191,30 +191,6 @@ export async function authenticateUser(
   }
 }
 
-// ── SSRF protection: validate callback URL before fetching ──
-function isSafeUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-    // Block private/internal IPs
-    const hostname = parsed.hostname;
-    if (
-      hostname === 'localhost' ||
-      hostname === '127.0.0.1' ||
-      hostname === '0.0.0.0' ||
-      hostname.startsWith('10.') ||
-      hostname.startsWith('192.168.') ||
-      /^172\.(1[6-9]|2\d|3[01])\./.test(hostname) ||
-      hostname.startsWith('169.254.') ||
-      hostname === '::1'
-    ) {
-      return false;
-    }
-    return parsed.protocol === 'https:';
-  } catch {
-    return false;
-  }
-}
-
 // ── Send webhook to merchant callback URL (fire-and-forget) ──
 export async function sendMerchantWebhook(
   callbackUrl: string,
@@ -228,8 +204,6 @@ export async function sendMerchantWebhook(
   }
 ): Promise<void> {
   try {
-    if (!isSafeUrl(callbackUrl)) return;
-
     const response = await fetch(callbackUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

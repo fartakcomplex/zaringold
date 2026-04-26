@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { MCILogo, IrancellLogo, RightelLogo } from '@/components/utility-services/operators/OperatorLogos';
 import {
   Smartphone,
   Wifi,
@@ -224,7 +223,7 @@ function StatusBadge({ status }: { status: string }) {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 function ProviderSettingsPanel({ serviceType }: { serviceType: 'utility' | 'car' | 'insurance' }) {
-  const { t } = useTranslation();
+  const t = useTranslation();
   const [open, setOpen] = useState(false);
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -321,13 +320,13 @@ function ProviderSettingsPanel({ serviceType }: { serviceType: 'utility' | 'car'
                 <div className="space-y-4">
                   {/* Operator API Sections */}
                   {[
-                    { prefix: 'mci', label: 'همراه اول', Logo: MCILogo },
-                    { prefix: 'irancell', label: 'ایرانسل', Logo: IrancellLogo },
-                    { prefix: 'rightel', label: 'رایتل', Logo: RightelLogo },
+                    { prefix: 'mci', label: 'همراه اول', icon: Smartphone },
+                    { prefix: 'irancell', label: 'ایرانسل', icon: Wifi },
+                    { prefix: 'rightel', label: 'رایتل', icon: Phone },
                   ].map((op) => (
                     <div key={op.prefix} className="rounded-lg border border-border/50 bg-muted/20 p-3 space-y-3">
                       <div className="flex items-center gap-2">
-                        <op.Logo size={18} />
+                        <op.icon className="h-3.5 w-3.5 text-gold" />
                         <span className="text-xs font-bold text-foreground">{op.label}</span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -590,7 +589,7 @@ function ProviderSettingsPanel({ serviceType }: { serviceType: 'utility' | 'car'
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 function UtilityTab() {
-  const { t } = useTranslation();
+  const t = useTranslation();
   const [stats, setStats] = useState<UtilityStats | null>(null);
   const [orders, setOrders] = useState<UtilityOrder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -749,15 +748,7 @@ function UtilityTab() {
                           {typeCfg.label}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-foreground">
-                        <div className="flex items-center gap-1.5">
-                          {order.operator && (() => {
-                            const OpLogo = ({ mci: MCILogo, irancell: IrancellLogo, rightel: RightelLogo } as Record<string, React.FC<{ size?: number; className?: string }>>)[order.operator];
-                            return OpLogo ? <OpLogo size={18} /> : null;
-                          })()}
-                          {OPERATOR_MAP[order.operator] || order.operator || '—'}
-                        </div>
-                      </td>
+                      <td className="px-4 py-3 text-foreground">{OPERATOR_MAP[order.operator] || order.operator || '—'}</td>
                       <td className="px-4 py-3 font-mono text-foreground">{order.phoneNumber || '—'}</td>
                       <td className="px-4 py-3 font-medium text-foreground">{formatPrice(order.totalPrice)} <span className="text-muted-foreground">ت</span></td>
                       <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
@@ -792,7 +783,7 @@ function UtilityTab() {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 function CarTab() {
-  const { t } = useTranslation();
+  const t = useTranslation();
   const [stats, setStats] = useState<CarStats | null>(null);
   const [orders, setOrders] = useState<CarOrder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -979,7 +970,7 @@ function CarTab() {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 function InsuranceTab() {
-  const { t } = useTranslation();
+  const t = useTranslation();
   const [stats, setStats] = useState<InsStats | null>(null);
   const [orders, setOrders] = useState<InsOrder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1176,7 +1167,7 @@ const TABS = [
 ] as const;
 
 export default function AdminServices({ defaultTab }: { defaultTab?: string }) {
-  const { t } = useTranslation();
+  const t = useTranslation();
   const [activeTab, setActiveTab] = useState<string>(defaultTab || 'utility');
 
   return (

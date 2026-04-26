@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
     })
 
     const isAdmin = existingUser?.role === 'admin' || existingUser?.role === 'super_admin'
+    const requiresPassword = isAdmin
 
     // In dev mode, always use 123456
     const isDev = process.env.NODE_ENV === 'development'
@@ -59,6 +60,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'کد ارسال شد',
+      isAdmin,
+      requiresPassword,
+      ...(isDev && { devCode: code }),
     })
   } catch (error) {
     console.error('Send OTP error:', error)

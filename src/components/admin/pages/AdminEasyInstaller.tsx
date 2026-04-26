@@ -290,7 +290,7 @@ export default function AdminEasyInstaller() {
                 <span className="text-[11px] text-muted-foreground">حجم دیتابیس</span>
               </div>
               <p className="text-lg font-bold text-foreground">{toPersianNum(systemInfo.dbSize)}</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">PostgreSQL</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">SQLite</p>
             </CardContent>
           </Card>
 
@@ -507,7 +507,7 @@ export default function AdminEasyInstaller() {
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {[
               { icon: Shield, label: 'بررسی پیش‌نیازها', desc: 'Node.js, دیسک, دسترسی‌ها' },
-              { icon: Database, label: 'راه‌اندازی دیتابیس', desc: 'PostgreSQL' },
+              { icon: Database, label: 'راه‌اندازی دیتابیس', desc: 'SQLite, MySQL, PostgreSQL' },
               { icon: Zap, label: 'بیلد خودکار', desc: 'نصب وابستگی‌ها + بیلد' },
               { icon: Server, label: 'حذف خودکار', desc: 'پاکسازی فایل‌های نصب' },
             ].map((f) => (

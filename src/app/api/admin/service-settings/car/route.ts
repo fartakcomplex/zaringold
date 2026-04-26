@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 const GROUP = 'service_car';
 
@@ -18,13 +17,8 @@ const DEFAULTS: Record<string, { key: string; value: string; label: string }> = 
   tow_enabled: { key: 'car_tow_enabled', value: 'true', label: 'یدک‌کش فعال' },
 };
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const settings = await db.systemSetting.findMany({ where: { group: GROUP } });
     const map: Record<string, string> = {};
     for (const s of settings) map[s.key] = s.value;
@@ -41,11 +35,6 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const auth = await requireAdmin(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const body = await req.json();
     const data: Record<string, string> = body.settings ?? body;
 

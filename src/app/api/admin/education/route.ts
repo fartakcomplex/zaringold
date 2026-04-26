@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 /* ------------------------------------------------------------------ */
 /*  GET /api/admin/education — List all lessons                       */
 /* ------------------------------------------------------------------ */
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const { searchParams } = request.nextUrl
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '20')
@@ -107,12 +101,21 @@ export async function POST(request: NextRequest) {
     const {
       title,
       titleFa,
-      descriptexport async function POST(!title || !title.trim(): NextRequest) {
-    const auth = await requireAdmin(!title || !title.trim());
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
+      description,
+      descriptionFa,
+      type,
+      category,
+      url,
+      content,
+      contentFa,
+      thumbnail,
+      duration,
+      sortOrder,
+      isActive,
+      isPremium,
+    } = body
 
+    if (!title || !title.trim()) {
       return NextResponse.json(
         { success: false, message: 'عنوان درس الزامی است' },
         { status: 400 }

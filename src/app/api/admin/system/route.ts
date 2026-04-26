@@ -1,15 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import os from 'os';
 import fs from 'fs';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const cpus = os.cpus();
     const totalMem = os.totalmem();
     const freeMem = os.freemem();

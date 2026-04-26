@@ -109,19 +109,14 @@ export async function GET(request: NextRequest) {
     },
   })
 
-  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['https://zaringold.ir', 'https://www.zaringold.ir'];
-  const origin = request.headers.get('origin') || '';
-  const headers: Record<string, string> = {
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache, no-transform',
-    Connection: 'keep-alive',
-    'Access-Control-Allow-Methods': 'GET',
-    'Access-Control-Allow-Headers': 'Cache-Control, EventSource',
-  };
-  if (allowedOrigins.includes(origin)) {
-    headers['Access-Control-Allow-Origin'] = origin;
-    headers['Vary'] = 'Origin';
-  }
-
-  return new Response(stream, { headers })
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache, no-transform',
+      Connection: 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET',
+      'Access-Control-Allow-Headers': 'Cache-Control, EventSource',
+    },
+  })
 }

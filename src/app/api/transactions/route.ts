@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAuth } from '@/lib/security/auth-guard'
 
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAuth(request)
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 })
-    }
-
     const { searchParams } = request.nextUrl
-    const userId = auth.user.id
+    const userId = searchParams.get('userId')
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '20')
     const type = searchParams.get('type') || undefined
+
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: 'شناسه کاربر الزامی است' },
+        { status: 400 }
+      )
+    }
 
     const skip = (page - 1) * limit
 

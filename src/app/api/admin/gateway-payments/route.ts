@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import crypto from 'crypto'
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 async function getOrCreateSession(token: string) {
   let session = await db.userSession.findUnique({
@@ -35,11 +34,6 @@ async function getOrCreateSession(token: string) {
  */
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const authHeader = request.headers.get('authorization')
     const token = authHeader?.replace('Bearer ', '') || ''
     if (!token) return NextResponse.json({ success: false, message: 'توکن ارسال نشده' }, { status: 401 })

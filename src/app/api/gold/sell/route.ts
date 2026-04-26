@@ -1,20 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getUserAccess } from '@/lib/access'
-import { requireAuth } from '@/lib/security/auth-guard'
 import crypto from 'crypto'
 
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth(request)
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 })
-    }
+    const { userId, goldGrams } = await request.json()
 
-    const { goldGrams } = await request.json()
-    const userId = auth.user.id
-
-    if (!goldGrams || goldGrams <= 0) {
+    if (!userId || !goldGrams || goldGrams <= 0) {
       return NextResponse.json(
         { success: false, message: 'شناسه کاربر و مقدار طلا الزامی است' },
         { status: 400 }

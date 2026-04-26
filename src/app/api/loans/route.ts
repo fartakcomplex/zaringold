@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAuth } from '@/lib/security/auth-guard'
 
 const DEFAULT_SETTINGS = {
   ltvRatio: 0.7,
@@ -39,12 +38,15 @@ async function getLoanSettings() {
 // ── GET: Return user's loans ──
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAuth(request)
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 })
-    }
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId')
 
-    const userId = auth.user.id
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: 'شناسه کاربر الزامی است' },
+        { status: 400 }
+      )
+    }
 
     const loans = await db.goldLoan.findMany({
       where: { userId },
@@ -73,19 +75,13 @@ export async function GET(request: NextRequest) {
 // ── POST: Apply for a new gold loan ──
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth(request)
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 })
-    }
+    const { userId, goldCollateral, durationDays } = await request.json()
 
-    const { goldCollateral, durationDays } = await request.json()
-    const userId = auth.user.id
-
-    if (!goldCollateral || !durationDays) {
+    if (!userId || !goldCollateral || !durationDays) {
       return NextResponse.json(
         {
           success: false,
-          message: 'تمامی فیلدها (میزان طلای وثیقه و مدت وام) الزامی است',
+          message: 'تمامی فیلدها (شناسه کاربر، میزان طلای وثیقه و مدت وام) الزامی است',
         },
         { status: 400 }
       )

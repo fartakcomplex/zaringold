@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 /* ------------------------------------------------------------------ */
 /*  GET /api/admin/achievements — List all achievements               */
 /* ------------------------------------------------------------------ */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const achievements = await db.achievement.findMany({
       include: {
         _count: {
@@ -42,12 +36,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { slug, title, description, icon, category, xpReward, goldRewardexport async function POST(!slug || !slug.trim(): NextRequest) {
-    const auth = await requireAdmin(!slug || !slug.trim());
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
+    const { slug, title, description, icon, category, xpReward, goldRewardMg, sortOrder, isHidden } = body
 
+    if (!slug || !slug.trim()) {
       return NextResponse.json(
         { success: false, message: 'اسلاگ الزامی است' },
         { status: 400 }

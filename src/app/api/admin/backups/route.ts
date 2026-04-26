@@ -1,20 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { listBackups, getBackupStats, createBackup, cleanupOldBackups } from '@/lib/backup';
 import fs from 'fs';
 import path from 'path';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 /**
  * GET /api/admin/backups
  * Returns list of backups + stats for the admin panel
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const data = listBackups();
     const stats = getBackupStats();
 
@@ -58,13 +52,8 @@ export async function GET(request: NextRequest) {
  * Create a backup manually.
  * Body: { type: 'daily' | 'weekly' }
  */
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const body = await request.json();
     const type: 'daily' | 'weekly' = body.type === 'weekly' ? 'weekly' : 'daily';
 

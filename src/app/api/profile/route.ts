@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAuth } from '@/lib/security/auth-guard'
 
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAuth(request)
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 })
-    }
+    const userId = request.nextUrl.searchParams.get('userId')
 
-    const userId = auth.user.id
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: 'شناسه کاربر الزامی است' },
+        { status: 400 }
+      )
+    }
 
     const user = await db.user.findUnique({
       where: { id: userId },
@@ -51,14 +52,15 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const auth = await requireAuth(request)
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 })
-    }
-
     const body = await request.json()
-    const { fullName, email, nationalId, iban, province, city, address, postalCode } = body
-    const userId = auth.user.id
+    const { userId, fullName, email, nationalId, iban, province, city, address, postalCode } = body
+
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: 'شناسه کاربر الزامی است' },
+        { status: 400 }
+      )
+    }
 
     const user = await db.user.findUnique({ where: { id: userId } })
     if (!user) {

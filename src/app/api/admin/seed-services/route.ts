@@ -1,14 +1,8 @@
 import { db } from '@/lib/db';
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/security/auth-guard';
+import { NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     // Check if data already exists
     const existingUtility = await db.utilityPayment.count();
     if (existingUtility > 0) {

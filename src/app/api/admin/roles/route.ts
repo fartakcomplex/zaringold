@@ -1,15 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAdmin } from '@/lib/security/auth-guard';
 
 // GET /api/admin/roles — List all roles with permission count & user count
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const auth = await requireAdmin(request);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const roles = await db.role.findMany({
       orderBy: { priority: 'desc' },
       include: {
@@ -26,13 +20,8 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/admin/roles — Create new role
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const auth = await requireAdmin(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
-    }
-
     const body = await req.json();
     const { name, label, description, color, priority } = body;
 
