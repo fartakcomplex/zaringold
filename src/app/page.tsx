@@ -12,7 +12,7 @@ import HowItWorksSection from '@/components/landing/HowItWorksSection';
 import SecuritySection from '@/components/landing/SecuritySection';
 import FAQSection from '@/components/landing/FAQSection';
 import CTASection from '@/components/landing/CTASection';
-import LandingFooter from '@/components/landing/LandingFooter';
+import LandingFooter, { type LandingSubPage } from '@/components/landing/LandingFooter';
 import LoginDialog from '@/components/auth/LoginDialog';
 import ToastContainer from '@/components/shared/ToastContainer';
 import ScrollToTop from '@/components/shared/ScrollToTop';
@@ -68,6 +68,14 @@ const ApiDocsView = lazy(() => import('@/components/gateway/ApiDocsView').then(m
 const InsuranceView = lazy(() => import('@/components/insurance/InsuranceView').then(m => ({ default: m.default })));
 const CarServicesView = lazy(() => import('@/components/car-services/CarServicesView').then(m => ({ default: m.default })));
 const UtilityServicesView = lazy(() => import('@/components/utility-services/UtilityServicesView').then(m => ({ default: m.default })));
+
+/* Lazy-loaded landing sub-pages */
+const AboutPage = lazy(() => import('@/components/landing/pages/AboutPage').then(m => ({ default: m.default })));
+const TermsPage = lazy(() => import('@/components/landing/pages/TermsPage').then(m => ({ default: m.default })));
+const PrivacyPage = lazy(() => import('@/components/landing/pages/PrivacyPage').then(m => ({ default: m.default })));
+const ContactPage = lazy(() => import('@/components/landing/pages/ContactPage').then(m => ({ default: m.default })));
+const BlogPage = lazy(() => import('@/components/landing/pages/BlogPage').then(m => ({ default: m.default })));
+const FAQPage = lazy(() => import('@/components/landing/pages/FAQPage').then(m => ({ default: m.default })));
 
 /* ── Loading fallback ── */
 function PageLoader() {
@@ -155,10 +163,44 @@ export default function Home() {
   const [registerOpen, setRegisterOpen] = useState(false);
   const [registeringUser, setRegisteringUser] = useState<any>(null);
   const [showLanding, setShowLanding] = useState(false);
+  const [landingSubPage, setLandingSubPage] = useState<LandingSubPage>(null);
+
+  const handleLandingNavigate = (page: LandingSubPage) => {
+    setLandingSubPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSubPageBack = () => {
+    setLandingSubPage(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const renderLandingSubPage = () => {
+    switch (landingSubPage) {
+      case 'about': return <AboutPage onBack={handleSubPageBack} />;
+      case 'terms': return <TermsPage onBack={handleSubPageBack} />;
+      case 'privacy': return <PrivacyPage onBack={handleSubPageBack} />;
+      case 'contact': return <ContactPage onBack={handleSubPageBack} />;
+      case 'blog': return <BlogPage onBack={handleSubPageBack} />;
+      default: return null;
+    }
+  };
 
   /* Authenticated → dashboard or admin */
   if (isAuthenticated) {
     if (showLanding) {
+      if (landingSubPage) {
+        return (
+          <main className="min-h-screen">
+            <LandingPreviewToggle showLanding={showLanding} onToggle={() => { setShowLanding(false); setLandingSubPage(null); }} />
+            <LandingNav onLogin={() => {}} />
+            <Suspense fallback={<PageLoader />}>{renderLandingSubPage()}</Suspense>
+            <LandingFooter onNavigate={handleLandingNavigate} />
+            <ScrollToTop />
+            <ToastContainer />
+          </main>
+        );
+      }
       return (
         <main className="min-h-screen">
           <LandingPreviewToggle showLanding={showLanding} onToggle={() => setShowLanding(false)} />
@@ -169,7 +211,7 @@ export default function Home() {
           <SecuritySection />
           <FAQSection />
           <CTASection onGetStarted={() => {}} />
-          <LandingFooter onNavigate={() => {}} />
+          <LandingFooter onNavigate={handleLandingNavigate} />
           <ScrollToTop />
           <ToastContainer />
         </main>
@@ -192,6 +234,29 @@ export default function Home() {
   }
 
   /* Guest → Landing Page */
+  if (landingSubPage) {
+    return (
+      <main className="min-h-screen">
+        <LandingNav onLogin={() => setLoginOpen(true)} />
+        <Suspense fallback={<PageLoader />}>{renderLandingSubPage()}</Suspense>
+        <LandingFooter onNavigate={handleLandingNavigate} />
+        <ScrollToTop />
+        <ToastContainer />
+
+        <LoginDialog
+          open={loginOpen}
+          onOpenChange={setLoginOpen}
+          onSuccess={(userData: any) => {
+            setLoginOpen(false);
+            if (userData?.isNewUser) { setRegisteringUser(userData); setRegisterOpen(true); return; }
+            const role = userData?.role || userData?.user?.role;
+            if (role === 'admin' || role === 'super_admin') setPage('admin');
+          }}
+        />
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen">
       <LandingNav onLogin={() => setLoginOpen(true)} />
@@ -208,7 +273,7 @@ export default function Home() {
         <AppDownloadSection />
       </Suspense>
       <CTASection onGetStarted={() => setLoginOpen(true)} />
-      <LandingFooter onNavigate={() => {}} />
+      <LandingFooter onNavigate={handleLandingNavigate} />
       <ScrollToTop />
       <ToastContainer />
 

@@ -45,14 +45,20 @@ export default function LandingFooter({ onNavigate }: LandingFooterProps) {
   ];
 
   const socials = [
-    { icon: Instagram, href: '#', label: t('footer.instagram'), color: 'from-pink-500 via-rose-500 to-amber-500' },
-    { icon: Twitter, href: '#', label: t('footer.twitter'), color: 'from-sky-400 via-blue-500 to-indigo-500' },
-    { icon: Send, href: '#', label: t('footer.telegram'), color: 'from-sky-500 via-cyan-500 to-blue-500' },
+    { icon: Instagram, href: 'https://instagram.com/zarringold', label: t('footer.instagram'), color: 'from-pink-500 via-rose-500 to-amber-500' },
+    { icon: Twitter, href: 'https://twitter.com/zarringold', label: t('footer.twitter'), color: 'from-sky-400 via-blue-500 to-indigo-500' },
+    { icon: Send, href: 'https://t.me/zarringold', label: t('footer.telegram'), color: 'from-sky-500 via-cyan-500 to-blue-500' },
   ];
 
   const handleServiceClick = (authPage?: string) => {
     if (isAuthenticated && authPage) {
       setPage(authPage as any);
+    }
+  };
+
+  const handleSocialClick = (href: string) => {
+    if (href && href !== '#') {
+      window.open(href, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -267,10 +273,19 @@ export default function LandingFooter({ onNavigate }: LandingFooterProps) {
 /** Social icon button with hover glow + scale animation */
 function SocialIcon({ s }: { s: { icon: React.ComponentType<{ className?: string }>; href: string; label: string; color: string } }) {
   const [hovered, setHovered] = useState(false);
+  const handleClick = (e: React.MouseEvent) => {
+    if (s.href && s.href !== '#') {
+      e.preventDefault();
+      window.open(s.href, '_blank', 'noopener,noreferrer');
+    }
+  };
   return (
     <a
       href={s.href}
       aria-label={s.label}
+      onClick={handleClick}
+      target="_blank"
+      rel="noopener noreferrer"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className={cn(

@@ -66,3 +66,34 @@ Stage Summary:
 - Root cause: Missing destructuring of return value from useTranslation() hook
 - Fix: Changed `const t = useTranslation()` → `const { t } = useTranslation()` (5 occurrences)
 - Site is running and serving correctly at localhost:3000
+
+---
+Task ID: 4
+Agent: Main Agent
+Task: Fix non-working footer links on landing page
+
+Work Log:
+- User reported footer links don't work on landing page
+- Investigated LandingFooter.tsx and page.tsx to find root cause
+- Found 4 separate failures:
+  1. `onNavigate` callback was wired to empty function `() => {}` in page.tsx (lines 172, 211)
+  2. Sub-page components existed but were never imported or rendered
+  3. Social links had placeholder `href="#"` instead of real URLs
+  4. Service links silently did nothing for guest (unauthenticated) users
+- Fixed page.tsx:
+  - Imported `LandingSubPage` type from LandingFooter
+  - Added lazy imports for AboutPage, TermsPage, PrivacyPage, ContactPage, BlogPage, FAQPage
+  - Added `landingSubPage` state with `handleLandingNavigate` and `handleSubPageBack` handlers
+  - Added `renderLandingSubPage()` switch to render correct component based on state
+  - Wired `onNavigate={handleLandingNavigate}` in all 3 places (authenticated+landing, authenticated+subpage, guest+subpage)
+  - Sub-pages render with Suspense fallback, replace landing content, keep footer visible
+- Fixed LandingFooter.tsx:
+  - Updated social links from `href="#"` to real URLs (instagram, twitter, telegram)
+  - Added `handleClick` in SocialIcon for proper `window.open` with `_blank`
+  - Added `target="_blank"` and `rel="noopener noreferrer"` to social links
+
+Stage Summary:
+- All 5 footer quick links (About, Terms, Privacy, Contact, Blog) now navigate to sub-pages
+- Each sub-page has a back button to return to the landing page
+- Social media links now open in new tabs with real URLs
+- Works for both authenticated (with landing preview toggle) and guest users
