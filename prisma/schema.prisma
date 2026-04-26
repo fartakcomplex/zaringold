@@ -8,56 +8,1730 @@ datasource db {
 }
 
 model User {
-  id        String       @id @default(cuid())
-  email     String       @unique
-  name      String?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  transactions Transaction[]
-  serviceOrders ServiceOrder[]
+  id            String   @id @default(cuid())
+  phone         String   @unique
+  email         String?  @unique
+  password      String?
+  fullName      String?  @default("")
+  isVerified    Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  isFrozen      Boolean  @default(false)
+  role          String   @default("user")
+  avatar        String?
+  referredBy    String?
+  referralCode  String   @unique
+  userLevel     String   @default("bronze")
+  levelUpgradedAt DateTime?
+  lastLoginAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  profile             Profile?
+  wallet              Wallet?
+  goldWallet          GoldWallet?
+  kyc                 KYCRequest?
+  transactions        Transaction[]
+  referrals           Referral[]       @relation("Referrer")
+  referredByRel       Referral[]       @relation("Referred")
+  notifications       Notification[]
+  tickets             SupportTicket[]
+  otpCodes            OTPCode[]
+  sessions            UserSession[]
+  priceAlerts         PriceAlert[]
+  goldLoans           GoldLoan[]
+  gamification        UserGamification?
+  achievements        UserAchievement[]
+  savingGoals         SavingGoal[]
+  autoBuyPlans        AutoBuyPlan[]
+  checkIns            CheckIn[]
+  pricePredictions    PricePrediction[]
+  sentGifts           GiftTransfer[]   @relation("GiftSender")
+  receivedGifts       GiftTransfer[]   @relation("GiftReceiver")
+  familyMemberships   FamilyWalletMember[]
+  vipSubscription     VIPSubscription?
+  cashbackRewards     CashbackReward[]
+  socialPosts         SocialPost[]
+  creatorProfile      CreatorProfile?
+  creatorSubmissions  CreatorSubmission[]
+  creatorRewards      CreatorReward[]
+  goldCard            GoldCard?
+  goldCardTx          GoldCardTransaction[]
+  payments            Payment[]
+  merchant            Merchant?
+  blogPosts           BlogPost[]
+  telegramUser        TelegramUser?
+  activities          UserActivity[]
+  roles               UserRole[]
+  insuranceOrders     InsuranceOrder[]
+  cars               UserCar[]
+  carServiceOrders   CarServiceOrder[]
+  utilityPayments    UtilityPayment[]
 }
 
-model Post {
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  label       String
+  description String?
+  permissions String   @default("[]")
+  color       String   @default("#6B7280")
+  isSystem    Boolean  @default(false)
+  priority    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users          UserRole[]
+  rolePermissions RolePermission[]
+}
+
+model UserRole {
+  id          String   @id @default(cuid())
+  userId      String
+  roleId      String
+  assignedBy  String?
+  assignedAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  label       String
+  module      String
+  description String?
+  createdAt   DateTime @default(now())
+
+  roles RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
+model UserActivity {
   id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
+  userId    String
+  action    String
+  details   String?
+  ip        String?
+  userAgent String?
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Profile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  nationalId  String?
+  birthDate   String?
+  iban        String?
+  bankCard    String?
+  province    String?
+  city        String?
+  address     String?
+  postalCode  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model KYCRequest {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  idCardImage     String?
+  idCardBackImage String?
+  selfieImage     String?
+  bankCardImage    String?
+  verificationVideo String?
+  status        String   @default("pending")
+  adminNote     String?
+  reviewedBy    String?
+  reviewedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Wallet {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  balance       Float    @default(0)
+  frozenBalance Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model GoldWallet {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  goldGrams   Float    @default(0)
+  frozenGold  Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model GoldPrice {
-  id           String   @id @default(cuid())
-  name         String
-  nameEn       String
-  price        Int
-  change       Int
-  changePercent Float
-  timestamp    DateTime @default(now())
+  id          String   @id @default(cuid())
+  buyPrice    Float
+  sellPrice   Float
+  marketPrice Float
+  ouncePrice  Float
+  spread      Float    @default(0)
+  currency    String   @default("IRR")
+  isManual    Boolean  @default(false)
+  createdAt   DateTime @default(now())
 }
 
 model Transaction {
+  id             String   @id @default(cuid())
+  userId         String
+  type           String
+  amountFiat     Float    @default(0)
+  amountGold     Float    @default(0)
+  fee            Float    @default(0)
+  goldPrice      Float?
+  status         String   @default("pending")
+  referenceId    String   @unique
+  description    String?
+  toUserId       String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Referral {
+  id           String   @id @default(cuid())
+  referrerId   String
+  referredId   String   @unique
+  rewardType   String   @default("cash")
+  rewardAmount Float    @default(0)
+  status       String   @default("pending")
+  claimedAt    DateTime?
+  createdAt    DateTime @default(now())
+
+  referrer User @relation("Referrer", fields: [referrerId], references: [id], onDelete: Cascade)
+  referred User @relation("Referred", fields: [referredId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  body        String
+  type        String   @default("info")
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SupportTicket {
+  id          String    @id @default(cuid())
+  userId      String
+  subject     String
+  category    String    @default("general")
+  status      String    @default("open")
+  priority    String    @default("normal")
+  department  String    @default("support")
+  assignedTo  String?
+  rating      Int?
+  feedback    String?
+  slaDeadline DateTime?
+  closedAt    DateTime?
+  firstReplyAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages TicketMessage[]
+}
+
+model TicketMessage {
+  id          String   @id @default(cuid())
+  ticketId    String
+  senderId    String
+  content     String
+  isAdmin     Boolean  @default(false)
+  isInternal  Boolean  @default(false)
+  attachments String   @default("[]")
+  createdAt   DateTime @default(now())
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}
+
+model OTPCode {
+  id          String   @id @default(cuid())
+  userId      String?
+  phone       String
+  code        String
+  purpose     String   @default("login")
+  attempts    Int      @default(0)
+  maxAttempts Int      @default(5)
+  expiresAt   DateTime
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model UserSession {
   id        String   @id @default(cuid())
-  type      String
-  amount    Int
-  goldAmount Float?
-  status    String   @default("pending")
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  device    String?
+  ip        String?
+  userAgent String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PriceHistory {
+  id          String   @id @default(cuid())
+  price       Float
+  interval    String   @default("1h")
+  openPrice   Float
+  highPrice   Float
+  lowPrice    Float
+  closePrice  Float
+  volume      Float    @default(0)
+  timestamp   DateTime @default(now())
+}
+
+model CMSPage {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  content     String
+  seoTitle    String?
+  seoDesc     String?
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  components  CMSComponent[]
+}
+
+model CMSComponent {
+  id        String   @id @default(cuid())
+  pageId    String
+  type      String
+  order     Int
+  props     String
+  page      CMSPage  @relation(fields: [pageId], references: [id], onDelete: Cascade)
+}
+
+model SmsConfig {
+  id          String   @id @default(cuid())
+  provider    String   @default("kavenegar")
+  apiKey      String   @default("")
+  senderNumber String  @default("")
+  otpTemplate String   @default("")
+  lastTestAt  DateTime?
+  lastTestOk  Boolean?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  details   String?
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+}
+
+/* ── Security Shield Models ── */
+
+model SecurityEvent {
+  id          String   @id @default(cuid())
+  type        String   // auth_success, auth_failure, account_frozen, suspicious_activity, bot_detected, rate_limit_exceeded, api_abuse, permission_denied, session_revoked, security_scan
+  severity    String   @default("info") // info, warning, critical
+  userId      String?
+  phone       String?
+  ip          String?
+  userAgent   String?
+  url         String?
+  method      String?
+  details     String?  // JSON
+  riskScore   Int      @default(0)
+  resolved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model BlockedIP {
+  id          String   @id @default(cuid())
+  ip          String   @unique
+  reason      String?
+  blockedBy   String?
+  expiresAt   DateTime?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model SecurityConfig {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+}
+
+model SiteSetting {
+  id          String   @id @default(cuid())
+  group       String
+  key         String
+  value       String   @default("")
+  type        String   @default("text") // text, textarea, boolean, number, json, color, image
+  label       String   @default("")
+  description String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([group, key])
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  group     String   @default("general")
+  label     String
+  updatedAt DateTime @updatedAt
+}
+
+model PriceAlert {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String
+  condition   String
+  targetPrice Int
+  isActive    Boolean  @default(true)
+  isTriggered Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model GoldLoan {
+  id              String   @id @default(cuid())
+  userId          String
+  amountRequested Float
+  goldCollateral  Float
+  goldPriceAtLoan Float
+  ltvRatio        Float    @default(0.7)
+  interestRate    Float    @default(0.05)
+  durationDays    Int      @default(30)
+  amountApproved  Float?
+  status          String   @default("pending")
+  adminNote       String?
+  reviewedBy      String?
+  reviewedAt      DateTime?
+  approvedAt      DateTime?
+  dueDate         DateTime?
+  repaidAmount    Float    @default(0)
+  penaltyAmount   Float    @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  repayments  LoanRepayment[]
+}
+
+model LoanRepayment {
+  id          String   @id @default(cuid())
+  loanId      String
+  amount      Float
+  penalty     Float    @default(0)
+  method      String   @default("wallet")
+  status      String   @default("completed")
+  description String?
+  createdAt   DateTime @default(now())
+
+  loan GoldLoan @relation(fields: [loanId], references: [id], onDelete: Cascade)
+}
+
+model LoanSetting {
+  id             String   @id @default(cuid())
+  key            String   @unique
+  value          String
+  description    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+/* ── Blog Module ── */
+
+model BlogCategory {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  color       String   @default("#D4AF37")
+  icon        String   @default("BookOpen")
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  posts BlogPost[]
+}
+
+model BlogTag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts BlogPostTag[]
+}
+
+model BlogPost {
+  id            String   @id @default(cuid())
+  title         String
+  slug          String   @unique
+  content       String   @default("")
+  excerpt       String   @default("")
+  featuredImage String?
+  status        String   @default("draft") // draft, published, archived
+  seoTitle      String?
+  seoDesc       String?
+  readTime      Int      @default(1)
+  isFeatured    Boolean  @default(false)
+  viewCount     Int      @default(0)
+  publishedAt   DateTime?
+  authorId      String
+  categoryId    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  author   User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category BlogCategory?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags     BlogPostTag[]
+}
+
+model BlogPostTag {
+  postId String
+  tagId  String
+
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  BlogTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+/* ── Media Library ── */
+
+model Media {
+  id        String   @id @default(cuid())
+  filename  String
+  originalName String
+  mimeType  String
+  size      Int      @default(0)
+  url       String
+  alt       String?
+  folder    String   @default("general")
+  width     Int?
+  height    Int?
+  uploadedBy String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model ServiceOrder {
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  Gold Payment Gateway Platform — Merchant Ecosystem                   */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+model Merchant {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  businessName    String
+  businessType    String   @default("online")
+  website         String?
+  logo            String?
+  description     String?
+  iban            String?
+  settlementType  String   @default("toman")
+  settlementFreq  String   @default("daily")
+  feeRate         Float    @default(0.01)
+  minFee          Float    @default(0)
+  maxFee          Float    @default(500000)
+  isActive        Boolean  @default(true)
+  isVerified      Boolean  @default(false)
+  kycStatus       String   @default("pending")
+  totalSales      Float    @default(0)
+  totalSalesGold  Float    @default(0)
+  totalSettled    Float    @default(0)
+  totalSettledGold Float   @default(0)
+  pendingSettle   Float    @default(0)
+  pendingSettleGold Float  @default(0)
+  riskScore       Float    @default(0)
+  webhookUrl      String?
+  webhookSecret   String?
+  brandingColor   String   @default("#D4AF37")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  apiKeys         ApiKey[]
+  payments        GatewayPayment[]
+  refunds         GatewayRefund[]
+  settlements     Settlement[]
+  webhooksLogs    WebhookLog[]
+  invoices        Invoice[]
+  qrCodes         QrCode[]
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  merchantId String
+  keyHash   String   @unique
+  keyPrefix String
+  keyType   String   @default("live")
+  name      String   @default("Default Key")
+  isActive  Boolean  @default(true)
+  lastUsedAt DateTime?
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+}
+
+model GatewayPayment {
+  id             String   @id @default(cuid())
+  authority      String   @unique
+  merchantId     String
+  userId         String?
+  amountToman    Float
+  amountGold     Float    @default(0)
+  goldGrams      Float    @default(0)
+  feeToman       Float    @default(0)
+  feeGold        Float    @default(0)
+  paymentMethod  String   @default("toman")
+  status         String   @default("pending")
+  refId          String?
+  description    String?
+  callbackUrl    String?
+  customerPhone  String?
+  customerEmail  String?
+  customerName   String?
+  cardPan        String?
+  goldPriceAtPay Float?
+  metadata       String   @default("{}")
+  paidAt         DateTime?
+  verifiedAt     DateTime?
+  settledAt      DateTime?
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  merchant   Merchant       @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  refunds    GatewayRefund[]
+  webhookLogs WebhookLog[]
+}
+
+model GatewayRefund {
+  id           String   @id @default(cuid())
+  paymentId    String
+  merchantId   String
+  amountToman  Float    @default(0)
+  amountGold   Float    @default(0)
+  reason       String   @default("")
+  status       String   @default("pending")
+  refundMethod String   @default("original")
+  processedAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  payment GatewayPayment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  merchant Merchant        @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+}
+
+model Settlement {
+  id              String   @id @default(cuid())
+  merchantId      String
+  amountToman     Float
+  amountGold      Float    @default(0)
+  feeToman        Float    @default(0)
+  type            String   @default("auto")
+  periodStart     DateTime
+  periodEnd       DateTime
+  status          String   @default("pending")
+  iban            String?
+  transactionRef  String?
+  processedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+}
+
+model WebhookLog {
   id          String   @id @default(cuid())
-  serviceType String
-  operator    String?
-  phoneNumber String?
-  amount      Int?
-  status      String   @default("pending")
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  paymentId   String
+  merchantId  String
+  url         String
+  method      String   @default("POST")
+  payload     String
+  response    String?
+  statusCode  Int      @default(0)
+  success     Boolean  @default(false)
+  attempts    Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  payment GatewayPayment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  merchant Merchant        @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+}
+
+model Invoice {
+  id             String   @id @default(cuid())
+  merchantId     String
+  invoiceNumber  String   @unique
+  customerName   String
+  customerPhone  String?
+  customerEmail  String?
+  items          String   @default("[]")
+  amountToman    Float
+  amountGold     Float    @default(0)
+  taxToman       Float    @default(0)
+  discountToman  Float    @default(0)
+  totalToman     Float
+  totalGold      Float    @default(0)
+  status         String   @default("pending")
+  dueDate        DateTime?
+  paidAt         DateTime?
+  paymentId      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+}
+
+
+
+model QrCode {
+  id          String   @id @default(cuid())
+  merchantId  String
+  title       String
+  amountToman Float
+  amountGold  Float    @default(0)
+  isFixed     Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  scanCount   Int      @default(0)
+  token       String   @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+}
+
+model RiskEvent {
+  id          String   @id @default(cuid())
+  paymentId   String?
+  userId      String?
+  merchantId  String?
+  eventType   String
+  riskScore   Float
+  details     String?
+  isResolved  Boolean  @default(false)
+  resolveNote String?
+  resolvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  NEW MODULES — Advanced Gold Platform Features                          */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Achievement / Gamification Module ── */
+
+model UserGamification {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  xp              Int      @default(0)
+  level           Int      @default(1)
+  totalBadges     Int      @default(0)
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  lastCheckInAt   DateTime?
+  checkInCount    Int      @default(0)
+  predictionScore Int      @default(0)
+  referralCount   Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  icon        String   @default("trophy")
+  category    String   @default("general")
+  xpReward    Int      @default(0)
+  goldRewardMg Float   @default(0)
+  sortOrder   Int      @default(0)
+  isHidden    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  earnedBy    UserAchievement[]
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  earnedAt      DateTime @default(now())
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+}
+
+/* ── Saving Goal Module ── */
+
+model SavingGoal {
+  id                 String   @id @default(cuid())
+  userId             String
+  title              String
+  description        String?
+  icon               String   @default("target")
+  targetAmountFiat   Float
+  targetGrams        Float
+  currentGrams       Float    @default(0)
+  currentAmountFiat  Float    @default(0)
+  monthlyContribution Float   @default(0)
+  deadline           DateTime?
+  status             String   @default("active")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/* ── Auto Buy Plan Module ── */
+
+model AutoBuyPlan {
+  id              String   @id @default(cuid())
+  userId          String
+  amountFiat      Float
+  frequency       String   @default("monthly")
+  dayOfMonth      Int      @default(1)
+  isActive        Boolean  @default(true)
+  lastExecutedAt  DateTime?
+  nextExecuteAt   DateTime?
+  totalExecutions Int      @default(0)
+  totalSpent      Float    @default(0)
+  totalGoldBought Float    @default(0)
+  failedCount     Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/* ── Daily Check-In Module ── */
+
+model CheckIn {
+  id        String   @id @default(cuid())
+  userId    String
+  dayNumber Int
+  rewardType  String   @default("fiat")
+  rewardValue Float    @default(0)
+  xpEarned  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/* ── Price Prediction Game Module ── */
+
+model PricePrediction {
+  id              String   @id @default(cuid())
+  userId          String
+  predictedPrice  Float
+  actualPrice     Float?
+  priceDiffPercent Float?
+  xpEarned        Int      @default(0)
+  isCorrect       Boolean?
+  targetDate      String
+  createdAt       DateTime @default(now())
+  resolvedAt      DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/* ── Gold Gift Module ── */
+
+model GiftTransfer {
+  id            String   @id @default(cuid())
+  senderId      String
+  receiverId    String
+  goldMg        Float
+  message       String?
+  occasion      String?
+  giftCardStyle String   @default("birthday")
+  status        String   @default("completed")
+  scheduledAt   DateTime?
+  openedAt      DateTime?
+  createdAt     DateTime @default(now())
+
+  sender   User @relation("GiftSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("GiftReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
+/* ── Family Wallet Module ── */
+
+model FamilyWallet {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members FamilyWalletMember[]
+}
+
+model FamilyWalletMember {
+  id            String   @id @default(cuid())
+  walletId      String
+  userId        String
+  role          String   @default("member")
+  contribution  Float    @default(0)
+  canWithdraw   Boolean  @default(false)
+  joinedAt      DateTime @default(now())
+
+  wallet FamilyWallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  user   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([walletId, userId])
+}
+
+/* ── VIP Subscription Module ── */
+
+model VIPSubscription {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  plan        String   @default("silver")
+  startedAt   DateTime @default(now())
+  expiresAt   DateTime
+  isActive    Boolean  @default(true)
+  autoRenew   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/* ── Cashback Reward Module ── */
+
+model CashbackReward {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  rewardType  String   @default("fiat")
+  rewardValue Float
+  status      String   @default("pending")
+  expiresAt   DateTime?
+  claimedAt   DateTime?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/* ── Social Feed Module ── */
+
+model SocialPost {
+  id          String   @id @default(cuid())
+  userId      String
+  content     String
+  postType    String   @default("trade")
+  likes       Int      @default(0)
+  isAnonymous Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/* ── Gold Reserve / Vault Transparency Module ── */
+
+model GoldReserve {
+  id               String   @id @default(cuid())
+  totalGrams       Float    @default(0)
+  todayAddedGrams  Float    @default(0)
+  reserveRatio     Float    @default(1.0)
+  lastAuditDate    String?
+  auditFirm        String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+/* ── Gold Creator Club — UGC Viral Reward Engine ── */
+
+model CreatorProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  level           String   @default("beginner") // beginner, bronze, silver, gold, diamond, elite
+  score           Int      @default(0)
+  totalGoldEarned Float   @default(0) // mg
+  totalViews      Int      @default(0)
+  totalPosts      Int      @default(0)
+  approvedPosts   Int      @default(0)
+  rejectedPosts   Int      @default(0)
+  pendingPosts    Int      @default(0)
+  rank            Int      @default(0)
+  referralClicks  Int      @default(0)
+  referralSignups Int      @default(0)
+  referralPurchases Int    @default(0)
+  isBanned        Boolean  @default(false)
+  bannedReason    String?
+  bio             String?
+  socialLinks     String   @default("{}") // JSON: {instagram, tiktok, youtube, telegram, x, aparat}
+  joinedAt        DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user        User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submissions  CreatorSubmission[]
+  rewards      CreatorReward[]
+  referrals    CreatorReferralTracking[]
+}
+
+model CreatorCampaign {
+  id          String   @id @default(cuid())
+  title       String
+  titleFa     String   @default("")
+  description String
+  descriptionFa String  @default("")
+  rewardMg    Float    @default(0)
+  tier        String   @default("bronze") // bronze, silver, gold, diamond
+  rules       String   @default("")
+  rulesFa     String   @default("")
+  platforms   String   @default("instagram,tiktok,youtube,telegram,x,aparat")
+  minViews    Int      @default(0)
+  maxSubmissionsPerUser Int @default(10)
+  isActive    Boolean  @default(true)
+  startDate   DateTime?
+  endDate     DateTime?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  submissions CreatorSubmission[]
+}
+
+model CreatorSubmission {
+  id            String   @id @default(cuid())
+  userId        String
+  campaignId    String?
+  platform      String   // instagram, tiktok, youtube, telegram, x, aparat
+  postUrl       String
+  screenshot    String?
+  analyticsShot String?
+  status        String   @default("pending") // pending, ai_review, approved, rejected, revision
+  aiScore       Float    @default(0)
+  adminNote     String?
+  adminBonusMg  Float    @default(0)
+  rewardMg      Float    @default(0)
+  estimatedViews Int     @default(0)
+  isDuplicate   Boolean  @default(false)
+  isFlagged     Boolean  @default(false)
+  flagReason    String?
+  reviewedBy    String?
+  reviewedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  creator  CreatorProfile?   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  campaign CreatorCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  rewards  CreatorReward[]
+}
+
+model CreatorReward {
+  id            String   @id @default(cuid())
+  userId        String
+  submissionId  String?
+  goldMg        Float
+  reason        String
+  reasonFa      String   @default("")
+ tier          String   @default("bronze")
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  creator    CreatorProfile? @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  submission CreatorSubmission? @relation(fields: [submissionId], references: [id], onDelete: SetNull)
+}
+
+model CreatorReferralTracking {
+  id            String   @id @default(cuid())
+  creatorId     String
+  refCode       String   @unique
+  clicks        Int      @default(0)
+  signups       Int      @default(0)
+  purchases     Int      @default(0)
+  totalRewardMg Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  creator CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+}
+
+/* ── Gold Card (کارت طلایی) Module ── */
+
+model GoldCard {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  cardNumber     String   @unique
+  cvv            String
+  expiryMonth    Int
+  expiryYear     Int
+  pin            String
+  cardType       String   @default("virtual") // virtual, physical
+  status         String   @default("active") // active, frozen, blocked, expired
+  balanceFiat    Float    @default(0)
+  linkedGoldGram Float    @default(0)
+  dailyLimit     Float    @default(50000000) // 50M toman
+  monthlyLimit   Float    @default(500000000) // 500M toman
+  spentToday     Float    @default(0)
+  spentThisMonth Float    @default(0)
+  lastUsedAt     DateTime?
+  design         String   @default("gold-gradient") // gold-gradient, black-premium, diamond, rose-gold
+  issuedAt       DateTime @default(now())
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions GoldCardTransaction[]
+}
+
+model GoldCardTransaction {
+  id          String   @id @default(cuid())
+  cardId      String
+  userId      String
+  type        String   // purchase, refund, charge, withdrawal
+  amount      Float
+  goldGrams   Float    @default(0)
+  description String?
+  merchant    String?
+  status      String   @default("completed") // completed, pending, failed
+  createdAt   DateTime @default(now())
+
+  card GoldCard @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/* ── Payment Gateway (درگاه پرداخت زرین‌پال) Module ── */
+
+model Payment {
+  id            String   @id @default(cuid())
+  userId        String
+  authority     String   @unique
+  amount        Float    // in Toman
+  description   String   @default("شارژ کیف پول زرین گلد")
+  status        String   @default("pending") // pending, paid, failed, expired, refunded
+  provider      String   @default("zarinpal")
+  refId         String?
+  cardPan       String?
+  fee           Float    @default(0)
+  verifiedAt    DateTime?
+  paidAt        DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+/* ── Landing Page Builder ── */
+
+model LandingSection {
+  id        String   @id @default(cuid())
+  sectionId String   @unique
+  title     String
+  icon      String   @default("Layout")
+  isVisible Boolean  @default(true)
+  sortOrder Int      @default(0)
+  settings  String   @default("{}")
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  SMS Marketing Platform Module                                         */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+model SmsCampaign {
+  id            String   @id @default(cuid())
+  name          String
+  type          String   @default("marketing") // marketing, transactional, birthday, price_alert, security, promotional
+  message       String
+  senderNumber  String   @default("")
+  recipientCount Int     @default(0)
+  deliveredCount Int     @default(0)
+  failedCount   Int     @default(0)
+  pendingCount  Int     @default(0)
+  status        String   @default("draft") // draft, scheduled, sending, completed, cancelled
+  scheduledAt   DateTime?
+  sentAt        DateTime?
+  completedAt   DateTime?
+  createdById   String?
+  segment       String   @default("all") // all, active, vip, new_users, kyc_verified, gold_holders
+  filterJson    String   @default("{}") // JSON filter criteria
+  costPerSms    Float    @default(35)
+  totalCost     Float    @default(0)
+  template      String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  logs SmsLog[]
+}
+
+model SmsLog {
+  id          String   @id @default(cuid())
+  campaignId  String?
+  phone       String
+  message     String
+  type        String   @default("marketing") // otp, transaction, birthday, marketing, price_alert, security, promotional, welcome, withdrawal, deposit
+  status      String   @default("pending") // pending, sent, delivered, failed, bounced
+  provider    String   @default("kavenegar")
+  messageId   String?
+  cost        Float    @default(35)
+  errorMessage String?
+  retryCount  Int      @default(0)
+  sentAt      DateTime?
+  deliveredAt DateTime?
+  userId      String?
+  createdAt   DateTime @default(now())
+
+  campaign SmsCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+}
+
+model SmsTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  content     String
+  type        String   @default("transactional") // transactional, marketing, birthday, welcome, security, notification
+  variables   String   @default("[]") // JSON array of variable names
+  isActive    Boolean  @default(true)
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SmsBlacklist {
+  id        String   @id @default(cuid())
+  phone     String   @unique
+  reason    String   @default("")
+  addedBy   String?
+  createdAt DateTime @default(now())
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  Telegram Bot Platform Module                                            */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+model TelegramUser {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  telegramId          Int      @unique
+  chatId              Int
+  username            String?
+  firstName           String?
+  lastName            String?
+  languageCode        String   @default("fa")
+  isB2B               Boolean  @default(false)
+  subscribedAnalysis  Boolean  @default(false)
+  subscribedReport    Boolean  @default(false)
+  lastActivityAt      DateTime @default(now())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user           User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alerts         TelegramAlert[]
+  subscriptions  TelegramSubscription[]
+  b2bCustomers   TelegramB2BCustomer[]
+  supportMsgs    TelegramSupportMessage[]
+  invoices       TelegramInvoice[]
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  Smart Chat Platform Module                                             */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+model ChatFAQ {
+  id          String   @id @default(cuid())
+  question    String
+  answer      String
+  category    String   @default("general") // general, account, trading, gold_card, wallet, security, payments, referral
+  keywords    String   @default("") // comma-separated keywords for matching
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  views       Int      @default(0)
+  helpfulYes  Int      @default(0)
+  helpfulNo   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ChatOperator {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String   @unique
+  email       String?
+  role        String   @default("operator") // operator, supervisor, admin
+  department  String   @default("support")
+  maxChats    Int      @default(5)
+  isOnline    Boolean  @default(false)
+  isAvailable Boolean  @default(true)
+  status      String   @default("active") // active, inactive, suspended
+  avatar      String?
+  socketId    String?
+  lastSeenAt  DateTime?
+  totalChats  Int      @default(0)
+  avgRating   Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ChatAIConfig {
+  id              String   @id @default(cuid())
+  isEnabled       Boolean  @default(true)
+  systemPrompt    String   @default("تو دستیار هوشمند پشتیبانی زرین گلد هستی. به سوالات کاربران درباره خرید و فروش طلا، کیف پول، کارت طلایی، وام، حساب کاربری و سایر خدمات پاسخ بده. پاسخ‌ها باید مختصر، دوستانه و به زبان فارسی باشند.")
+  fallbackMessage String   @default("متشکرم از پیام شما. به زودی یک اپراتور پاسخ خواهد داد.")
+  maxHistory      Int      @default(10)
+  responseDelay   Int      @default(2000)
+  greetingMessage String   @default("سلام! 👋 من دستیار هوشمند زرین گلد هستم. چطور می‌تونم کمکتون کنم؟")
+  offlineMessage  String   @default("در حال حاضر اپراتور آنلاین نیست. دستیار هوشمند در خدمت شماست.")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model TelegramAlert {
+  id              String   @id @default(cuid())
+  telegramUserId  String
+  assetType       String   @default("gold18") // gold18, gold24, mesghal, ounce
+  condition       String   @default("above") // above, below, crosses
+  targetPrice     Float
+  isActive        Boolean  @default(true)
+  isTriggered     Boolean  @default(false)
+  triggeredAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  telegramUser TelegramUser @relation(fields: [telegramUserId], references: [id], onDelete: Cascade)
+}
+
+model TelegramSubscription {
+  id              String   @id @default(cuid())
+  telegramUserId  String
+  type            String   @default("analysis") // analysis, report, price_alert
+  schedule        String   @default("daily") // daily, weekly, monthly
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  telegramUser TelegramUser @relation(fields: [telegramUserId], references: [id], onDelete: Cascade)
+}
+
+model TelegramB2BCustomer {
+  id              String   @id @default(cuid())
+  telegramUserId  String
+  name            String
+  phone           String?
+  note            String?
+  totalInvoices   Int      @default(0)
+  totalSpent      Float    @default(0)
+  totalGold       Float    @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  telegramUser TelegramUser @relation(fields: [telegramUserId], references: [id], onDelete: Cascade)
+}
+
+model TelegramSupportMessage {
+  id              String   @id @default(cuid())
+  telegramUserId  String
+  ticketId        String?
+  subject         String?
+  message         String
+  isAdmin         Boolean  @default(false)
+  isRead          Boolean  @default(false)
+  replyToId       String?
+  createdAt       DateTime @default(now())
+
+  telegramUser TelegramUser @relation(fields: [telegramUserId], references: [id], onDelete: Cascade)
+}
+
+model CannedResponse {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  category  String   @default("general")
+  isAdmin   Boolean  @default(true)
+  useCount  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TicketRating {
+  id        String   @id @default(cuid())
+  ticketId  String
+  score     Int
+  comment   String?
+  createdAt DateTime @default(now())
+}
+
+model TelegramInvoice {
+  id              String   @id @default(cuid())
+  telegramUserId  String
+  customerName    String
+  customerPhone   String?
+  weightGrams     Float
+  pricePerGram    Float
+  ejratPercent    Float    @default(3)
+  taxPercent      Float    @default(9)
+  totalAmount     Float
+  status          String   @default("draft") // draft, sent, paid, cancelled
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  telegramUser TelegramUser @relation(fields: [telegramUserId], references: [id], onDelete: Cascade)
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  Email Marketing Platform Module                                              */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+model EmailCampaign {
+  id            String   @id @default(cuid())
+  name          String
+  type          String   @default("marketing") // marketing, transactional, birthday, price_alert, security, promotional, newsletter, weekly_report
+  subject       String
+  htmlContent   String   @default("")
+  plainText     String   @default("")
+  senderName    String   @default("زرین گلد")
+  senderEmail   String   @default("noreply@zarringold.ir")
+  recipientCount Int     @default(0)
+  openedCount  Int     @default(0)
+  clickedCount  Int     @default(0)
+  bouncedCount Int     @default(0)
+  unsubscribed Int     @default(0)
+  status        String   @default("draft") // draft, scheduled, sending, completed, cancelled
+  scheduledAt   DateTime?
+  sentAt        DateTime?
+  completedAt   DateTime?
+  createdById   String?
+  segment       String   @default("all") // all, active, vip, new_users, kyc_verified, gold_holders, inactive_30d
+  filterJson    String   @default("{}")
+  template      String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  logs EmailLog[]
+}
+
+model EmailLog {
+  id            String   @id @default(cuid())
+  campaignId    String?
+  email         String
+  subject       String
+  type          String   @default("marketing") // otp, transaction, birthday, marketing, price_alert, security, welcome, newsletter
+  status        String   @default("pending") // pending, sent, delivered, opened, clicked, bounced, failed, unsubscribed
+  openedAt      DateTime?
+  clickedAt     DateTime?
+  bouncedAt     DateTime?
+  errorMessage  String?
+  userId        String?
+  createdAt     DateTime @default(now())
+
+  campaign EmailCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+}
+
+model EmailTemplate {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  subject       String
+  htmlContent   String
+  type          String   @default("transactional") // transactional, marketing, birthday, welcome, security, newsletter, notification
+  variables     String   @default("[]") // JSON array
+  isActive      Boolean  @default(true)
+  isDefault     Boolean  @default(false)
+  previewText   String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model EmailBlacklist {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  reason    String   @default("")
+  addedBy   String?
+  createdAt DateTime @default(now())
+}
+
+model EmailConfig {
+  id          String   @id @default(cuid())
+  provider    String   @default("smtp")
+  host        String   @default("")
+  port        Int      @default(587)
+  secure      Boolean  @default(true) // SSL/TLS
+  username    String   @default("")
+  password    String   @default("")
+  senderName  String   @default("زرین گلد")
+  senderEmail String   @default("noreply@zarringold.ir")
+  replyTo     String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  Insurance Module                                                       */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+model InsuranceProvider {
+  id          String   @id @default(cuid())
+  name        String
+  nameEn      String   @default("")
+  logo        String?
+  apiEndpoint String?
+  apiKey      String?
+  isActive    Boolean  @default(true)
+  commissionRate Float @default(0)
+  commissionFixed Float @default(0)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  categories InsuranceCategory[]
+  plans     InsurancePlan[]
+  orders    InsuranceOrder[]
+}
+
+model InsuranceCategory {
+  id          String   @id @default(cuid())
+  name        String
+  nameEn      String   @default("")
+  slug        String   @unique
+  icon        String   @default("Shield")
+  description String?
+  descriptionEn String  @default("")
+  color       String   @default("#D4AF37")
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  hasSubtypes Boolean  @default(false)
+  subtypes    String   @default("[]")
+  formFields  String   @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  provider   InsuranceProvider? @relation(fields: [providerId], references: [id], onDelete: SetNull)
+  providerId String?
+  plans      InsurancePlan[]
+}
+
+model InsurancePlan {
+  id            String   @id @default(cuid())
+  providerId    String
+  categoryId    String
+  name          String
+  nameEn        String   @default("")
+  description   String?
+  descriptionEn String   @default("")
+  basePrice     Float
+  sellingPrice  Float
+  commissionType String  @default("percentage")
+  commissionValue Float  @default(0)
+  durationDays  Int      @default(365)
+  durationLabel String   @default("1 ساله")
+  durationLabelEn String @default("1 Year")
+  coverageAmount Float   @default(0)
+  coverages     String   @default("[]")
+  isActive      Boolean  @default(true)
+  minAge        Int      @default(18)
+  maxAge        Int      @default(70)
+  terms         String?
+  termsEn       String?
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  provider  InsuranceProvider  @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  category  InsuranceCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  orders    InsuranceOrder[]
+}
+
+model InsuranceOrder {
+  id              String   @id @default(cuid())
+  userId          String
+  planId          String
+  providerId      String
+  categoryId      String
+  planName        String
+  providerName    String
+  amountPaid      Float
+  commissionEarned Float   @default(0)
+  status          String   @default("pending")
+  policyNumber    String?
+  startDate       DateTime?
+  endDate         DateTime?
+  formData        String   @default("{}")
+  personalInfo    String   @default("{}")
+  vehicleInfo     String?
+  holderName      String?
+  holderPhone     String?
+  holderNationalId String?
+  holderEmail     String?
+  paymentRef      String?
+  externalOrderId String?
+  issuedAt        DateTime?
+  cancelledAt     DateTime?
+  adminNote       String?
+  reviewedBy      String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan     InsurancePlan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  provider InsuranceProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/*  Automotive Services Module (خدمات خودرو)                         */
+/* ═══════════════════════════════════════════════════════════════ */
+
+model UserCar {
+  id            String   @id @default(cuid())
+  userId        String
+  country       String   @default("ایران")
+  province      String   @default("")
+  city          String   @default("")
+  carType       String   @default("")
+  carBrand      String   @default("")
+  carModel      String   @default("")
+  productionYear Int     @default(1400)
+  plateNumber   String   @default("")
+  plateTwoChar  String   @default("")
+  plateThreeChar String  @default("")
+  plateRegion   String   @default("")
+  color         String   @default("")
+  vin           String   @default("")
+  isDefault     Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user   User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders CarServiceOrder[]
+}
+
+model CarServiceCategory {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  nameEn      String   @default("")
+  description String   @default("")
+  descriptionEn String @default("")
+  icon        String   @default("Car")
+  color       String   @default("#8B5CF6")
+  basePrice   Float    @default(0)
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orders CarServiceOrder[]
+}
+
+model CarServiceOrder {
+  id              String   @id @default(cuid())
+  userId          String
+  carId           String
+  categoryId      String
+  status          String   @default("pending")
+  urgency         String   @default("normal")
+  description     String   @default("")
+  location        String   @default("")
+  latitude        Float    @default(0)
+  longitude       Float    @default(0)
+  scheduledAt     DateTime?
+  estimatedPrice  Float    @default(0)
+  finalPrice      Float    @default(0)
+  paymentStatus   String   @default("unpaid")
+  paymentMethod   String   @default("wallet")
+  rating          Int?
+  userFeedback    String?
+  adminNote       String?
+  assignedTo      String?
+  completedAt     DateTime?
+  cancelledAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  car       UserCar             @relation(fields: [carId], references: [id], onDelete: Cascade)
+  category  CarServiceCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  Utility Payment Services Module (خرید شارژ، اینترنت، قبوض)              */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+model UtilityPayment {
+  id              String   @id @default(cuid())
+  userId          String
+  type            String   // topup, internet, bill
+  operator        String   // mci, irancell, rightel, taliya
+  phoneNumber     String   @default("")
+  amount          Float
+  fee             Float    @default(0)
+  totalPrice      Float
+  status          String   @default("pending") // pending, success, failed, refunded
+  paymentMethod   String   @default("wallet") // wallet, card
+  billType        String   @default("") // water, electricity, gas, landline, internet
+  billNumber      String   @default("")
+  billId          String   @default("")
+  packageTitle    String   @default("")
+  packageDays     Int      @default(0)
+  packageDataMb   Int      @default(0)
+  referenceCode   String   @default("")
+  description     String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

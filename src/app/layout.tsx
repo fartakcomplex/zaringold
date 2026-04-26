@@ -1,41 +1,74 @@
-import type { Metadata } from "next";
-import { Vazirmatn } from "next/font/google";
-import { ThemeProvider } from "next-themes";
+import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "next-themes";
+import LocaleProvider from "@/components/shared/LocaleProvider";
 
-const vazirmatn = Vazirmatn({
-  variable: "--font-vazirmatn",
-  subsets: ["arabic"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+const iranSans = localFont({
+  variable: "--font-vazir",
+  src: [
+    {
+      path: "../../public/fonts/IRANSansWeb_UltraLight.woff2",
+      weight: "200",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/IRANSansWeb_Light.woff2",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/IRANSansWeb.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/IRANSansWeb_Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/IRANSansWeb_Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/IRANSansWeb_Black.woff2",
+      weight: "900",
+      style: "normal",
+    },
+  ],
+  display: "swap",
+});
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "زرین گلد — پلتفرم جامع معاملات طلای هوشمند | Zaringold",
-  description:
-    "خرید، فروش و سرمایهگذاری طلای دیجیتال با هوش مصنوعی. معاملات لحظهای طلا، کیف پول دوگانه، درگاه پرداخت طلایی و خدمات جامع مالی.",
-  keywords: [
-    "زرین گلد",
-    "طلا",
-    "معاملات طلا",
-    "سرمایهگذاری طلا",
-    "قیمت طلا",
-    "فینتک",
-    "Zaringold",
-    "gold trading",
-    "digital gold",
-  ],
-  authors: [{ name: "Fartak Complex" }],
+  title: "زرین گلد | خرید و فروش طلای نوین",
+  description: "پلتفرم معاملات طلای آنلاین - خرید، فروش و پس‌انداز طلا",
+  keywords: ["طلا", "خرید طلا", "فروش طلا", "زرین گلد", "سرمایه‌گذاری طلا", "قیمت طلا"],
+  authors: [{ name: "Zarrin Gold" }],
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪙</text></svg>",
+    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
   },
-  openGraph: {
-    title: "زرین گلد — پلتفرم جامع معاملات طلای هوشمند",
-    description:
-      "خرید، فروش و سرمایهگذاری طلای دیجیتال با هوش مصنوعی",
-    siteName: "Zaringold",
-    type: "website",
-  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
 };
 
 export default function RootLayout({
@@ -45,18 +78,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
-      <body
-        className={`${vazirmatn.variable} antialiased bg-background text-foreground`}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
+      <body className={`${iranSans.variable} ${inter.variable} antialiased bg-background text-foreground`}>
+        <LocaleProvider>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

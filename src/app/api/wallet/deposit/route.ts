@@ -1,0 +1,54 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+import { requireAuth } from '@/lib/security/auth-guard'
+import crypto from 'crypto'
+
+export async function POST(request: NextRequest) {
+  try {
+    const auth = await requireAuth(request)
+    if (!auth) {
+      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 })
+    }
+
+    const { amount } = await request.json()
+    const userId = auth.user.id
+
+    if (!amount || amount <= 0) {
+      return NextResponse.json(
+        { success: false, message: 'شناسه کاربر و مبلغ الزامی است' },
+        { status: 400 }
+      )
+    }
+
+    // Find or create wallet
+    const wallet = await db.wallet.upsert({
+      where: { userId },
+      update: { balance: { increment: amount } },
+      create: { userId, balance: amount },
+    })
+
+    // Create transaction record
+    await db.transaction.create({
+      data: {
+        userId,
+        type: 'deposit',
+        amountFiat: amount,
+        status: 'completed',
+        referenceId: crypto.randomUUID(),
+        description: 'واریز به کیف پول',
+      },
+    })
+
+    return NextResponse.json({
+      success: true,
+      message: 'واریز با موفقیت انجام شد',
+      balance: wallet.balance,
+    })
+  } catch (error) {
+    console.error('Deposit error:', error)
+    return NextResponse.json(
+      { success: false, message: 'خطا در واریز' },
+      { status: 500 }
+    )
+  }
+}

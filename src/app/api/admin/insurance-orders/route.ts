@@ -1,0 +1,57 @@
+import { db } from '@/lib/db';
+import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/security/auth-guard';
+
+export async function GET(req: NextRequest) {
+  try {
+    const auth = await requireAdmin(req);
+    if (!auth) {
+      return NextResponse.json({ message: 'احراز هویت نشده' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const status = searchParams.get('status') || '';
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const from = searchParams.get('from') || '';
+    const to = searchParams.get('to') || '';
+
+    const where: Record<string, unknown> = {};
+    if (status) where.status = status;
+    if (from && to) {
+      where.createdAt = { gte: new Date(from), lte: new Date(to) };
+    } else if (from) {
+      where.createdAt = { gte: new Date(from) };
+    }
+
+    const [orders, total] = await Promise.all([
+      db.insuranceOrder.findMany({
+        where,
+        include: {
+          user: { select: { id: true, fullName: true, phone: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      db.insuranceOrder.count({ where }),
+    ]);
+
+    return NextResponse.json({
+      success: true,
+      orders,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error('Insurance orders error:', error);
+    return NextResponse.json(
+      { success: false, message: 'خطا در دریافت سفارشات' },
+      { status: 500 }
+    );
+  }
+}
