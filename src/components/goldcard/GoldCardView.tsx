@@ -127,6 +127,105 @@ const CardStyles = () => (
       animation: holo-shimmer 3.5s ease-in-out infinite;
     }
 
+    /* ── Premium light sweep ── */
+    @keyframes light-sweep {
+      0% { transform: translateX(-100%) rotate(25deg); }
+      100% { transform: translateX(200%) rotate(25deg); }
+    }
+    .light-sweep {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .light-sweep::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 50%;
+      height: 200%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.12),
+        rgba(255,255,255,0.04),
+        transparent
+      );
+      animation: light-sweep 4s ease-in-out infinite;
+    }
+
+    /* ── Geometric holographic pattern ── */
+    @keyframes pattern-drift {
+      0% { background-position: 0 0; }
+      100% { background-position: 40px 40px; }
+    }
+    .holo-pattern {
+      background-image:
+        linear-gradient(30deg, rgba(255,215,0,0.04) 12%, transparent 12.5%, transparent 87%, rgba(255,215,0,0.04) 87.5%),
+        linear-gradient(150deg, rgba(255,215,0,0.04) 12%, transparent 12.5%, transparent 87%, rgba(255,215,0,0.04) 87.5%),
+        linear-gradient(30deg, rgba(255,215,0,0.04) 12%, transparent 12.5%, transparent 87%, rgba(255,215,0,0.04) 87.5%),
+        linear-gradient(150deg, rgba(255,215,0,0.04) 12%, transparent 12.5%, transparent 87%, rgba(255,215,0,0.04) 87.5%);
+      background-size: 40px 70px;
+      background-position: 0 0, 0 0, 20px 35px, 20px 35px;
+      animation: pattern-drift 20s linear infinite;
+    }
+
+    /* ── EMV Chip ── */
+    .emv-chip {
+      width: 42px;
+      height: 32px;
+      border-radius: 5px;
+      background: linear-gradient(135deg, #d4af37 0%, #f0d060 30%, #d4af37 50%, #b8960b 70%, #f0d060 100%);
+      position: relative;
+      box-shadow: inset 0 1px 2px rgba(255,255,255,0.3), inset 0 -1px 2px rgba(0,0,0,0.2);
+    }
+    .emv-chip::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 3px;
+      right: 3px;
+      height: 1px;
+      background: rgba(0,0,0,0.25);
+    }
+    .emv-chip::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 3px;
+      bottom: 3px;
+      width: 1px;
+      background: rgba(0,0,0,0.25);
+    }
+    .emv-chip-inner {
+      position: absolute;
+      top: 50%;
+      left: 3px;
+      right: 3px;
+      height: 1px;
+      background: rgba(0,0,0,0.15);
+      transform: translateY(-6px);
+    }
+    .emv-chip-inner2 {
+      position: absolute;
+      top: 50%;
+      left: 3px;
+      right: 3px;
+      height: 1px;
+      background: rgba(0,0,0,0.15);
+      transform: translateY(6px);
+    }
+
+    /* ── Contactless icon ── */
+    @keyframes nfc-pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+    .nfc-icon {
+      animation: nfc-pulse 2.5s ease-in-out infinite;
+    }
+
     /* ── Magnetic stripe ── */
     .magnetic-stripe {
       background: repeating-linear-gradient(
@@ -208,6 +307,21 @@ const CardStyles = () => (
       -webkit-mask-composite: xor;
       mask-composite: exclude;
       pointer-events: none;
+    }
+
+    /* ── Card glow shadow ── */
+    .premium-card-glow {
+      box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.3),
+        0 10px 25px -5px rgba(0, 0, 0, 0.4),
+        0 0 40px -10px rgba(212, 175, 55, 0.25);
+    }
+
+    /* ── VISA logo gradient text ── */
+    .visa-text {
+      font-family: 'Arial', sans-serif;
+      font-style: italic;
+      letter-spacing: 0.05em;
     }
   `}</style>
 );
@@ -338,40 +452,48 @@ function getStatusBadge(status: CardTransaction['status']) {
 
 const CARD_DESIGNS = {
   'gold-gradient': {
-    bg: 'linear-gradient(135deg, #b8860b, #daa520, #ffd700, #f0c040, #daa520, #b8860b)',
-    text: 'text-[#2a1a00]',
-    sub: 'text-[#3d2800]/90',
-    accent: 'text-[#ffd700]',
+    bg: 'linear-gradient(135deg, #8B6914 0%, #B8860B 15%, #DAA520 30%, #FFD700 45%, #FFF4B0 55%, #FFD700 65%, #DAA520 80%, #B8860B 95%, #8B6914 100%)',
+    text: 'text-[#1a0f00]',
+    sub: 'text-[#4a3000]/85',
+    accent: 'text-[#fff]',
     shimmer: 'from-amber-300/0 via-amber-200/30 to-amber-300/0',
     label: 'طلایی کلاسیک',
     border: '',
+    chipBg: 'linear-gradient(135deg, #d4af37 0%, #f0d060 30%, #d4af37 50%, #b8960b 70%, #f0d060 100%)',
+    networkColor: '#1a1f71',
   },
   'black-premium': {
-    bg: 'linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #1a1a2e)',
+    bg: 'linear-gradient(145deg, #0a0a1a 0%, #111128 20%, #1a1a3e 40%, #0f1f4a 60%, #0a1628 80%, #0a0a1a 100%)',
     text: 'text-white',
-    sub: 'text-gray-300',
+    sub: 'text-gray-400',
     accent: 'text-[#D4AF37]',
     shimmer: 'from-[#D4AF37]/0 via-[#D4AF37]/25 to-[#D4AF37]/0',
     label: 'مشکی پریمیوم',
-    border: 'border-[#D4AF37]/40',
+    border: 'border-[#D4AF37]/30',
+    chipBg: 'linear-gradient(135deg, #d4af37 0%, #f0d060 30%, #d4af37 50%, #b8960b 70%, #f0d060 100%)',
+    networkColor: '#D4AF37',
   },
   'diamond': {
-    bg: 'linear-gradient(135deg, #b8860b, #daa520, #ffd700, #e8c252, #daa520, #b8860b)',
-    text: 'text-[#2a1a00]',
-    sub: 'text-[#3d2800]/90',
+    bg: 'linear-gradient(135deg, #c9b037 0%, #f7e98e 20%, #fffde7 35%, #f7e98e 50%, #c9b037 70%, #96771f 85%, #c9b037 100%)',
+    text: 'text-[#1a0f00]',
+    sub: 'text-[#4a3000]/85',
     accent: 'text-white',
-    shimmer: 'from-white/0 via-white/30 to-white/0',
+    shimmer: 'from-white/0 via-white/40 to-white/0',
     label: 'الماسی',
     border: '',
+    chipBg: 'linear-gradient(135deg, #fff 0%, #e8e8e8 30%, #fff 50%, #ccc 70%, #fff 100%)',
+    networkColor: '#1a1f71',
   },
   'rose-gold': {
-    bg: 'linear-gradient(135deg, #b76e79, #e8b4b8, #f4d6cc, #daa06d, #b76e79)',
+    bg: 'linear-gradient(135deg, #8B5A5A 0%, #B76E79 20%, #E8B4B8 40%, #F4D6CC 55%, #E8B4B8 70%, #DAA06D 85%, #B76E79 100%)',
     text: 'text-[#2a1018]',
-    sub: 'text-[#3d1a25]/90',
+    sub: 'text-[#4a2030]/80',
     accent: 'text-white',
     shimmer: 'from-white/0 via-white/25 to-white/0',
     label: 'رزگلد',
     border: '',
+    chipBg: 'linear-gradient(135deg, #d4af37 0%, #f0d060 30%, #d4af37 50%, #b8960b 70%, #f0d060 100%)',
+    networkColor: '#1a1f71',
   },
 } as const;
 
@@ -443,6 +565,7 @@ function VirtualCard({
   const [flipped, setFlipped] = useState(false);
   const design = CARD_DESIGNS[card.design];
   const isDiamond = card.design === 'diamond';
+  const isDark = card.design === 'black-premium';
 
   const handleFlip = () => {
     setFlipped(!flipped);
@@ -452,13 +575,19 @@ function VirtualCard({
   return (
     <div className="card-perspective w-full max-w-[400px] mx-auto" onClick={handleFlip}>
       <div className={`card-flipper w-full aspect-[1.586/1] ${flipped ? 'flipped' : ''}`}>
-        {/* ── FRONT FACE ── */}
+        {/* ══════ FRONT FACE ══════ */}
         <div
-          className={`card-face card-face-front w-full rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(212,175,55,0.25)] golden-card-animated ${design.border || 'border border-white/10'} select-none cursor-pointer`}
+          className={`card-face card-face-front w-full rounded-2xl overflow-hidden premium-card-glow ${design.border || 'border border-white/10'} select-none cursor-pointer`}
           style={{ background: design.bg }}
         >
+          {/* Subtle texture pattern */}
+          <div className="absolute inset-0 holo-pattern pointer-events-none opacity-60" />
+
           {/* Holographic shimmer */}
           <div className="absolute inset-0 holo-shimmer pointer-events-none" />
+
+          {/* Light sweep */}
+          <div className="light-sweep" />
 
           {/* Diamond sparkle particles */}
           {isDiamond && (
@@ -467,8 +596,16 @@ function VirtualCard({
               <div className="absolute top-12 right-16 w-1.5 h-1.5 bg-white/50 rounded-full animate-[twinkle_2.5s_ease-in-out_infinite_0.5s]" />
               <div className="absolute bottom-16 left-20 w-1 h-1 bg-white/60 rounded-full animate-[twinkle_3s_ease-in-out_infinite_1s]" />
               <div className="absolute top-1/2 right-8 w-2 h-2 bg-white/40 rounded-full animate-[twinkle_2.8s_ease-in-out_infinite_0.3s]" />
+              <div className="absolute bottom-8 right-24 w-1.5 h-1.5 bg-white/50 rounded-full animate-[twinkle_3.2s_ease-in-out_infinite_0.7s]" />
             </>
           )}
+
+          {/* Decorative circles (top-right) */}
+          <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/[0.06] pointer-events-none" />
+          <div className="absolute -top-4 -right-4 w-28 h-28 rounded-full bg-white/[0.04] pointer-events-none" />
+
+          {/* Decorative circles (bottom-left) */}
+          <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-black/[0.06] pointer-events-none" />
 
           {/* Frozen overlay */}
           {isFrozen && (
@@ -482,98 +619,149 @@ function VirtualCard({
 
           {/* Card front content */}
           <div className="relative z-[5] flex flex-col justify-between h-full p-5 sm:p-6">
-            {/* Top row */}
+            {/* Top row: Bank name + NFC */}
             <div className="flex items-start justify-between">
-              <div>
-                <p className={`text-[10px] font-bold tracking-wider uppercase ${design.sub}`}>ZARRIN GOLD</p>
-                <p className={`text-lg font-extrabold tracking-wide ${design.text} mt-0.5`}>زرین گلد</p>
+              <div className="flex flex-col gap-1">
+                <p className={`text-[11px] font-black tracking-[0.18em] uppercase ${design.sub}`}>ZARRIN GOLD</p>
+                <p className={`text-[17px] font-black ${design.text} leading-tight`}>زرین گلد</p>
               </div>
-              <div className="flex items-center gap-2">
-                <Wifi className={`size-5 ${design.sub} rotate-90`} />
-                <Badge variant="outline" className={`${design.border || 'border-white/30'} ${design.sub} text-[9px] px-1.5 py-0`}>
-                  {card.type === 'VIRTUAL' ? 'مجازی' : 'فیزیکی'}
+              <div className="flex flex-col items-end gap-1.5">
+                {/* Contactless NFC icon */}
+                <svg className="nfc-icon size-5" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#D4AF37' : '#4a3000'} strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M8.5 16.5a5 5 0 0 1 0-9" />
+                  <path d="M5 19a9 9 0 0 1 0-14" />
+                  <path d="M12 14a2 2 0 0 1 0-4" />
+                </svg>
+                <Badge variant="outline" className={`${design.border || 'border-white/30'} ${design.sub} text-[8px] px-1.5 py-0 font-bold tracking-wider`}>
+                  {card.type === 'VIRTUAL' ? 'VIRTUAL' : 'PHYSICAL'}
                 </Badge>
               </div>
             </div>
 
-            {/* Card number */}
-            <div className="cursor-pointer active:scale-[0.98] transition-transform" onClick={(e) => { e.stopPropagation(); onToggleNumber(); }}>
-              <p className={`text-lg sm:text-xl font-mono tracking-[0.15em] ${design.text} text-center font-bold`}>
-                {showNumber ? card.cardNumber : maskCardNumber(card.cardNumber)}
-              </p>
-              <p className="text-center mt-0.5">
-                {showNumber
-                  ? <EyeOff className={`size-3.5 mx-auto ${design.sub}`} />
-                  : <Eye className={`size-3.5 mx-auto ${design.sub}`} />}
-              </p>
+            {/* EMV Chip + Card Number row */}
+            <div className="flex items-center gap-4 mt-1">
+              {/* EMV Chip */}
+              <div className="emv-chip flex-shrink-0">
+                <div className="emv-chip-inner" />
+                <div className="emv-chip-inner2" />
+              </div>
+              {/* Card Number */}
+              <div
+                className="cursor-pointer active:scale-[0.98] transition-transform flex-1 text-center"
+                onClick={(e) => { e.stopPropagation(); onToggleNumber(); }}
+              >
+                <p className={`text-[17px] sm:text-[19px] font-mono tracking-[0.18em] ${design.text} font-black leading-none`}>
+                  {showNumber ? card.cardNumber : maskCardNumber(card.cardNumber)}
+                </p>
+                <p className="flex items-center justify-center gap-1 mt-1">
+                  {showNumber
+                    ? <EyeOff className={`size-3 ${design.sub}`} />
+                    : <Eye className={`size-3 ${design.sub}`} />}
+                  <span className={`text-[7px] ${design.sub} opacity-60`}>برای نمایش کلیک کنید</span>
+                </p>
+              </div>
             </div>
 
-            {/* Bottom row */}
-            <div className="flex items-end justify-between">
-              <div>
-                <p className={`text-[9px] font-semibold ${design.sub}`}>CVV2</p>
-                <div className="cursor-pointer active:scale-[0.98] transition-transform" onClick={(e) => { e.stopPropagation(); onToggleCvv(); }}>
-                  <p className={`text-sm font-mono ${design.text} font-bold`}>{showCvv ? card.cvv : '***'}</p>
+            {/* Bottom row: CVV, Expiry, Holder, Network */}
+            <div className="flex items-end justify-between mt-1">
+              {/* CVV */}
+              <div className="flex flex-col items-start">
+                <p className={`text-[8px] font-bold tracking-wider uppercase ${design.sub} opacity-70`}>CVV2</p>
+                <div
+                  className="cursor-pointer active:scale-[0.98] transition-transform"
+                  onClick={(e) => { e.stopPropagation(); onToggleCvv(); }}
+                >
+                  <p className={`text-[14px] font-mono ${design.text} font-black tracking-[0.2em]`}>
+                    {showCvv ? card.cvv : '•••'}
+                  </p>
                 </div>
               </div>
-              <div className="text-center">
-                <p className={`text-[9px] font-semibold ${design.sub}`}>اعتبار</p>
-                <p className={`text-sm font-mono ${design.text} font-bold`}>{card.expiry}</p>
+
+              {/* Expiry */}
+              <div className="flex flex-col items-center">
+                <p className={`text-[8px] font-bold tracking-wider uppercase ${design.sub} opacity-70`}>EXPIRY</p>
+                <p className={`text-[14px] font-mono ${design.text} font-black tracking-[0.15em]`}>{card.expiry}</p>
               </div>
-              <div className="text-left">
-                <p className={`text-[9px] font-semibold ${design.sub}`}>دارنده کارت</p>
-                <p className={`text-xs font-bold ${design.text} max-w-[120px] truncate`}>{userName || 'کاربر زرین گلد'}</p>
+
+              {/* Card Holder */}
+              <div className="flex flex-col items-end">
+                <p className={`text-[8px] font-bold tracking-wider uppercase ${design.sub} opacity-70`}>CARD HOLDER</p>
+                <p className={`text-[11px] font-black ${design.text} max-w-[110px] truncate tracking-wide`}>
+                  {userName || 'ZARRIN GOLD USER'}
+                </p>
+              </div>
+
+              {/* Network Logo (VISA style) */}
+              <div className="flex flex-col items-end ml-1">
+                <svg width="36" height="12" viewBox="0 0 36 12" className="opacity-90">
+                  <text x="0" y="11" fill={design.networkColor || '#1a1f71'} fontFamily="Arial" fontStyle="italic" fontWeight="900" fontSize="14" letterSpacing="1">VISA</text>
+                </svg>
               </div>
             </div>
           </div>
 
           {/* Flip hint */}
-          <div className={`absolute bottom-2 left-1/2 -translate-x-1/2 ${design.sub} opacity-40 z-[5]`}>
-            <p className="text-[8px]">برای مشاهده پشت کارت کلیک کنید</p>
+          <div className={`absolute bottom-1.5 left-1/2 -translate-x-1/2 ${design.sub} opacity-30 z-[5]`}>
+            <p className="text-[7px] tracking-wider">برای مشاهده پشت کارت کلیک کنید</p>
           </div>
         </div>
 
-        {/* ── BACK FACE ── */}
+        {/* ══════ BACK FACE ══════ */}
         <div
-          className={`card-face card-face-back w-full rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(212,175,55,0.25)] select-none ${design.border || 'border border-white/10'}`}
+          className={`card-face card-face-back w-full rounded-2xl overflow-hidden premium-card-glow select-none ${design.border || 'border border-white/10'}`}
           style={{ background: design.bg }}
         >
+          {/* Subtle pattern */}
+          <div className="absolute inset-0 holo-pattern pointer-events-none opacity-40" />
+
           {/* Magnetic stripe */}
           <div className="magnetic-stripe w-full h-12 mt-4" />
 
-          {/* CVV strip */}
-          <div className="px-5 pt-4">
-            <div className="bg-black/20 backdrop-blur-sm rounded-lg p-3 flex items-center justify-between">
-              <div>
-                <p className={`text-[9px] ${design.sub}`}>CVV2</p>
+          {/* Signature strip */}
+          <div className="mx-5 mt-4">
+            <div className="bg-black/15 backdrop-blur-sm rounded-md p-3 flex items-center justify-between min-h-[44px]">
+              <div className="flex items-center gap-2">
+                {/* CVV */}
                 <div className="cursor-pointer" onClick={(e) => { e.stopPropagation(); onToggleCvv(); }}>
-                  <p className={`text-lg font-mono ${design.text} font-bold tracking-widest`}>{showCvv ? card.cvv : '•••'}</p>
+                  <p className={`text-[18px] font-mono ${design.text} font-black tracking-[0.2em] leading-none`}>
+                    {showCvv ? card.cvv : '•••'}
+                  </p>
                 </div>
               </div>
-              <div className="text-left">
-                <p className={`text-[9px] ${design.sub}`}>PIN</p>
-                <div className="cursor-pointer" onClick={(e) => { e.stopPropagation(); onTogglePin(); }}>
-                  <p className={`text-lg font-mono ${design.text} font-bold tracking-widest`}>{showPin ? card.pin : '••••'}</p>
+              <div className="flex items-center gap-3">
+                {/* PIN */}
+                <div className="text-right">
+                  <p className={`text-[8px] ${design.sub} font-bold uppercase tracking-wider opacity-70`}>PIN</p>
+                  <div className="cursor-pointer" onClick={(e) => { e.stopPropagation(); onTogglePin(); }}>
+                    <p className={`text-[14px] font-mono ${design.text} font-black tracking-[0.2em]`}>
+                      {showPin ? card.pin : '••••'}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Bottom info */}
-          <div className="absolute bottom-4 right-5 left-5 z-[5]">
+          <div className="absolute bottom-3 right-5 left-5 z-[5]">
             <div className="flex items-center justify-between">
               <div>
-                <p className={`text-[9px] ${design.sub}`}>شماره کارت</p>
-                <p className={`text-xs font-mono ${design.text} font-bold tracking-wide`}>
+                <p className={`text-[8px] ${design.sub} font-bold uppercase tracking-wider opacity-60`}>Card Number</p>
+                <p className={`text-[11px] font-mono ${design.text} font-bold tracking-[0.15em]`}>
                   {showNumber ? card.cardNumber : maskCardNumber(card.cardNumber)}
                 </p>
               </div>
-              <QrCode className={`size-8 ${design.sub} opacity-30`} />
+              <div className="flex flex-col items-end gap-1">
+                <QrCode className={`size-7 ${design.sub} opacity-25`} />
+                <p className={`text-[7px] ${design.sub} opacity-40`}>zarrin.gold</p>
+              </div>
             </div>
           </div>
 
-          {/* Holographic shimmer on back too */}
-          <div className="absolute inset-0 holo-shimmer pointer-events-none opacity-50" />
+          {/* Holographic shimmer on back */}
+          <div className="absolute inset-0 holo-shimmer pointer-events-none opacity-40" />
+          {/* Light sweep on back */}
+          <div className="light-sweep" />
         </div>
       </div>
     </div>
