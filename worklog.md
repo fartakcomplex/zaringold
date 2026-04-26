@@ -99,3 +99,28 @@ Stage Summary:
 - All 13 landing page components updated with better mobile spacing
 - Server running on port 3000
 - Changes pushed to GitHub: fartakcomplex/zaringold main branch
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Fix mobile menu too small/narrow and landing page scrolling issues
+
+Work Log:
+- Analyzed uploaded screenshot showing mobile menu issue
+- Read LandingNav.tsx - mobile menu panel was w-[300px] (too narrow for some devices)
+- Read AppLayout.tsx - mobile Sheet sidebar was w-[280px] (too narrow)
+- Read AppHeader.tsx - discovered hamburger menu button was missing from mobile view entirely
+- Read globals.css - identified user-select: none on html/body could interfere with touch scrolling
+- Changed LandingNav mobile menu: w-[300px] → w-[85vw] max-w-[360px]
+- Changed AppLayout Sheet sidebar: w-[280px] → w-[85vw] max-w-[320px]
+- Added hamburger menu button to AppHeader mobile view
+- Removed LanguageSwitcher from mobile header (still available in sidebar)
+- Fixed landing page scrolling: added touch-action: pan-y, overflow-y: auto, -webkit-overflow-scrolling: touch, overflow-x: hidden to html/body in globals.css
+- Rebuilt with bun run build, copied static files, started production server on port 3000
+- Pushed changes to GitHub (main branch)
+
+Stage Summary:
+- Mobile menu panels are now wider and responsive (85vw with max-width)
+- Mobile hamburger menu button now visible in authenticated panel
+- Landing pages can now scroll properly on mobile devices
+- Server running on port 3000, changes pushed to GitHub

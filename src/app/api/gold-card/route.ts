@@ -6,20 +6,21 @@ import { db } from '@/lib/db';
 /* ═══════════════════════════════════════════════════════════════ */
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const userId = searchParams.get('userId');
+  try {
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get('userId');
 
-  if (!userId) {
-    return NextResponse.json({ error: 'userId الزامی است' }, { status: 400 });
-  }
+    if (!userId) {
+      return NextResponse.json({ error: 'userId الزامی است' }, { status: 400 });
+    }
 
-  const card = await db.goldCard.findUnique({
-    where: { userId },
-  });
+    const card = await db.goldCard.findUnique({
+      where: { userId },
+    });
 
-  if (!card) {
-    return NextResponse.json({ hasCard: false });
-  }
+    if (!card) {
+      return NextResponse.json({ hasCard: false });
+    }
 
   // Mask card number: 6219-XXXX-XX43-4332
   const cn = card.cardNumber.replace(/-/g, '');
@@ -66,6 +67,10 @@ export async function GET(request: Request) {
       createdAt: tx.createdAt,
     })),
   });
+  } catch (error) {
+    console.error('[GoldCard GET Error]', error);
+    return NextResponse.json({ error: 'خطای سرور', hasCard: false }, { status: 500 });
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════ */

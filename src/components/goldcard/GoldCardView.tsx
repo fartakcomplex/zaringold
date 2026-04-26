@@ -1378,7 +1378,11 @@ export default function GoldCardView() {
       } else {
         setCard(null);
       }
-    } catch { addToast('خطا در دریافت اطلاعات کارت', 'error'); }
+    } catch (err) {
+      console.error('[GoldCard fetch error]', err);
+      // Don't show error toast — silently set to no-card state so user can request a card
+      setCard(null);
+    }
     finally { setLoading(false); }
   }, [user?.id, goldPrice, addToast]);
 
@@ -1401,7 +1405,10 @@ export default function GoldCardView() {
         createdAt: (tx.createdAt as string) || new Date().toISOString(),
         goldGrams: (tx.goldGrams as number) || undefined,
       })));
-    } catch { addToast('خطا در دریافت تراکنش‌ها', 'error'); }
+    } catch (err) {
+      console.error('[GoldCard transactions fetch error]', err);
+      // Silently fail — transactions are not critical
+    }
     finally { setTxLoading(false); }
   }, [user?.id, addToast]);
 
