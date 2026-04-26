@@ -149,3 +149,25 @@ Stage Summary:
 - Server stability improved with keepalive daemon (auto-restart on crash)
 - Dashboard renders cleanly without Next.js error overlay
 - All endpoints return 200: /, /api/gold/prices, /api/blog/posts
+
+---
+Task ID: 5
+Agent: Main Agent
+Task: Create Release v4.0.1
+
+Work Log:
+- Verified all `useTranslation()` calls properly destructured (no `const t = useTranslation()` remaining)
+- Confirmed 5 fixes in AdminServices.tsx: lines 226, 592, 786, 973, 1170
+- Cleaned working tree (reset trivial comment changes)
+- Built production version with `NEXT_DISABLE_TURBOPACK=1 npx next build`
+- Copied static files to `.next/standalone/`
+- Created git tag `v4.0.1` with comprehensive release notes
+- Pushed tag to GitHub (fartakcomplex/zaringold)
+- Created GitHub release with detailed changelog
+- Dev server running on port 3000, all routes returning 200
+
+Stage Summary:
+- Release v4.0.1 created and pushed to GitHub
+- GitHub Release URL: https://github.com/fartakcomplex/zaringold/releases/tag/v4.0.1
+- Includes 8 bug fixes, 3 new features, 1 infrastructure fix since v4.0.0
+- All verified: useTranslation fix, hydration fix, admin panel, gold card, mobile UX
