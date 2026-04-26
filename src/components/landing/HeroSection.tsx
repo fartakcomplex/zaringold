@@ -478,7 +478,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="mb-6 sm:mb-8"
+            className="mb-8 sm:mb-10"
           >
             <div
               className={cn(
@@ -515,7 +515,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
             className={cn(
               'gold-gradient-text gold-text-shadow',
               'text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight tracking-tight',
-              'mb-4 sm:mb-6 max-w-4xl',
+              'mb-5 sm:mb-8 max-w-4xl',
             )}
             style={{
               backgroundSize: '200% auto',
@@ -530,7 +530,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
-            className="text-muted-foreground text-base sm:text-lg md:text-xl lg:text-2xl max-w-2xl leading-relaxed mb-8 sm:mb-10 font-medium"
+            className="text-muted-foreground text-base sm:text-lg md:text-xl lg:text-2xl max-w-2xl leading-relaxed mb-10 sm:mb-14 font-medium"
           >
             {t('landing.heroSubtitle')}
           </motion.p>
@@ -540,7 +540,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.55 }}
-            className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5 w-full sm:w-auto mb-14 sm:mb-20"
+            className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5 w-full sm:w-auto mb-16 sm:mb-20"
           >
             {/* Primary CTA — multiple glow layers */}
             <div className="cta-pulse-ring w-full sm:w-auto relative">
@@ -600,7 +600,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
             transition={{ duration: 0.7, delay: 0.7 }}
             className="w-full mb-14 sm:mb-20"
           >
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
               {FEATURES.map((feat, i) => (
                 <motion.div
                   key={i}
@@ -609,7 +609,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
                   transition={{ duration: 0.5, delay: 0.8 + i * 0.1 }}
                   className={cn(
                     'card-spotlight group flex flex-col items-center gap-2.5 sm:gap-3',
-                    'rounded-2xl p-4 sm:p-5',
+                    'rounded-2xl p-5 sm:p-6',
                     'border border-gold/[0.08] bg-gold/[0.02] backdrop-blur-sm',
                     'transition-all duration-300',
                     'hover:border-gold/20 hover:bg-gold/[0.06] hover:scale-[1.04] hover:-translate-y-1',
@@ -687,7 +687,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
                 </div>
 
                 {/* Ticker items grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                   {TICKER_ITEMS.map((item, i) => (
                     <motion.div
                       key={i}
@@ -695,13 +695,13 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.4, delay: 1.1 + i * 0.1 }}
                       className={cn(
-                        'stat-glow rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center',
+                        'stat-glow rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center',
                         'bg-background/50 backdrop-blur-sm',
                         'border border-gold/[0.08] transition-all duration-200',
                         'hover:border-gold/20 hover:bg-gold/[0.04] hover:shadow-[0_4px_20px_rgba(212,175,55,0.06)]',
                       )}
                     >
-                      <div className="text-[11px] sm:text-xs text-muted-foreground font-medium mb-2 truncate">
+                      <div className="text-[11px] sm:text-xs text-muted-foreground font-medium mb-2.5 truncate">
                         {t(item.key)}
                       </div>
                       <div
@@ -715,7 +715,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
                       </div>
                       <div
                         className={cn(
-                          'text-[10px] sm:text-xs font-bold mt-2 flex items-center justify-center gap-1',
+                          'text-[10px] sm:text-xs font-bold mt-2.5 flex items-center justify-center gap-1',
                           item.up ? 'text-emerald-400' : 'text-red-400',
                         )}
                       >

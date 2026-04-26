@@ -85,9 +85,9 @@ export default function LandingFooter({ onNavigate }: LandingFooterProps) {
           <div className="absolute inset-0 dot-pattern opacity-30" />
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <motion.div
-            className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-12"
+            className="grid grid-cols-1 gap-14 sm:grid-cols-2 lg:grid-cols-12"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -148,7 +148,7 @@ export default function LandingFooter({ onNavigate }: LandingFooterProps) {
                 <span className="size-1.5 rounded-full bg-gradient-to-br from-gold to-gold-dark" />
                 {t('footer.quickLinks')}
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 {quickLinks.map((link, i) => (
                   <li key={i}>
                     <FooterLink onClick={() => onNavigate?.(link.page)}>
@@ -165,7 +165,7 @@ export default function LandingFooter({ onNavigate }: LandingFooterProps) {
                 <span className="size-1.5 rounded-full bg-gradient-to-br from-gold to-gold-dark" />
                 {t('footer.services')}
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 {services.map((s, i) => (
                   <li key={i}>
                     <FooterLink onClick={() => handleServiceClick(s.authPage)}>
@@ -228,7 +228,7 @@ export default function LandingFooter({ onNavigate }: LandingFooterProps) {
           {/* Separator */}
           <div className="h-px w-full bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
 
-          <div className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
               {/* Copyright */}
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">

@@ -149,7 +149,7 @@ export default function ComparisonSection() {
     <section
       id="comparison"
       dir={dir}
-      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
+      className="relative py-20 sm:py-24 lg:py-28 overflow-hidden"
     >
       {/* ── Background decorative ── */}
       <div className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" />
@@ -157,7 +157,7 @@ export default function ComparisonSection() {
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
-          className="mx-auto mb-10 max-w-2xl text-center sm:mb-14"
+          className="mx-auto mb-12 max-w-2xl text-center sm:mb-16"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -175,7 +175,7 @@ export default function ComparisonSection() {
 
         {/* ── Table Container ── */}
         <motion.div
-          className="glass-card-enhanced rounded-2xl p-4 sm:p-6 overflow-hidden"
+          className="glass-card-enhanced rounded-2xl p-5 sm:p-6 overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}

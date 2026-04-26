@@ -70,7 +70,7 @@ function FAQItem({
             onClick={onToggle}
             className={cn(
               'flex w-full items-center gap-4',
-              'px-5 py-4 sm:px-6 sm:py-5',
+              'px-5 py-5 sm:px-6 sm:py-6',
               'text-right transition-all duration-300',
               isOpen ? 'text-foreground' : 'text-foreground/80 hover:text-foreground',
             )}
@@ -172,7 +172,7 @@ export default function FAQSection() {
     <section
       id="faq"
       dir={dir}
-      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
+      className="relative py-20 sm:py-24 lg:py-28 overflow-hidden"
     >
       {/* ── Background ── */}
       <div className="absolute inset-0 grid-pattern pointer-events-none opacity-20" />
@@ -184,7 +184,7 @@ export default function FAQSection() {
       <div className="relative mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
-          className="mx-auto mb-10 max-w-2xl text-center sm:mb-14"
+          className="mx-auto mb-12 max-w-2xl text-center sm:mb-16"
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -201,7 +201,7 @@ export default function FAQSection() {
         </motion.div>
 
         {/* ── FAQ Accordion ── */}
-        <div className="space-y-3 sm:space-y-4">
+        <div className="space-y-4 sm:space-y-5">
           {faqItems.map((item, index) => (
             <FAQItem
               key={item.qKey}

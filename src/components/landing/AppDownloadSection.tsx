@@ -298,7 +298,7 @@ export default function AppDownloadSection() {
     <section
       id="app-download"
       dir={dir}
-      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
+      className="relative py-20 sm:py-24 lg:py-28 overflow-hidden"
     >
       {/* ── Gold separator at top ── */}
       <div className="absolute top-0 left-0 right-0 gold-separator" />
@@ -328,7 +328,7 @@ export default function AppDownloadSection() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
-          className="mx-auto mb-10 max-w-2xl text-center sm:mb-14"
+          className="mx-auto mb-12 max-w-2xl text-center sm:mb-16"
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -364,13 +364,13 @@ export default function AppDownloadSection() {
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             {/* Feature highlights grid */}
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
               {appFeatures.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
                   <motion.div
                     key={feature.titleKey}
-                    className="group relative rounded-2xl overflow-hidden p-4 card-spotlight hover-lift-sm"
+                    className="group relative rounded-2xl overflow-hidden p-5 card-spotlight hover-lift-sm"
                     style={{
                       background: 'linear-gradient(135deg, oklch(0.98 0.02 85 / 70%), oklch(0.995 0.008 85 / 80%))',
                       border: '1px solid oklch(0.75 0.15 85 / 8%)',

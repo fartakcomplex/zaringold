@@ -298,7 +298,7 @@ export default function SecuritySection() {
     <section
       id="security"
       dir={dir}
-      className="relative overflow-hidden py-16 sm:py-20 lg:py-24"
+      className="relative overflow-hidden py-20 sm:py-24 lg:py-28"
     >
       {/* ── Background decorative elements ── */}
       <div className="pointer-events-none absolute inset-0">
@@ -309,7 +309,7 @@ export default function SecuritySection() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
-          className="mx-auto mb-12 max-w-2xl text-center sm:mb-16"
+          className="mx-auto mb-14 max-w-2xl text-center sm:mb-20"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -339,7 +339,7 @@ export default function SecuritySection() {
         </div>
 
         {/* ── Security Feature Cards (2×3 grid) ── */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-6">
           {securityFeatures.map((feature, index) => (
             <SecurityCard
               key={feature.titleKey}
@@ -351,7 +351,7 @@ export default function SecuritySection() {
 
         {/* ── Trust Badges Strip ── */}
         <motion.div
-          className="mt-12 flex flex-wrap items-center justify-center gap-3 sm:mt-16 sm:gap-4"
+          className="mt-14 flex flex-wrap items-center justify-center gap-4 sm:mt-16 sm:gap-5"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}

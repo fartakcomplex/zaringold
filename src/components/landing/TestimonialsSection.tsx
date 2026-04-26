@@ -160,7 +160,7 @@ export default function TestimonialsSection() {
     <section
       id="testimonials"
       dir={dir}
-      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
+      className="relative py-20 sm:py-24 lg:py-28 overflow-hidden"
     >
       {/* ── Background decorative ── */}
       <div className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" />
@@ -172,7 +172,7 @@ export default function TestimonialsSection() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
-          className="mx-auto mb-10 max-w-2xl text-center sm:mb-14"
+          className="mx-auto mb-12 max-w-2xl text-center sm:mb-16"
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -190,7 +190,7 @@ export default function TestimonialsSection() {
 
         {/* ── Stats row ── */}
         <motion.div
-          className="flex items-center justify-center gap-6 sm:gap-10 mb-10 sm:mb-14"
+          className="flex items-center justify-center gap-8 sm:gap-10 mb-12 sm:mb-16"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
@@ -341,7 +341,7 @@ export default function TestimonialsSection() {
             ref={scrollRef}
             onScroll={checkScroll}
             className={cn(
-              'flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory px-2',
+              'flex gap-5 overflow-x-auto pb-5 snap-x snap-mandatory px-2',
               'mobile-scroll scrollbar-thin',
             )}
             style={{ scrollbarWidth: 'thin' }}

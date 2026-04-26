@@ -220,7 +220,7 @@ export default function CalculatorSection({ onLogin }: CalculatorSectionProps) {
     <section
       id="calculator"
       dir={dir}
-      className="relative overflow-hidden py-16 sm:py-20 lg:py-24"
+      className="relative overflow-hidden py-20 sm:py-24 lg:py-28"
     >
       {/* ── Background decorations ── */}
       <div className="pointer-events-none absolute inset-0">
@@ -232,7 +232,7 @@ export default function CalculatorSection({ onLogin }: CalculatorSectionProps) {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
-          className="mb-14 text-center"
+          className="mb-16 sm:mb-18 text-center"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -262,7 +262,7 @@ export default function CalculatorSection({ onLogin }: CalculatorSectionProps) {
         </motion.div>
 
         {/* ── Two-column layout ── */}
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-14 items-start">
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-14 items-start">
           {/* ── Left Column: Info Cards + Gold Coin (desktop only) ── */}
           <motion.div
             className="hidden flex-col justify-center gap-5 lg:flex"

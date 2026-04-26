@@ -264,7 +264,7 @@ export default function HowItWorksSection() {
     <section
       id="how-it-works"
       dir={dir}
-      className="relative py-16 sm:py-20 lg:py-24"
+      className="relative py-20 sm:py-24 lg:py-28"
     >
       {/* ── Background elements ── */}
       <GoldSparkles />
@@ -272,12 +272,12 @@ export default function HowItWorksSection() {
       <div className="pointer-events-none absolute inset-0 dot-pattern opacity-30" aria-hidden="true" />
 
       {/* ── Gold separator at top ── */}
-      <div className="gold-separator mb-12 sm:mb-16" />
+      <div className="gold-separator mb-14 sm:mb-20" />
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
-          className="mb-12 text-center sm:mb-16"
+          className="mb-14 text-center sm:mb-20"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -298,7 +298,7 @@ export default function HowItWorksSection() {
           {/* Title */}
           <h2
             className={cn(
-              'mt-6 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl',
+              'mt-7 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl',
               'gold-gradient-text gold-text-shadow',
             )}
           >

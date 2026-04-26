@@ -53,7 +53,7 @@ export default function PartnersSection() {
     <section
       id="partners"
       dir={dir}
-      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
+      className="relative py-20 sm:py-24 lg:py-28 overflow-hidden"
     >
       {/* ── Background decorative glow ── */}
       <div
@@ -69,7 +69,7 @@ export default function PartnersSection() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
-          className="mx-auto mb-10 max-w-2xl text-center sm:mb-14"
+          className="mx-auto mb-12 max-w-2xl text-center sm:mb-16"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -86,7 +86,7 @@ export default function PartnersSection() {
         </motion.div>
 
         {/* ── Partner Badge Cards Grid ── */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-6">
           {partnerBadges.map((badge, index) => {
             const Icon = badge.icon;
             return (
@@ -145,7 +145,7 @@ export default function PartnersSection() {
 
         {/* ── Stats strip ── */}
         <motion.div
-          className="mt-12 grid grid-cols-2 gap-4 sm:mt-16 sm:grid-cols-4 sm:gap-6"
+          className="mt-14 grid grid-cols-2 gap-5 sm:mt-16 sm:grid-cols-4 sm:gap-6"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
@@ -158,7 +158,7 @@ export default function PartnersSection() {
           ].map((stat) => (
             <div
               key={stat.label}
-              className="text-center rounded-xl p-4 card-glass-premium"
+              className="text-center rounded-xl p-5 card-glass-premium"
             >
               <div className="gold-gradient-text text-xl font-extrabold sm:text-2xl">
                 {stat.value}

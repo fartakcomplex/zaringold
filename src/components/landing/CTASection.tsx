@@ -57,7 +57,7 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
     <section
       id="cta"
       dir={dir}
-      className="relative py-16 sm:py-24 lg:py-32 overflow-hidden"
+      className="relative py-20 sm:py-24 lg:py-32 overflow-hidden"
     >
       {/* ── Gold separator at top ── */}
       <div className="absolute top-0 left-0 right-0 gold-separator" />
@@ -151,12 +151,12 @@ export default function CTASection({ onGetStarted }: CTASectionProps) {
           </motion.div>
 
           {/* ── Large Heading ── */}
-          <h2 className="gold-gradient-text mb-4 text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl gold-text-shadow leading-tight">
+          <h2 className="gold-gradient-text mb-5 text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl gold-text-shadow leading-tight">
             {t('cta.title')}
           </h2>
 
           {/* ── Subheading ── */}
-          <p className="text-base sm:text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
+          <p className="text-base sm:text-lg text-muted-foreground mb-10 max-w-lg leading-relaxed">
             {t('cta.subtitle')}
           </p>
 

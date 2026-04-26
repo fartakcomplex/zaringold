@@ -292,19 +292,19 @@ export default function FeaturesSection() {
     <section
       id="features"
       dir={dir}
-      className="relative py-16 sm:py-20 lg:py-24 overflow-hidden"
+      className="relative py-20 sm:py-24 lg:py-28 overflow-hidden"
     >
       {/* Background decorations */}
       <div className="radial-gold-fade pointer-events-none absolute inset-0 opacity-40" aria-hidden="true" />
       <div className="dot-pattern pointer-events-none absolute inset-0 opacity-20" aria-hidden="true" />
 
       {/* Gold separator at top */}
-      <div className="gold-separator mb-12 sm:mb-16" />
+      <div className="gold-separator mb-14 sm:mb-20" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
         <motion.div
-          className="relative z-10 mb-12 text-center sm:mb-16"
+          className="relative z-10 mb-14 text-center sm:mb-20"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -343,7 +343,7 @@ export default function FeaturesSection() {
           {/* Title */}
           <h2
             className={cn(
-              'relative mt-6 text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl',
+              'relative mt-7 text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl',
               'gold-gradient-text gold-text-shadow',
               'leading-tight sm:leading-tight',
             )}
@@ -352,7 +352,7 @@ export default function FeaturesSection() {
           </h2>
 
           {/* Subtitle */}
-          <p className="relative mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground/80 sm:mt-6 sm:text-base sm:leading-8">
+          <p className="relative mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted-foreground/80 sm:mt-7 sm:text-base sm:leading-8">
             {t('features.subtitle')}
           </p>
         </motion.div>
