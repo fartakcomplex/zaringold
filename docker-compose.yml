@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: zarringold
+      POSTGRES_USER: zarringold
+      POSTGRES_PASSWORD: zarringold123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zarringold"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DEBUG: "False"
+      SECRET_KEY: "change-this-in-production-use-a-long-random-string"
+      POSTGRES_DB: zarringold
+      POSTGRES_USER: zarringold
+      POSTGRES_PASSWORD: zarringold123
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - media_data:/app/media
+      - static_data:/app/static
+
+volumes:
+  postgres_data:
+  media_data:
+  static_data:
