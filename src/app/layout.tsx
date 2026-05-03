@@ -57,7 +57,9 @@ export const metadata: Metadata = {
   authors: [{ name: "Zarrin Gold" }],
   icons: {
     icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    apple: "/icons/icon-192.png",
   },
+  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
@@ -66,10 +68,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
-  ],
+  themeColor: "#D4AF37",
 };
 
 export default function RootLayout({
@@ -79,7 +78,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning className="overflow-fix">
-
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#D4AF37" />
+        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="زرین گلد" />
+      </head>
       <body className={`${iranSans.variable} ${inter.variable} antialiased bg-background text-foreground`}>
         <ScrollFix />
         <LocaleProvider>
@@ -88,6 +94,31 @@ export default function RootLayout({
             <Toaster />
           </ThemeProvider>
         </LocaleProvider>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                      console.log('[PWA] Service Worker registered with scope:', registration.scope);
+                      registration.addEventListener('updatefound', function() {
+                        var newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', function() {
+                          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            console.log('[PWA] New content available, refresh to update.');
+                          }
+                        });
+                      });
+                    })
+                    .catch(function(error) {
+                      console.log('[PWA] Service Worker registration failed:', error);
+                    });
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );

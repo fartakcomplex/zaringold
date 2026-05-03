@@ -22,6 +22,9 @@ import LoginDialog from '@/components/auth/LoginDialog';
 import RegisterDialog from '@/components/auth/RegisterDialog';
 import ToastContainer from '@/components/shared/ToastContainer';
 import ScrollToTop from '@/components/shared/ScrollToTop';
+import PWAInstallPrompt from '@/components/shared/PWAInstallPrompt';
+import CookieConsent from '@/components/shared/CookieConsent';
+import { CommandPaletteProvider } from '@/components/shared/CommandPalette';
 import { useTranslation } from '@/lib/i18n';
 
 /* ------------------------------------------------------------------ */
@@ -414,10 +417,12 @@ export default function Home() {
   /* ── Landing page toggle (authenticated users can preview landing) ── */
   if (isAuthenticated && showLanding) {
     return (
-      <main className="min-h-screen">
+      <CommandPaletteProvider><main className="min-h-screen">
         <LandingPreviewToggle showLanding={showLanding} onToggle={() => { setShowLanding(false); setLandingSubPage(null); }} />
         <LandingPageContent onLogin={() => {}} subPage={landingSubPage} onNavigate={setLandingSubPage} />
         <ToastContainer />
+        <PWAInstallPrompt />
+        <CookieConsent />
       </main>
     );
   }
@@ -460,7 +465,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen">
+    <CommandPaletteProvider><main className="min-h-screen">
       <LandingPageContent onLogin={() => setLoginOpen(true)} subPage={landingSubPage} onNavigate={setLandingSubPage} />
 
       {/* Toast Notifications */}
@@ -480,6 +485,9 @@ export default function Home() {
         onComplete={handleRegisterComplete}
         user={registeringUser}
       />
+      <PWAInstallPrompt />
+      <CookieConsent />
     </main>
+    </CommandPaletteProvider>
   );
 }
