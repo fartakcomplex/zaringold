@@ -425,7 +425,7 @@ export default function Home() {
         <ToastContainer />
         <PWAInstallPrompt />
         <CookieConsent />
-      </main>
+      </main></CommandPaletteProvider>
     );
   }
 
