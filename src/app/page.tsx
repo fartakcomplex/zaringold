@@ -335,6 +335,30 @@ import EconomicCalendarView from '@/components/calendar/EconomicCalendarView';
 import TechnicalAnalysisView from '@/components/technical/TechnicalAnalysisView';
 import BackupView from '@/components/backup/BackupView';
 
+/* ── Enhanced V3 Features (dashboard route group) ── */
+import AdvancedAnalyticsPage from '@/app/(dashboard)/analytics/page';
+import AIAdvisorPage from '@/app/(dashboard)/ai/page';
+import SmartAlertsPage from '@/app/(dashboard)/alerts/page';
+import GoldCalculatorPage from '@/app/(dashboard)/calculator/page';
+
+/* ── Enhanced V4 Features (dashboard route group) ── */
+import MicroGoldPage from '@/app/(dashboard)/microgold/page';
+import GoldDepositPage from '@/app/(dashboard)/deposit/page';
+import SocialTradingPage from '@/app/(dashboard)/social-trading/page';
+import WidgetGeneratorPage from '@/app/(dashboard)/widget/page';
+
+/* ── Enhanced V5 Features (dashboard route group) ── */
+import GoldAcademyPage from '@/app/(dashboard)/academy/page';
+import EconomicCalendarPage from '@/app/(dashboard)/calendar/page';
+import MultiSigWalletPage from '@/app/(dashboard)/backup/page';
+import PricePredictionGamePage from '@/app/(dashboard)/predictions/page';
+
+/* ── Enhanced V6 Features (dashboard route group) ── */
+import CustomPortfolioPage from '@/app/(dashboard)/portfolio/page';
+import EnhancedP2PPage from '@/app/(dashboard)/p2p/page';
+import GoldCardPage from '@/app/(dashboard)/goldcard/page';
+import ProfessionalTechnicalAnalysisPage from '@/app/(dashboard)/technical-analysis/page';
+
 /* ------------------------------------------------------------------ */
 /*  Authenticated Page Router (User Panel)                             */
 /* ------------------------------------------------------------------ */
@@ -381,7 +405,7 @@ function AuthenticatedPage() {
     case 'emergency-sell': return <EmergencySellButton />;
     case 'gold-card': return <GoldCardView />;
     case 'gold-transfer': return <GoldTransferView />;
-    case 'price-alerts': return <PriceAlertsView />;
+    case 'price-alerts': return <SmartAlertsPage />;
     case 'merchant': return <MerchantDashboard />;
     case 'qr-payment': return <QrPaymentView />;
     case 'invoices': return <InvoiceView />;
@@ -393,18 +417,22 @@ function AuthenticatedPage() {
     case 'utility': return <UtilityServicesView />;
 
     /* ── V2 Features ── */
-    case 'advanced-analytics': return <AnalyticsView />;
-    case 'ai-advisor': return <AIAdvisorView />;
-    case 'micro-gold': return <MicroGoldView />;
-    case 'gold-deposit': return <GoldDepositView />;
-    case 'social-trading': return <SocialTradingView />;
+    case 'advanced-analytics': return <AdvancedAnalyticsPage />;
+    case 'ai-advisor': return <AIAdvisorPage />;
+    case 'micro-gold': return <MicroGoldPage />;
+    case 'gold-deposit': return <GoldDepositPage />;
+    case 'social-trading': return <SocialTradingPage />;
     case 'p2p-exchange': return <P2PExchangeView />;
-    case 'widget': return <WidgetView />;
-    case 'gold-calculator': return <GoldCalculatorView />;
-    case 'academy': return <AcademyView />;
-    case 'economic-calendar': return <EconomicCalendarView />;
-    case 'technical-analysis': return <TechnicalAnalysisView />;
-    case 'backup': return <BackupView />;
+    case 'widget': return <WidgetGeneratorPage />;
+    case 'gold-calculator': return <GoldCalculatorPage />;
+    case 'academy': return <GoldAcademyPage />;
+    case 'economic-calendar': return <EconomicCalendarPage />;
+    case 'technical-analysis': return <ProfessionalTechnicalAnalysisPage />;
+    case 'backup': return <MultiSigWalletPage />;
+    case 'prediction': return <PricePredictionGamePage />;
+    case 'custom-portfolio': return <CustomPortfolioPage />;
+    case 'p2p-enhanced': return <EnhancedP2PPage />;
+    case 'gold-card-enhanced': return <GoldCardPage />;
 
     /* ── Account ── */
     case 'notifications': return <NotificationsView />;
