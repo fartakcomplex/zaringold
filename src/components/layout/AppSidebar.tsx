@@ -19,6 +19,16 @@ import {
   Moon,
   Sun,
   Bell,
+  Brain,
+  LineChart,
+  Coins,
+  Repeat,
+  Scale,
+  Code,
+  Activity,
+  CalendarDays,
+  GraduationCap,
+  Download,
   MessageCircle,
   /* New module icons */
   Bot,
@@ -95,6 +105,8 @@ const navSections: NavSection[] = [
     items: [
       { labelKey: 'nav.smartBuy', page: 'smart-buy', icon: Bot, isNew: true },
       { labelKey: 'nav.analytics', page: 'analytics', icon: TrendingUp, isNew: true },
+      { labelKey: 'nav.aiAdvisor', page: 'ai-advisor', icon: Brain, isNew: true },
+      { labelKey: 'nav.advancedAnalytics', page: 'advanced-analytics', icon: LineChart, isNew: true },
       { labelKey: 'nav.aiCoach', page: 'ai-coach', icon: Sparkles, isNew: true },
     ],
   },
@@ -103,6 +115,8 @@ const navSections: NavSection[] = [
     items: [
       { labelKey: 'nav.autosave', page: 'autosave', icon: Calculator, isNew: true },
       { labelKey: 'nav.goals', page: 'goals', icon: Target, isNew: true },
+      { labelKey: 'nav.goldDeposit', page: 'gold-deposit', icon: Landmark, isNew: true },
+      { labelKey: 'nav.microGold', page: 'micro-gold', icon: Coins, isNew: true },
       { labelKey: 'nav.savings', page: 'savings', icon: PiggyBank },
       { labelKey: 'nav.loans', page: 'loans', icon: Banknote },
     ],
@@ -115,6 +129,7 @@ const navSections: NavSection[] = [
       { labelKey: 'nav.gifts', page: 'gifts', icon: Gift, isNew: true },
       { labelKey: 'nav.familyWallet', page: 'family-wallet', icon: UsersRound, isNew: true },
       { labelKey: 'nav.socialFeed', page: 'social-feed', icon: MessageCircle, isNew: true },
+      { labelKey: 'nav.socialTrading', page: 'social-trading', icon: Users, isNew: true },
     ],
   },
   {
@@ -138,6 +153,8 @@ const navSections: NavSection[] = [
       { labelKey: 'nav.fraudAlerts', page: 'fraud-alerts', icon: ShieldAlert, isNew: true },
       { labelKey: 'nav.vault', page: 'vault', icon: Shield, isNew: true },
       { labelKey: 'nav.emergencySell', page: 'emergency-sell', icon: Vault, isNew: true },
+      { labelKey: 'nav.p2pExchange', page: 'p2p-exchange', icon: Repeat, isNew: true },
+      { labelKey: 'nav.goldCalculator', page: 'gold-calculator', icon: Scale, isNew: true },
     ],
   },
   {
@@ -159,12 +176,23 @@ const navSections: NavSection[] = [
     ],
   },
   {
+    titleKey: 'nav.tools',
+    items: [
+      { labelKey: 'nav.widget', page: 'widget', icon: Code, isNew: true },
+      { labelKey: 'nav.technicalAnalysis', page: 'technical-analysis', icon: Activity, isNew: true },
+      { labelKey: 'nav.economicCalendar', page: 'economic-calendar', icon: CalendarDays, isNew: true },
+      { labelKey: 'nav.academy', page: 'academy', icon: GraduationCap, isNew: true },
+      { labelKey: 'nav.backup', page: 'backup', icon: Download, isNew: true },
+    ],
+  },
+  {
     titleKey: 'nav.account',
     items: [
       { labelKey: 'nav.notifications', page: 'notifications', icon: Bell },
       { labelKey: 'nav.support', page: 'support', icon: HelpCircle },
       { labelKey: 'nav.profile', page: 'profile', icon: User },
       { labelKey: 'nav.settings', page: 'settings', icon: Settings },
+      { labelKey: 'nav.backupRecovery', page: 'backup', icon: ShieldCheck, isNew: true },
       { labelKey: 'nav.admin', page: 'admin', icon: ShieldCheck, adminOnly: true },
     ],
   },

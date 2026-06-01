@@ -66,6 +66,14 @@ model User {
   cars               UserCar[]
   carServiceOrders   CarServiceOrder[]
   utilityPayments    UtilityPayment[]
+  microGoldRoundUp   MicroGoldRoundUp?
+  microGoldTx        MicroGoldTransaction[]
+  goldDeposits       GoldDeposit[]
+  socialTrader       SocialTrader?
+  customPortfolios   CustomPortfolio[]
+  p2pOrders          P2POrder[]
+  backupCodes        BackupCode[]
+  aiChatMessages     AIChatMessage[]
 }
 
 model Role {
@@ -1732,6 +1740,196 @@ model UtilityPayment {
   description     String   @default("")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  V2 FEATURES — 18 New Advanced Modules                                   */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 4. Micro-Gold Purchase (خرید خرد طلا) ── */
+
+model MicroGoldRoundUp {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  totalRounded   Float    @default(0)
+  totalGoldBought Float   @default(0)
+  totalRoundUps  Int      @default(0)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions MicroGoldTransaction[]
+}
+
+model MicroGoldTransaction {
+  id             String   @id @default(cuid())
+  userId         String
+  roundUpId      String?
+  sourceAmount   Float
+  roundedAmount  Float
+  goldGrams      Float
+  goldPrice      Float
+  description    String   @default("")
+  createdAt      DateTime @default(now())
+
+  user    User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roundUp MicroGoldRoundUp?  @relation(fields: [roundUpId], references: [id], onDelete: SetNull)
+}
+
+/* ── 5. Gold Fixed Deposit (سپرده طلایی ثابت) ── */
+
+model GoldDeposit {
+  id              String   @id @default(cuid())
+  userId          String
+  goldGrams       Float
+  interestRate    Float    @default(0.15)
+  durationMonths  Int
+  startDate       DateTime @default(now())
+  maturityDate    DateTime
+  goldGramsMatured Float   @default(0)
+  isActive        Boolean  @default(true)
+  autoRenew       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/* ── 6. Social Trading (معاملات اجتماعی) ── */
+
+model SocialTrader {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  bio             String   @default("")
+  isPublic        Boolean  @default(true)
+  totalFollowers  Int      @default(0)
+  totalTrades     Int      @default(0)
+  winRate         Float    @default(0)
+  totalProfit     Float    @default(0)
+  avgProfit       Float    @default(0)
+  riskLevel       String   @default("medium")
+  rank            Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trades   SocialTrade[]
+  followers SocialFollow[]
+}
+
+model SocialTrade {
+  id          String   @id @default(cuid())
+  traderId    String
+  type        String
+  goldGrams   Float
+  goldPrice   Float
+  profitLoss Float    @default(0)
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  trader SocialTrader @relation(fields: [traderId], references: [id], onDelete: Cascade)
+}
+
+model SocialFollow {
+  id            String   @id @default(cuid())
+  followerId    String
+  traderId      String
+  trader        SocialTrader  @relation(fields: [traderId], references: [id], onDelete: Cascade)
+  isCopyTrading Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@unique([followerId, traderId])
+}
+
+/* ── 10. Economic Calendar (تقویم اقتصادی) ── */
+
+model EconomicEvent {
+  id            String   @id @default(cuid())
+  title         String
+  titleFa        String   @default("")
+  country       String   @default("US")
+  impact        String   @default("medium")
+  eventDate     DateTime
+  actualValue   String?
+  forecastValue String
+  previousValue String?
+  goldImpact    String   @default("neutral")
+  description   String   @default("")
+  createdAt     DateTime @default(now())
+}
+
+/* ── 13. Custom Portfolio Index (سبد دارایی) ── */
+
+model CustomPortfolio {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String   @default("")
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user    User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items   CustomPortfolioItem[]
+}
+
+model CustomPortfolioItem {
+  id          String   @id @default(cuid())
+  portfolioId String
+  portfolio   CustomPortfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  assetType   String   @default("gold")
+  assetName   String
+  weight      Float    @default(0)
+  quantity    Float    @default(0)
+  buyPrice    Float    @default(0)
+
+  @@unique([portfolioId, assetType, assetName])
+}
+
+/* ── 14. P2P Gold Exchange (بازار همتا به همتا) ── */
+
+model P2POrder {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   @default("sell")
+  goldGrams   Float
+  pricePerGram Float
+  minAmount   Float    @default(0)
+  maxAmount   Float    @default(0)
+  status      String   @default("open")
+  paymentMethod String @default("wallet")
+  iban        String?
+  expiresAt    DateTime
+  matchedWith String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/* ── 17. Backup & Recovery ── */
+
+model BackupCode {
+  id          String   @id @default(cuid())
+  userId      String
+  code        String   @unique
+  usedAt      DateTime?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/* ── AI Chat History ── */
+
+model AIChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  role      String   @default("user")
+  content   String
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

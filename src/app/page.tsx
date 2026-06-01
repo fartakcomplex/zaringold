@@ -321,6 +321,20 @@ import InsuranceView from '@/components/insurance/InsuranceView';
 import CarServicesView from '@/components/car-services/CarServicesView';
 import UtilityServicesView from '@/components/utility-services/UtilityServicesView';
 
+/* ── V2 Features ── */
+import AnalyticsView from '@/components/analytics/AnalyticsView';
+import AIAdvisorView from '@/components/ai/AIAdvisorView';
+import MicroGoldView from '@/components/microgold/MicroGoldView';
+import GoldDepositView from '@/components/deposit/GoldDepositView';
+import SocialTradingView from '@/components/social/SocialTradingView';
+import P2PExchangeView from '@/components/p2p/P2PExchangeView';
+import WidgetView from '@/components/widget/WidgetView';
+import GoldCalculatorView from '@/components/calculator/GoldCalculatorView';
+import AcademyView from '@/components/academy/AcademyView';
+import EconomicCalendarView from '@/components/calendar/EconomicCalendarView';
+import TechnicalAnalysisView from '@/components/technical/TechnicalAnalysisView';
+import BackupView from '@/components/backup/BackupView';
+
 /* ------------------------------------------------------------------ */
 /*  Authenticated Page Router (User Panel)                             */
 /* ------------------------------------------------------------------ */
@@ -377,6 +391,20 @@ function AuthenticatedPage() {
     case 'insurance': return <InsuranceView />;
     case 'car-services': return <CarServicesView />;
     case 'utility': return <UtilityServicesView />;
+
+    /* ── V2 Features ── */
+    case 'advanced-analytics': return <AnalyticsView />;
+    case 'ai-advisor': return <AIAdvisorView />;
+    case 'micro-gold': return <MicroGoldView />;
+    case 'gold-deposit': return <GoldDepositView />;
+    case 'social-trading': return <SocialTradingView />;
+    case 'p2p-exchange': return <P2PExchangeView />;
+    case 'widget': return <WidgetView />;
+    case 'gold-calculator': return <GoldCalculatorView />;
+    case 'academy': return <AcademyView />;
+    case 'economic-calendar': return <EconomicCalendarView />;
+    case 'technical-analysis': return <TechnicalAnalysisView />;
+    case 'backup': return <BackupView />;
 
     /* ── Account ── */
     case 'notifications': return <NotificationsView />;
