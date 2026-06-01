@@ -87,6 +87,7 @@ const navSections: NavSection[] = [
       { labelKey: 'nav.wallet', page: 'wallet', icon: Wallet },
       { labelKey: 'nav.transactions', page: 'transactions', icon: Receipt },
       { labelKey: 'nav.market', page: 'market', icon: BarChart3 },
+      { labelKey: 'nav.priceAlerts', page: 'price-alerts', icon: Bell, isNew: true },
     ],
   },
   {

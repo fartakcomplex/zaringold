@@ -15,6 +15,7 @@ import { useTranslation, getPageTitleKey } from '@/lib/i18n';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
+import LiveGoldTicker from '@/components/shared/LiveGoldTicker';
 import {
   Popover,
   PopoverTrigger,
@@ -213,28 +214,7 @@ export default function AppHeader({ onMenuToggle }: AppHeaderProps) {
         </h1>
 
         {/* Gold price ticker */}
-        {goldPrice && (
-          <div className="hidden items-center gap-2.5 rounded-full border border-gold/25 bg-gradient-to-l from-gold/10 via-gold/5 to-gold/[0.03] px-4 py-1.5 sm:flex shadow-sm shadow-gold/[0.06]">
-            <span className={cn('relative inline-block size-2 shrink-0 rounded-full', wsConnected ? 'bg-emerald-500' : 'bg-gray-400')}>
-              {wsConnected && <span className="absolute inset-0 inline-block size-2 animate-ping rounded-full bg-emerald-400 opacity-75" />}
-            </span>
-            <span className={cn('text-[11px] font-medium shrink-0', wsConnected ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground')}>
-              {wsConnected ? 'زنده' : 'آفلاین'}
-            </span>
-            <div className="h-4 w-px bg-border" />
-            <div className="flex items-center gap-1.5">
-              <TrendingUp className="size-3.5 text-emerald-500" />
-              <span className="text-[11px] text-muted-foreground">خرید:</span>
-              <span className="text-xs font-semibold text-emerald-500 tabular-nums">{formatPrice(goldPrice.buyPrice)}</span>
-            </div>
-            <div className="h-4 w-px bg-border" />
-            <div className="flex items-center gap-1.5">
-              <TrendingDown className="size-3.5 text-red-500" />
-              <span className="text-[11px] text-muted-foreground">فروش:</span>
-              <span className="text-xs font-semibold text-red-500 tabular-nums">{formatPrice(goldPrice.sellPrice)}</span>
-            </div>
-          </div>
-        )}
+        <LiveGoldTicker />
 
         <LanguageSwitcher />
 

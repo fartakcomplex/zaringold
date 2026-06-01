@@ -411,6 +411,11 @@ const translations: Record<Locale, TranslationMap> = {
     'dashboard.promoTitle': 'طلای خود را هدیه بدهید!',
     'dashboard.promoDesc': 'با ارسال طلای رایگان به دوستانتان، از پاداش ویژه بهره‌مند شوید',
     'dashboard.promoAction': 'ارسال هدیه',
+    'dashboard.quickStatsGold': 'موجودی طلای شما',
+    'dashboard.quickStatsValue': 'ارزش پرتفوی',
+    'dashboard.quickStatsPL': 'سود/زیان امروز',
+    'dashboard.quickStatsTrend': 'روند ۲۴ ساعته طلا',
+    'nav.priceAlerts': 'هشدار قیمت',
 
     // chart ranges
     'chart.1h': '۱ ساعت',
@@ -2322,6 +2327,11 @@ const translations: Record<Locale, TranslationMap> = {
     'dashboard.promoTitle': 'Gift Gold to Friends!',
     'dashboard.promoDesc': 'Send free gold to your friends and earn special rewards',
     'dashboard.promoAction': 'Send Gift',
+    'dashboard.quickStatsGold': 'Your Gold Balance',
+    'dashboard.quickStatsValue': 'Portfolio Value',
+    'dashboard.quickStatsPL': 'Today P/L',
+    'dashboard.quickStatsTrend': '24h Gold Trend',
+    'nav.priceAlerts': 'Price Alerts',
 
     // chart ranges
     'chart.1h': '1 Hour',

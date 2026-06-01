@@ -291,6 +291,7 @@ import EarnView from '@/components/earn/EarnView';
 import NotificationsView from '@/components/notifications/NotificationsView';
 import ChatView from '@/components/chat/ChatView';
 import LoanView from '@/components/loan/LoanView';
+import PriceAlertsView from '@/components/gold/PriceAlertsView';
 /* New premium modules */
 import SmartBuyAdvisor from '@/components/ai/SmartBuyAdvisor';
 import PortfolioAnalytics from '@/components/analytics/PortfolioAnalytics';
@@ -366,6 +367,7 @@ function AuthenticatedPage() {
     case 'emergency-sell': return <EmergencySellButton />;
     case 'gold-card': return <GoldCardView />;
     case 'gold-transfer': return <GoldTransferView />;
+    case 'price-alerts': return <PriceAlertsView />;
     case 'merchant': return <MerchantDashboard />;
     case 'qr-payment': return <QrPaymentView />;
     case 'invoices': return <InvoiceView />;

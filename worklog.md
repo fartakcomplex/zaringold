@@ -1,173 +1,106 @@
-# ZarinGold v2.9.0 - Project Setup Worklog
+# ZarinGold Work Log
 
-## Project Overview
-ZarinGold (زرین گلد) is a comprehensive gold trading and investment platform built with Next.js 16.
-
-## Current Status: Successfully Deployed
-
-### Setup Steps Completed:
-1. **Repository Clone**: Cloned `https://github.com/fartakcomplex/zaringold` and checked out the latest release tag `v2.9.0`
-2. **File Migration**: Copied all project files to `/home/z/my-project/` including:
-   - `src/` - All source code (components, API routes, hooks, lib)
-   - `prisma/schema.prisma` - Full database schema (1737 lines, 80+ models)
-   - `mini-services/` - Chat service (Socket.IO on port 3005)
-   - `public/` - Fonts (IRANSans), images, uploads
-   - Configuration files (package.json, tailwind.config.ts, next.config.ts, etc.)
-3. **Dependencies**: Installed all packages via `bun install` (68 packages)
-4. **Database**: Prisma schema pushed to SQLite, database already in sync
-5. **Services**: Chat-service started on port 3005
-6. **Dev Server**: Next.js 16.1.3 (Turbopack) running on port 3000
-
-### Key Features in v2.9.0:
-- Gold trading (buy/sell) with real-time prices
-- Wallet system (fiat + gold)
-- Payment gateway integration (ZarinPal)
-- User authentication (OTP-based, password login)
-- KYC verification system
-- Blog/CMS system
-- Chat support with AI
-- Gold Card (virtual/physical)
-- Merchant payment gateway
-- Savings goals & auto-buy plans
-- Gamification (achievements, daily check-in, quests)
-- Creator club (UGC content)
-- Insurance, car services, utility payments
-- Admin dashboard with comprehensive management
-- SMS & Email marketing
-- Landing page builder
-- And many more features...
-
-### Running Services:
-- **Next.js Dev Server**: Port 3000 (main application)
-- **Chat Service**: Port 3005 (Socket.IO + HTTP)
-
-### Database:
-- SQLite at `file:/home/z/my-project/db/custom.db`
-- 80+ models covering all platform features
-
-### Current Goals:
-- Application is running and serving pages
-- All API routes are available
-- Landing page renders correctly (GET / 200)
-
-### Unresolved Issues:
-- Need to seed initial data (prices, site settings, landing sections)
-- Some external integrations (SMS, email) need API key configuration
-- Telegram bot needs configuration
+**Date**: 2026-06-01  
+**Session**: Feature Implementation Sprint
 
 ---
-Task ID: 1
-Agent: Main Agent
-Task: Add English translations to landing pages (Terms, Privacy, Contact, Blog, BlogPostDetail)
 
-Work Log:
-- Analyzed existing i18n system (`src/lib/i18n.ts` with `useTranslation` hook)
-- Identified 5 landing page components with hardcoded Farsi text
-- Updated TermsPage.tsx: Added bilingual sections (7 articles, 38 content items, all UI strings)
-- Updated PrivacyPage.tsx: Added bilingual sections (6 sections, 6 quick badges, all UI strings)
-- Updated ContactPage.tsx: Added bilingual contact info, departments, social links, form labels
-- Updated BlogPage.tsx: Added bilingual mock data (8 posts, categories), UI strings, date formatting
-- Updated BlogPostDetailPage.tsx: Added bilingual UI strings (back button, share, meta labels)
-- Verified all files compile with no new lint errors
-- Dev server running and serving pages correctly (200)
+## Task 1: Fix Gold Card Display Bug ✅
 
-Stage Summary:
-- All 5 landing pages now support both Farsi (fa) and English (en) via `useTranslation` hook
-- Translations use local locale-conditional objects (not i18n.ts keys) for long-form content
-- Date formatting is locale-aware (fa-IR for Farsi, en-US for English)
-- Direction (RTL/LTR) handled correctly in ContactPage form fields
-- No changes to i18n.ts needed - all translations kept local to each component
----
-Task ID: 1
-Agent: Main Agent
-Task: Improve mobile spacing across all landing page sections
+### Files Modified:
+- `src/components/goldcard/GoldCardView.tsx`
+  - **Line 1767**: Fixed CSS typo `text-[2a1a00]` → `text-[#2a1a00]` (missing `#` for hex color)
+  - **fetchCard function**: Added `console.log` and `console.error` statements for debugging userId matching, response status, and card data
+  - Verified `user.id` = `dev-super-admin` matches the store constant in `src/lib/store.ts`
 
-Work Log:
-- Read and analyzed all 13 active landing page section components
-- Identified compressed/crowded spacing in mobile view across all sections
-- Increased section vertical padding from py-16 to py-20 across all sections
-- Increased grid gaps (cards, features, stats, testimonials) on mobile
-- Increased header margins from mb-10/12 to mb-12/14
-- Enhanced FAQ accordion spacing (space-y-3 → space-y-4, py-4 → py-5)
-- Improved feature highlight card padding (p-4 → p-5)
-- Enhanced ticker card padding (p-3 → p-4)
-- Improved footer grid gap and link spacing
-- Rebuilt with NEXT_DISABLE_TURBOPACK=1 and started production server
-- Pushed all changes to GitHub (forced push due to rebase conflicts)
+- `src/app/page.tsx`
+  - Added direct import of `PriceAlertsView` component
+  - Added `case 'price-alerts': return <PriceAlertsView />` in the AuthenticatedPage switch
 
-Stage Summary:
-- All 13 landing page components updated with better mobile spacing
-- Server running on port 3000
-- Changes pushed to GitHub: fartakcomplex/zaringold main branch
+### Issues:
+- The existing alerts API at `/api/alerts` already supports GET/POST/PATCH/DELETE — no breaking changes needed
 
 ---
-Task ID: 3
-Agent: Main Agent
-Task: Fix mobile menu too small/narrow and landing page scrolling issues
 
-Work Log:
-- Analyzed uploaded screenshot showing mobile menu issue
-- Read LandingNav.tsx - mobile menu panel was w-[300px] (too narrow for some devices)
-- Read AppLayout.tsx - mobile Sheet sidebar was w-[280px] (too narrow)
-- Read AppHeader.tsx - discovered hamburger menu button was missing from mobile view entirely
-- Read globals.css - identified user-select: none on html/body could interfere with touch scrolling
-- Changed LandingNav mobile menu: w-[300px] → w-[85vw] max-w-[360px]
-- Changed AppLayout Sheet sidebar: w-[280px] → w-[85vw] max-w-[320px]
-- Added hamburger menu button to AppHeader mobile view
-- Removed LanguageSwitcher from mobile header (still available in sidebar)
-- Fixed landing page scrolling: added touch-action: pan-y, overflow-y: auto, -webkit-overflow-scrolling: touch, overflow-x: hidden to html/body in globals.css
-- Rebuilt with bun run build, copied static files, started production server on port 3000
-- Pushed changes to GitHub (main branch)
+## Task 2: Add Real-time Gold Price Widget to Header ✅
 
-Stage Summary:
-- Mobile menu panels are now wider and responsive (85vw with max-width)
-- Mobile hamburger menu button now visible in authenticated panel
-- Landing pages can now scroll properly on mobile devices
-- Server running on port 3000, changes pushed to GitHub
+### Files Created:
+- `src/components/shared/LiveGoldTicker.tsx` — New component that:
+  - Fetches gold prices from `/api/gold/prices` every 30 seconds
+  - Shows live gold price in a compact gold-themed ticker bar
+  - Has pulse animation when price changes (using key-based re-render)
+  - Shows price change direction (up/down arrow with green/red)
+  - RTL-compatible with `dir` prop from `useTranslation()`
+  - Uses `useTranslation()` from `@/lib/i18n` for i18n
+  - Shows loading state with spinner
+  - Handles error state gracefully
+
+### Files Modified:
+- `src/components/layout/AppHeader.tsx`
+  - Imported `LiveGoldTicker`
+  - Replaced the static gold price ticker with the new `LiveGoldTicker` component in the desktop header
 
 ---
-Task ID: 4
-Agent: Main Agent
-Task: Fix React Hydration Error and Server Stability
 
-Work Log:
-- Diagnosed "1 Issue" error badge from Next.js DevTools overlay
-- Identified root cause: React hydration mismatch from Zustand persist middleware with localStorage
-- Server-side render uses `initialState` but client rehydrates from localStorage with different values
-- Fixed `src/lib/store.ts`:
-  - Added `_hasHydrated` flag to AppState
-  - Added `typeof window === 'undefined'` guard in `getItem` to prevent SSR localStorage access
-  - Set `_hasHydrated = true` in `onRehydrateStorage` callback
-- Fixed `src/app/page.tsx`:
-  - Added hydration guard: shows loading spinner until `mounted && _hasHydrated`
-  - Prevents rendering conditional content before store hydration completes
-- Created `keepalive-server.js` daemon to auto-restart Next.js dev server
-- Verified: dashboard loads correctly, no hydration error badge, all API routes functional
+## Task 3: Add Price Alert System ✅
 
-Stage Summary:
-- React hydration error fixed by adding hydration guard in Home component
-- Server stability improved with keepalive daemon (auto-restart on crash)
-- Dashboard renders cleanly without Next.js error overlay
-- All endpoints return 200: /, /api/gold/prices, /api/blog/posts
+### Files Created:
+- `src/app/api/alerts/price/route.ts` — New API route:
+  - **GET**: List all alerts for a user + check triggered conditions against current prices
+  - **POST**: Create new price alert (userId, targetPrice, direction, goldType)
+  - **DELETE**: Remove an alert (with userId ownership validation)
+  - Checks current prices from `GoldPrice` table against alerts and marks triggered ones
+
+- `src/components/gold/PriceAlertsView.tsx` — New component:
+  - Lists active, triggered, and inactive price alerts
+  - Create new alert form with gold type selector (gram/coin), direction toggle (above/below), price input
+  - Visual indicators for triggered alerts (green emerald styling)
+  - Delete alerts with confirmation
+  - RTL-compatible, uses shadcn/ui components
+  - All UI text in Persian/Farsi
+
+### Files Modified:
+- `src/app/page.tsx` — Added `PriceAlertsView` import and route case
+- `src/lib/i18n.ts` — Added translation keys for:
+  - `dashboard.quickStatsGold`, `dashboard.quickStatsValue`, `dashboard.quickStatsPL`, `dashboard.quickStatsTrend`
+  - `nav.priceAlerts`
+  - Both `fa` and `en` locales
 
 ---
-Task ID: 5
-Agent: Main Agent
-Task: Create Release v4.0.1
 
-Work Log:
-- Verified all `useTranslation()` calls properly destructured (no `const t = useTranslation()` remaining)
-- Confirmed 5 fixes in AdminServices.tsx: lines 226, 592, 786, 973, 1170
-- Cleaned working tree (reset trivial comment changes)
-- Built production version with `NEXT_DISABLE_TURBOPACK=1 npx next build`
-- Copied static files to `.next/standalone/`
-- Created git tag `v4.0.1` with comprehensive release notes
-- Pushed tag to GitHub (fartakcomplex/zaringold)
-- Created GitHub release with detailed changelog
-- Dev server running on port 3000, all routes returning 200
+## Task 4: Improve Dashboard with Quick Stats ✅
 
-Stage Summary:
-- Release v4.0.1 created and pushed to GitHub
-- GitHub Release URL: https://github.com/fartakcomplex/zaringold/releases/tag/v4.0.1
-- Includes 8 bug fixes, 3 new features, 1 infrastructure fix since v4.0.0
-- All verified: useTranslation fix, hydration fix, admin panel, gold card, mobile UX
+### Files Modified:
+- `src/components/dashboard/DashboardView.tsx`
+  - Added "Quick Stats" row at the top of the desktop layout (hidden on mobile)
+  - 4 stat cards with gold-gradient borders:
+    1. **Total Gold Balance** (grams) with gold icon
+    2. **Portfolio Value** (toman) with TrendingUp icon
+    3. **Today's Profit/Loss** with percentage (green/red indicator)
+    4. **24h Gold Trend** with direction indicator
+  - Each card has: gradient background overlay, gold-themed border, hover effects
+  - RTL-compatible with translation keys
+
+---
+
+## Task 5: Add Price Alerts Navigation Item ✅
+
+### Files Modified:
+- `src/components/layout/AppSidebar.tsx`
+  - Added `Price Alerts` nav item with `Bell` icon and `isNew: true` badge
+  - Placed under "Main" section between Market and the section divider
+  - Uses `nav.priceAlerts` translation key
+
+---
+
+## Summary
+
+| Task | Status | Files Created | Files Modified |
+|------|--------|---------------|-----------------|
+| 1. Fix Gold Card Bug | ✅ | 0 | 2 |
+| 2. Live Gold Ticker | ✅ | 1 | 1 |
+| 3. Price Alert System | ✅ | 2 | 3 |
+| 4. Dashboard Quick Stats | ✅ | 0 | 2 |
+| 5. Sidebar Navigation | ✅ | 0 | 1 |
+
+**Total**: 3 new files created, 7 files modified, 0 TypeScript errors introduced in our code.

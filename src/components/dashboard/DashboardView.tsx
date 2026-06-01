@@ -1446,6 +1446,90 @@ const GOLD_NEWS = [
       animate="show"
     >
       {/* ──────────────────────────────────────────────────────── */}
+      {/*  Quick Stats Row (gold-gradient borders)                */}
+      {/* ──────────────────────────────────────────────────────── */}
+      {!isMobile && !isLoading && (
+        <motion.div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4" variants={itemVariants}>
+          {/* Total Gold Balance */}
+          <div className="relative rounded-xl border border-[#D4AF37]/30 bg-card p-4 overflow-hidden group hover:border-[#D4AF37]/50 transition-all">
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#D4AF37]/5 via-transparent to-transparent pointer-events-none" />
+            <div className="relative flex items-center gap-3">
+              <div className="size-10 rounded-lg bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 flex items-center justify-center shrink-0">
+                <Coins className="size-5 text-[#D4AF37]" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] text-muted-foreground">{t('dashboard.quickStatsGold')}</p>
+                <p className="text-lg font-bold tabular-nums gold-gradient-text">
+                  {formatGrams(goldWallet.goldGrams)} <span className="text-xs text-muted-foreground font-normal">{t('common.gram')}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Portfolio Value */}
+          <div className="relative rounded-xl border border-[#D4AF37]/30 bg-card p-4 overflow-hidden group hover:border-[#D4AF37]/50 transition-all">
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#D4AF37]/5 via-transparent to-transparent pointer-events-none" />
+            <div className="relative flex items-center gap-3">
+              <div className="size-10 rounded-lg bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 flex items-center justify-center shrink-0">
+                <TrendingUp className="size-5 text-[#D4AF37]" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] text-muted-foreground">{t('dashboard.quickStatsValue')}</p>
+                <p className="text-lg font-bold tabular-nums text-foreground">
+                  {formatToman(goldValueInToman)}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Today's Profit/Loss */}
+          <div className="relative rounded-xl border border-[#D4AF37]/30 bg-card p-4 overflow-hidden group hover:border-[#D4AF37]/50 transition-all">
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#D4AF37]/5 via-transparent to-transparent pointer-events-none" />
+            <div className="relative flex items-center gap-3">
+              <div className={cn(
+                'size-10 rounded-lg flex items-center justify-center shrink-0',
+                isProfitPositive ? 'bg-emerald-500/15' : 'bg-red-500/15'
+              )}>
+                {isProfitPositive ? (
+                  <TrendingUp className="size-5 text-emerald-500" />
+                ) : (
+                  <TrendingDown className="size-5 text-red-500" />
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] text-muted-foreground">{t('dashboard.quickStatsPL')}</p>
+                <div className="flex items-center gap-1.5">
+                  <p className={cn('text-lg font-bold tabular-nums', isProfitPositive ? 'text-emerald-500' : 'text-red-500')}>
+                    {isProfitPositive ? '+' : '-'}{formatToman(profitAmount)}
+                  </p>
+                  <span className={cn('text-[11px] font-medium', isProfitPositive ? 'text-emerald-400' : 'text-red-400')}>
+                    ({profitPercentage}%)
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 24h Gold Trend */}
+          <div className="relative rounded-xl border border-[#D4AF37]/30 bg-card p-4 overflow-hidden group hover:border-[#D4AF37]/50 transition-all">
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#D4AF37]/5 via-transparent to-transparent pointer-events-none" />
+            <div className="relative flex items-center gap-3">
+              <div className="size-10 rounded-lg bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 flex items-center justify-center shrink-0">
+                <Activity className="size-5 text-[#D4AF37]" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] text-muted-foreground">{t('dashboard.quickStatsTrend')}</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-lg font-bold text-emerald-500 tabular-nums">▲</p>
+                  <span className="text-sm font-semibold text-emerald-500">+۱.۲٪</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* ──────────────────────────────────────────────────────── */}
       {/*  Row 1 — Stat Cards                                      */}
       {/* ──────────────────────────────────────────────────────── */}
       {isLoading ? (

@@ -1542,11 +1542,17 @@ export default function GoldCardView() {
 
   /* ── Fetch Card Data ── */
   const fetchCard = useCallback(async () => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      console.error('[GoldCard] fetchCard skipped: no user.id', { userId: user?.id });
+      return;
+    }
     try {
       setLoading(true);
+      console.log('[GoldCard] Fetching card for userId:', user.id);
       const res = await fetch(`/api/gold-card?userId=${user.id}`);
+      console.log('[GoldCard] Response status:', res.status, res.ok);
       const data = await res.json();
+      console.log('[GoldCard] Response data:', { hasCard: data.hasCard, cardId: data.card?.id, cardUserId: data.card?.userId });
       if (data.hasCard && data.card) {
         const c = data.card;
         setCard(mapApiCard(c, user.id, goldPrice));
@@ -1764,7 +1770,7 @@ export default function GoldCardView() {
               <ArrowLeftRight className="size-3.5" />
               {locale === 'en' ? 'Transfer' : 'انتقال'}
             </TabsTrigger>
-            <TabsTrigger value="settings" data-goldcard-tab="settings" className="rounded-lg data-[state=active]:bg-[#D4AF37] data-[state=active]:text-[2a1a00] text-xs font-medium gap-1">
+            <TabsTrigger value="settings" data-goldcard-tab="settings" className="rounded-lg data-[state=active]:bg-[#D4AF37] data-[state=active]:text-[#2a1a00] text-xs font-medium gap-1">
               <Gauge className="size-3.5" />
               {locale === 'en' ? 'Settings' : 'تنظیمات'}
             </TabsTrigger>
