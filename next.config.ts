@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: [
     "preview-chat-05200337-6681-4db4-9e64-b8ae99325756.space.z.ai",
     "*.space.z.ai",
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
   ],
 };
 

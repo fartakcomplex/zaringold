@@ -97,25 +97,23 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                      console.log('[PWA] Service Worker registered with scope:', registration.scope);
-                      registration.addEventListener('updatefound', function() {
-                        var newWorker = registration.installing;
-                        newWorker.addEventListener('statechange', function() {
-                          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            console.log('[PWA] New content available, refresh to update.');
-                          }
-                        });
-                      });
-                    })
-                    .catch(function(error) {
-                      console.log('[PWA] Service Worker registration failed:', error);
+              (function() {
+                if ('serviceWorker' in navigator) {
+                  // ALWAYS unregister all service workers first (fixes stuck loading)
+                  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    registrations.forEach(function(reg) {
+                      reg.unregister();
+                      console.log('[PWA] Unregistered SW:', reg.scope);
                     });
-                });
-              }
+                  });
+                  // Clear all caches
+                  if (window.caches) {
+                    caches.keys().then(function(names) {
+                      names.forEach(function(name) { caches.delete(name); });
+                    });
+                  }
+                }
+              })();
             `,
           }}
         />
