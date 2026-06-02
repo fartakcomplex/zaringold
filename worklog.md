@@ -455,3 +455,30 @@
 - TypeScript errors: 0
 - All pages wired into main router (page.tsx)
 - Git commit: done (push failed - no credentials)
+
+---
+
+## Session: Live Preview & Screenshots (2026-06-02)
+
+### Production Build
+- ✅ `next build` completed successfully (0 TypeScript errors)
+- ✅ Production build output at `.next/standalone/`
+- ✅ Created lightweight bun static server (`serve.ts`) for serving pre-rendered HTML + static assets
+- ✅ All pages verified: Homepage, Dashboard, Market, Wallet, Calculator, Savings — all HTTP 200
+- ✅ Title: "زرین گلد | خرید و فروش طلای نوین"
+
+### Screenshots Taken
+- `zaringold-homepage-full.png` — Full page homepage
+- `zaringold-dashboard-preview.png` — Dashboard page
+- `zaringold-market-preview.png` — Market page
+- `zaringold-wallet-preview.png` — Wallet page
+- `zaringold-calculator-preview.png` — Calculator page
+- `zaringold-savings-preview.png` — Savings page
+- `zaringold-iphone-preview.png` — Mobile view (iPhone 16 Pro)
+- `zaringold-live-preview.png` — Initial viewport screenshot
+
+### Server Infrastructure
+- Next.js production standalone server: `.next/standalone/server.js`
+- Lightweight bun static server: `serve.ts` (serves cached HTML + static assets without Next.js runtime)
+- Caddy reverse proxy on port 81 → port 3000
+- Note: Background processes in sandbox don't persist between tool invocations
