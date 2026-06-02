@@ -14,7 +14,7 @@ import {
   Heart, KeyRound, Code2, Trash2,
   Scale, Calculator, Landmark, PieChart, Activity,
   Code, Copy, LayoutGrid, GraduationCap, CalendarDays,
-  BadgeCheck, ArrowRightLeft, LineChart,
+  BadgeCheck, ArrowRightLeft, LineChart, Users, Clock, BarChart, Trash,
 } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
