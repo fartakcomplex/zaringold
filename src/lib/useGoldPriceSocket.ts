@@ -47,23 +47,45 @@ export function useGoldPriceSocket() {
         if (!isMounted) return;
         try {
           const data = JSON.parse(event.data);
+          
+          // Support both old format (buy/sell) and new format (geram18/sekkehEmami)
+          let buyPrice: number;
+          let sellPrice: number;
+          
           if (data.buy != null && data.sell != null) {
-            setGoldPrice({
-              buyPrice: data.buy,
-              sellPrice: data.sell,
-              marketPrice: Math.round((data.buy + data.sell) / 2),
-              ouncePrice: Math.round(data.buy * 0.03215),
-              spread: data.buy - data.sell,
-              updatedAt: new Date(data.timestamp * 1000).toISOString(),
-            });
-            setLastUpdate(
-              new Intl.DateTimeFormat('fa-IR', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-              }).format(new Date(data.timestamp * 1000)),
-            );
+            // Old format
+            buyPrice = data.buy;
+            sellPrice = data.sell;
+          } else if (data.geram18 != null) {
+            // New format: derive buy/sell from geram18
+            const spread = Math.round(data.geram18 * 0.003);
+            buyPrice = data.geram18 + Math.round(spread / 2);
+            sellPrice = data.geram18 - Math.round(spread / 2);
+          } else {
+            return; // Unknown format, skip
           }
+          
+          setGoldPrice({
+            buyPrice,
+            sellPrice,
+            marketPrice: Math.round((buyPrice + sellPrice) / 2),
+            ouncePrice: data.ounceUsd 
+              ? data.ounceUsd * (data.dollar || 95000) * 10
+              : Math.round(buyPrice * 0.03215),
+            spread: buyPrice - sellPrice,
+            updatedAt: data.updatedAt 
+              ? data.updatedAt 
+              : new Date((data.timestamp || Date.now() / 1000) * 1000).toISOString(),
+          });
+          
+          const ts = data.timestamp || Math.floor(Date.now() / 1000);
+          setLastUpdate(
+            new Intl.DateTimeFormat('fa-IR', {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+            }).format(new Date(ts * 1000)),
+          );
         } catch {
           // Ignore non-JSON messages (e.g. SSE heartbeats)
         }

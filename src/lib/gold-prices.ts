@@ -190,15 +190,11 @@ async function fetchFromWebSearch(): Promise<PriceSourceResult> {
     for (const { num, context } of allNumbers) {
       const ctx = context.toLowerCase()
       
-      // سکه امامی / سکه تمام — typically 180M-250M Toman
+      // سکه امامی / سکه تمام — typically 150M-350M Toman
       if (!prices.sekkehEmami && num >= 150_000_000 && num <= 350_000_000) {
         if (ctx.includes('امامی') || ctx.includes('تمام') || ctx.includes('sekkeh') || 
-            ctx.includes('emami') || ctx.includes('سکه') && !ctx.includes('نیم') && !ctx.includes('ربع') && !ctx.includes('گرمی')) {
-          prices.sekkehEmami = num
-          continue
-        }
-        // First large number after "سکه" without qualifiers
-        if (ctx.includes('سکه') && !prices.sekkehEmami) {
+            ctx.includes('emami') || 
+            (ctx.includes('سکه') && !ctx.includes('نیم') && !ctx.includes('ربع') && !ctx.includes('گرمی'))) {
           prices.sekkehEmami = num
           continue
         }
@@ -301,6 +297,122 @@ async function fetchFromWebSearch(): Promise<PriceSourceResult> {
   }
 }
 
+// ─── AlanChand Website Scrape Fallback ────────────────────────────────
+
+async function fetchFromAlanChandScrape(): Promise<PriceSourceResult> {
+  try {
+    const res = await fetch('https://alanchand.com/gold-price', {
+      signal: AbortSignal.timeout(10000),
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36',
+        'Accept': 'text/html,application/xhtml+xml',
+      },
+    })
+    
+    if (!res.ok) {
+      return { success: false, source: 'alanchand-scrape', error: `HTTP ${res.status}` }
+    }
+    
+    const html = await res.text()
+    
+    // Parse Persian/English numbers
+    const persianToEnglish = (s: string) =>
+      s.replace(/[۰-۹]/g, d => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))
+    
+    const normalized = persianToEnglish(html)
+    
+    // Extract prices from AlanChand HTML
+    const prices: Partial<GoldPrices> = {}
+    
+    // Find all numbers in range 15M-300M (gold/coin prices in Toman)
+    const numRegex = /([\d,]+\.?\d*)/g
+    const allNums: number[] = []
+    let m
+    while ((m = numRegex.exec(normalized)) !== null) {
+      const cleaned = m[1].replace(/,/g, '')
+      const num = parseFloat(cleaned)
+      if (num >= 15_000_000 && num <= 500_000_000) {
+        allNums.push(Math.round(num))
+      }
+    }
+    
+    // Find by context keywords near the numbers
+    const findPriceNear = (keyword: string, min: number, max: number): number | undefined => {
+      const kIdx = normalized.indexOf(keyword)
+      if (kIdx === -1) return undefined
+      
+      // Search in a 500-char window around the keyword
+      const start = Math.max(0, kIdx - 500)
+      const end = Math.min(normalized.length, kIdx + 500)
+      const window = normalized.substring(start, end)
+      
+      const wNumRegex = /([\d,]+\.?\d*)/g
+      let wm
+      while ((wm = wNumRegex.exec(window)) !== null) {
+        const cleaned = wm[1].replace(/,/g, '')
+        const num = parseFloat(cleaned)
+        if (num >= min && num <= max) {
+          return Math.round(num)
+        }
+      }
+      return undefined
+    }
+    
+    prices.geram18 = findPriceNear('18', 10_000_000, 50_000_000) ||
+                     findPriceNear('گرم', 10_000_000, 50_000_000)
+    prices.sekkehEmami = findPriceNear('امامی', 100_000_000, 400_000_000) ||
+                         findPriceNear('سکه', 100_000_000, 400_000_000)
+    prices.nimSekkeh = findPriceNear('نیم', 50_000_000, 200_000_000)
+    prices.robSekkeh = findPriceNear('ربع', 30_000_000, 120_000_000)
+    prices.sekkehGerami = findPriceNear('گرمی', 15_000_000, 60_000_000)
+    prices.ounceUsd = findPriceNear('اونس', 1500, 10000)
+    
+    // If context matching didn't work, try position-based from allNums
+    if (!prices.sekkehEmami && allNums.length > 0) {
+      const sorted = [...allNums].sort((a, b) => b - a)
+      prices.sekkehEmami = sorted[0] // Largest = sekkeh emami
+    }
+    if (!prices.geram18 && allNums.length > 2) {
+      const sorted = [...allNums].sort((a, b) => a - b)
+      prices.geram18 = sorted.find(n => n >= 15_000_000 && n <= 35_000_000)
+    }
+    
+    // Fill in missing values using ratios
+    if (prices.sekkehEmami) {
+      prices.sekkehBahar = prices.sekkehBahar || Math.round(prices.sekkehEmami * 0.97)
+      prices.nimSekkeh = prices.nimSekkeh || Math.round(prices.sekkehEmami * 0.535)
+      prices.robSekkeh = prices.robSekkeh || Math.round(prices.sekkehEmami * 0.31)
+      prices.sekkehGerami = prices.sekkehGerami || Math.round(prices.sekkehEmami * 0.155)
+    }
+    if (prices.geram18) {
+      prices.geram24 = prices.geram24 || Math.round(prices.geram18 / 0.75)
+    }
+    
+    // Must have at least sekkehEmami or geram18
+    if (prices.sekkehEmami || prices.geram18) {
+      return {
+        success: true,
+        source: 'alanchand-scrape',
+        prices: {
+          ...getDefaultPrices(),
+          ...prices,
+          source: 'alanchand-scrape',
+          updatedAt: new Date().toISOString(),
+          lastFetch: Date.now(),
+        } as GoldPrices,
+      }
+    }
+    
+    return { success: false, source: 'alanchand-scrape', error: 'No prices parsed from page' }
+  } catch (err) {
+    return { 
+      success: false, 
+      source: 'alanchand-scrape', 
+      error: err instanceof Error ? err.message : 'Unknown error' 
+    }
+  }
+}
+
 // ─── Static Fallback ─────────────────────────────────────────────────
 
 // Realistic market prices for 1404 (Persian calendar year 2025-2026)
@@ -354,7 +466,7 @@ function fetchStaticFallback(): PriceSourceResult {
 
 let cachedPrices: GoldPrices | null = null
 let cacheTimestamp = 0
-const CACHE_TTL = 15 * 60 * 1000 // 15 minutes
+const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
 // Per-source cooldown: skip sources that recently failed to avoid rate-limit spam
 const sourceCooldowns: Record<string, number> = {} // source → timestamp of last failure
@@ -372,6 +484,7 @@ export async function fetchGoldPrices(forceRefresh = false): Promise<GoldPrices>
   const sources: Array<{ name: string; fn: () => Promise<PriceSourceResult> }> = [
     { name: 'alanchand', fn: fetchFromAlanChand },
     { name: 'web-search', fn: fetchFromWebSearch },
+    { name: 'alanchand-scrape', fn: fetchFromAlanChandScrape },
     { name: 'static', fn: () => Promise.resolve(fetchStaticFallback()) },
   ]
 
