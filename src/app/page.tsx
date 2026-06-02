@@ -378,6 +378,7 @@ function AuthenticatedPage() {
     case 'smart-buy': return <SmartBuyAdvisor />;
     case 'analytics': return <PortfolioAnalytics />;
     case 'ai-coach': return <AIWealthCoach />;
+    case 'ai-advisor': return <AIAdvisorPage />;
 
     /* ── Saving & Loans ── */
     case 'autosave': return <AutoSaveView />;
@@ -395,7 +396,6 @@ function AuthenticatedPage() {
     /* ── Gamification ── */
     case 'achievements': return <AchievementsView />;
     case 'checkin': return <DailyCheckIn />;
-    case 'prediction': return <PricePredictionGame />;
     case 'vip': return <VIPMembershipView />;
     case 'cashback': return <CashbackCenter />;
     case 'earn': return <EarnView />;

@@ -105,9 +105,8 @@ const navSections: NavSection[] = [
     titleKey: 'nav.smartTools',
     items: [
       { labelKey: 'nav.smartBuy', page: 'smart-buy', icon: Bot, isNew: true },
-      { labelKey: 'nav.analytics', page: 'advanced-analytics', icon: TrendingUp, isNew: true },
+      { labelKey: 'nav.advancedAnalytics', page: 'advanced-analytics', icon: TrendingUp, isNew: true },
       { labelKey: 'nav.aiAdvisor', page: 'ai-advisor', icon: Brain, isNew: true },
-      { labelKey: 'nav.advancedAnalytics', page: 'advanced-analytics', icon: LineChart, isNew: true },
       { labelKey: 'nav.aiCoach', page: 'ai-coach', icon: Sparkles, isNew: true },
       { labelKey: 'nav.customPortfolio', page: 'custom-portfolio', icon: PieChart, isNew: true },
     ],
@@ -184,7 +183,6 @@ const navSections: NavSection[] = [
       { labelKey: 'nav.technicalAnalysis', page: 'technical-analysis', icon: Activity, isNew: true },
       { labelKey: 'nav.economicCalendar', page: 'economic-calendar', icon: CalendarDays, isNew: true },
       { labelKey: 'nav.academy', page: 'academy', icon: GraduationCap, isNew: true },
-      { labelKey: 'nav.backup', page: 'backup', icon: Download, isNew: true },
     ],
   },
   {

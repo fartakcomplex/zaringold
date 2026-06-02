@@ -482,3 +482,33 @@
 - Lightweight bun static server: `serve.ts` (serves cached HTML + static assets without Next.js runtime)
 - Caddy reverse proxy on port 81 → port 3000
 - Note: Background processes in sandbox don't persist between tool invocations
+
+---
+
+## Session: Bug Fix (2026-06-02)
+
+### Bugs Found and Fixed
+
+#### Bug 1: Missing i18n Translation Keys (CRITICAL)
+**File:** `/src/lib/i18n.ts`
+- ۶+ sidebar navigation items showed raw translation keys instead of Persian text
+- Missing keys: `nav.aiAdvisor`, `nav.advancedAnalytics`, `nav.customPortfolio`, `nav.goldDeposit`, `nav.microGold`, `nav.socialTrading`, `nav.p2pExchange`, `nav.goldCalculator`, `nav.technicalAnalysis`, `nav.economicCalendar`, `nav.academy`, `nav.widget`, `nav.backupRecovery`, `nav.backup`, `nav.tools`, `nav.insuranceSection`, `nav.carServicesSection`, `nav.utilitySection`
+- Added all missing translations for both Persian (fa) and English (en) locales
+- 38 new translation keys added
+
+#### Bug 2: Duplicate Sidebar Navigation Items (HIGH)
+**File:** `/src/components/layout/AppSidebar.tsx`
+- `nav.analytics` and `nav.advancedAnalytics` both pointed to page `advanced-analytics`
+- Removed duplicate `nav.analytics`, kept `nav.advancedAnalytics` with correct label
+- `nav.backup` appeared in both "Tools" section and "Account" section (as `nav.backupRecovery`)
+- Removed duplicate from "Tools" section, kept only in "Account" section
+
+#### Bug 3: Wrong Icon in BottomNav (MEDIUM)
+**File:** `/src/components/layout/BottomNav.tsx`
+- `nav.socialFeed` (Social Feed) was using `LayoutDashboard` icon
+- Changed to `MessageCircle` which is more appropriate for a social feed
+
+#### Build Verification
+- `bun run build` → 0 TypeScript errors
+- All translations verified in built JS chunks (`.next/static/chunks/ffd15056ea015cfe.js`)
+- Static server serves correct JS with updated translations

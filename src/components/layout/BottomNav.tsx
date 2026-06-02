@@ -119,7 +119,7 @@ const moreMenuItems: MoreMenuItem[] = [
   { labelKey: 'nav.referral', page: 'referral', icon: Users },
   { labelKey: 'nav.gifts', page: 'gifts', icon: Gift },
   { labelKey: 'nav.familyWallet', page: 'family-wallet', icon: UsersRound },
-  { labelKey: 'nav.socialFeed', page: 'social-feed', icon: LayoutDashboard },
+  { labelKey: 'nav.socialFeed', page: 'social-feed', icon: MessageCircle },
 
   /* ── Gamification ── */
   { labelKey: 'nav.achievements', page: 'achievements', icon: Trophy },
