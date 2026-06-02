@@ -446,6 +446,13 @@ select, input, textarea, [contenteditable="true"], .selectable {
   animation: pull-spinner 0.8s linear infinite;
 }
 
+/* Better touch targets on mobile */
+@media (max-width: 768px) {
+  button, a, [role="button"] {
+    min-height: 44px;
+  }
+}
+
 /* Safe area padding utilities */
 .safe-bottom {
   padding-bottom: max(16px, env(safe-area-inset-bottom));

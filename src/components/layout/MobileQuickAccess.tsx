@@ -20,6 +20,10 @@ import {
   /* Social */
   Gift,
   Users,
+  /* Advanced Features */
+  Coins,
+  PieChart,
+  Activity,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useTranslation } from '@/lib/i18n';
@@ -55,6 +59,12 @@ const quickAccessItems: QuickAccessItem[] = [
   { labelKey: 'quickAccess.goals', page: 'goals', icon: Target, color: 'text-orange-400' },
   { labelKey: 'quickAccess.gifts', page: 'gifts', icon: Gift, color: 'text-pink-400' },
   { labelKey: 'quickAccess.referral', page: 'referral', icon: Users, color: 'text-violet-400' },
+
+  // Row 4 — New Advanced Features
+  { labelKey: 'quickAccess.analytics', page: 'advanced-analytics', icon: TrendingUp, color: 'text-violet-400', badge: 'new' },
+  { labelKey: 'quickAccess.microGold', page: 'micro-gold', icon: Coins, color: 'text-yellow-400', badge: 'new' },
+  { labelKey: 'quickAccess.portfolio', page: 'custom-portfolio', icon: PieChart, color: 'text-cyan-400', badge: 'new' },
+  { labelKey: 'quickAccess.technicalAnalysis', page: 'technical-analysis', icon: Activity, color: 'text-orange-400', badge: 'new' },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -225,7 +235,7 @@ export default function MobileQuickAccess() {
           />
         </div>
 
-        {/* Grid - 4 columns × 3 rows */}
+        {/* Grid - 4 columns × 4 rows */}
         <div className="grid grid-cols-4 justify-items-center gap-y-1 gap-x-1">
           {quickAccessItems.map((item, index) => (
             <QuickAccessButton

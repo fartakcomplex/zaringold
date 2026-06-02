@@ -153,7 +153,7 @@ function VirtualCard({ card, userName, showNumber, showCvv, onToggleNumber, onTo
   const expiry = `${card.expiryMonth < 10 ? '0' : ''}${card.expiryMonth}/${String(card.expiryYear).slice(-2)}`;
 
   return (
-    <div className="relative w-full max-w-[380px] mx-auto" onClick={() => setFlipped(!flipped)}>
+    <div className="relative w-full max-w-[340px] sm:max-w-[380px] mx-auto" onClick={() => setFlipped(!flipped)}>
       {/* Card container */}
       <div className="relative w-full aspect-[1.586/1] rounded-2xl overflow-hidden cursor-pointer select-none"
         style={{ background: design.bg, boxShadow: '0 8px 32px rgba(0,0,0,0.3), 0 0 40px rgba(212,175,55,0.15)' }}>

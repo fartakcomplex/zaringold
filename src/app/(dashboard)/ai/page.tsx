@@ -335,7 +335,7 @@ export default function AIAdvisorPage() {
 
       {/* Quick Action Buttons */}
       <div className="px-4 pb-2">
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {QUICK_ACTIONS.map((action) => {
             const Icon = action.icon;
             return (
@@ -362,8 +362,7 @@ export default function AIAdvisorPage() {
       {/* Messages area */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-4 pb-2"
-        style={{ maxHeight: 'calc(100vh - 380px)' }}
+        className="flex-1 overflow-y-auto px-4 pb-2 min-h-[50vh] md:min-h-[calc(100vh-380px)]"
       >
         <div className="space-y-4 py-2">
           {messages.map((msg) => (

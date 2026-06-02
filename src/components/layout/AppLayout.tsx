@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useAppStore } from '@/lib/store';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSessionRefresh } from '@/hooks/use-session-refresh';
@@ -18,6 +18,7 @@ import {
   SheetContent,
   SheetTitle,
 } from '@/components/ui/sheet';
+import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /* ------------------------------------------------------------------ */
@@ -116,9 +117,53 @@ function PageEventFallback() {
 /* ------------------------------------------------------------------ */
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, currentPage } = useAppStore();
+  const { isAuthenticated, currentPage, setPage } = useAppStore();
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  /* ── Swipe-back gesture state ── */
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const swipeIndicatorRef = useRef<HTMLDivElement>(null);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    if (touch.clientX < 30) { // Only from left edge (start in RTL)
+      touchStartX.current = touch.clientX;
+      touchStartY.current = touch.clientY;
+    }
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    const diffX = touch.clientX - touchStartX.current;
+    const diffY = Math.abs(touch.clientY - touchStartY.current);
+    
+    if (touchStartX.current > 0 && touchStartX.current < 30 && diffX > 20 && diffX > diffY) {
+      if (swipeIndicatorRef.current) {
+        const progress = Math.min(diffX / 150, 1);
+        swipeIndicatorRef.current.style.opacity = String(progress);
+        swipeIndicatorRef.current.style.transform = `translateX(${Math.min(diffX * 0.3, 50)}px)`;
+      }
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    const touch = e.changedTouches[0];
+    const diffX = touch.clientX - touchStartX.current;
+    
+    if (swipeIndicatorRef.current) {
+      swipeIndicatorRef.current.style.opacity = '0';
+      swipeIndicatorRef.current.style.transform = 'translateX(0)';
+    }
+    
+    if (diffX > 100 && touchStartX.current < 30) {
+      setPage('dashboard');
+    }
+    
+    touchStartX.current = 0;
+    touchStartY.current = 0;
+  }, [setPage]);
 
   /* ── Validate & refresh user session on mount ── */
   useSessionRefresh();
@@ -161,7 +206,20 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             /* Mobile bottom padding for bottom nav */
             isMobile && 'pb-24'
           )}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
+          {/* Swipe back indicator */}
+          <div 
+            ref={swipeIndicatorRef}
+            className="pointer-events-none fixed inset-y-0 start-0 z-50 flex items-center opacity-0 transition-opacity duration-200 md:hidden"
+            style={{ willChange: 'transform, opacity' }}
+          >
+            <div className="ms-2 flex size-10 items-center justify-center rounded-full bg-gold/20 backdrop-blur-sm">
+              <ChevronRight className="size-5 text-gold" />
+            </div>
+          </div>
           <div key={currentPage} className="page-transition">
             <MobileQuickActions />
             {children}

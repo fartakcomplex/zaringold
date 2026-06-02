@@ -65,6 +65,17 @@ import {
   Camera,
   Image as ImageIcon,
   RefreshCw,
+  Scale,
+  Landmark,
+  Code,
+  CalendarDays,
+  Lock,
+  BadgeCheck,
+  Copy,
+  LayoutGrid,
+  LineChart,
+  ArrowRightLeft,
+  KeyRound,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useTranslation } from '@/lib/i18n';
@@ -437,6 +448,118 @@ const pageActions: Record<string, QAAction[]> = {
     { labelKey: 'qa.active', action: 'scroll:pm-active', icon: Zap, color: 'text-amber-400 bg-amber-400/10' },
     { labelKey: 'qa.history', action: 'scroll:pm-history', icon: History, color: 'text-blue-400 bg-blue-400/10' },
     { labelKey: 'qa.stats', action: 'scroll:pm-stats', icon: BarChart3, color: 'text-gold bg-gold/10' },
+  ],
+
+  /* ── Advanced Analytics ── */
+  'advanced-analytics': [
+    { labelKey: 'qa.overview', action: 'scroll:aa-overview', icon: PieChart, color: 'text-gold bg-gold/10' },
+    { labelKey: 'qa.chart', action: 'scroll:aa-chart', icon: LineChart, color: 'text-emerald-400 bg-emerald-400/10' },
+    { labelKey: 'qa.analysis', action: 'scroll:aa-analysis', icon: Activity, color: 'text-cyan-400 bg-cyan-400/10' },
+    { labelKey: 'qa.risk', action: 'scroll:aa-risk', icon: Shield, color: 'text-rose-400 bg-rose-400/10' },
+  ],
+
+  /* ── AI Advisor ── */
+  'ai-advisor': [
+    { labelKey: 'qa.ask', action: 'scroll:aiad-ask', icon: Sparkles, color: 'text-amber-400 bg-amber-400/10' },
+    { labelKey: 'qa.advice', action: 'scroll:aiad-advice', icon: Bot, color: 'text-cyan-400 bg-cyan-400/10' },
+    { labelKey: 'qa.goals', action: 'scroll:aiad-goals', icon: Target, color: 'text-orange-400 bg-orange-400/10' },
+    { labelKey: 'qa.tips', action: 'scroll:aiad-tips', icon: GraduationCap, color: 'text-violet-400 bg-violet-400/10' },
+  ],
+
+  /* ── Gold Calculator ── */
+  'gold-calculator': [
+    { labelKey: 'qa.calculate', action: 'scroll:gc-calc', icon: Calculator, color: 'text-amber-400 bg-amber-400/10' },
+    { labelKey: 'qa.convert', action: 'scroll:gc-convert', icon: Scale, color: 'text-cyan-400 bg-cyan-400/10' },
+    { labelKey: 'qa.compare', action: 'scroll:gc-compare', icon: BarChart3, color: 'text-emerald-400 bg-emerald-400/10' },
+    { labelKey: 'qa.history', action: 'scroll:gc-history', icon: History, color: 'text-blue-400 bg-blue-400/10' },
+  ],
+
+  /* ── Micro Gold ── */
+  'micro-gold': [
+    { labelKey: 'qa.buy', action: 'scroll:mg-buy', icon: TrendingUp, color: 'text-emerald-400 bg-emerald-400/10' },
+    { labelKey: 'qa.sell', action: 'scroll:mg-sell', icon: TrendingDown, color: 'text-red-400 bg-red-400/10' },
+    { labelKey: 'qa.history', action: 'scroll:mg-history', icon: History, color: 'text-blue-400 bg-blue-400/10' },
+    { labelKey: 'qa.settings', action: 'scroll:mg-settings', icon: Settings, color: 'text-slate-400 bg-slate-400/10' },
+  ],
+
+  /* ── Gold Deposit ── */
+  'gold-deposit': [
+    { labelKey: 'qa.create', action: 'open:gd-create', icon: Plus, color: 'text-emerald-400 bg-emerald-400/10' },
+    { labelKey: 'qa.plans', action: 'scroll:gd-plans', icon: PiggyBank, color: 'text-teal-400 bg-teal-400/10' },
+    { labelKey: 'qa.history', action: 'scroll:gd-history', icon: History, color: 'text-blue-400 bg-blue-400/10' },
+    { labelKey: 'qa.withdraw', action: 'open:gd-withdraw', icon: ArrowUpFromLine, color: 'text-red-400 bg-red-400/10' },
+  ],
+
+  /* ── Social Trading ── */
+  'social-trading': [
+    { labelKey: 'qa.traders', action: 'scroll:st-traders', icon: Users, color: 'text-emerald-400 bg-emerald-400/10' },
+    { labelKey: 'qa.copy', action: 'scroll:st-copy', icon: Copy, color: 'text-cyan-400 bg-cyan-400/10' },
+    { labelKey: 'qa.leaderboard', action: 'scroll:st-leaderboard', icon: Trophy, color: 'text-gold bg-gold/10' },
+    { labelKey: 'qa.settings', action: 'scroll:st-settings', icon: Settings, color: 'text-slate-400 bg-slate-400/10' },
+  ],
+
+  /* ── Widget ── */
+  'widget': [
+    { labelKey: 'qa.create', action: 'open:wdg-create', icon: Plus, color: 'text-emerald-400 bg-emerald-400/10' },
+    { labelKey: 'qa.preview', action: 'scroll:wdg-preview', icon: Eye, color: 'text-cyan-400 bg-cyan-400/10' },
+    { labelKey: 'qa.customize', action: 'scroll:wdg-customize', icon: LayoutGrid, color: 'text-amber-400 bg-amber-400/10' },
+    { labelKey: 'qa.embed', action: 'scroll:wdg-embed', icon: Code, color: 'text-violet-400 bg-violet-400/10' },
+  ],
+
+  /* ── Academy ── */
+  'academy': [
+    { labelKey: 'qa.courses', action: 'scroll:acd-courses', icon: GraduationCap, color: 'text-violet-400 bg-violet-400/10' },
+    { labelKey: 'qa.tutorials', action: 'scroll:acd-tutorials', icon: Video, color: 'text-rose-400 bg-rose-400/10' },
+    { labelKey: 'qa.certificates', action: 'scroll:acd-certs', icon: BadgeCheck, color: 'text-gold bg-gold/10' },
+    { labelKey: 'qa.settings', action: 'scroll:acd-settings', icon: Settings, color: 'text-slate-400 bg-slate-400/10' },
+  ],
+
+  /* ── Economic Calendar ── */
+  'economic-calendar': [
+    { labelKey: 'qa.today', action: 'scroll:ec-today', icon: CalendarCheck, color: 'text-emerald-400 bg-emerald-400/10' },
+    { labelKey: 'qa.week', action: 'scroll:ec-week', icon: CalendarDays, color: 'text-blue-400 bg-blue-400/10' },
+    { labelKey: 'qa.month', action: 'scroll:ec-month', icon: CalendarDays, color: 'text-amber-400 bg-amber-400/10' },
+    { labelKey: 'qa.filter', action: 'scroll:ec-filter', icon: Filter, color: 'text-violet-400 bg-violet-400/10' },
+  ],
+
+  /* ── Backup ── */
+  'backup': [
+    { labelKey: 'qa.codes', action: 'scroll:bak-codes', icon: KeyRound, color: 'text-amber-400 bg-amber-400/10' },
+    { labelKey: 'qa.devices', action: 'scroll:bak-devices', icon: Lock, color: 'text-cyan-400 bg-cyan-400/10' },
+    { labelKey: 'qa.security', action: 'scroll:bak-security', icon: Shield, color: 'text-emerald-400 bg-emerald-400/10' },
+    { labelKey: 'qa.recovery', action: 'scroll:bak-recovery', icon: Download, color: 'text-blue-400 bg-blue-400/10' },
+  ],
+
+  /* ── Custom Portfolio ── */
+  'custom-portfolio': [
+    { labelKey: 'qa.assets', action: 'scroll:cp-assets', icon: Coins, color: 'text-gold bg-gold/10' },
+    { labelKey: 'qa.allocation', action: 'scroll:cp-allocation', icon: PieChart, color: 'text-violet-400 bg-violet-400/10' },
+    { labelKey: 'qa.rebalance', action: 'scroll:cp-rebalance', icon: ArrowRightLeft, color: 'text-cyan-400 bg-cyan-400/10' },
+    { labelKey: 'qa.settings', action: 'scroll:cp-settings', icon: Settings, color: 'text-slate-400 bg-slate-400/10' },
+  ],
+
+  /* ── P2P Enhanced ── */
+  'p2p-enhanced': [
+    { labelKey: 'qa.orderbook', action: 'scroll:p2p-orderbook', icon: BarChart3, color: 'text-gold bg-gold/10' },
+    { labelKey: 'qa.create', action: 'open:p2p-create', icon: Plus, color: 'text-emerald-400 bg-emerald-400/10' },
+    { labelKey: 'qa.myOrders', action: 'scroll:p2p-myorders', icon: Receipt, color: 'text-blue-400 bg-blue-400/10' },
+    { labelKey: 'qa.history', action: 'scroll:p2p-history', icon: History, color: 'text-amber-400 bg-amber-400/10' },
+  ],
+
+  /* ── Gold Card Enhanced ── */
+  'gold-card-enhanced': [
+    { labelKey: 'qa.cardInfo', action: 'scroll:gce-info', icon: CreditCard, color: 'text-gold bg-gold/10' },
+    { labelKey: 'qa.transactions', action: 'scroll:gce-transactions', icon: Receipt, color: 'text-blue-400 bg-blue-400/10' },
+    { labelKey: 'qa.settings', action: 'scroll:gce-settings', icon: Settings, color: 'text-slate-400 bg-slate-400/10' },
+    { labelKey: 'qa.share', action: 'click:gce-share', icon: Send, color: 'text-pink-400 bg-pink-400/10' },
+  ],
+
+  /* ── Technical Analysis ── */
+  'technical-analysis': [
+    { labelKey: 'qa.chart', action: 'scroll:ta-chart', icon: CandlestickChart, color: 'text-violet-400 bg-violet-400/10' },
+    { labelKey: 'qa.indicators', action: 'scroll:ta-indicators', icon: Activity, color: 'text-cyan-400 bg-cyan-400/10' },
+    { labelKey: 'qa.timeframe', action: 'open:ta-timeframe', icon: Clock, color: 'text-amber-400 bg-amber-400/10' },
+    { labelKey: 'qa.patterns', action: 'scroll:ta-patterns', icon: Target, color: 'text-emerald-400 bg-emerald-400/10' },
   ],
 };
 

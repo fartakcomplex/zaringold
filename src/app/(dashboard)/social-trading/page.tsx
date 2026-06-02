@@ -318,7 +318,7 @@ export default function SocialTradingPage() {
       </Card>
 
       {/* ── Summary Stats ── */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Card className="overflow-hidden"><CardContent className="p-3 text-center">
           <Target className="size-4 text-[#D4AF37] mx-auto mb-1" />
           <p className="text-[10px] text-muted-foreground">میانگین نرخ برد</p>

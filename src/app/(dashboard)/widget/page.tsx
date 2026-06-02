@@ -84,6 +84,7 @@ function WidgetPreviewCard({
         className="transition-all duration-500 ease-out overflow-hidden"
         style={{
           width: sizeConfig.width,
+          maxWidth: '100%',
           minHeight: sizeConfig.height,
           backgroundColor: config.bg,
           border: `1px solid ${config.border}`,

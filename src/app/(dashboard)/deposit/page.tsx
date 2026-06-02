@@ -321,7 +321,7 @@ export default function GoldDepositPage() {
       </div>
 
       {/* ── Summary Cards ── */}
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
         <Card className="overflow-hidden">
           <CardContent className="p-3 text-center">
             <Coins className="size-4 text-[#D4AF37] mx-auto mb-1" />
@@ -346,7 +346,7 @@ export default function GoldDepositPage() {
       </div>
 
       {/* ── Tabs ── */}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {[
           { key: 'plans' as const, label: 'طرح‌ها', icon: <CalendarCheck className="size-3.5" /> },
           { key: 'active' as const, label: 'سپرده فعال', icon: <Timer className="size-3.5" /> },
@@ -454,7 +454,7 @@ export default function GoldDepositPage() {
                 />
                 <span className="absolute start-3 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground">گرم</span>
               </div>
-              <div className="flex gap-2 mt-3">
+              <div className="flex flex-wrap gap-2 mt-3">
                 {[0.01, 0.1, 0.5, 1, 5, 10].map((preset) => (
                   <button
                     key={preset}

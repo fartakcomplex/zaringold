@@ -175,7 +175,7 @@ function MicroGoldPageSkeleton() {
           <Skeleton className="size-28 rounded-full mx-auto" />
         </CardContent>
       </Card>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {Array.from({ length: 6 }).map((_, i) => (
           <Skeleton key={i} className="h-16 rounded-xl" />
         ))}
@@ -375,7 +375,7 @@ export default function MicroGoldPage() {
           <Badge variant="secondary" className="text-[10px]">میلی‌گرم</Badge>
         </CardHeader>
         <CardContent className="pb-5">
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {QUICK_AMOUNTS.map((mg) => {
               const isSelected = selectedAmount === mg;
               const grams = mg / 1000;

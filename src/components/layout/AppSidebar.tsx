@@ -58,6 +58,7 @@ import {
   Umbrella,
   Car,
   Smartphone,
+  PieChart,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useAppStore } from '@/lib/store';
@@ -93,7 +94,7 @@ const navSections: NavSection[] = [
       { labelKey: 'nav.dashboard', page: 'dashboard', icon: LayoutDashboard },
       { labelKey: 'nav.trade', page: 'trade', icon: ArrowLeftRight },
       { labelKey: 'nav.goldTransfer', page: 'gold-transfer', icon: Send, isNew: true },
-      { labelKey: 'nav.goldCard', page: 'gold-card', icon: CreditCard, isNew: true },
+      { labelKey: 'nav.goldCard', page: 'gold-card-enhanced', icon: CreditCard, isNew: true },
       { labelKey: 'nav.wallet', page: 'wallet', icon: Wallet },
       { labelKey: 'nav.transactions', page: 'transactions', icon: Receipt },
       { labelKey: 'nav.market', page: 'market', icon: BarChart3 },
@@ -104,10 +105,11 @@ const navSections: NavSection[] = [
     titleKey: 'nav.smartTools',
     items: [
       { labelKey: 'nav.smartBuy', page: 'smart-buy', icon: Bot, isNew: true },
-      { labelKey: 'nav.analytics', page: 'analytics', icon: TrendingUp, isNew: true },
+      { labelKey: 'nav.analytics', page: 'advanced-analytics', icon: TrendingUp, isNew: true },
       { labelKey: 'nav.aiAdvisor', page: 'ai-advisor', icon: Brain, isNew: true },
       { labelKey: 'nav.advancedAnalytics', page: 'advanced-analytics', icon: LineChart, isNew: true },
       { labelKey: 'nav.aiCoach', page: 'ai-coach', icon: Sparkles, isNew: true },
+      { labelKey: 'nav.customPortfolio', page: 'custom-portfolio', icon: PieChart, isNew: true },
     ],
   },
   {
@@ -153,7 +155,7 @@ const navSections: NavSection[] = [
       { labelKey: 'nav.fraudAlerts', page: 'fraud-alerts', icon: ShieldAlert, isNew: true },
       { labelKey: 'nav.vault', page: 'vault', icon: Shield, isNew: true },
       { labelKey: 'nav.emergencySell', page: 'emergency-sell', icon: Vault, isNew: true },
-      { labelKey: 'nav.p2pExchange', page: 'p2p-exchange', icon: Repeat, isNew: true },
+      { labelKey: 'nav.p2pExchange', page: 'p2p-enhanced', icon: Repeat, isNew: true },
       { labelKey: 'nav.goldCalculator', page: 'gold-calculator', icon: Scale, isNew: true },
     ],
   },

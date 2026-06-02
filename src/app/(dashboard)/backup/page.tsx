@@ -294,7 +294,7 @@ export default function MultiSigWalletPage() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="w-full grid grid-cols-4">
+        <TabsList className="w-full grid grid-cols-2 sm:grid-cols-4">
           <TabsTrigger value="security" className="text-[10px]">امنیت</TabsTrigger>
           <TabsTrigger value="cosigners" className="text-[10px]">امضاکنندگان</TabsTrigger>
           <TabsTrigger value="backup" className="text-[10px]">پشتیبان</TabsTrigger>

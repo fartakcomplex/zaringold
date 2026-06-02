@@ -43,6 +43,13 @@ import {
   Percent,
   BookOpen,
   Send,
+  PieChart,
+  Scale,
+  CalendarDays,
+  GraduationCap,
+  Coins,
+  Landmark,
+  Activity,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useTranslation } from '@/lib/i18n';
@@ -94,8 +101,9 @@ interface MoreMenuItem {
 const moreMenuItems: MoreMenuItem[] = [
   /* ── Smart Tools ── */
   { labelKey: 'nav.smartBuy', page: 'smart-buy', icon: Bot },
-  { labelKey: 'nav.analytics', page: 'analytics', icon: TrendingUp },
-  { labelKey: 'nav.aiCoach', page: 'ai-coach', icon: Sparkles },
+  { labelKey: 'nav.analytics', page: 'advanced-analytics', icon: TrendingUp },
+  { labelKey: 'nav.aiAdvisor', page: 'ai-advisor', icon: Sparkles },
+  { labelKey: 'nav.priceAlerts', page: 'price-alerts', icon: Bell },
 
   /* ── Market ── */
   { labelKey: 'nav.market', page: 'market', icon: BarChart3 },
@@ -122,7 +130,14 @@ const moreMenuItems: MoreMenuItem[] = [
   { labelKey: 'nav.earn', page: 'earn', icon: Flame },
 
   /* ── Gold Card & Trust ── */
-  { labelKey: 'nav.goldCard', page: 'gold-card', icon: CreditCard },
+  { labelKey: 'nav.goldCard', page: 'gold-card-enhanced', icon: CreditCard },
+  { labelKey: 'nav.customPortfolio', page: 'custom-portfolio', icon: PieChart },
+  { labelKey: 'nav.goldCalculator', page: 'gold-calculator', icon: Scale },
+  { labelKey: 'nav.economicCalendar', page: 'economic-calendar', icon: CalendarDays },
+  { labelKey: 'nav.technicalAnalysis', page: 'technical-analysis', icon: Activity },
+  { labelKey: 'nav.academy', page: 'academy', icon: GraduationCap },
+  { labelKey: 'nav.microGold', page: 'micro-gold', icon: Coins },
+  { labelKey: 'nav.goldDeposit', page: 'gold-deposit', icon: Landmark },
   { labelKey: 'nav.goldTransfer', page: 'gold-transfer', icon: Send },
   { labelKey: 'nav.vault', page: 'vault', icon: Vault },
   { labelKey: 'nav.emergencySell', page: 'emergency-sell', icon: Shield },

@@ -445,7 +445,7 @@ export default function AdvancedAnalyticsPage() {
       </div>
 
       {/* ── Return Cards (7d / 30d / 90d) ── */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {(['7d', '30d', '90d'] as const).map((p) => {
           const rd = returns.find((r) => r.period === p);
           if (!rd) return null;
@@ -554,7 +554,7 @@ export default function AdvancedAnalyticsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl bg-blue-500/5 border border-blue-500/10 p-4">
               <p className="text-xs font-medium text-blue-600/80 mb-1">سود امروز</p>
               <p className="text-lg font-black text-blue-500 tabular-nums">

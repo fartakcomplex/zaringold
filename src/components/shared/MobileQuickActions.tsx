@@ -12,6 +12,9 @@ import {
   MessageCircle, AlertTriangle, Percent, BookOpen, Search,
   Plus, History, ChevronUp, Phone, CheckCircle, Star,
   Heart, KeyRound, Code2, Trash2,
+  Scale, Calculator, Landmark, PieChart, Activity,
+  Code, Copy, LayoutGrid, GraduationCap, CalendarDays,
+  BadgeCheck, ArrowRightLeft, LineChart,
 } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -321,6 +324,118 @@ const PAGE_ACTIONS: Record<string, QuickAction[]> = {
     { icon: Lock, label: 'امنیت', color: '#34D399', actionType: 'event', actionValue: 'security' },
     { icon: Bell, label: 'اعلان‌ها', color: '#FBBF24', actionType: 'navigate', actionValue: 'notifications' },
     { icon: Shield, label: 'حریم خصوصی', color: '#A78BFA', actionType: 'event', actionValue: 'privacy' },
+  ],
+
+  /* ── Advanced Analytics ── */
+  'advanced-analytics': [
+    { icon: PieChart, label: 'پرتفوی', color: '#D4AF37', actionType: 'navigate', actionValue: 'wallet' },
+    { icon: LineChart, label: 'نمودار', color: '#34D399', actionType: 'event', actionValue: 'chart' },
+    { icon: Activity, label: 'تحلیل', color: '#60A5FA', actionType: 'event', actionValue: 'analysis' },
+    { icon: Shield, label: 'ریسک', color: '#F87171', actionType: 'event', actionValue: 'risk' },
+  ],
+
+  /* ── AI Advisor ── */
+  'ai-advisor': [
+    { icon: MessageCircle, label: 'مشاوره', color: '#34D399', actionType: 'event', actionValue: 'consult' },
+    { icon: TrendingUp, label: 'پیشنهاد', color: '#60A5FA', actionType: 'event', actionValue: 'suggestion' },
+    { icon: Target, label: 'هدف', color: '#FBBF24', actionType: 'navigate', actionValue: 'goals' },
+    { icon: GraduationCap, label: 'نکات', color: '#A78BFA', actionType: 'event', actionValue: 'tips' },
+  ],
+
+  /* ── Gold Calculator ── */
+  'gold-calculator': [
+    { icon: Calculator, label: 'محاسبه', color: '#FBBF24', actionType: 'event', actionValue: 'calculate' },
+    { icon: Scale, label: 'تبدیل', color: '#60A5FA', actionType: 'event', actionValue: 'convert' },
+    { icon: BarChart3, label: 'مقایسه', color: '#34D399', actionType: 'event', actionValue: 'compare' },
+    { icon: History, label: 'تاریخچه', color: '#A78BFA', actionType: 'event', actionValue: 'history' },
+  ],
+
+  /* ── Micro Gold ── */
+  'micro-gold': [
+    { icon: TrendingUp, label: 'خرید', color: '#34D399', actionType: 'navigate', actionValue: 'trade' },
+    { icon: TrendingDown, label: 'فروش', color: '#F87171', actionType: 'navigate', actionValue: 'trade' },
+    { icon: History, label: 'تاریخچه', color: '#60A5FA', actionType: 'event', actionValue: 'history' },
+    { icon: Settings, label: 'تنظیمات', color: '#A78BFA', actionType: 'event', actionValue: 'settings' },
+  ],
+
+  /* ── Gold Deposit ── */
+  'gold-deposit': [
+    { icon: Plus, label: 'ایجاد', color: '#34D399', actionType: 'event', actionValue: 'create' },
+    { icon: Target, label: 'طرح‌ها', color: '#FBBF24', actionType: 'event', actionValue: 'plans' },
+    { icon: History, label: 'تاریخچه', color: '#60A5FA', actionType: 'event', actionValue: 'history' },
+    { icon: ArrowUpFromLine, label: 'برداشت', color: '#F87171', actionType: 'event', actionValue: 'withdraw' },
+  ],
+
+  /* ── Social Trading ── */
+  'social-trading': [
+    { icon: Users, label: 'معامله‌گران', color: '#34D399', actionType: 'event', actionValue: 'traders' },
+    { icon: Copy, label: 'کپی', color: '#60A5FA', actionType: 'event', actionValue: 'copy' },
+    { icon: Trophy, label: 'رده‌بندی', color: '#FBBF24', actionType: 'event', actionValue: 'leaderboard' },
+    { icon: Settings, label: 'تنظیمات', color: '#A78BFA', actionType: 'event', actionValue: 'settings' },
+  ],
+
+  /* ── Widget ── */
+  'widget': [
+    { icon: Plus, label: 'ایجاد ویجت', color: '#34D399', actionType: 'event', actionValue: 'create' },
+    { icon: Eye, label: 'پیش‌نمایش', color: '#60A5FA', actionType: 'event', actionValue: 'preview' },
+    { icon: LayoutGrid, label: 'سفارشی', color: '#FBBF24', actionType: 'event', actionValue: 'customize' },
+    { icon: Code, label: 'کد_embed', color: '#A78BFA', actionType: 'event', actionValue: 'embed' },
+  ],
+
+  /* ── Academy ── */
+  'academy': [
+    { icon: GraduationCap, label: 'دوره‌ها', color: '#A78BFA', actionType: 'event', actionValue: 'courses' },
+    { icon: BookOpen, label: 'آموزش', color: '#F87171', actionType: 'event', actionValue: 'tutorials' },
+    { icon: BadgeCheck, label: 'گواهی‌ها', color: '#FBBF24', actionType: 'event', actionValue: 'certificates' },
+    { icon: Settings, label: 'تنظیمات', color: '#60A5FA', actionType: 'event', actionValue: 'settings' },
+  ],
+
+  /* ── Economic Calendar ── */
+  'economic-calendar': [
+    { icon: CalendarCheck, label: 'امروز', color: '#34D399', actionType: 'event', actionValue: 'today' },
+    { icon: CalendarDays, label: 'هفته', color: '#60A5FA', actionType: 'event', actionValue: 'week' },
+    { icon: CalendarDays, label: 'ماه', color: '#FBBF24', actionType: 'event', actionValue: 'month' },
+    { icon: Filter, label: 'فیلتر', color: '#A78BFA', actionType: 'event', actionValue: 'filter' },
+  ],
+
+  /* ── Backup ── */
+  'backup': [
+    { icon: KeyRound, label: 'کدها', color: '#FBBF24', actionType: 'event', actionValue: 'codes' },
+    { icon: Lock, label: 'دستگاه‌ها', color: '#60A5FA', actionType: 'event', actionValue: 'devices' },
+    { icon: Shield, label: 'امنیت', color: '#34D399', actionType: 'event', actionValue: 'security' },
+    { icon: Download, label: 'بازیابی', color: '#A78BFA', actionType: 'event', actionValue: 'recovery' },
+  ],
+
+  /* ── Custom Portfolio ── */
+  'custom-portfolio': [
+    { icon: Coins, label: 'دارایی‌ها', color: '#D4AF37', actionType: 'event', actionValue: 'assets' },
+    { icon: PieChart, label: 'تخصیص', color: '#A78BFA', actionType: 'event', actionValue: 'allocation' },
+    { icon: ArrowRightLeft, label: 'ساختار مجدد', color: '#60A5FA', actionType: 'event', actionValue: 'rebalance' },
+    { icon: Settings, label: 'تنظیمات', color: '#FBBF24', actionType: 'event', actionValue: 'settings' },
+  ],
+
+  /* ── P2P Enhanced ── */
+  'p2p-enhanced': [
+    { icon: BarChart3, label: 'دفتر سفارش', color: '#D4AF37', actionType: 'event', actionValue: 'orderbook' },
+    { icon: Plus, label: 'ایجاد سفارش', color: '#34D399', actionType: 'event', actionValue: 'create-order' },
+    { icon: Receipt, label: 'سفارشات من', color: '#60A5FA', actionType: 'event', actionValue: 'my-orders' },
+    { icon: History, label: 'تاریخچه', color: '#FBBF24', actionType: 'event', actionValue: 'history' },
+  ],
+
+  /* ── Gold Card Enhanced ── */
+  'gold-card-enhanced': [
+    { icon: CreditCard, label: 'اطلاعات کارت', color: '#D4AF37', actionType: 'event', actionValue: 'card-info' },
+    { icon: Receipt, label: 'تراکنش‌ها', color: '#60A5FA', actionType: 'event', actionValue: 'transactions' },
+    { icon: Settings, label: 'تنظیمات', color: '#A78BFA', actionType: 'event', actionValue: 'settings' },
+    { icon: Send, label: 'اشتراک‌گذاری', color: '#F472B6', actionType: 'event', actionValue: 'share' },
+  ],
+
+  /* ── Technical Analysis ── */
+  'technical-analysis': [
+    { icon: LineChart, label: 'نمودار', color: '#A78BFA', actionType: 'event', actionValue: 'chart' },
+    { icon: Activity, label: 'اندیکاتورها', color: '#60A5FA', actionType: 'event', actionValue: 'indicators' },
+    { icon: Clock, label: 'تایم‌فریم', color: '#FBBF24', actionType: 'event', actionValue: 'timeframe' },
+    { icon: Target, label: 'الگوها', color: '#34D399', actionType: 'event', actionValue: 'patterns' },
   ],
 };
 

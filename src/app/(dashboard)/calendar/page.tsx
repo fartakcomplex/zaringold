@@ -193,7 +193,7 @@ export default function EconomicCalendarPage() {
       {/* Sentiment Summary */}
       <Card className="overflow-hidden border-[#D4AF37]/20 bg-gradient-to-l from-[#D4AF37]/10 via-[#D4AF37]/5 to-transparent">
         <CardContent className="p-4">
-          <div className="grid grid-cols-3 gap-3 text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
             <div>
               <p className="text-lg font-black tabular-nums text-red-500">{formatNumber(futureEvents.filter((e) => e.impact === 'high').length)}</p>
               <p className="text-[10px] text-muted-foreground">رویداد مهم 🔴</p>
@@ -242,9 +242,9 @@ export default function EconomicCalendarPage() {
       {/* Filters */}
       <Card className="overflow-hidden border-border">
         <CardContent className="p-3">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Filter className="size-4 text-muted-foreground shrink-0" />
-            <div className="flex flex-1 gap-2">
+            <div className="flex flex-1 flex-wrap gap-2">
               <Select value={selectedCountry} onValueChange={setSelectedCountry}>
                 <SelectTrigger className="h-8 border-border text-[11px] bg-background"><SelectValue placeholder="کشور" /></SelectTrigger>
                 <SelectContent>

@@ -549,7 +549,7 @@ export default function SmartAlertsPage() {
             {/* Direction toggle - 3 options */}
             <div className="space-y-1.5">
               <Label>شرط هشدار</Label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => setDirection('above')}

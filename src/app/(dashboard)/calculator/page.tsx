@@ -199,7 +199,7 @@ export default function GoldCalculatorPage() {
           <CardTitle className="text-sm font-bold">عیار طلا</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {KARATS.map((k) => (
               <button
                 key={k.id}
@@ -344,7 +344,7 @@ export default function GoldCalculatorPage() {
             </div>
 
             {/* Value Cards */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="rounded-lg border border-border bg-background p-3 text-center">
                 <p className="text-[10px] text-muted-foreground">مقدار تبدیل شده</p>
                 <p className="mt-1 text-sm font-black tabular-nums text-[#D4AF37]">

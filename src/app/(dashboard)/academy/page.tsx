@@ -297,7 +297,7 @@ export default function GoldAcademyPage() {
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Card className="overflow-hidden">
           <CardContent className="p-3 text-center">
             <p className="text-lg font-black tabular-nums text-[#D4AF37]">{formatNumber(completedCourses.length)}</p>

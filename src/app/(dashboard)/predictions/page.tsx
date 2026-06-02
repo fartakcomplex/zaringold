@@ -289,7 +289,7 @@ export default function PricePredictionGamePage() {
       </Card>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[
           { icon: <Target className="size-3.5 text-rose-500" />, label: 'دقت', value: `${formatNumber(stats?.accuracy || 0)}٪` },
           { icon: <Flame className="size-3.5 text-orange-500" />, label: 'رشته فعلی', value: formatNumber(stats?.streak || 0) },
@@ -310,7 +310,7 @@ export default function PricePredictionGamePage() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="w-full grid grid-cols-4">
+        <TabsList className="w-full grid grid-cols-2 sm:grid-cols-4">
           <TabsTrigger value="predict" className="gap-1 text-[10px]"><Target className="size-3" /> پیش‌بینی</TabsTrigger>
           <TabsTrigger value="history" className="gap-1 text-[10px]"><History className="size-3" /> تاریخچه</TabsTrigger>
           <TabsTrigger value="leaderboard" className="gap-1 text-[10px]"><Crown className="size-3" /> رده‌بندی</TabsTrigger>

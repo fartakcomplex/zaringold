@@ -268,7 +268,7 @@ export default function EnhancedP2PPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Card><CardContent className="p-3 text-center">
           <TrendingUp className="size-4 text-emerald-500 mx-auto mb-1" />
           <p className="text-[10px] text-muted-foreground">سفارش خرید</p>

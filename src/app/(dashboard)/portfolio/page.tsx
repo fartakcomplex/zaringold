@@ -141,7 +141,7 @@ function DonutChart({ assets, totalValue }: { assets: PortfolioAsset[]; totalVal
   });
 
   return (
-    <div className="relative mx-auto" style={{ width: size, height: size }}>
+    <div className="relative mx-auto w-[140px] h-[140px] sm:w-[180px] sm:h-[180px]">
       <svg viewBox={`0 0 ${size} ${size}`} className="transform -rotate-90">
         {/* Background circle */}
         <circle
