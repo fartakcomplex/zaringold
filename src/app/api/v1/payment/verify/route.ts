@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -386,11 +387,7 @@ export async function POST(request: NextRequest) {
       }
 
       /* Get latest gold price */
-      const latestGoldPrice = await db.goldPrice.findFirst({
-        orderBy: { createdAt: 'desc' },
-      })
-
-      /* Deduct gold from wallet */
+      const latestGoldPrice = await getLatestGoldPrice()      /* Deduct gold from wallet */
       await db.goldWallet.update({
         where: { userId: resolvedUserId },
         data: {
@@ -409,7 +406,7 @@ export async function POST(request: NextRequest) {
           userId: resolvedUserId,
           paidAt: now,
           verifiedAt: now,
-          goldPriceAtPay: latestGoldPrice?.buyPrice || payment.goldPriceAtPay,
+          goldPriceAtPay: latestGoldPrice.buyPrice,
         },
       })
 
@@ -422,7 +419,7 @@ export async function POST(request: NextRequest) {
         amountFiat: 0,
         amountGold: paidAmountGold,
         fee: payment.feeGold,
-        goldPrice: latestGoldPrice?.buyPrice,
+        goldPrice: latestGoldPrice.buyPrice,
         status: 'completed',
         referenceId: refId,
         description: txDescription,
@@ -452,11 +449,9 @@ export async function POST(request: NextRequest) {
       const tomanPortion = totalTomanEquivalent - goldPortionToman
 
       /* Get latest gold price for conversion */
-      const latestGoldPrice = await db.goldPrice.findFirst({
-        orderBy: { createdAt: 'desc' },
-      })
+      const latestGoldPrice = await getLatestGoldPrice()
 
-      const goldPricePerGram = latestGoldPrice?.buyPrice || 35_000_000
+      const goldPricePerGram = latestGoldPrice.buyPrice
       const goldGramsToDeduct = goldPortionToman / goldPricePerGram
 
       /* Check gold wallet balance */

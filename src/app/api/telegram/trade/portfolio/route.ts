@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db';
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -57,11 +58,9 @@ export async function GET(request: NextRequest) {
     const averageBuyPrice = totalGoldBought > 0 ? totalInvested / totalGoldBought : 0;
 
     // Get latest gold price for current valuation
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    });
+    const latestPrice = await getLatestGoldPrice()
 
-    const currentPrice = latestPrice?.marketPrice ?? latestPrice?.buyPrice ?? 3750000;
+    const currentPrice = latestPrice.marketPrice;
     const currentValue = totalGoldGrams * currentPrice;
 
     // Calculate profit/loss

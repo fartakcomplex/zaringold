@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 import { getUserAccess } from '@/lib/access'
 import crypto from 'crypto'
@@ -15,16 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get latest gold price
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-
-    if (!latestPrice) {
-      return NextResponse.json(
-        { success: false, message: 'قیمت طلا در دسترس نیست' },
-        { status: 400 }
-      )
-    }
+    const latestPrice = await getLatestGoldPrice()
 
     const sellPrice = latestPrice.sellPrice
     const access = await getUserAccess(userId)

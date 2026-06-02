@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db';
 
 /* ═══════════════════════════════════════════════════════════════ */
@@ -26,13 +27,7 @@ export async function POST(request: Request) {
     }
 
     // Get latest gold price
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    });
-
-    if (!latestPrice) {
-      return NextResponse.json({ error: 'قیمت طلا در دسترس نیست' }, { status: 400 });
-    }
+    const latestPrice = await getLatestGoldPrice()
 
     const goldPrice = latestPrice.sellPrice;
 
@@ -188,10 +183,8 @@ export async function GET(request: Request) {
   }
 
   // Get latest gold price
-  const latestPrice = await db.goldPrice.findFirst({
-    orderBy: { createdAt: 'desc' },
-  });
-  const goldPrice = latestPrice?.sellPrice || 8_900_000;
+  const latestPrice = await getLatestGoldPrice()
+  const goldPrice = latestPrice.sellPrice;
 
   // Get transfer transactions (transfer_out type)
   const transfers = await db.goldCardTransaction.findMany({

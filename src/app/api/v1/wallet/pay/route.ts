@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -317,10 +318,8 @@ export async function POST(request: NextRequest) {
     const refId = generateRefId()
 
     /* Get latest gold price */
-    const latestGoldPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-    const goldPriceAtPay = latestGoldPrice?.buyPrice || payment.goldPriceAtPay || 35_000_000
+    const latestGoldPrice = await getLatestGoldPrice()
+    const goldPriceAtPay = latestGoldPrice.buyPrice
 
     /* Deduct gold from wallet */
     await db.goldWallet.update({

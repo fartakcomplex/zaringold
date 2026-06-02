@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 /* ═══════════════════════════════════════════════════════════════════════ */
@@ -69,10 +70,8 @@ export async function POST(
     }
 
     /* ── Get latest gold price ── */
-    const latestGoldPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-    const goldPrice = latestGoldPrice?.buyPrice || 8_900_000
+    const latestGoldPrice = await getLatestGoldPrice()
+    const goldPrice = latestGoldPrice.buyPrice
 
     /* ════════════════════════════════════════════════════════════════ */
     /*  Payment Method: Toman (ZarinPal Gateway)                         */
@@ -558,7 +557,7 @@ export async function GET(
       zarinpalData.data.code === 101
     ) {
       const now = new Date()
-      const goldPrice = zarinpalData.data.goldPriceAtPay || (await db.goldPrice.findFirst({ orderBy: { createdAt: 'desc' } }))?.buyPrice || 8_900_000
+      const goldPrice = zarinpalData.data.goldPriceAtPay || (await getLatestGoldPrice()).buyPrice
       const goldGrams = goldPrice > 0 ? payment.amountToman / goldPrice : 0
       const feeToman = Math.min(
         payment.amountToman * (payment.merchant?.feeRate || 0.01),

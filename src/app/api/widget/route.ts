@@ -1,7 +1,6 @@
+import { db } from '@/lib/db'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
 
 // CORS headers for cross-origin embedding
 const corsHeaders = {
@@ -28,17 +27,14 @@ export async function OPTIONS() {
 export async function GET(request: NextRequest) {
   try {
     // Get latest gold price
-    const latestPrice = await prisma.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    });
+    const latestPrice = await getLatestGoldPrice();
 
-    // Fallback default price if no data
-    const marketPrice = latestPrice?.marketPrice ?? 8_900_000;
-    const buyPrice = latestPrice?.buyPrice ?? 8_900_000;
-    const sellPrice = latestPrice?.sellPrice ?? 8_875_000;
+    const marketPrice = latestPrice.marketPrice;
+    const buyPrice = latestPrice.buyPrice;
+    const sellPrice = latestPrice.sellPrice;
 
     // Get previous price for 24h change calculation
-    const previousPrice = await prisma.goldPrice.findFirst({
+    const previousPrice = await db.goldPrice.findFirst({
       orderBy: { createdAt: 'desc' },
       skip: 1,
     });
@@ -50,7 +46,7 @@ export async function GET(request: NextRequest) {
         : 0;
 
     // Get recent price history for the widget (last 24 entries)
-    const history = await prisma.priceHistory.findMany({
+    const history = await db.priceHistory.findMany({
       orderBy: { timestamp: 'desc' },
       take: 24,
       select: {
@@ -77,7 +73,7 @@ export async function GET(request: NextRequest) {
         change24h: Math.round(change24h * 100) / 100,
         currency: 'IRR',
         history: historyData,
-        updatedAt: latestPrice?.createdAt?.toISOString() ?? new Date().toISOString(),
+        updatedAt: latestPrice.createdAt.toISOString(),
       },
       { headers: corsHeaders }
     );

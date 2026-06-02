@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -11,20 +12,7 @@ import { db } from '@/lib/db'
 export async function GET() {
   try {
     /* ── Fetch latest gold price ── */
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-
-    if (!latestPrice) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'اطلاعات قیمت طلا در حال حاضر موجود نیست',
-          error_code: -1,
-        },
-        { status: 404 }
-      )
-    }
+    const latestPrice = await getLatestGoldPrice()
 
     /* ── Also get price from 24h ago for change comparison ── */
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000)

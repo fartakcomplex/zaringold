@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 import { getUserAccess } from '@/lib/access'
 
@@ -43,11 +44,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Get latest gold price to calculate target grams
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-
-    const buyPrice = latestPrice?.buyPrice ?? 0
+    const latestPrice = await getLatestGoldPrice()
+    const buyPrice = latestPrice.buyPrice
     const access = await getUserAccess(userId)
     const feeRate = access.buyFeeRate
     const netAmount = targetAmountFiat * (1 - feeRate)

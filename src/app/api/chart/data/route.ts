@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 // Timeframe to interval mapping (in minutes)
@@ -109,10 +110,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Get base price from latest gold price
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-    const basePrice = latestPrice?.marketPrice || 35000000
+    const latestPrice = await getLatestGoldPrice()
+    const basePrice = latestPrice.marketPrice
 
     // Try to get data from PriceHistory
     const historyCount = Math.min(limit, TIMEFRAME_HISTORY[timeframe] || 500)

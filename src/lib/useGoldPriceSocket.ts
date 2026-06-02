@@ -76,6 +76,17 @@ export function useGoldPriceSocket() {
             updatedAt: data.updatedAt 
               ? data.updatedAt 
               : new Date((data.timestamp || Date.now() / 1000) * 1000).toISOString(),
+            // Pass through full Iranian gold prices
+            geram18: data.geram18 || undefined,
+            geram24: data.geram24 || undefined,
+            sekkehEmami: data.sekkehEmami || undefined,
+            sekkehBahar: data.sekkehBahar || undefined,
+            nimSekkeh: data.nimSekkeh || undefined,
+            robSekkeh: data.robSekkeh || undefined,
+            sekkehGerami: data.sekkehGerami || undefined,
+            ounceUsd: data.ounceUsd || undefined,
+            dollar: data.dollar || undefined,
+            source: data.source || undefined,
           });
           
           const ts = data.timestamp || Math.floor(Date.now() / 1000);

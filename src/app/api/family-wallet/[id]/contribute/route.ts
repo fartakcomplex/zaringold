@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 import crypto from 'crypto'
 
@@ -57,11 +58,8 @@ export async function POST(
     }
 
     // Get latest gold price for fiat valuation
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-
-    const goldPrice = latestPrice?.sellPrice ?? 0
+    const latestPrice = await getLatestGoldPrice()
+    const goldPrice = latestPrice.sellPrice
     const fiatValue = goldGrams * goldPrice
 
     // Deduct gold from user

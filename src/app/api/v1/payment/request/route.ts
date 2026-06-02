@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -384,10 +385,8 @@ export async function POST(request: NextRequest) {
     /* ── Get gold price if payment involves gold ── */
     let goldPriceAtPay: number | undefined
     if (method === 'gold' || method === 'mixed') {
-      const goldPrice = await db.goldPrice.findFirst({
-        orderBy: { createdAt: 'desc' },
-      })
-      goldPriceAtPay = goldPrice?.buyPrice
+      const goldPrice = await getLatestGoldPrice()
+      goldPriceAtPay = goldPrice.buyPrice
     }
 
     /* ── Calculate expiry ── */

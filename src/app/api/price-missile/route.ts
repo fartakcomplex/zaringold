@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { getLatestGoldPrice } from '@/lib/gold-prices';
 
 export interface Target {
   id: string;
@@ -13,22 +13,7 @@ export interface Target {
 export async function GET() {
   try {
     // Get latest gold price
-    let latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    });
-
-    if (!latestPrice) {
-      latestPrice = await db.goldPrice.create({
-        data: {
-          buyPrice: 35000000,
-          sellPrice: 34800000,
-          marketPrice: 34900000,
-          ouncePrice: 2500000000,
-          spread: 200000,
-        },
-      });
-    }
-
+    const latestPrice = await getLatestGoldPrice();
     const currentPrice = latestPrice.marketPrice;
 
     // Generate mock targets based on current price ±5%

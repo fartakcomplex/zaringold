@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db';
 
 /* ═══════════════════════════════════════════════════════════════ */
@@ -174,8 +175,8 @@ export async function POST(request: Request) {
         }
 
         // Get gold price
-        const goldPrice = await db.goldPrice.findFirst({ orderBy: { createdAt: 'desc' } });
-        const pricePerGram = goldPrice?.buyPrice || 8900000;
+        const goldPrice = await getLatestGoldPrice();
+        const pricePerGram = goldPrice.buyPrice;
         const fiatAmount = grams * pricePerGram;
 
         // Deduct from gold wallet

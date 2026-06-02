@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 /**
@@ -36,10 +37,8 @@ export async function GET(request: NextRequest) {
     ])
 
     // Get current price for reference
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-    const currentPrice = latestPrice?.marketPrice || 0
+    const latestPrice = await getLatestGoldPrice()
+    const currentPrice = latestPrice.marketPrice
 
     return NextResponse.json({
       success: true,
@@ -125,10 +124,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Get current price
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-    const currentPrice = latestPrice?.marketPrice || 0
+    const latestPrice = await getLatestGoldPrice()
+    const currentPrice = latestPrice.marketPrice
 
     // Calculate amounts
     const resolvedAmountFiat = amountFiat || (amountGrams ? amountGrams * targetPrice : 0)

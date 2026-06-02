@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db';
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -54,11 +55,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Get latest gold price (fallback if none exists)
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    });
+    const latestPrice = await getLatestGoldPrice()
 
-    const sellPrice = latestPrice?.sellPrice ?? 3650000;
+    const sellPrice = latestPrice.sellPrice;
     const fee = 0.005; // 0.5% fee
     const payout = grams * sellPrice * (1 - fee);
 

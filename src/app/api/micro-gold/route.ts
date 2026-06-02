@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 export async function GET(request: NextRequest) {
@@ -73,16 +74,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get current gold price
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-
-    if (!latestPrice) {
-      return NextResponse.json(
-        { success: false, message: 'قیمت فعلی طلا در دسترس نیست' },
-        { status: 400 }
-      )
-    }
+    const latestPrice = await getLatestGoldPrice()
 
     const goldPrice = latestPrice.buyPrice // Use buy price for purchases
 

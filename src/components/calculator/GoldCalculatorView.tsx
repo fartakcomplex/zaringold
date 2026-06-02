@@ -77,15 +77,25 @@ export default function GoldCalculatorView() {
     const fetchPrices = async () => {
       setPriceLoading(true);
       try {
-        const res = await fetch('/api/gold/prices');
+        const res = await fetch('/api/gold/realtime?format=raw');
         const data = await res.json();
-        if (data.success && data.prices?.market) {
-          setPricePerGram(data.prices.market);
+        if (data.success && data.prices) {
+          // Use real-time geram18 (gold 18k per gram) as base price
+          setPricePerGram(data.prices.geram18);
         } else {
-          setPricePerGram(33900000);
+          // Fallback: try the unified prices endpoint
+          const res2 = await fetch('/api/gold/prices');
+          const data2 = await res2.json();
+          if (data2.geram18) {
+            setPricePerGram(data2.geram18);
+          } else if (data2.marketPrice) {
+            setPricePerGram(data2.marketPrice);
+          } else {
+            setPricePerGram(0);
+          }
         }
       } catch {
-        setPricePerGram(33900000);
+        setPricePerGram(0);
       } finally {
         setPriceLoading(false);
       }

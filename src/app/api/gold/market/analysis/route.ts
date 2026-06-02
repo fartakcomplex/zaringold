@@ -1,13 +1,11 @@
 import { NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 export async function GET() {
   try {
     // Get latest price
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-
+    const latestPrice = await getLatestGoldPrice()
     // Get recent price history (last 30 days)
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
     const priceHistory = await db.priceHistory.findMany({
@@ -20,12 +18,12 @@ export async function GET() {
 
     // Calculate statistics
     const prices = priceHistory.map((p) => p.price)
-    const high24h = prices.length > 0 ? Math.max(...prices) : latestPrice?.buyPrice ?? 0
-    const low24h = prices.length > 0 ? Math.min(...prices) : latestPrice?.sellPrice ?? 0
+    const high24h = prices.length > 0 ? Math.max(...prices) : latestPrice.buyPrice
+    const low24h = prices.length > 0 ? Math.min(...prices) : latestPrice.sellPrice
     const avgPrice = prices.length > 0
       ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length)
-      : latestPrice?.marketPrice ?? 0
-    const currentPrice = latestPrice?.marketPrice ?? avgPrice
+      : latestPrice.marketPrice
+    const currentPrice = latestPrice.marketPrice ?? avgPrice
     const changePercent = avgPrice > 0
       ? Number((((currentPrice - avgPrice) / avgPrice) * 100).toFixed(2))
       : 0

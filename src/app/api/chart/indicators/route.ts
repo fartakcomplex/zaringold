@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 const TIMEFRAME_MAP: Record<string, number> = {
@@ -180,9 +181,7 @@ export async function GET(request: NextRequest) {
     if (priceHistory.length > 30) {
       closes = priceHistory.map((p) => p.closePrice)
     } else {
-      const basePrice = (await db.goldPrice.findFirst({
-        orderBy: { createdAt: 'desc' },
-      }))?.marketPrice || 35000000
+      const basePrice = (await getLatestGoldPrice()).marketPrice
 
       closes = []
       let price = basePrice

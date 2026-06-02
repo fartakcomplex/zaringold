@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import crypto from 'crypto'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -159,25 +160,7 @@ export async function POST() {
     /*  5. Seed gold price if not exists                                        */
     /* ════════════════════════════════════════════════════════════════════════ */
 
-    const existingPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-
-    let goldPrice
-    if (existingPrice) {
-      goldPrice = existingPrice
-    } else {
-      goldPrice = await db.goldPrice.create({
-        data: {
-          buyPrice: GOLD_BUY_PRICE,
-          sellPrice: GOLD_SELL_PRICE,
-          marketPrice: GOLD_MARKET_PRICE,
-          ouncePrice: GOLD_MARKET_PRICE * 31.1035,
-          spread: GOLD_BUY_PRICE - GOLD_SELL_PRICE,
-          currency: 'IRR',
-        },
-      })
-    }
+    const goldPrice = await getLatestGoldPrice()
 
     /* ════════════════════════════════════════════════════════════════════════ */
     /*  6. Create test GatewayPayment                                           */

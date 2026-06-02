@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 /* ═══════════════════════════════════════════════════════════════════════ */
@@ -82,11 +83,8 @@ export async function GET(
     }
 
     /* ── Fetch latest gold price for gold equivalent ── */
-    const latestGoldPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-
-    const goldPrice = latestGoldPrice?.buyPrice || 8_900_000
+    const latestGoldPrice = await getLatestGoldPrice()
+    const goldPrice = latestGoldPrice.buyPrice
     const goldGrams = goldPrice > 0 ? payment.amountToman / goldPrice : 0
 
     /* ── Calculate remaining time in seconds ── */

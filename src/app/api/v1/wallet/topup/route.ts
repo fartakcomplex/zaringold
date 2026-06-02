@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 import crypto from 'crypto'
 
@@ -237,20 +238,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Get current gold price (use sell price for conversion)
-      const latestPrice = await db.goldPrice.findFirst({
-        orderBy: { createdAt: 'desc' },
-      })
-
-      if (!latestPrice) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: 'قیمت طلا در حال حاضر در دسترس نیست',
-            error_code: -10,
-          },
-          { status: 503 }
-        )
-      }
+      const latestPrice = await getLatestGoldPrice()
 
       const sellPrice = latestPrice.sellPrice // Sell price: what platform pays for gold
       const tomanAmount = gramsToConvert * sellPrice

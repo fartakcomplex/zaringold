@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 import { authenticateMerchant } from '@/lib/gateway-helpers'
 import crypto from 'crypto'
@@ -64,14 +65,8 @@ export async function POST(request: NextRequest) {
       // amountGrams provided, need goldPrice for fiat conversion
       if (!finalGoldPrice || finalGoldPrice <= 0) {
         // Try to get latest price
-        const latestPrice = await db.goldPrice.findFirst({
-          orderBy: { createdAt: 'desc' },
-        })
-        if (latestPrice) {
-          finalGoldPrice = latestPrice.marketPrice
-        } else {
-          finalGoldPrice = 0
-        }
+        const latestPrice = await getLatestGoldPrice()
+        finalGoldPrice = latestPrice.marketPrice
       }
       if (finalGoldPrice > 0) {
         finalAmountFiat = finalAmountGrams * finalGoldPrice

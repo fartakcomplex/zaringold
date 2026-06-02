@@ -10,8 +10,38 @@
  */
 
 import ZAI from 'z-ai-web-dev-sdk'
+import { db } from '@/lib/db'
 
 // ─── Types ───────────────────────────────────────────────────────────
+
+/**
+ * Unified price data returned by getLiveGoldPrice().
+ * Combines DB GoldPrice fields with live Iranian gold prices.
+ */
+export interface LiveGoldPrice {
+  buyPrice: number
+  sellPrice: number
+  marketPrice: number
+  ouncePrice: number
+  spread: number
+  source: string
+  updatedAt: string
+  // Extended Iranian gold prices
+  geram18: number
+  geram24: number
+  sekkehEmami: number
+  sekkehBahar: number
+  nimSekkeh: number
+  robSekkeh: number
+  sekkehGerami: number
+  ounceUsd: number
+  dollar: number
+}
+
+// In-memory cache for getLiveGoldPrice (separate from fetchGoldPrices cache)
+let _livePriceCache: LiveGoldPrice | null = null
+let _livePriceCacheTime = 0
+const LIVE_CACHE_TTL = 3 * 60 * 1000 // 3 minutes
 
 export interface GoldPrices {
   // Per gram 18k gold (toman)
@@ -616,5 +646,146 @@ export function formatGoldPricesForFrontend(prices: GoldPrices) {
     },
     source: prices.source,
     updatedAt: prices.updatedAt,
+  }
+}
+
+// ─── Unified DB + Live Price Sync ────────────────────────────────────
+
+/**
+ * getLiveGoldPrice() — THE single source of truth for ALL API routes.
+ *
+ * Strategy:
+ * 1. Return in-memory cache if fresh (< 3 min)
+ * 2. Check DB for a recent GoldPrice record (< 10 min old)
+ * 3. Fetch live prices from multi-source engine
+ * 4. Write new GoldPrice record to DB (fire-and-forget)
+ * 5. Return unified LiveGoldPrice with both DB fields and live Iranian prices
+ *
+ * This replaces ALL `db.goldPrice.findFirst()` calls across the codebase.
+ * Every API route that needs gold prices should use this function.
+ */
+export async function getLiveGoldPrice(): Promise<LiveGoldPrice> {
+  const now = Date.now()
+
+  // 1. In-memory cache (fastest path)
+  if (_livePriceCache && now - _livePriceCacheTime < LIVE_CACHE_TTL) {
+    return _livePriceCache
+  }
+
+  // 2. Try DB for a recent record (< 10 minutes old)
+  try {
+    const dbRecord = await db.goldPrice.findFirst({
+      orderBy: { createdAt: 'desc' },
+    })
+
+    if (dbRecord && now - dbRecord.createdAt.getTime() < 10 * 60 * 1000) {
+      // Extend with live Iranian prices (uses fetchGoldPrices cache, won't re-fetch)
+      const live = await fetchGoldPrices(false)
+      const result: LiveGoldPrice = {
+        buyPrice: dbRecord.buyPrice,
+        sellPrice: dbRecord.sellPrice,
+        marketPrice: dbRecord.marketPrice,
+        ouncePrice: dbRecord.ouncePrice,
+        spread: dbRecord.spread,
+        source: live.source,
+        updatedAt: dbRecord.createdAt.toISOString(),
+        geram18: live.geram18,
+        geram24: live.geram24,
+        sekkehEmami: live.sekkehEmami,
+        sekkehBahar: live.sekkehBahar,
+        nimSekkeh: live.nimSekkeh,
+        robSekkeh: live.robSekkeh,
+        sekkehGerami: live.sekkehGerami,
+        ounceUsd: live.ounceUsd,
+        dollar: live.dollar,
+      }
+      _livePriceCache = result
+      _livePriceCacheTime = now
+      return result
+    }
+  } catch (err) {
+    console.warn('[getLiveGoldPrice] DB read failed, falling back to live:', err)
+  }
+
+  // 3. Fetch live prices from multi-source engine
+  const live = await fetchGoldPrices(false)
+
+  // 4. Calculate buy/sell spread from geram18
+  const spread = Math.round(live.geram18 * 0.003) // 0.3% spread
+  const buyPrice = live.geram18 + Math.round(spread / 2)
+  const sellPrice = live.geram18 - Math.round(spread / 2)
+  const marketPrice = live.geram18
+  const ouncePrice = live.ounceUsd * live.dollar * 10 // Ounce in Toman
+
+  const result: LiveGoldPrice = {
+    buyPrice,
+    sellPrice,
+    marketPrice,
+    ouncePrice,
+    spread,
+    source: live.source,
+    updatedAt: live.updatedAt,
+    geram18: live.geram18,
+    geram24: live.geram24,
+    sekkehEmami: live.sekkehEmami,
+    sekkehBahar: live.sekkehBahar,
+    nimSekkeh: live.nimSekkeh,
+    robSekkeh: live.robSekkeh,
+    sekkehGerami: live.sekkehGerami,
+    ounceUsd: live.ounceUsd,
+    dollar: live.dollar,
+  }
+
+  // 5. Persist to DB (fire-and-forget — don't block the response)
+  db.goldPrice.create({
+    data: {
+      buyPrice,
+      sellPrice,
+      marketPrice,
+      ouncePrice,
+      spread,
+      isManual: false,
+    },
+  }).catch(() => {
+    // Ignore DB write errors — the live price is already in memory
+  })
+
+  // Update in-memory cache
+  _livePriceCache = result
+  _livePriceCacheTime = now
+
+  console.log(`[getLiveGoldPrice] ✅ Synced from ${live.source} | buy=${buyPrice.toLocaleString()} sell=${sellPrice.toLocaleString()} geram18=${live.geram18.toLocaleString()}`)
+
+  return result
+}
+
+/**
+ * Convenience alias: returns only the "classic" DB-compatible fields.
+ * Drop-in replacement for `db.goldPrice.findFirst({ orderBy: { createdAt: 'desc' } })`.
+ * Properties are identical to the Prisma GoldPrice model.
+ */
+export async function getLatestGoldPrice() {
+  const live = await getLiveGoldPrice()
+  return {
+    id: 'live-' + Date.now(),
+    buyPrice: live.buyPrice,
+    sellPrice: live.sellPrice,
+    marketPrice: live.marketPrice,
+    ouncePrice: live.ouncePrice,
+    spread: live.spread,
+    currency: 'IRR' as const,
+    isManual: false,
+    createdAt: new Date(live.updatedAt),
+    // Extended fields (not in Prisma model but useful for callers)
+    source: live.source,
+    geram18: live.geram18,
+    geram24: live.geram24,
+    sekkehEmami: live.sekkehEmami,
+    sekkehBahar: live.sekkehBahar,
+    nimSekkeh: live.nimSekkeh,
+    robSekkeh: live.robSekkeh,
+    sekkehGerami: live.sekkehGerami,
+    ounceUsd: live.ounceUsd,
+    dollar: live.dollar,
   }
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 // GET: return gold reserve info (vault transparency)
@@ -22,11 +23,8 @@ export async function GET() {
     }
 
     // Get latest gold price for valuation
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-
-    const goldPrice = latestPrice?.marketPrice ?? 0
+    const latestPrice = await getLatestGoldPrice()
+    const goldPrice = latestPrice.marketPrice
     const totalFiatValue = reserve.totalGrams * goldPrice
 
     return NextResponse.json({

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 /**
@@ -63,15 +64,11 @@ export async function GET(request: NextRequest) {
     /* ── Fetch latest gold price ── */
     let goldPrice: { buy: number; sell: number; market: number } | null = null
     if (payment.paymentMethod === 'gold' || payment.paymentMethod === 'mixed') {
-      const latestGold = await db.goldPrice.findFirst({
-        orderBy: { createdAt: 'desc' },
-      })
-      if (latestGold) {
-        goldPrice = {
-          buy: latestGold.buyPrice,
-          sell: latestGold.sellPrice,
-          market: latestGold.marketPrice,
-        }
+      const latestGold = await getLatestGoldPrice()
+      goldPrice = {
+        buy: latestGold.buyPrice,
+        sell: latestGold.sellPrice,
+        market: latestGold.marketPrice,
       }
     }
 

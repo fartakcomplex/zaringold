@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 /**
@@ -44,16 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get latest gold price
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-
-    if (!latestPrice) {
-      return NextResponse.json(
-        { success: false, message: 'قیمت طلا در دسترس نیست. لطفاً بعداً تلاش کنید.' },
-        { status: 400 }
-      )
-    }
+    const latestPrice = await getLatestGoldPrice()
 
     // Calculate fiat amount from gold grams
     const fiatAmount = goldGrams * latestPrice.buyPrice

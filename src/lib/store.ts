@@ -31,6 +31,17 @@ export interface GoldPriceData {
   ouncePrice: number;
   spread: number;
   updatedAt: string;
+  // Extended Iranian gold prices
+  geram18?: number;
+  geram24?: number;
+  sekkehEmami?: number;
+  sekkehBahar?: number;
+  nimSekkeh?: number;
+  robSekkeh?: number;
+  sekkehGerami?: number;
+  ounceUsd?: number;
+  dollar?: number;
+  source?: string;
 }
 
 export interface Transaction {

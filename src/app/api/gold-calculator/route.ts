@@ -1,7 +1,5 @@
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
 
 /**
  * Iranian gold unit conversion factors (relative to gram of pure gold).
@@ -67,12 +65,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch latest gold price from DB
-    const latestPrice = await prisma.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    });
-
-    const gramPrice = latestPrice?.marketPrice ?? 8_900_000;
+    // Fetch latest gold price
+    const latestPrice = await getLatestGoldPrice();
+    const gramPrice = latestPrice.marketPrice;
 
     // Step 1: Convert source amount to pure gold grams
     const sourceGrams = amount * (UNIT_TO_GRAM[from] ?? 1);
@@ -95,7 +90,7 @@ export async function GET(request: NextRequest) {
       to,
       amount,
       basePrice: gramPrice,
-      updatedAt: latestPrice?.createdAt?.toISOString() ?? new Date().toISOString(),
+      updatedAt: latestPrice.createdAt.toISOString(),
     });
   } catch (error) {
     console.error('[GET /api/gold-calculator] Error:', error);

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 // GET: user portfolio analytics
@@ -24,12 +25,9 @@ export async function GET(request: NextRequest) {
     const fiatBalance = wallet?.balance ?? 0
 
     // Get latest gold price
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-
-    const currentPrice = latestPrice?.buyPrice ?? 0
-    const sellPrice = latestPrice?.sellPrice ?? 0
+    const latestPrice = await getLatestGoldPrice()
+    const currentPrice = latestPrice.buyPrice
+    const sellPrice = latestPrice.sellPrice
 
     // Get all buy transactions to calculate average buy price
     const buyTransactions = await db.transaction.findMany({

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 import crypto from 'crypto'
 
@@ -250,10 +251,8 @@ export async function POST(request: NextRequest) {
         })
 
         // Get current gold price for reference
-        const latestPrice = await db.goldPrice.findFirst({
-          orderBy: { createdAt: 'desc' },
-        })
-        const goldPrice = latestPrice?.buyPrice || 0
+        const latestPrice = await getLatestGoldPrice()
+        const goldPrice = latestPrice.buyPrice
 
         // Create transaction for sender (outflow)
         await db.transaction.create({

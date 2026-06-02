@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 import { getUserAccess } from '@/lib/access'
 
@@ -32,10 +33,8 @@ export async function PATCH(
     }
 
     if (targetAmountFiat && targetAmountFiat > 0) {
-      const latestPrice = await db.goldPrice.findFirst({
-        orderBy: { createdAt: 'desc' },
-      })
-      const buyPrice = latestPrice?.buyPrice ?? 0
+      const latestPrice = await getLatestGoldPrice()
+      const buyPrice = latestPrice.buyPrice
       const access = await getUserAccess(goal.userId)
       const feeRate = access.buyFeeRate
       const netAmount = targetAmountFiat * (1 - feeRate)

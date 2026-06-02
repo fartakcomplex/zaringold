@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 import ZAI from 'z-ai-web-dev-sdk'
 
@@ -210,10 +211,8 @@ export async function GET() {
     }
 
     // Get latest price and RSI from DB
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-    const currentPrice = latestPrice?.marketPrice || 35000000
+    const latestPrice = await getLatestGoldPrice()
+    const currentPrice = latestPrice.marketPrice
 
     const priceHistory = await db.priceHistory.findMany({
       orderBy: { timestamp: 'desc' },

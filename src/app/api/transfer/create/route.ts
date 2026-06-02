@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 import crypto from 'crypto'
 
@@ -159,11 +160,8 @@ export async function POST(request: NextRequest) {
     }
 
     // ── دریافت قیمت طلای فعلی ──
-    let currentGoldPrice = 0
-    try {
-      const priceRecord = await db.goldPrice.findFirst({ orderBy: { createdAt: 'desc' } })
-      if (priceRecord) currentGoldPrice = priceRecord.buyPrice || priceRecord.sellPrice || 0
-    } catch { /* ignored */ }
+    const priceRecord = await getLatestGoldPrice()
+    const currentGoldPrice = priceRecord.buyPrice
 
     // ── پردازش انتقال ──
     const transferRef = `TRF-${crypto.randomBytes(6).toString('hex').toUpperCase()}`
@@ -188,10 +186,10 @@ export async function POST(request: NextRequest) {
         data: {
           userId: senderId,
           type: 'gold_transfer_out',
-          amountFiat: currentGoldPrice ? Math.round(amountGrams * currentGoldPrice) : 0,
+          amountFiat: Math.round(amountGrams * currentGoldPrice),
           amountGold: -netAmount,
           fee: feeGrams,
-          goldPrice: currentGoldPrice || null,
+          goldPrice: currentGoldPrice,
           status: 'completed',
           referenceId: senderRefId,
           description: `انتقال طلا (کارت‌به‌کارت) به ${recipient.fullName || recipient.phone} — ${amountGrams} گرم`,
@@ -203,10 +201,10 @@ export async function POST(request: NextRequest) {
         data: {
           userId: recipient.id,
           type: 'gold_transfer_in',
-          amountFiat: currentGoldPrice ? Math.round(amountGrams * currentGoldPrice) : 0,
+          amountFiat: Math.round(amountGrams * currentGoldPrice),
           amountGold: amountGrams,
           fee: 0,
-          goldPrice: currentGoldPrice || null,
+          goldPrice: currentGoldPrice,
           status: 'completed',
           referenceId: recipientRefId,
           description: `دریافت طلا (کارت‌به‌کارت) از ${session.user.fullName || session.user.phone} — ${amountGrams} گرم${note ? ` (${note})` : ''}`,

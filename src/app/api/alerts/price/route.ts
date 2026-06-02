@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db';
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -24,12 +25,10 @@ export async function GET(request: NextRequest) {
     });
 
     // Get latest gold price to check triggers
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    });
+    const latestPrice = await getLatestGoldPrice()
 
-    const currentBuyPrice = latestPrice?.buyPrice ?? 8_900_000;
-    const currentSellPrice = latestPrice?.sellPrice ?? 8_875_000;
+    const currentBuyPrice = latestPrice.buyPrice;
+    const currentSellPrice = latestPrice.sellPrice;
 
     // Check which alerts would be triggered
     const triggered: typeof alerts = [];

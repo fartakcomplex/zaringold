@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -108,12 +109,9 @@ export async function GET(request: NextRequest) {
     const totalClaimed = allCashbackRewards.filter((r) => r.status === 'claimed').length
 
     /* ── Fetch latest gold price for value estimation ── */
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
-
-    const goldBuyPrice = latestPrice?.buyPrice || 0
-    const goldSellPrice = latestPrice?.sellPrice || 0
+    const latestPrice = await getLatestGoldPrice()
+    const goldBuyPrice = latestPrice.buyPrice
+    const goldSellPrice = latestPrice.sellPrice
 
     /* ── Calculate available (non-frozen) amounts ── */
     const tomanBalance = tomanWallet?.balance ?? 0
@@ -158,7 +156,7 @@ export async function GET(request: NextRequest) {
         market: {
           gold_buy_price: goldBuyPrice,
           gold_sell_price: goldSellPrice,
-          price_timestamp: latestPrice?.createdAt?.toISOString() ?? null,
+          price_timestamp: latestPrice.createdAt.toISOString(),
         },
 
         /* Account status */

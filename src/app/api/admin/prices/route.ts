@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getLatestGoldPrice } from '@/lib/gold-prices'
 import { db } from '@/lib/db'
 
 export async function GET() {
   try {
-    const latestPrice = await db.goldPrice.findFirst({
-      orderBy: { createdAt: 'desc' },
-    })
+    const latestPrice = await getLatestGoldPrice()
 
     return NextResponse.json({
       success: true,
-      price: latestPrice || null,
+      price: latestPrice,
     })
   } catch (error) {
     console.error('Admin get prices error:', error)
